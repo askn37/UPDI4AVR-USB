@@ -11,7 +11,7 @@ AVRDUDE>=7.3 is required for this to work. Install it on your host PC in your pr
 
 - [AVRDUDE v7.3 releases](https://github.com/avrdudes/avrdude/releases/tag/v7.3)
 
-> [!TIPS]
+> [!TIP]
 > AVRDUDE>=7.2 actually works, but it doesn't come with part definitions for the AVR-DU family.
 
 ## Setting up Curiosity Nano
