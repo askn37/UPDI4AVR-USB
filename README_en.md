@@ -1,11 +1,12 @@
 # UPDI4AVR-USB : OSS/OSHW Programmer for UPDI/TPI
 
+*Switching document languages* : [日本語](README.md), __English__
+
 - Open source software/firmware that transforms the AVR-DU family into a USB-connected programmer.
 - Can read/erase/write NVM (non-volatile memory) of UPDI and TPI type AVR series.
 - AVRDUDE is assumed as the programming application on the host PC. It looks like "PICKit4" or "Curiosity Nano".
 - Equipped with VCP-UART transfer function.
-
-All results are distributed under the MIT license.
+- All results are distributed under the MIT license.
 
 The conventional *USB4AVR* is designed to use a USB-serial conversion circuit, but this *UPDI4AVR-USB* is a one-chip complete design that uses the USB peripheral circuit built into the MCU.
 
@@ -13,7 +14,7 @@ The conventional *USB4AVR* is designed to use a USB-serial conversion circuit, b
 
 The pre-built binaries can be uploaded to the ["AVR64DU32 Curiosity Nano : EV59F82A"](https://www.microchip.com/en-us/development-tool/ev59f82a) product for easy setup.
 
-[->Click Here](hex/updi4avr/README.md)
+[->Click Here](https://github.com/askn37/UPDI4AVR-USB/tree/main/hex/updi4avr-usb)
 
 ## Introduction
 
@@ -180,9 +181,10 @@ avrdude: writing output file <stdout>
 avrdude done.  Thank you.
 ```
 
+> 14P model does not have TPI control function.
 > In this example, the *Blink LED* sketch binary for terminal PB2 is read out.
 
-## LED blinking
+### LED blinking
 
 The orange LED can have several different states depending on the situation.
 
@@ -197,6 +199,10 @@ The orange LED can have several different states depending on the situation.
 
 For detailed pinout/signal assignments, see [<configuration.h>](src/configuration.h).
 
+## High-Voltage control
+
+We are currently planning to address this issue. It will be necessary to attach a dedicated control circuit externally. Technically, this has already been achieved in the previous model [UPDI4AVR](https://askn37.github.io/product/UPDI4AVR/), but with each new addition to the family, the specifications change and increase, making the design even more difficult than before.
+
 ## Build and installation
 
 By installing the SDK at the following link into the Arduino IDE, you can easily build and install for all AVR-DU family chips, including bare metal chips.
@@ -207,7 +213,9 @@ For build options, see [<UPDI4AVR-USB.ino>](UPDI4AVR-USB.ino).
 
 ## Related link and documentation
 
-- [Japanese Document](README.md)
+- Repository front page (This page): We're looking for contributors to help us out.
+  - [日本語(Native)](README.md), [English](README_en.md)
+
 - [UPDI4AVR-USB QUICK INSTALLATION GUIDE](hex/updi4avr/README.md)
 - [UPDI4AVR](https://askn37.github.io/product/UPDI4AVR/README_en.html) : USB to serial converter
 

@@ -1,5 +1,7 @@
 # UPDI4AVR-USB : OSS/OSHW Programmer for UPDI/TPI
 
+*Switching document languages* : __日本語__, [English](README_en.md)
+
 - AVR-DUファミリーを、USB接続プログラム書込器に変身させるオープンソース ソフトウェア／ファームウェア。
 - UPDIタイプと、TPIタイプの AVRシリーズの NVM（不揮発メモリ）を読み出し／消去／書き込みができる。
 - ホストPC側のプログラム書き込みアプリケーションは AVRDUDEを想定。"PICKit4" や "Curiosity Nano" のように見える。
@@ -14,7 +16,7 @@
 
 The pre-built binaries can be uploaded to the ["AVR64DU32 Curiosity Nano : EV59F82A"](https://www.microchip.com/en-us/development-tool/ev59f82a) product for easy setup.
 
-[->Click Here](hex/updi4avr/README.md)
+[->Click Here](https://github.com/askn37/UPDI4AVR-USB/tree/main/hex/updi4avr-usb)
 
 ## Introduction
 
@@ -181,9 +183,10 @@ avrdude: writing output file <stdout>
 avrdude done.  Thank you.
 ```
 
+> 14Pモデルには、TPI制御機能なし。
 > この例では PB2端子用の *Lチカ* スケッチバイナリが読み出されている。
 
-## LED blinking
+### LED blinking
 
 オレンジLEDは、状況によって幾つかの表情を見せる。
 
@@ -198,6 +201,10 @@ avrdude done.  Thank you.
 
 ピン配列／信号割当の詳細については、[<configuration.h>](src/configuration.h)を参照されたい。
 
+## High-Voltage control
+
+対応計画中。専用の制御回路を外付けする必要がある。技術的にはすでに前作の[UPDI4AVR](https://askn37.github.io/product/UPDI4AVR/)で実現していることだが、ファミリーが新たに増えるたびに仕様が変化／増加しているため、以前よりさらに設計の難易度が上がっている。
+
 ## Build and installation
 
 Arduino IDEに、次のリンク先の SDK を導入すると、ベアメタルチップを含めた AVR-DUファミリー全てへのビルドとインストールが簡単にできる。
@@ -208,7 +215,9 @@ Arduino IDEに、次のリンク先の SDK を導入すると、ベアメタル�
 
 ## Related link and documentation
 
-- [English Document](README_en.md) : We're looking for contributors to help us out.
+- リポジトリフロントページ (このページ): We're looking for contributors to help us out.
+  - [日本語(Native)](README.md), [English](README_en.md)
+
 - [UPDI4AVR-USB QUICK INSTALLATION GUIDE](hex/updi4avr/README.md)
 - [UPDI4AVR](https://askn37.github.io/product/UPDI4AVR/) : USBシリアル変換版
 
