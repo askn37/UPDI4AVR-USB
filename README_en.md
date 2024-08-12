@@ -201,7 +201,7 @@ For detailed pinout/signal assignments, see [<configuration.h>](src/configuratio
 
 ## High-Voltage control
 
-We are currently planning to address this issue. It will be necessary to attach a dedicated control circuit externally. Technically, this has already been achieved in the previous model [UPDI4AVR](https://askn37.github.io/product/UPDI4AVR/), but with each new addition to the family, the specifications change and increase, making the design even more difficult than before.
+We are currently planning to address this issue. It will be necessary to attach a dedicated control circuit externally. Technically, this has already been achieved in the previous model [UPDI4AVR](https://askn37.github.io/product/UPDI4AVR/README_en.html), but with each new addition to the family, the specifications change and increase, making the design even more difficult than before.
 
 ## Build and installation
 
