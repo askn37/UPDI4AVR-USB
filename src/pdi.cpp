@@ -28,6 +28,10 @@
  * The hardware layer also uses the same 12-bit frames USART as UPDI/TPI.
  * It is a single-wire bidirectional communication like RS485,
  * synchronized by the XCLK just like TPI.
+ * 
+ * ACC handles 32-bit addresses:
+ *   high order byte 0 specifies the code space.
+ *   high order byte 1 specifies the data space.
  */
 
 namespace PDI {

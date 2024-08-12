@@ -24,8 +24,8 @@
  * UPDI NVM version 2 is used in AVR-DA, DB, DD series.
  * Features include:
  *
- * - Data area is at the beginning of the 24-bit address space.
- *   Flash area is at the end of the 24-bit address space.
+ * - Data area is at the beginning of the 24-bit address space. (MSB=0)
+ *   Flash area is at the end of the 24-bit address space. (MSB=1)
  *   All other memory types are in data space.
  *
  * - Signature is at address 0x1100.

@@ -457,7 +457,7 @@ namespace USB {
     uint8_t _d = USART0_RXDATAH;
     uint8_t _c = USART0_RXDATAL;
     if (!(_d & (USART_BUFOVF_bm | USART_FERR_bm | USART_PERR_bm))) {
-      USB::write_byte(_c);
+      write_byte(_c);
     }
     RXSTAT |= _d;
   #if defined(CONFIG_VCP_INTERRUPT_SUPPRT)

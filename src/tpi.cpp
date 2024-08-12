@@ -307,11 +307,11 @@ namespace TPI {
       D1PRINTF(" TPI_ENTER_PROGMODE\r\n");
       USART::setup();
       USART::change_tpi();
-      _rspsize = Timeout::command(&TPI::connect);
+      _rspsize = Timeout::command(&connect);
     }
     else if (_cmd == 0x02) {        /* XPRG_CMD_LEAVE_PROGMODE */
       D1PRINTF(" TPI_LEAVE_PROGMODE\r\n");
-      _rspsize = TPI::disconnect();
+      _rspsize = disconnect();
       _tpi_setmode = 0;
       USART::setup();
       USART::change_vcp();
@@ -322,7 +322,7 @@ namespace TPI {
         packet.out.tpi.read.bMType,
         bswap32(packet.out.tpi.read.dwAddr)
       );
-      _rspsize = Timeout::command(&TPI::erase_memory);
+      _rspsize = Timeout::command(&erase_memory);
     }
     else if (_cmd == 0x04) {        /* XPRG_CMD_WRITE_MEM */
       D1PRINTF(" TPI_WRITE=%02X:%08lX:%04X\r\n",
@@ -330,7 +330,7 @@ namespace TPI {
         bswap32(packet.out.tpi.write.dwAddr),
         bswap16(packet.out.tpi.write.wLength)
       );
-      _rspsize = Timeout::command(&TPI::write_memory);
+      _rspsize = Timeout::command(&write_memory);
     }
     else if (_cmd == 0x05) {        /* XPRG_CMD_READ_MEM */
       D1PRINTF(" TPI_READ=%02X:%08lX:%04X\r\n",
@@ -338,7 +338,7 @@ namespace TPI {
         bswap32(packet.out.tpi.read.dwAddr),
         bswap16(packet.out.tpi.read.wLength)
       );
-      _rspsize = Timeout::command(&TPI::read_memory);
+      _rspsize = Timeout::command(&read_memory);
     }
     else if (_cmd == 0x06) {        /* XPRG_CMD_CRC */
       D1PRINTF(" TPI_CRC\r\n");     /* not used (Fail) */

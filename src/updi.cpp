@@ -453,7 +453,7 @@ namespace UPDI {
       /* If not in PROGMODE, respond with a dummy. */
       /* A dummy SIG will be returned for locked devices. */
       /* This will prevent AVRDUDE from displaying annoying errors. */
-      else _rspsize = UPDI::read_dummy();
+      else _rspsize = read_dummy();
       packet.in.res = _rspsize ? 0x184 : 0xA0;
       return _rspsize;
     }

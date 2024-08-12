@@ -28,6 +28,10 @@
  *   Flash is mapped into the second half of the 64KiB address range.
  *   The offset value is different between tinyAVR and megaAVR.
  * 
+ * - ACC only uses 16-bit addresses, but it can also use
+ *   24-bit addresses with a zero high-order byte.
+ *   The use of PDI-compatible 32-bit addresses is explicitly prohibited.
+ * 
  * - The signature is located at address 0x1100.
  * 
  * - Fuse uses special commands to rewrite byte by byte.

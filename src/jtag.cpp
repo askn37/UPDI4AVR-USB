@@ -26,7 +26,7 @@
  * Handles JTAGICE3 payloads.
  *
  * Encapsulates higher level payloads in various formats using leading scope numbers.
- * ATMEL based JTAG, AVRISP, STK600/600, etc.
+ * ATMEL based JTAG, AVRISP, STK600-XPRG, etc.
  *
  * EDBG payload is an ATMEL vendor extension to CSMIS-DAP.
  * Splits JTAG3 payload into chunks to fit into USB-HID report packets.

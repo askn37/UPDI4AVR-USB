@@ -24,8 +24,8 @@
  * UPDI NVM version 3 is used in the AVR-EA series.
  * It has the following features:
  *
- * - The data area is at the beginning of the 24-bit address space.
- *   The flash area is at the end of the 24-bit address space.
+ * - The data area is at the beginning of the 24-bit address space. (MSB=0)
+ *   The flash area is at the end of the 24-bit address space. (MSB=1)
  *   All other memory types are in the data space.
  * 
  * - The signature is at address 0x1100.

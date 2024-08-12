@@ -24,11 +24,11 @@
  * UPDI NVM version 4 is used in AVR-DU series.
  * Features include:
  *
- * - Data area is at the beginning of the 24-bit address space.
- *   Flash area is at the end of the 24-bit address space.
+ * - Data area is at the beginning of the 24-bit address space. (MSB=0)
+ *   Flash area is at the end of the 24-bit address space. (MSB=1)
  *   All other memory types are in data space.
  *
- * - Signature is at address 0x1100.
+ * - Signature is at address 0x1080.
  *
  * - There is no page buffer memory. Data space flash (i.e. USERROW) 
  *   is heavily affected by this, so RSD fast writes cannot be used.
