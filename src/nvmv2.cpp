@@ -139,6 +139,14 @@ namespace NVM::V2 {
       /* XMEGA_ERASE_CHIP */
       return UPDI::chip_erase();
     }
+    else {
+      /* NOTE: AVRDUDE<=7.3 may pass the wrong M_TYPE. */
+      /* For safety, only USERROW and BOOTROW are allowed to erase pages. */
+      if (e_type == 0x07) {
+        /* XMEGA_ERASE_USERSIG */
+        return erase_flash_page(packet.out.dwAddr);
+      }
+    }
     /* Page erase will not be used if received. */
     /* Instead, page erase is determined by the is_boundary_flash_page function. */
     return 1;
