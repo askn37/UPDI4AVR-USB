@@ -398,7 +398,7 @@ namespace USB {
   void cci_interrupt (void) {
   #if defined(CONFIG_VCP_INTERRUPT_SUPPRT)
     SerialState_t _value = {};
-    #if defined(PIN_VCP_DTD)
+    #if defined(CONFIG_VCP_RS232C_ENABLE)
     uint8_t _c = VPORTD_IN;
     _value.bValue = (_c ^ 0x0B) & 0x0B;
     #endif
