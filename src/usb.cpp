@@ -520,6 +520,7 @@ namespace USB {
   #endif
   }
 
+  /*** USB Standard Request Enumeration. ***/
   bool request_standard (void) {
     bool _listen = true;
     uint8_t bRequest = EP_MEM.req_data.bRequest;
@@ -587,19 +588,27 @@ namespace USB {
     return _listen;
   }
 
+  /*** CDC-ACM request processing. ***/
   bool request_class (void) {
     bool _listen = true;
     uint8_t bRequest = EP_MEM.req_data.bRequest;
     if (bRequest == 0x0A) {       /* SET_IDLE */
+      /* This is a HID Compliance Class Request. */
+      /* It is called but not used. */
       D1PRINTF(" IDL=%02X\r\n", (uint8_t)EP_MEM.req_data.wValue);
       EP_RES.CNT = 0;
     }
     else if (bRequest == 0x20) {  /* SET_LINE_ENCODING */
+      /* SET_LINE_ENCODING is called whenever a port is opened. */
+      /* On Windows, it runs immediately after SET_INTREFACE.   */
+      /* On macOS, it runs when the host app opens the port.    */
+      /* In any case, this isn't a one-off thing. */
+      /* If the same parameter settings persist,  */
+      /* it's probably best to do nothing.        */
       ep_req_pending();
       USART::set_line_encoding(&EP_MEM.res_encoding);
       D1PRINTF(" SLE=");
       D1PRINTHEX(&_set_line_encoding, sizeof(LineEncoding_t));
-      /* SET_LINE_ENCODING is called whenever a port is opened. */
       bit_set(GPCONF, GPCONF_OPN_bp);
       _send_count = 0;
       _recv_count = 0;
@@ -609,6 +618,8 @@ namespace USB {
     else if (bRequest == 0x21) {  /* GET_LINE_ENCODING */
       memcpy(&EP_MEM.res_encoding, &_set_line_encoding, sizeof(LineEncoding_t));
       if (EP_MEM.res_encoding.dwDTERate == 0) {
+        /* Parameters that, if incorrectly accepted,           */
+        /* would result in division by zero must be corrected. */
         EP_MEM.res_encoding.dwDTERate = 9600UL;
         EP_MEM.res_encoding.bDataBits = 8;
       }
@@ -617,11 +628,14 @@ namespace USB {
       EP_RES.CNT = sizeof(LineEncoding_t);
     }
     else if (bRequest == 0x22) {  /* SET_LINE_STATE */
+      /* This includes the DTR and RTS settings. */
       D1PRINTF(" SLS=%02X\r\n", (uint8_t)EP_MEM.req_data.wValue);
       USART::set_line_state((uint8_t)EP_MEM.req_data.wValue);
       EP_RES.CNT = 0;
     }
     else if (bRequest == 0x23) {  /* SET_SEND_BREAK */
+      /* When the host application closes the port, it may send a BREAK=0. */
+      /* Nothing else is used unless programmed by the application. */
       D1PRINTF(" SB=%04X\r\n", EP_MEM.req_data.wValue);
       _send_break = EP_MEM.req_data.wValue;
       if (_send_break) break_on();
@@ -634,12 +648,16 @@ namespace USB {
     return _listen;
   }
 
+  /*** Accept the EP0 setup packet. ***/
+  /* This process is equivalent to a endpoint interrupt. */
+  /* The reason for using polling is to prioritize VCP performance. */
   void handling_control_transactions (void) {
     bool _listen = false;
     uint8_t bmRequestType = EP_MEM.req_data.bmRequestType;
     D1PRINTF("RQ=%02X:%04X:%02X:%02X:%04X:%04X:%04X\r\n",
       EP_REQ.STATUS, EP_REQ.CNT, EP_MEM.req_data.bmRequestType, EP_MEM.req_data.bRequest,
       EP_MEM.req_data.wValue, EP_MEM.req_data.wIndex, EP_MEM.req_data.wLength);
+    /* Accepts subsequent EP0_DATA packets as needed. */
     if (bit_is_clear(bmRequestType, 7)) ep_req_listen();
     bmRequestType &= (3 << 5);
     if (bmRequestType == (0 << 5)) {
@@ -663,6 +681,9 @@ namespace USB {
     USB0_INTFLAGSB |= USB_EPSETUP_bp;
   }
 
+  /*** This process is equivalent to a bus interrupt. ***/
+  /* The reason for using polling is to prioritize VCP performance. */
+  /* The trade-off is that power standby is not available. */
   void handling_bus_events (void) {
     uint8_t busstate = USB0_INTFLAGSA;
     USB0_INTFLAGSA = busstate;

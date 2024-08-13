@@ -218,7 +218,6 @@ namespace TPI {
     }
 
     /*** Enter RESET (normal programing) ***/
-    /* Do not drive TCLK and take TRST LOW.           */
     /* TRST remains LOW until program mode is exited. */
     openDrainWriteMacro(PIN_VCP_TXD, LOW);
     openDrainWriteMacro(PIN_PG_TRST, LOW);

@@ -96,6 +96,7 @@ int main (void) {
   loop_until_bit_is_clear(WDT_STATUS, WDT_SYNCBUSY_bp);
   _PROTECTED_WRITE(WDT_CTRLA, WDT_PERIOD_1KCLK_gc);
 
+  /* Clear the dirty flag before enabling interrupts. */
   VPORTA_INTFLAGS = ~0;
   VPORTC_INTFLAGS = ~0;
   VPORTD_INTFLAGS = ~0;
@@ -103,6 +104,7 @@ int main (void) {
   interrupts();
 
   #if !defined(PIN_USB_VDETECT)
+  /* If you do not use VBD, insert the shortest possible delay instead. */
   delay_millis(250);
   USB::setup_device(true);
   #else
@@ -118,12 +120,18 @@ int main (void) {
     USB::handling_bus_events();
     if (USB::is_ep_setup()) USB::handling_control_transactions();
 
+    /* If SW0 was used, work here. */
     if      (bit_is_set(GPCONF, GPCONF_FAL_bp)) SYS::reset_enter();
     else if (bit_is_set(GPCONF, GPCONF_RIS_bp)) SYS::reset_leave();
 
+    /* If the USB port is not open, go back to the loop beginning. */
     if (bit_is_clear(GPCONF, GPCONF_USB_bp)) continue;
 
     /*** CMSIS-DAP VCP transceiver ***/
+    /* The AVR series requires at least 100 clocks to service   */
+    /* an interrupt. At the maximum speed of the VCP-RxD, one   */
+    /* character arrives every 400 clocks on a 20MHz reference. */
+    /* So we avoid using interrupts here and use polling to gain speed. */
   #if defined(CONFIG_VCP_9BIT_SUPPORT)
     if (bit_is_set(GPCONF, GPCONF_VCP_bp)) usart_transmitter();
   #else

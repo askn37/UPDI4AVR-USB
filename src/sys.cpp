@@ -268,11 +268,11 @@ namespace SYS {
   #endif
     D1PRINTF("<RST:OUT>\r\n");
     if (bit_is_set(GPCONF, GPCONF_USB_bp))
-      LED_HeartBeat();
+      LED_HeartBeat();  /* The USB is ready. */
     else if (!USB0_ADDR)
-      reboot();
+      reboot();         /* USB disconnected, System reboot. */
     else
-      LED_Flash();
+      LED_Flash();      /* USB is not yet enabled. */
     bit_clear(GPCONF, GPCONF_FAL_bp);
     bit_clear(GPCONF, GPCONF_RIS_bp);
   }
