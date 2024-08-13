@@ -38,8 +38,8 @@
 
 namespace JTAG {
 
-  /* PARM3_HW_VER, PARM3_FW_MAJOR, PARM3_FW_MINOR, PARM3_FW_RELEASE[2] */
-  const uint8_t PROGMEM jtag_version[] = { 0, 1, 32, 41, 0 };
+  /* PARM3_HW_VER, PARM3_FW_MAJOR, PARM3_FW_MINOR, PARM3_FW_REL[2] */
+  const uint8_t PROGMEM jtag_version[] = CONFIG_SYS_FWVER;
   const uint8_t PROGMEM jtag_physical[] = {0x90, 0x28, 0x00, 0x18, 0x38, 0x00, 0x00, 0x00};
 
   /*** Only a subset of the CMSIS-DAP commands are implemented. ***/

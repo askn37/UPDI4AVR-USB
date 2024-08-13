@@ -130,6 +130,15 @@
  *                  (Low active) LED0 - PF2 - |19   20| - PF1 - N.C.
  *                                            +--| |--+
  *                                      for Application USB-C
+ * 
+ * NOTE:
+ * 
+ * - PIN_PC3 is connected to a resistor divider as the AC0 input for on-board
+ *   VBUS detection, but it is bus-powered only and will not function properly
+ *   when two USB-C cables are connected, so it is not used in this application.
+ * - PIN_PF0,1 are reserved for external 32k crystal oscillators and are not used.
+ * - Because HVFW and HVSW have exclusive use of AC0 inputs and outputs,
+ *   you cannot move the definitions from PIN_PD2 and PIN_PA7.
  */
 
 /*
@@ -177,15 +186,33 @@
  * When the DEBUG symbol is enabled, DBG-COM is enabled.
  *
  * Functions that use overlapping pins are disabled.
+ * 
+ * The DEBUG=0 output is not normally used,
+ * but can be used to filter only user-defined output.
  */
+
 // #define DEBUG 2
 
 /*
  * UPDI/TPI Program interface operating clock: default is 225kHz.
  */
+
 #define UPDI_CLK  225000L   /* The selection range is 40kHz to 240kHz. */
 
 /*** CONFIG_SYS ***/
+
+/*
+ * JTAGICE3 FW versions:
+ *
+ * This is notified to MPLAB-X etc.
+ * Set it a bit higher than the real "Curiosity Nano" value.
+ * This will almost always avoid notifications of incompatible version upgrades,
+ * but it's not perfect.
+ *
+ * Columns: HW_VER, FW_MAJOR, FW_MINOR, FW_RELL, FW_RELH (all 1-byte decimal)
+ */
+
+#define CONFIG_SYS_FWVER { 0, 1, 32, 42, 0 }
 
 /*
  * For CNANO, you can change the detection of SW0 to PIN_PF5.
@@ -267,10 +294,23 @@
 #define CONFIG_VCP_DTR_RESET
 
 /*
+ * Enables RS232C signal GPIO support
+ *
+ * Sets the DCD, RI, DSR, DTR, RTS, and CTS signals for RS232C compatibility to GPIO.
+ * If disabled, the corresponding pin terminals remain unused.
+ * 
+ * NOTE: DCD, DSR and RI always use the pin terminals specified
+ * 　　　 in the VPOTRTD_IN register. (Parallel input)
+ */
+
+#define CONFIG_VCP_RS232C_ENABLE
+
+/*
  * Enables the VCP-CTS input signal. Disabled by default.
  *
  * When enabled, VCP-TxD will not transmit data unless CTS is LOW.
  * When enabled and unused, CTS must be shorted to GND.
+ * Affected by CONFIG_VCP_RS232C_ENABLE.
  */
 
 // #define CONFIG_VCP_CTS_ENABLE
@@ -279,6 +319,7 @@
  * Support VCP interrupts.
  *
  * If you disable it, you will lose some lesser used features in Windows.
+ * Affected by CONFIG_VCP_RS232C_ENABLE.
  */
 
 #define CONFIG_VCP_INTERRUPT_SUPPRT
@@ -304,7 +345,8 @@
 /*** CONFIG_HVCTRL ***/
 
 /*
- * Enables HV control, using the following I/O signals: HVFB, HVSW, HVSL, HVCP
+ * Enables HV control. (Not yet implemented)
+ * using the following I/O signals: HVFB, HVSW, HVSL, HVCP
  * 
  * Not available in 14P package.
  * Requires additional external circuitry to enable.
@@ -318,6 +360,8 @@
  * When supplying power to a V-target, it can control power-off.
  * Not used when power is supplied from the V-target.
  * If the HVPW terminal is used directly as a power output, it must not exceed 15mA.
+ * 
+ * Not affected by CONFIG_HVCTRL_ENABLE.
  */
 
 #define CONFIG_HVCTRL_POWER_ENABLE
@@ -327,15 +371,18 @@
 /*
  * Enable TPI type programming support
  *
+ * When disabled, the size is approximately 2KiB smaller.
  * Cannot be used with 14P model. 
  */
+
 #define CONFIG_PGM_TPI_ENABLE
 
 /*
- * Enable PDI type programming support
+ * Enable PDI type programming support. (Not yet implemented)
  *
  * Cannot be used with 14P model. 
  */
+
 // #define CONFIG_PGM_PDI_ENABLE
 
 /********************************
@@ -464,6 +511,14 @@
   #undef PIN_HV_SWITCH
   #undef PIN_HV_SELECT
   #undef PIN_HV_CHGPUMP
+#endif
+#ifndef CONFIG_VCP_RS232C_ENABLE
+  #undef PIN_VCP_DCD
+  #undef PIN_VCP_DSR
+  #undef PIN_VCP_RI
+  #undef PIN_VCP_DTR
+  #undef PIN_VCP_RTS
+  #undef PIN_VCP_CTS
 #endif
 
 // end of header
