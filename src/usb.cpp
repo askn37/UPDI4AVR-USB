@@ -297,6 +297,7 @@ namespace USB {
 
   void ep_cdi_listen (void) {
     /* Send the VCP-RxD buffer to the host. */
+  #ifdef _This_might_be_too_much_
     if (bit_is_clear(GPCONF, GPCONF_OPN_bp)) {
       /* No sending allowed while port is closed.  */
       /* If the buffer overflows, it is discarded. */
@@ -316,6 +317,18 @@ namespace USB {
         return;
       }
     }
+  #else
+    /* If our math is correct, then if each side of the double */
+    /* buffer can complete the transmission of 64 characters   */
+    /* in 1 ms, then it can support 640 kbps. */
+    if (bit_is_clear(GPCONF, GPCONF_OPN_bp)
+     || bit_is_clear(EP_CDI.STATUS, USB_BUSNAK_bp)) {
+      /* No sending allowed while port is closed.  */
+      /* If the buffer overflows, it is discarded. */
+      if (_send_count == 64) _send_count = 0;
+      return;
+    }
+  #endif
     D2PRINTF(" VI=%02X:", _send_count);
     D2PRINTHEX(bit_is_set(GPCONF, GPCONF_DBL_bp)
       ? &EP_MEM.cdi_data[64]
@@ -526,6 +539,7 @@ namespace USB {
       EP_RES.CNT = 0;
     }
     else if (bRequest == 0x04) {  /* SET_FEATURE */
+      /* If used, it will be ignored. */
       D1PRINTF(" SF=%02X:%02X\r\n", EP_MEM.req_data.wValue, EP_MEM.req_data.wIndex);
       EP_RES.CNT = 0;
     }
@@ -545,9 +559,11 @@ namespace USB {
     }
     else if (bRequest == 0x08) {  /* GET_CONFIGURATION */
       EP_MEM.res_data[0] = _set_config;
+      D1PRINTF("<GC:%02X>\r\n", _set_config);
       EP_RES.CNT = 1;
     }
     else if (bRequest == 0x09) {  /* SET_CONFIGURATION */
+      /* Once the USB connection is fully initiated, it will go through here. */
       _set_config = (uint8_t)EP_MEM.req_data.wValue;
       bit_set(GPCONF, GPCONF_USB_bp);
       SYS::LED_HeartBeat();
@@ -555,10 +571,14 @@ namespace USB {
       EP_RES.CNT = 0;
     }
     else if (bRequest == 0x0A) {  /* GET_INTREFACE */
+      /* It seems not to be used. */
+      D1PRINTF("<SI:0>\r\n");
       EP_MEM.res_data[0] = 0;
       EP_RES.CNT = 1;
     }
     else if (bRequest == 0x0B) {  /* SET_INTREFACE */
+      /* It seems not to be used. */
+      D1PRINTF("<GI:%02X>\r\n", EP_MEM.req_data.wValue);
       EP_RES.CNT = 0;
     }
     else {
@@ -680,6 +700,8 @@ namespace USB {
     }
     if (bit_is_set(busstate, USB_SUSPEND_bp)
      || bit_is_set(busstate, USB_RESUME_bp)) {
+      /* This implementation does not transition to power saving mode. */
+      /* This is only passed when the USB cable is unplugged. */
       if (bit_is_set(GPCONF, GPCONF_USB_bp)) {
         /* System reboot */
         SYS::reboot();
