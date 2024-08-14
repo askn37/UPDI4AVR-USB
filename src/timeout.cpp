@@ -76,12 +76,13 @@ namespace Timeout {
     if (setjmp(TIMEOUT_CONTEXT) == 0) {
       Timeout::start(_ms);
       _result = (*func_p)();
+      bit_clear(PGCONF, PGCONF_FAIL_bp);
     }
     else {
       /* Stack dump. */
       /* An unused register is borrowed to store the SP. */
-      D1PRINTF("\r\n!TIMEOUT:%04lX>", NVMCTRL_DATA);
-      D1PRINTHEX((const void*)(NVMCTRL_DATA - 2), 16);
+      D1PRINTF("\r\n!TIMEOUT:%04X>", RTC_CMP);
+      D1PRINTHEX((const void*)(RTC_CMP + 1), 16);
     }
     Timeout::stop();
     return _result;
@@ -100,7 +101,7 @@ ISR(TCB0_INT_vect, ISR_NAKED) {
   ***/
   __asm__ __volatile__ ("EOR R1,R1");
 #if defined(DEBUG)
-  NVMCTRL_DATA = SP;
+  RTC_CMP = SP;
 #endif
   TCB0_CTRLA = 0;
   TCB0_INTFLAGS = TCB_CAPT_bm;

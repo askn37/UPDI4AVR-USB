@@ -96,11 +96,11 @@ int main (void) {
   loop_until_bit_is_clear(WDT_STATUS, WDT_SYNCBUSY_bp);
   _PROTECTED_WRITE(WDT_CTRLA, WDT_PERIOD_1KCLK_gc);
 
+  #if defined(PIN_SYS_SW0)
   /* Clear the dirty flag before enabling interrupts. */
-  VPORTA_INTFLAGS = ~0;
-  VPORTC_INTFLAGS = ~0;
-  VPORTD_INTFLAGS = ~0;
-  VPORTF_INTFLAGS = ~0;
+  vportRegister(PIN_SYS_SW0).INTFLAGS = ~0;
+  CCL_INTFLAGS = ~0;
+  #endif
   interrupts();
 
   #if !defined(PIN_USB_VDETECT)
@@ -121,8 +121,10 @@ int main (void) {
     if (USB::is_ep_setup()) USB::handling_control_transactions();
 
     /* If SW0 was used, work here. */
-    if      (bit_is_set(GPCONF, GPCONF_FAL_bp)) SYS::reset_enter();
-    else if (bit_is_set(GPCONF, GPCONF_RIS_bp)) SYS::reset_leave();
+    if (bit_is_clear(PGCONF, PGCONF_UPDI_bp)) {
+      if      (bit_is_set(GPCONF, GPCONF_FAL_bp)) SYS::reset_enter();
+      else if (bit_is_set(GPCONF, GPCONF_RIS_bp)) SYS::reset_leave();
+    }
 
     /* If the USB port is not open, go back to the loop beginning. */
     if (bit_is_clear(GPCONF, GPCONF_USB_bp)) continue;

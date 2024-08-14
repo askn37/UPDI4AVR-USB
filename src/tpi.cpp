@@ -235,7 +235,6 @@ namespace TPI {
     /*** Check TPIIR code : Fixed 0x80 ***/
     while (!(get_sldcs(0x0F) && (RXDATA == 0x80)));
     D1PRINTF(" TPIIR>%02X\r\n", RXDATA);
-
     bit_set(PGCONF, PGCONF_UPDI_bp);
 
     /*** Activate NVMPROG mode ***/
@@ -272,9 +271,7 @@ namespace TPI {
                 : _signature == 0x910F ? 4  /* ATtiny20 */
                 : 2;                        /* Othres   */
     D1PRINTF(" SIG>%04X:%02X\r\n", _signature, _tpi_chunks);
-
-    bit_set(PGCONF, PGCONF_UPDI_bp);
-    bit_clear(PGCONF, PGCONF_FAIL_bp);
+    bit_set(PGCONF, PGCONF_PROG_bp);
     return 1;
   }
 
