@@ -23,10 +23,10 @@ namespace Timeout {
 
   void setup (void) {
     RTC_PITEVGENCTRLA = RTC_EVGEN0SEL_DIV32_gc | RTC_EVGEN1SEL_DIV128_gc;
-    EVSYS_CHANNEL1 = EVSYS_CHANNEL_RTC_EVGEN0_gc; /* 1kHz periodic. */
-    EVSYS_CHANNEL2 = EVSYS_CHANNEL_RTC_EVGEN1_gc; /* 32Hz periodic. */
-    EVSYS_USERTCB0COUNT = EVSYS_USER_CHANNEL1_gc; /* TCB0_CLK = 1kHz */
-    EVSYS_USERTCB1COUNT = EVSYS_USER_CHANNEL2_gc; /* TCB1_CLK = 32Hz */
+    EVSYS_CHANNEL1 = EVSYS_CHANNEL_RTC_EVGEN0_gc; /* 1024Hz periodic.  */
+    EVSYS_CHANNEL2 = EVSYS_CHANNEL_RTC_EVGEN1_gc; /* 32Hz periodic.    */
+    EVSYS_USERTCB0COUNT = EVSYS_USER_CHANNEL1_gc; /* TCB0_CLK = 1024Hz */
+    EVSYS_USERTCB1COUNT = EVSYS_USER_CHANNEL2_gc; /* TCB1_CLK = 32Hz   */
     RTC_PITCTRLA = RTC_PITEN_bm;
   }
 
@@ -76,12 +76,13 @@ namespace Timeout {
     if (setjmp(TIMEOUT_CONTEXT) == 0) {
       Timeout::start(_ms);
       _result = (*func_p)();
+      bit_clear(PGCONF, PGCONF_FAIL_bp);
     }
     else {
       /* Stack dump. */
       /* An unused register is borrowed to store the SP. */
-      D1PRINTF("\r\n!TIMEOUT:%04lX>", NVMCTRL_DATA);
-      D1PRINTHEX((const void*)(NVMCTRL_DATA - 2), 16);
+      D1PRINTF("\r\n!TIMEOUT:%04X>", RTC_CMP);
+      D1PRINTHEX((const void*)(RTC_CMP + 1), 16);
     }
     Timeout::stop();
     return _result;
@@ -100,7 +101,7 @@ ISR(TCB0_INT_vect, ISR_NAKED) {
   ***/
   __asm__ __volatile__ ("EOR R1,R1");
 #if defined(DEBUG)
-  NVMCTRL_DATA = SP;
+  RTC_CMP = SP;
 #endif
   TCB0_CTRLA = 0;
   TCB0_INTFLAGS = TCB_CAPT_bm;

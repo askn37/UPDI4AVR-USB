@@ -52,13 +52,20 @@
  *                      | VUSB - |6    9| - PC3 - LED0
  *  for Application USB |   DM - |7    8| - DP  - for Application USB
  *                               +------+
+ * 
+ * - If CONFIG_SYS_SW0_ALT_14P is enabled, the pin definitions go to:
+ * 
+ *                PF6 - nRST
+ *                PD7 - VBD
+ *                PD6 - SW0
+ *               (DEBUG is Disable)
  */
 
 /*
  * HAL_BAREMETAL_20P: The AVR32-16DU20 has the following limitations:
  * 
- * - The following I/O signal cannot be used: DSR, CTS, RI, DCD, nRST.
- * - When using DEBUG-COM port, the following control signals are not available: DTR, VBD.
+ * - The following I/O signal cannot be used: DSR, RI, DCD.
+ * - When using DEBUG-COM port, the following control signals are not available: RTS, VBD.
  * 
  *                                          AVR32-16DU20
  *                                            +------+
@@ -73,6 +80,14 @@
  *                               HVSL - PA5 - |9   12| - VUSB |
  *                               LED0 - PA6 - |10  11| - PA7 - HVSW
  *                                            +------+
+ * 
+ * - If CONFIG_VCP_RS232C_ENABLE is disabled, the pin definitions go to:
+ * 
+ *                PF6 - nRST
+ *                PD7 - DBG-RxD or N.C.
+ *                PD6 - DBG-TxD or N.C.
+ *                PD5 - SW0
+ *                PD4 - VBD
  */
 
 /*
@@ -212,7 +227,7 @@
  * Columns: HW_VER, FW_MAJOR, FW_MINOR, FW_RELL, FW_RELH (all 1-byte decimal)
  */
 
-#define CONFIG_SYS_FWVER { 0, 1, 32, 42, 0 }
+#define CONFIG_SYS_FWVER { 0, 1, 32, 43, 0 }
 
 /*
  * For CNANO, you can change the detection of SW0 to PIN_PF5.
@@ -224,6 +239,14 @@
  */
 
 // #define CONFIG_SYS_SW0_ALT_CNANO
+
+/*
+ * For HAL_BAREMETAL_14P you can change SW0 to PD6.
+ *
+ * This will disable DEBUG and replace PF6 with nRST.
+ */
+
+// #define CONFIG_SYS_SW0_ALT_14P
 
 /*** CONFIG_USB ***/
 
@@ -411,6 +434,42 @@
   #endif
 #endif
 
+/*** To override the default value at the CLI level: ***/
+
+#ifdef CONFIG_USB_VDETECT_DISABLE
+  #undef CONFIG_USB_VDETECT
+#endif
+#ifdef CONFIG_VCP_DTR_RESET_DISABLE
+  #undef CONFIG_VCP_DTR_RESET
+#endif
+#ifdef CONFIG_VCP_RS232C_DISABLE
+  #undef CONFIG_VCP_RS232C_ENABLE
+#endif
+#ifdef CONFIG_VCP_CTS_DISABLE
+  #undef CONFIG_VCP_CTS_ENABLE
+#endif
+#ifdef CONFIG_VCP_INTERRUPT_SUPPRT_DISABLE
+  #undef CONFIG_VCP_INTERRUPT_SUPPRT
+#endif
+#ifdef CONFIG_VCP_TXD_ODM_DISABLE
+  #undef CONFIG_VCP_TXD_ODM
+#endif
+#ifdef CONFIG_VCP_9BIT_SUPPORT_DISABLE
+  #undef CONFIG_VCP_9BIT_SUPPORT
+#endif
+#ifdef CONFIG_HVCTRL_ENABLE_DISABLE
+  #undef CONFIG_HVCTRL_ENABLE
+#endif
+#ifdef CONFIG_HVCTRL_POWER_DISABLE
+  #undef CONFIG_HVCTRL_POWER_ENABLE
+#endif
+#ifdef CONFIG_PGM_TPI_DISABLE
+  #undef CONFIG_PGM_TPI_ENABLE
+#endif
+#ifdef CONFIG_PGM_PDI_DISABLE
+  #undef CONFIG_PGM_PDI_ENABLE
+#endif
+
 /*** Note: The pin numbers of VCP-DCD,DSR,RI are fixed as PIN_PD0,1,3. ***/
 
 #if (CONFIG_HAL_TYPE == HAL_BAREMETAL_14P)
@@ -422,14 +481,20 @@
   #define PIN_PG_TDAT         PIN_USART0_TXD_ALT3
   #define PIN_PG_TRST         PIN_USART0_RXD_ALT3
   #define PIN_SYS_LED         PIN_PC3      /* PIN_LUT1_OUT */
-  #define PIN_SYS_SW0         PIN_PF6
   #undef CONFIG_VCP_CTS_ENABLE
   #undef CONFIG_PGM_TPI_ENABLE
   #undef CONFIG_HVCTRL_ENABLE
   #undef CONFIG_HVCTRL_POWER_ENABLE
-  #if !defined(DEBUG)
+  #ifdef CONFIG_SYS_SW0_ALT_14P
+    #undef DEBUG
     #define PIN_USB_VDETECT   PIN_PD7
-    #define PIN_VCP_DTR       PIN_PD6
+    #define PIN_SYS_SW0       PIN_PD6
+  #else
+    #define PIN_SYS_SW0       PIN_PF6
+    #if !defined(DEBUG)
+      #define PIN_USB_VDETECT PIN_PD7
+      #define PIN_VCP_DTR     PIN_PD6
+    #endif
   #endif
 #else
   #define PORTMUX_USART_VCP   (PORTMUX_USART0_ALT2_gc    | PORTMUX_USART1_ALT2_gc)
@@ -444,13 +509,18 @@
   #define PIN_HV_SELECT       PIN_PA5
   #define PIN_HV_CHGPUMP      PIN_PA4      /* PIN_TCA0_WO4 */
   #if (CONFIG_HAL_TYPE == HAL_BAREMETAL_20P)
-    #define PIN_SYS_SW0       PIN_PF6
-    #if !defined(DEBUG)
-      #define PIN_USB_VDETECT PIN_PD7
-      #define PIN_VCP_RTS     PIN_PD6
+    #ifdef CONFIG_VCP_RS232C_ENABLE
+      #if !defined(DEBUG)
+        #define PIN_USB_VDETECT PIN_PD7
+        #define PIN_VCP_RTS     PIN_PD6
+      #endif
+      #define PIN_SYS_SW0     PIN_PF6
+      #define PIN_VCP_DTR     PIN_PD5
+      #define PIN_VCP_CTS     PIN_PD4
+    #else
+      #define PIN_SYS_SW0     PIN_PD5
+      #define PIN_USB_VDETECT PIN_PD4
     #endif
-    #define PIN_VCP_DTR       PIN_PD5
-    #define PIN_VCP_CTS       PIN_PD4
     #define PIN_HV_FEEDBACK   PIN_PC3     /* PIN_AC0_AINP4 */
     #define PIN_SYS_LED0      PIN_PA6 /* PIN_LUT0_OUT_ALT1 */
   #elif (CONFIG_HAL_TYPE == HAL_BAREMETAL_28P)
@@ -477,7 +547,7 @@
     #define PIN_HV_FEEDBACK   PIN_PC3     /* PIN_AC0_AINP4 */
     #define PIN_SYS_LED0      PIN_PA6 /* PIN_LUT0_OUT_ALT1 */
   #else /* CNANO */
-    #if defined(CONFIG_SYS_SW0_ALT_CNANO)
+    #ifdef CONFIG_SYS_SW0_ALT_CNANO
       #define PIN_SYS_SW0     PIN_PF5
     #else
       #define PIN_SYS_SW0     PIN_PF6

@@ -105,14 +105,23 @@ namespace SYS {
 
   #if defined(PIN_SYS_SW0)
     /* SW0 detection: Input negative logic. */
-    pinControlRegister(PIN_SYS_SW0) = PORT_PULLUPEN_bm | PORT_ISC_BOTHEDGES_gc;
+    /* Use CCL in conjunction to separate the falling edge and rising edge interrupts. */
+    /* For the falling edge, use the CCL filter function to remove chattering noise.   */
+    pinControlRegister(PIN_SYS_SW0) = PORT_PULLUPEN_bm | PORT_ISC_RISING_gc;
+    portRegister(PIN_SYS_SW0).EVGENCTRLA = pinPosition(PIN_SYS_SW0);
+    #if (PIN_SYS_SW0 & 0xF0) == 176
+    EVSYS_CHANNEL3 = EVSYS_CHANNEL_PORTF_EVGEN0_gc;
+    #elif (PIN_SYS_SW0 & 0xF0) == 112
+    EVSYS_CHANNEL3 = EVSYS_CHANNEL_PORTD_EVGEN0_gc;
+    #elif (PIN_SYS_SW0 & 0xF0) == 16
+    EVSYS_CHANNEL3 = EVSYS_CHANNEL_PORTA_EVGEN0_gc;
+    #endif
   #endif
 
     /*
      * GPIO - LED
      */
 
-  #undef LED_CCL
   #if (CONFIG_HAL_TYPE == HAL_BAREMETAL_14P)
     /* PORTMUX LUT0OUT -> PIN_PC3 */
     /* TRUTH0: 001 010 is ON */
@@ -135,6 +144,15 @@ namespace SYS {
     CCL_TRUTH1    = CCL_TRUTH_1_bm | CCL_TRUTH_2_bm;
     CCL_LUT1CTRLB = CCL_INSEL0_TCA0_gc | CCL_INSEL1_TCB1_gc;
     CCL_LUT1CTRLA = CCL_ENABLE_bm | CCL_OUTEN_bm; /* PIN_PA6 */
+  #endif
+
+  #if defined(PIN_SYS_SW0)
+    /* SW0 -> CH3 -> LUT3OUT -> INTFLAGS:INT3 */
+    EVSYS_USERCCLLUT3A = EVSYS_USER_CHANNEL3_gc;
+    CCL_TRUTH3    = CCL_TRUTH_1_bm;
+    CCL_LUT3CTRLB = CCL_INSEL0_EVENTA_gc;
+    CCL_LUT3CTRLA = CCL_ENABLE_bm | CCL_FILTSEL_FILTER_gc;
+    CCL_INTCTRL0  = CCL_INTMODE3_FALLING_gc;
   #endif
 
     /*** CCL enable ***/
@@ -234,7 +252,6 @@ namespace SYS {
    * May be called multiple times due to chattering.
    */
   void reset_enter (void) {
-    if (bit_is_set(PGCONF, PGCONF_UPDI_bp)) return;
     LED_Blink();
     if (_jtag_arch == 5) {
       /* 
@@ -256,7 +273,6 @@ namespace SYS {
    * but if the USB is stopped, it will reboot at the end.
    */
   void reset_leave (void) {
-    if (bit_is_set(PGCONF, PGCONF_UPDI_bp)) return;
     if (_jtag_arch == 5) {
       _updi_bitmap[10] = 0x00; /* SYSRUN */
       send_bitmap(_updi_bitmap, sizeof(_updi_bitmap) * 8);
@@ -268,11 +284,11 @@ namespace SYS {
   #endif
     D1PRINTF("<RST:OUT>\r\n");
     if (bit_is_set(GPCONF, GPCONF_USB_bp))
-      LED_HeartBeat();
+      LED_HeartBeat();  /* The USB is ready. */
     else if (!USB0_ADDR)
-      reboot();
+      reboot();         /* USB disconnected, System reboot. */
     else
-      LED_Flash();
+      LED_Flash();      /* USB is not yet enabled. */
     bit_clear(GPCONF, GPCONF_FAL_bp);
     bit_clear(GPCONF, GPCONF_RIS_bp);
   }
@@ -332,15 +348,17 @@ namespace SYS {
 };
 
 #if defined(PIN_SYS_SW0)
+/* If the level is not maintained for a sufficient period of time it will not function properly. */
 ISR(portIntrruptVector(PIN_SYS_SW0)) {
+  /* SW0 Raising Interrupt */
   vportRegister(PIN_SYS_SW0).INTFLAGS = ~0;
-  /* If the level is not maintained for a sufficient period of time it will not function properly. */
-  if (bit_is_clear(PGCONF, PGCONF_UPDI_bp)) {
-    if (digitalReadMacro(PIN_SYS_SW0))
-      bit_set(GPCONF, GPCONF_RIS_bp);
-    else
-      bit_set(GPCONF, GPCONF_FAL_bp);
-  }
+  bit_set(GPCONF, GPCONF_RIS_bp);
+}
+
+ISR(CCL_CCL_vect) {
+  /* SW0 Falling Intrrupt */
+  CCL_INTFLAGS = ~0;
+  bit_set(GPCONF, GPCONF_FAL_bp);
 }
 #endif
 

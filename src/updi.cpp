@@ -130,6 +130,15 @@ namespace UPDI {
     return send_bytes(_reset, _leave ? 9 : 6);
   }
 
+  void power_reset (void) {
+  #ifdef PIN_HV_POWER
+    /* If the previous connect attempt failed, power off the device if possible. */
+    digitalWriteMacro(PIN_HV_POWER, LOW);
+    delay_millis(200);
+    digitalWriteMacro(PIN_HV_POWER, HIGH);
+  #endif
+  }
+
   bool set_rsd (void) {
     const static uint8_t _set_rsd[] = {0x55, 0xC2, 0x0D};
     return send_bytes(_set_rsd, 3);
@@ -240,8 +249,6 @@ namespace UPDI {
   }
 
   bool chip_erase (void) {
-    bit_set(PGCONF, PGCONF_FAIL_bp);
-    bit_set(PGCONF, PGCONF_ERSE_bp);
     USART::drain();
     if (!set_erase_key()) return false;
     delay_millis(200);
@@ -256,8 +263,8 @@ namespace UPDI {
       do { sys_status(); } while(bit_is_clear(RXDATA, 3));  /* wait set PROGSTART */
     }
     D1PRINTF(" PROGSTART=%02X\r\n", RXDATA);
+    bit_set(PGCONF, PGCONF_ERSE_bp);
     bit_set(PGCONF, PGCONF_PROG_bp);
-    bit_clear(PGCONF, PGCONF_FAIL_bp);
     return (*Command_Table.prog_init)();
   }
 
@@ -267,8 +274,8 @@ namespace UPDI {
    * The write length should match the USERROW field.
    */
   bool write_userrow (void) {
-    const static uint8_t _urowdone[] = { 0x55, 0xCA, 0x03 };
-    const static uint8_t _urowstop[] = { 0x55, 0xC7, 0x20 };
+    const static uint8_t _urowdone[] = { 0x55, 0xCA, 0x03 };  /* ASI_SYS_CTRLA <= UROWDONE|CLKREQ */
+    const static uint8_t _urowstop[] = { 0x55, 0xC7, 0x20 };  /* ASI_KEY_STATUS <= UROWWR */
     uint8_t   m_type = packet.out.bMType;
     uint32_t _dwAddr = packet.out.dwAddr;
     size_t  _wLength = packet.out.dwLength;
@@ -276,16 +283,14 @@ namespace UPDI {
      || m_type != 0xC5 
      || _wLength != Device_Descriptor.UPDI.user_sig_bytes
      || (uint16_t)_dwAddr != Device_Descriptor.UPDI.user_sig_base) return false;
-    bit_set(PGCONF, PGCONF_FAIL_bp);
     USART::drain();
     D1PRINTF(" ENTER_UROW=%04lX:%04X\r\n", _dwAddr, _wLength);
     if (!set_urowwrite_key()) return false;
     do { sys_status(); } while(bit_is_clear(RXDATA, 2));    /* wait set UROWPROG */
-    send_bytes_block(_dwAddr, _wLength);
+    send_words_block(_dwAddr, _wLength);
     send_bytes(_urowdone, 3);
     do { sys_status(); } while(bit_is_set(RXDATA, 2));      /* wait clear UROWPROG */
     send_bytes(_urowstop, 3);
-    bit_clear(PGCONF, PGCONF_FAIL_bp);
     if (bit_is_set(PGCONF, PGCONF_PROG_bp)) {
       set_nvmprog_key();
       do { sys_status(); } while(bit_is_clear(RXDATA, 3));  /* wait set PROGSTART */
@@ -327,27 +332,23 @@ namespace UPDI {
     const static uint8_t _sib256[] = {
       0x55, 0xE6        /* SIB[256] */
     };
+    PGCONF = PGCONF_FAIL_bm;
     _sib[0] = 0;
     _before_page = -1L;
     NVM::V1::setup();   /* default is dummy callback */
     openDrainWriteMacro(PIN_PG_TRST, LOW);
     nop();
 
-    if (bit_is_set(PGCONF, PGCONF_FAIL_bp)) {
-      /* External Reset */
-  #ifdef PIN_HV_POWER
-      /* If the previous connect attempt failed, power off the device if possible. */
-      digitalWriteMacro(PIN_HV_POWER, LOW);
-      delay_millis(200);
-      digitalWriteMacro(PIN_HV_POWER, HIGH);
-  #endif
+    /* External Reset */
+    if (packet.out.bMType) {
+      D1PRINTF("<PWRST>\r\n");
+      power_reset();
   #ifdef CONFIG_HVCTRL_ENABLE
       /* High-Voltage control */
   #endif
     }
 
     openDrainWriteMacro(PIN_PG_TRST, HIGH);
-    PGCONF = PGCONF_FAIL_bm;
     USART::drain();
     long_break();
     if (send_bytes(_init, sizeof(_init))) {
@@ -367,9 +368,8 @@ namespace UPDI {
         if (_result) {
           /* If the SIB is obtained, the first 4-characters are returned.       */
           /* If the 1st character is blank, the next 4-characters are returned. */
-          bit_clear(PGCONF, PGCONF_FAIL_bp);
-          bit_set(PGCONF, PGCONF_UPDI_bp);
           memcpy(&packet.in.data[0], _sib[0] == ' ' ? &_sib[4] : &_sib[0], 4);
+          bit_set(PGCONF, PGCONF_UPDI_bp);
           return 5;
         }
       }
@@ -390,11 +390,17 @@ namespace UPDI {
 
   size_t enter_progmode (void) {
     if (bit_is_set(PGCONF, PGCONF_PROG_bp)) return 1;
-    bit_set(PGCONF, PGCONF_FAIL_bp);
     if (!set_nvmprog_key()) return 0;
-    do { sys_status(); } while(bit_is_clear(RXDATA, 3));  /* wait set PROGSTART */
+    uint8_t _count = 0;
+    do {
+      /* Do not wait for the global timeout to ensure that LOCKSTAT cannot */
+      /* be released. Aborting the ACC instruction set here will adversely */
+      /* affect subsequent USERROW writes or chip erases. */
+      if (0 == ++_count) return 0;
+      delay_micros(50);
+      sys_status();
+    } while (bit_is_clear(RXDATA, 3));  /* wait set PROGSTART */
     D1PRINTF(" PROGSTART=%02X\r\n", RXDATA);
-    bit_clear(PGCONF, PGCONF_FAIL_bp);
     bit_set(PGCONF, PGCONF_PROG_bp);
     return (*Command_Table.prog_init)();
   }

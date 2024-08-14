@@ -186,11 +186,13 @@ namespace JTAG {
       }
       else if (_section == 1) {     /* SET_GET_CTXT_PHYSICAL */
         if (_index == 0 || _index == 0x20) {  /* PARM3_VTARGET */
+          /* Called with `-xvtarget` HAS_VTARG_READ */
           _vtarget = SYS::get_vdd();
           D1PRINTF(" VTARGET=%d\r\n", _vtarget);
           packet.in.wValue = _vtarget;
         }
         else {                      /* PARM3_ANALOG_XXXX */
+          /* Called with PowerDebugger HAS_VTARG_ADJ */
           D1PRINTF(" PHYSICAL=%02X:%02X\r\n", _index, _length);
           memcpy_P(&packet.in.data[0], &jtag_physical[_index & 7], _length);
         }
@@ -229,7 +231,7 @@ namespace JTAG {
       D1PRINTF(" AVR_SET_PARAM=%02X:%02X:%02X:%02X\r\n", _section, _index, _length, _data);
       if (_section == 0) {          /* SET_GET_CTXT_CONFIG */
         if (_index == 0x10) {       /* EDBG_CONTROL_TARGET_POWER */
-          /* Called with `-xvtarget_switch=0,1` */
+          /* Called with `-xvtarget_switch=0,1` HAS_VTARG_SWITCH */
           D1PRINTF(" TARGET_POWER=%02X\r\n", _data);
           _jtag_vpow = _data;       /* 0,1 */
   #if defined(PIN_HV_POWER)
@@ -246,6 +248,7 @@ namespace JTAG {
       D1PRINTF(" AVR_GET_PARAM=%02X:%02X:%02X\r\n", _section, _index, _length);
       if (_section == 0) {          /* SET_GET_CTXT_CONFIG */
         if (_index == 0x10) {       /* EDBG_CONTROL_TARGET_POWER */
+          /* Called with `-xvtarget_switch` HAS_VTARG_SWITCH */
           D1PRINTF(" TARGET_POWER=%02X\r\n", _jtag_vpow);
           packet.in.data[0] = _jtag_vpow;
         }
@@ -314,6 +317,8 @@ namespace JTAG {
             D2PRINTF("    lockbits_base=%04X\r\n", Device_Descriptor.UPDI.lockbits_base);
             D2PRINTF("     address_mode=%02X\r\n", Device_Descriptor.UPDI.address_mode);
             D2PRINTF("   hvupdi_variant=%02X\r\n", Device_Descriptor.UPDI.hvupdi_variant);
+            /* Even with all this, the BOOTROW information is still undefined! */
+            /* Re-analysis of newer ICE FW is needed! */
           }
           /* STUB: And other descriptors. */
   #elif defined(DEBUG)
@@ -325,11 +330,12 @@ namespace JTAG {
       }
       else if (_section == 3) {     /* SET_GET_CTXT_OPTIONS */
         if (_index == 6) {          /* PARM3_OPT_12V_UPDI_ENABLE */
-          /* Called with `-xhvupdi` */
+          /* Called with `-xhvupdi` hvupdi_support */
           D1PRINTF(" HVCTRLEN=%02X\r\n", _data);
           _jtag_hvctrl = _data;     /* 1:ENABLE */
         }
         else if (_index == 7) {     /* PARM3_OPT_CHIP_ERASE_TO_ENTER */
+          /* This is a stub that shows no signs of being used. */
           /* force unlock chip-erase */
           /* This might be called having no `-e` or `-D`, but having `-F`. */
           D1PRINTF(" UNLOCKEN=%02X\r\n", _data);
@@ -348,10 +354,12 @@ namespace JTAG {
       }
       else if (_section == 1) {     /* SET_GET_CTXT_PHYSICAL */
         if (_index == 0) {          /* PARM3_CONNECTION */
+          /* This is a stub that is called but not used. */
           D1PRINTF(" CONNECTION=%02X\r\n", _jtag_conn);
           packet.in.data[0] = _jtag_conn;
         }
         else if (_index == 0x31) {  /* PARM3_CLK_XMEGA_PDI */
+          /* `-B <num>khz` : "khz" units are required. */
           D1PRINTF(" XCLK=%d\r\n", _xclk);
           packet.in.wValue = _xclk;
         }
@@ -360,7 +368,7 @@ namespace JTAG {
       _rspsize = _length + 1;
     }
   #ifdef _Not_yet_implemented_stub_
-    else if (_jtag_arch == 0x01) _rspsize = DWIRE:jtag_scope_tiny();    /* dWire? */
+    else if (_jtag_arch == 0x01) _rspsize = DWIRE::jtag_scope_tiny();   /* dWire? */
     else if (_jtag_arch == 0x02) _rspsize = MEGA::jtag_scope_mega();    /* MEGA */
     else if (_jtag_arch == 0x03) _rspsize = XMEGA::jtag_scope_xmega();  /* XMEGA */
   #endif
@@ -381,7 +389,7 @@ namespace JTAG {
       packet.out.index);
     if      (_scope == 0x01) _rspsize = jtag_scope_general();       /* SCOPE_GENERAL */
   #ifdef _Not_yet_implemented_stub_
-    else if (_scope == 0x00) _rspsize = jtag_scope_info();          /* SCOPE_INFO */ /* Not used with HID */
+    else if (_scope == 0x00) _rspsize = jtag_scope_info();          /* SCOPE_INFO */ /* Not used with EDBG/CMSIS-DAP type */
     else if (_scope == 0x11) _rspsize = ISP::jtag_scope_isp();      /* SCOPE_AVR_ISP */
     else if (_scope == 0x13) _rspsize = AVR32::jtag_scope_avr32();  /* SCOPE_AVR32 */
   #endif
