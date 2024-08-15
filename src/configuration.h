@@ -227,7 +227,7 @@
  * Columns: HW_VER, FW_MAJOR, FW_MINOR, FW_RELL, FW_RELH (all 1-byte decimal)
  */
 
-#define CONFIG_SYS_FWVER { 0, 1, 32, 43, 0 }
+#define CONFIG_SYS_FWVER { 0, 1, 32, 44, 0 }
 
 /*
  * For CNANO, you can change the detection of SW0 to PIN_PF5.

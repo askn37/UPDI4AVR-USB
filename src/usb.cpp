@@ -532,10 +532,11 @@ namespace USB {
     else if (bRequest == 0x01) {  /* CLEAR_FEATURE */
       D1PRINTF(" CF=%02X:%02X\r\n", EP_MEM.req_data.wValue, EP_MEM.req_data.wIndex);
       if (0 == (uint8_t)EP_MEM.req_data.wValue) {
-        /* Assumes that an Endpoint number is passed. */
-        uint8_t _EP = EP_MEM.req_data.wIndex;
+        /* Expects an endpoint number to be passed in. Swaps the high and low */
+        /* nibbles to make it a representation of the USB controller. */
+        uint8_t _EP = USB_EP_ID_SWAP(EP_MEM.req_data.wIndex);
         loop_until_bit_is_clear(USB0_INTFLAGSB, USB_RMWBUSY_bp);
-        USB_EP_STATUS_CLR(_EP) = USB_STALLED_bm | USB_TOGGLE_bm;
+        USB_EP_STATUS_CLR(_EP) = USB_STALLED_bm | USB_BUSNAK_bm | USB_TOGGLE_bm;
       }
       EP_RES.CNT = 0;
     }

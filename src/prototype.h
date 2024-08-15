@@ -74,7 +74,7 @@
                             (x <= 16) ? USB_BUFSIZE_DEFAULT_BUF16_gc:\
                             (x <= 32) ? USB_BUFSIZE_DEFAULT_BUF32_gc:\
                                         USB_BUFSIZE_DEFAULT_BUF64_gc)
-#define USB_EP_ID_DESC(x) (uint8_t)(((x)>>4)|((x)<<4))
+#define USB_EP_ID_SWAP(x) __builtin_avr_swap(x)
 #define USB_EP(EPFIFO) (*(USB_EP_t *)(((uint16_t)&EP_TABLE.EP) + (EPFIFO)))
 #define USB_EP_STATUS_CLR(EPFIFO) _SFR_MEM8(&USB0_STATUS0_OUTCLR + ((EPFIFO) >> 2))
 #define USB_EP_STATUS_SET(EPFIFO) _SFR_MEM8(&USB0_STATUS0_OUTSET + ((EPFIFO) >> 2))
@@ -82,6 +82,8 @@
 #define USB_ENDPOINTS_MAX 4
 #define USB_CCI_INTERVAL  4
 
+/* In the internal representation of an endpoint number, */
+/* the high and low nibbles are reversed from the representation on the USB device. */
 #define USB_EP_REQ  (0x00)
 #define USB_EP_RES  (0x08)
 #define USB_EP_DPI  (0x18)  /* #0 DAP IN  */
