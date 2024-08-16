@@ -18,7 +18,7 @@ AVRDUDE>=7.3 is required for this to work. Install it on your host PC in your pr
 
 Are you ready?
 
-Orient the AVR logo so it is readable, then connect a USB-C type cable between the programming port on the right and the host PC. Upload the file using the following command line:
+Orient the AVR logo so it is readable, then connect a USB-C type cable between the programming port on the left and the host PC. Upload the file using the following command line:
 
 ```
 avrdude -c pkobn_updi -p avr64du32 -e -U fuses:w:AVR64DU32_CNANO.fuse:i -U flash:w:AVR64DU32_CNANO.hex:i
@@ -34,7 +34,7 @@ The Green LED will flash while programming is in progress. If successful the Ora
 
 ## Next Step
 
-Reconnect the USB-C cable to the application port on the left. The adjacent jumper header should be closed.
+Reconnect the USB-C cable to the application port on the right. The adjacent jumper header should be closed.
 
 For Windows, it will take some time to adjust the driver at first. If it fails, please try connecting again.
 
