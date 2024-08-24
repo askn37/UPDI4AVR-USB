@@ -89,8 +89,7 @@ For UPDI control, the target device requires three wires: "VCC", "GND", and "UPD
 
 > The electrical characteristics are based on 5V/225kbps, and you should pay attention to the slew rate in the VCCx0.2 to 0.8 range.
 
-<img src="https://askn37.github.io/product/UPDI4AVR/images/IMG_3832.jpg" width="480">
-<img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_UPDI.drawio.svg" width="480">
+<img src="https://askn37.github.io/product/UPDI4AVR/images/IMG_3832.jpg" width="400"> <img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_UPDI.drawio.svg" width="400">
 
 The following signal arrangement is recommended for converting to the AVR-ICSP MIL/6P connector. This is compatible with TPI control and 3-types of HV control methods. (However, HV control is not possible without a dedicated circuit.)
 
@@ -139,8 +138,7 @@ For TPI control, the target device requires five wires: "VCC", "GND", "TDAT", "T
 As a result, for the 6P devices ATtiny4/5/9/10, only one unused pin remains.
 All connections are open-drain with built-in pull-up resistors.
 
-<img src="https://askn37.github.io/product/UPDI4AVR/images/IMG_3839.jpg" width="480">
-<img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_TPI.drawio.svg" width="480">
+<img src="https://askn37.github.io/product/UPDI4AVR/images/IMG_3839.jpg" width="400"> <img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_TPI.drawio.svg" width="400">
 
 If the target device is `ATiny10`, a minimum connection test can be performed with the following command line.
 
@@ -209,7 +207,7 @@ Currently, two projects are underway.
 - A candy box sized all-in-one model.
 - An expansion board model that allows you to attach a CNANO as a daughter board.
 
-<img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_VIEW_MZU2410A.drawio.svg" width="480">
+<img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_VIEW_MZU2410A.drawio.svg" width="400">
 
 ## Build and installation
 

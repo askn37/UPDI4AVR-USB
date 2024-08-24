@@ -91,7 +91,7 @@ UPDI制御の場合、対象デバイスに必須の配線は "VCC" "GND" "UPDI(
 
 > 電気特性は 5V/225kbpsが基準で、VCCx0.2〜0.8範囲のスリューレートに注意したい。
 
-<img src="https://askn37.github.io/product/UPDI4AVR/images/IMG_3832.jpg" width="440"> <img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_UPDI.drawio.svg" width="440">
+<img src="https://askn37.github.io/product/UPDI4AVR/images/IMG_3832.jpg" width="400"> <img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_UPDI.drawio.svg" width="400">
 
 AVR-ICSP MIL/6Pコネクタに変換するには、以下の信号配列を推奨。これは TPI制御や、2種類のHV制御方式と互換性がある。（ただし専用回路がなければ HV制御はできない）
 
@@ -140,7 +140,7 @@ TPI制御の場合、対象デバイスに必須の配線は "VCC" "GND" "TDAT" 
 結果的に、6Pデバイスである ATtiny4/5/9/10 の場合、未使用のピンは1本しか残らない。
 全ての接続は、プルアップ抵抗内蔵オープンドレインだ。
 
-<img src="https://askn37.github.io/product/UPDI4AVR/images/IMG_3839.jpg" width="440"> <img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_TPI.drawio.svg" width="440">
+<img src="https://askn37.github.io/product/UPDI4AVR/images/IMG_3839.jpg" width="400"> <img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_TPI.drawio.svg" width="400">
 
 仮に、`ATiny10`を対象デバイスとした場合、最低限の接続テストは以下のコマンドラインで可能だ。
 
@@ -209,7 +209,7 @@ avrdude done.  Thank you.
 - FRISKケースサイズのオールインワンモデル。
 - CNANOをドーターボードとして装着する拡張ボードモデル。
 
-<img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_VIEW_MZU2410A.drawio.svg" width="480">
+<img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_VIEW_MZU2410A.drawio.svg" width="400">
 
 ## Build and installation
 
