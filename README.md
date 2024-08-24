@@ -1,18 +1,16 @@
 # UPDI4AVR-USB : OSS/OSHW Programmer for UPDI/TPI
 
-*Switching document languages* : __日本語__, [English](README_en.md)
+*Switching document languages* : [日本語](README_jp.md), __English__
 
-- AVR-DUファミリーを、USB接続プログラム書込器に変身させるオープンソース ソフトウェア／ファームウェア。
-- UPDIタイプと、TPIタイプの AVRシリーズの NVM（不揮発メモリ）を読み出し／消去／書き込みができる。
-- ホストPC側のプログラム書き込みアプリケーションは AVRDUDEを想定。"PICKit4" や "Curiosity Nano" のように見える。
-- VCP-UART トランスファー機能を装備。
-- 全ての成果物は、MITライセンスで頒布。
+- Open source software/firmware that transforms the AVR-DU family into a USB-connected programmer.
+- Can read/erase/write NVM (non-volatile memory) of UPDI and TPI type AVR series.
+- AVRDUDE is assumed as the programming application on the host PC. It looks like "PICKit4" or "Curiosity Nano".
+- Equipped with VCP-UART transfer function.
+- All results are distributed under the MIT license.
 
-従来の *USB4AVR* は USBシリアル変換回路を使用する設計だが、この *UPDI4AVR-USB* は MCU内蔵USB周辺回路を使用する 1チップ完結設計である。
+The conventional *USB4AVR* is designed to use a USB-serial conversion circuit, but this *UPDI4AVR-USB* is a one-chip complete design that uses the USB peripheral circuit built into the MCU.
 
 ## Quick Start
-
-ビルド済バイナリを ["AVR64DU32 Curiosity Nano : EV59F82A"](https://www.microchip.com/en-us/development-tool/ev59f82a) 製品にアップロードして、手早くセットアップできる。
 
 The pre-built binaries can be uploaded to the ["AVR64DU32 Curiosity Nano : EV59F82A"](https://www.microchip.com/en-us/development-tool/ev59f82a) product for easy setup.
 
@@ -20,85 +18,85 @@ The pre-built binaries can be uploaded to the ["AVR64DU32 Curiosity Nano : EV59F
 
 ## Introduction
 
-AVR-DUファミリーの存在は 2021年春に公表されたものの、すぐにペンディングした。それが停滞している間にAVR-Exシリーズの発売が先行し、さらに時間を経て 2024年5月にようやく AVR64DU32 第一次生産品（残念なErrata有）が発売された。14P/20P製品の発売にはまだ半年ほどかかるだろう。
+The existence of the AVR-DU family was announced in the spring of 2021, but was soon put on hold. While that was stalled, the AVR-Ex series was released first, and after some time, the first production AVR64DU32 (with unfortunate errata) was finally released in May 2024. It will still take about half a year for the 14P/20P products to be released.
 
-最大の特徴は AVR-Dxシリーズのファミリーとして唯一、USB 2.0 "Full-Speed" デバイス周辺機能を内蔵していることだ。これは ATxmega AU ファミリー（高価でマイナー）から受け継がれた機能で、ATmega32U4ファミリーのそれよりずっと強力なものだ。AVR-DUファミリーでは SOIC-14P と、3ミリ角の VQFN-20P の外囲器も用意され、コンパクトにも作れることから、高い可能性を秘めている。
+The biggest feature is that it is the only AVR-Dx series family that has built-in USB 2.0 "Full-Speed" device peripheral functions. This is a function inherited from the ATxmega AU family (expensive and minor), and is much more powerful than that of the ATmega32U4 family. The AVR-DU family also has SOIC-14P and 3mm square VQFN-20P packages, and can be made compact, so it has great potential.
 
-一方であまりにも新しい製品であるため、オープンソース対応は進んでいない。公式開発環境は MPLAB-X であるが、HALに基づく大仰なビルド環境のため、とても大きなフラッシュ容量を奪われてしまう。しかもスループットが十分稼げない。戦斧で鮒を調理させたいの？
+On the other hand, since it is such a new product, open source compatibility has not progressed. The official development environment is MPLAB-X, but because of the elaborate build environment based on HAL, it takes up a very large amount of flash capacity. Moreover, the throughput is not sufficient. Do you want to cook a crucian carp with a battle axe?
 
-私が AVR-DUファミリーにまず求めていたことは、USB-CDC/ACM ベースで普通に OSから認識される VCPトランスファーの実現、そして USB-HID ベースで AVRDUDEから扱える UPDI/TPI プログラミング機能だ。自ずから USB複合デバイスでなければならない。一方で MPLAB-Xからの利用はライセンスの問題もあるから考えていない。だから dWire や OCD の存在は忘れることにしよう。
+What I wanted first from the AVR-DU family was the realization of VCP transfer based on USB-CDC/ACM that is normally recognized by the OS, and UPDI/TPI programming function based on USB-HID that can be handled from AVRDUDE. It naturally has to be a USB composite device. On the other hand, I am not considering using it from MPLAB-X due to licensing issues. So let's forget about the existence of dWire and OCD.
 
-手掛かりになる資料は [USB-IF 公開仕様書](https://www.usb.org/document-library/class-definitions-communication-devices-12)と、[AVR-DUファミリーデータシート](https://ww1.microchip.com/downloads/aemDocuments/documents/MCU08/ProductDocuments/DataSheets/AVR32-16DU-14-20-28-32-Prelim-DataSheet-DS40002576.pdf)と、[ATxmega AUファミリー概説](https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-8331-8-and-16-bit-AVR-Microcontroller-XMEGA-AU_Manual.pdf)だけ。これでは全くのクリーンルーム開発だ。AVR-GCC と AVR-LIBC だけを使用し、他のプロジェクトと何も関わりを持たないまま、USBプロトコルスタックをゼロから構築することから始めた。USB複合デバイスの主要な動作は 3KiB程度に凝縮して、自由に応用できるようになるまで 20日は必要だった。（もちろん DFUブートローダーも作れるが、それはまた別の計画）
+The only documents that provide clues are the [USB-IF public specification](https://www.usb.org/document-library/class-definitions-communication-devices-12), the [AVR-DU family data sheet](https://ww1.microchip.com/downloads/aemDocuments/documents/MCU08/ProductDocuments/DataSheets/AVR32-16DU-14-20-28-32-Prelim-DataSheet-DS40002576.pdf), and the [ATxmega AU family manual](https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-8331-8-and-16-bit-AVR-Microcontroller-XMEGA-AU_Manual.pdf). This is a completely clean room development. I started by building a USB protocol stack from scratch using only AVR-GCC and AVR-LIBC, without any involvement in other projects. I condensed the main operations of the USB composite device to about 3KiB, and it took me 20 days to make it freely applicable. (Of course, I can also make a DFU bootloader, but that's a different plan.)
 
-次に AVRDUDE のソースコード "jtag3.c"の調査に取り組んだ。私は既に "jtagmkII.c" "serialupdi.c" の改良に貢献してきたので難易度は高くない。UPDI NVM制御の多くは *UPDI4AVR* シリーズをハンドメイドしたことで熟知していたし、AVR-Dx/Exシリーズ対応にも関わってきた。仮初に "Curiosity Nano"の応答を模倣するエミュレーター応用を作ったところ、USB-VID:PID を自由に変更できない問題が立ちはだかったので、"usb_hidapi.c" の強化が必要だった。加えて、わずかなコード追加だけで済むことから UPDIデバイスだけでなく、TPIデバイスも扱えるようにした。*TPI4AVR*をハンドメイドした経験がここで活かされた。
+Next, I started investigating the AVRDUDE source code "jtag3.c". It was not difficult because I had already contributed to improving "jtagmkII.c" and "serialupdi.c". I was familiar with most of the UPDI NVM control from hand-making the *UPDI4AVR* series, and I have also been involved in supporting the AVR-Dx/Ex series. I created an emulator application that mimicked the response of "Curiosity Nano" at first, but I ran into a problem where I couldn't freely change the USB-VID:PID, so I had to strengthen "usb_hidapi.c". In addition, since it only requires a small amount of additional code, it can handle not only UPDI devices but also TPI devices. This is where my experience of making *TPI4AVR* came in handy.
 
-シナリオを作り、概ね動くようになるまで10日、手元にある 20種類以上の UPDIデバイスを片っ端から動作確認し、十分満足できる結果が得られるようになるまでさらに20日。だがそれ以上に、概説を整えなければならない退屈な時間！
+It took 10 days to create a scenario and get it to work, and another 20 days to check the operation of over 20 types of UPDI devices I had on hand one by one and get a satisfactory result. But even more than that, it was a tedious time to prepare the outline!
 
-そんな経緯を経てようやく["AVR64DU32 Curiosity Nano : EV59F82A"](https://www.microchip.com/en-us/development-tool/ev59f82a)で使用できる、最初のオープンソース ブランチを公開する。HV制御のような、予定機能のいくつかはまだ実装されていないが、一般用途で試してみるには困らないはずだ。
+After all that, I finally release the first open source branch that can be used with ["AVR64DU32 Curiosity Nano : EV59F82A"](https://www.microchip.com/en-us/development-tool/ev59f82a). Some of the planned features, such as HV control, have not yet been implemented, but it should be no problem to try it out for general use.
+
 
 ## What you can and can't do
 
-おおむね、従来の *JTAG2UPDI* や *microUPDI* の代替となる。それらをすでに使っているのなら、すぐに使い始められるだろう。
+It is mostly a replacement for the traditional *JTAG2UPDI* and *microUPDI*. If you are already using them, you can start using it right away.
 
-このソフトウェアは、次のことができる：
+This software can:
 
-- AVR-DUファミリーにのみインストールできる。
-- 発売済の全ての UPDIタイプ AVRシリーズを操作できる：
-  - tinyAVR-0/1/2、megaAVR-0、AVR-Dx、AVR-Ex の全ての製品
-- 発売済の全ての TPIタイプ AVRシリーズを操作できる：
-  - ATtiny4 ATtiny5 ATtiny9 ATtiny10 ATtiny20 ATtiny40 ATtiny102 ATtiny104 （計8種類）
-- Windows/macos/Linuxの OS標準ドライバーを使用するため、ドライバーの追加導入は不要。
-  - 追加ドライバー／Infファイルが既に入っている場合、VID:PIDに一致するデバイスベンダーが表示がされる。（ライセンス侵害に注意）
-- RS232制御信号を含む、VCP（Virtual Communication Port）を混載。
-  - RS232制御信号は余剰ピンに割り当てられるため、14P/20P外囲器品種では機能が制限される。
-- VCP動作中は、ターゲットデバイスをリセットできる、押し下げスイッチが利用できる。
-  - 押し下げている間、リセット状態が維持される。UPDI/TPIプログラム動作中は無効。
-  - tinyAVRシリーズのようにハードウェアリセット端子が標準では存在しないターゲットデバイス（UPDIタイプ）でも、電源を切らずにリセットできる。
-  - デバイスに書き込まれたブートローダーなどの応用コードを、強制再起動するのに便利。Arduino IDE互換。
-- ターゲットデバイスの、デバイス施錠、解錠ができる。（LOCKビットFUSE操作と、強制チップ消去）
+- Only install on the AVR-DU family.
+- Operates all released UPDI type AVR series:
+  - All tinyAVR-0/1/2, megaAVR-0, AVR-Dx, AVR-Ex products
+- Operates all released TPI type AVR series:
+  - ATtiny4 ATtiny5 ATtiny9 ATtiny10 ATtiny20 ATtiny40 ATtiny102 ATtiny104 (8 types in total)
+- No additional driver installation is required because it uses the standard OS driver for Windows/macos/Linux.
+  - If additional driver/Inf file is already installed, the device vendor that matches VID:PID will be displayed. (Beware of license infringement)
+- Includes VCP (Virtual Communication Port) including RS232 control signals.
+  - RS232 control signals are assigned to surplus pins, so functions are limited in 14P/20P package varieties.
+- A push switch can be used to reset the target device while the VCP is operating.
+  - The reset state is maintained while the switch is pressed. Disabled while UPDI/TPI programs are running.
+  - Can reset target devices (UPDI type) that do not have a hardware reset terminal as standard, such as the tinyAVR series, without turning off the power.
+  - Useful for forcibly restarting application code such as bootloaders written to the device. Compatible with Arduino IDE.
+- Can lock and unlock target devices. (LOCK bit FUSE operation and forced chip erase)
 
-計画はされているが、まだ実現していない：（2024年8月時点）
+Planned but not yet realized: (As of August 2024)
 
-- UPDIタイプの高電圧書込サポートが 2種類。*専用の追加ハードウェア回路が必要。*
-- TPIタイプの高電圧書込サポートが 1種類。*専用の追加ハードウェア回路が必要。さらにAVRDUDEの追加修正も必要。*
-- "DFU for Serial" および "arduino/urclock" などの、ブートローダープロトコル VCPブリッジ。*AVRDUDEに統合するかは未定。*
+- 2-types of UPDI type high voltage writing support. *Requires additional dedicated hardware circuitry.*
+- 1-type of TPI type high voltage writing support. *Requires additional dedicated hardware circuitry. Also requires additional modification of AVRDUDE.*
+- Bootloader protocol VCP bridge, such as "DFU for Serial" and "arduino/urclock". *It is not yet decided whether to integrate it into AVRDUDE.*
 
-このソフトウェアは、次のことができない：
+This software cannot:
 
-- AVR-DUファミリー以外には、必要な USB周辺機能が実装されていないため、動作しない。
-  - ATxmega AU ファミリーへの移植は USB周辺機能が似ているため、おそらくは可能。（計画はない：Fork必須）
-- USB 2.0 "Full-Speed" のみ対応。AVR-DUファミリーは "High-Speed"に対応していない。（不可能）
-- ISP／PP／HVPPタイプのデバイスはサポート対象外。ハードウェア要件が異なり、GPIOに共通性がないので別のソフトウェアとなる。（Fork必須）
-- PDIタイプの AVRシリーズはサポート対象外。*ただしハードウェア要件の違いは少ないため、将来追加対応の計画はある。*
-- JTAG通信機能、SWD/SWO機能、dWire機能、OCD機能はサポートされない。（計画はない）
-- 14P外囲器製品（AVR16-32DU14）には余剰ピンがないため、高電圧書込サポートはできない。全機能を同時に使用するには、28P/32P外囲器製品が必要。
-  - TPIタイプ操作もできない。
-- 16KiB品種では、空き容量がないため DEBUGビルド（PRINTF）は使用できない。
+- Does not work with devices other than the AVR-DU family, as the necessary USB peripheral functions are not implemented.
+  - Porting to the ATxmega AU family is probably possible, as the USB peripheral functions are similar. (No plans: Fork required)
+- Supports only USB 2.0 "Full-Speed". The AVR-DU family does not support "High-Speed". (Not possible)
+- Does not support ISP/PP/HVPP type devices. The hardware requirements are different and there is no commonality in GPIO, so it will be a different software. (Fork required)
+- Does not support PDI type AVR series. *However, there are plans to add support in the future, as the differences in hardware requirements are small.*
+- JTAG communication, SWD/SWO, dWire, and OCD functions are not supported. (No plans)
+- High-voltage programming is not supported on the 14P package (AVR16-32DU14) because there are no extra pins. To use all functions simultaneously, a 28P/32P package is required.
+- DEBUG build (PRINTF) cannot be used on the 16KiB model because there is no free space.
 
-AVR-DUファミリーの外囲器種別毎のピン配列／信号割当の詳細については、[<configuration.h>](src/configuration.h)を参照。
+For details on pinout/signal assignments for each package type of the AVR-DU family, see [<configuration.h>](src/configuration.h).
 
 > [!NOTE]
-> ATmega328P ファミリーのような前世代のデバイスは、通常は ISP直列プログラミング（SPI技術）で扱うが、ひとたび FUSEを破壊すると HVPP高電圧並列プログラミング（パラレル技術）を使用しなければ、工場出荷時状態に戻せない品種がある。この場合、*UPDI4AVR* のような「デバイスの工場出荷時状態の復元」を至上命題とするハイレベル書込器は、ISP／PP／HVPP を全て処理できる必要がある。
+> Previous generation devices such as the ATmega328P family are usually handled by ISP serial programming (SPI technology), but some models cannot be restored to factory settings once the fuses are destroyed unless HVPP high-voltage parallel programming (parallel technology) is used. In this case, a high-level programmer such as *UPDI4AVR*, whose primary objective is to "restore the device to its factory settings", needs to be able to process all of ISP/PP/HVPP.
 
 ## Practical Usage
 
-以下は、"AVR64DU32 Curiosity Nano" のための簡単な使用例。
-この製品シリーズは、付属のピンヘッダを使うとソルダーレスでブレッドボードに装着できる。
+Below is a simple usage example for "AVR64DU32 Curiosity Nano".
+This product series can be mounted on a breadboard without soldering using the included pin headers.
 
 ### UPDI Control
 
-UPDI制御の場合、対象デバイスに必須の配線は "VCC" "GND" "UPDI(TDAT)" の3本だ。これに任意で "nRST(TRST)" "VCP-TxD" "VCP-RxD" の 3本を加えることができる。デバイス側が GPIOをプッシュプル出力に設定しない限り、どの接続もプルアップ抵抗内蔵オープンドレインだ。GPIO の競合を懸念するなら 330Ωの直列抵抗を挿入しても良い。
+For UPDI control, the target device requires three wires: "VCC", "GND", and "UPDI (TDAT)". Optionally, three more wires can be added: "nRST (TRST)", "VCP-TxD", and "VCP-RxD". Unless the device sets the GPIO to push-pull output, all connections are open-drain with built-in pull-up resistors. If you are concerned about GPIO contention, you can insert a 330Ω series resistor.
 
-> 電気特性は 5V/225kbpsが基準で、VCCx0.2〜0.8範囲のスリューレートに注意したい。
+> The electrical characteristics are based on 5V/225kbps, and you should pay attention to the slew rate in the VCCx0.2 to 0.8 range.
 
 <img src="https://askn37.github.io/product/UPDI4AVR/images/IMG_3832.jpg" width="480">
 <img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_UPDI.drawio.svg" width="480">
 
-AVR-ICSP MIL/6Pコネクタに変換するには、以下の信号配列を推奨。これは TPI制御や、2種類のHV制御方式と互換性がある。（ただし専用回路がなければ HV制御はできない）
+The following signal arrangement is recommended for converting to the AVR-ICSP MIL/6P connector. This is compatible with TPI control and 3-types of HV control methods. (However, HV control is not possible without a dedicated circuit.)
 
 <img src="https://askn37.github.io/svg/AVR-ICSP-M6P-UPDI4AVR.drawio.svg" width="320">
 
-仮に、`AVR64DU28`を対象デバイスとした場合、最低限の接続テストは以下のコマンドラインで可能だ。
+If the target device is `AVR64DU28`, a minimum connection test can be performed with the following command line.
 
 ```
 avrdude -c pickit4_updi -p avr64du28 -v -U sib:r:-:r
@@ -137,14 +135,14 @@ avrdude done.  Thank you.
 
 ### TPI Control
 
-TPI制御の場合、対象デバイスに必須の配線は "VCC" "GND" "TDAT" "TCLK" "TRST" の5本だ。
-結果的に、6Pデバイスである ATtiny4/5/9/10 の場合、未使用のピンは1本しか残らない。
-全ての接続は、プルアップ抵抗内蔵オープンドレインだ。
+For TPI control, the target device requires five wires: "VCC", "GND", "TDAT", "TCLK", and "TRST".
+As a result, for the 6P devices ATtiny4/5/9/10, only one unused pin remains.
+All connections are open-drain with built-in pull-up resistors.
 
 <img src="https://askn37.github.io/product/UPDI4AVR/images/IMG_3839.jpg" width="480">
 <img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_TPI.drawio.svg" width="480">
 
-仮に、`ATiny10`を対象デバイスとした場合、最低限の接続テストは以下のコマンドラインで可能だ。
+If the target device is `ATiny10`, a minimum connection test can be performed with the following command line.
 
 ```
 avrdude -c pickit4_tpi -p attiny10 -v
@@ -183,49 +181,57 @@ avrdude: writing output file <stdout>
 avrdude done.  Thank you.
 ```
 
-> 14Pモデルには、TPI制御機能なし。
-> この例では PB2端子用の *Lチカ* スケッチバイナリが読み出されている。
+> The 14P model does not have the TPI control function. \
+> In this example, the *Blinking LED* sketch binary for the PB2 terminal is read. \
+> If you want to pull out the UART of the ATtiny102 and ATtiny104 to the 6P connector and connect it to the VCP, you will need to use some ingenuity. PA0/TCLK and PB3/RXD must be shorted, and PA0 must be left unused as a GPIO in principle.
 
 ### LED blinking
 
-オレンジLEDは、状況によって幾つかの表情を見せる。
+The orange LED can have several different states depending on the situation.
 
-- ハートビート - あるいは深呼吸。USB接続が ホストOSと確立されている。使用準備完了。
-- 短い閃光 - USB接続待機中。ホストOSから認識されていない。
-- 長い明滅 - SW0が押し下げられている。プログラミング中ではない。対象デバイスは（可能なら）リセット中。
-- 短い明滅 - プログラミング実行中。VCP通信は無効。
+- Heartbeat - or deep breath. USB connection established with host OS. Ready for use.
+- Short flash - Waiting for USB connection. Not seen by host OS.
+- Long blink - SW0 is pressed down. Not programming. Target device is resetting (if possible).
+- Short blink - Programming in progress. VCP communication is disabled.
 
-> VCPの TxD/RxD通信表示についての LED制御端子は用意されていない。
+> No LED control terminals are provided for VCP TxD/RxD communication indication.
 
 ### Other pinouts
 
-ピン配列／信号割当の詳細については、[<configuration.h>](src/configuration.h)を参照されたい。
+For detailed pinout/signal assignments, see [<configuration.h>](src/configuration.h).
 
 ## High-Voltage control
 
-対応計画中。専用の制御回路を外付けする必要がある。技術的にはすでに前作の[UPDI4AVR](https://askn37.github.io/product/UPDI4AVR/)で実現していることだが、ファミリーが新たに増えるたびに仕様が変化／増加しているため、以前よりさらに設計の難易度が上がっている。
+Planning to support this. A dedicated control circuit will be required to be attached externally. Technically, this has already been achieved with the previous model, [UPDI4AVR](https://askn37.github.io/product/UPDI4AVR/README_en.html).
+
+Currently, two projects are underway.
+
+- A candy box sized all-in-one model.
+- An expansion board model that allows you to attach a CNANO as a daughter board.
+
+<img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_VIEW_MZU2410A.drawio.svg" width="480">
 
 ## Build and installation
 
-Arduino IDEに、次のリンク先の SDK を導入すると、ベアメタルチップを含めた AVR-DUファミリー全てへのビルドとインストールが簡単にできる。
+By installing the SDK at the following link into the Arduino IDE, you can easily build and install for all AVR-DU family chips, including bare metal chips.
 
 - https://github.com/askn37/multix-zinnia-sdk-modernAVR
 
-ビルドオプションについては、[<UPDI4AVR-USB.ino>](UPDI4AVR-USB.ino)を参照されたい。
+For build options, see [<UPDI4AVR-USB.ino>](UPDI4AVR-USB.ino).
 
 ## Related link and documentation
 
-- リポジトリフロントページ (このページ): We're looking for contributors to help us out.
-  - [日本語(Native)](README.md), [English](README_en.md)
+- Repository front page (This page): We're looking for contributors to help us out.
+  - [日本語(Native)](README_jp.md), [English](README.md)
 
 - [UPDI4AVR-USB QUICK INSTALLATION GUIDE](hex/updi4avr/README.md)
-- [UPDI4AVR](https://askn37.github.io/product/UPDI4AVR/) : USBシリアル変換版
+- [UPDI4AVR](https://askn37.github.io/product/UPDI4AVR/README_en.html) : USB to serial converter
 
 - [AVRDUDE](https://github.com/avrdudes/avrdude)
 
-- [USB-IF 公開仕様書](https://www.usb.org/document-library/class-definitions-communication-devices-12)
-- [AVR-DUファミリーデータシート](https://ww1.microchip.com/downloads/aemDocuments/documents/MCU08/ProductDocuments/DataSheets/AVR32-16DU-14-20-28-32-Prelim-DataSheet-DS40002576.pdf)
-- [ATxmega AUファミリー概説](https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-8331-8-and-16-bit-AVR-Microcontroller-XMEGA-AU_Manual.pdf)
+- [USB-IF public specification](https://www.usb.org/document-library/class-definitions-communication-devices-12)
+- [AVR-DU family data sheet](https://ww1.microchip.com/downloads/aemDocuments/documents/MCU08/ProductDocuments/DataSheets/AVR32-16DU-14-20-28-32-Prelim-DataSheet-DS40002576.pdf)
+- [ATxmega AU family manual](https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-8331-8-and-16-bit-AVR-Microcontroller-XMEGA-AU_Manual.pdf)
 
 ## Copyright and Contact
 
