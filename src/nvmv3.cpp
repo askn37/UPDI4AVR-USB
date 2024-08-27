@@ -27,20 +27,20 @@
  * - The data area is at the beginning of the 24-bit address space. (MSB=0)
  *   The flash area is at the end of the 24-bit address space. (MSB=1)
  *   All other memory types are in the data space.
- * 
+ *
  * - The signature is at address 0x1100.
- * 
+ *
  * - Flash and EEPROM each have their own dedicated page buffer memory.
- * 
+ *
  * - EEPROM can be written in 8-byte units.
  *   There is no page erase command.
- * 
+ *
  * - Flash can be written in 64-byte units.
- * 
+ *
  * - FUSE must be written in the same way as EEPROM.
- * 
+ *
  * - Erasing and rewriting a flash memory page are separate commands.
- * 
+ *
  * - USERROW is written in the same way as flash, so a page erase is required.
  */
 

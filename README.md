@@ -71,7 +71,7 @@ This software cannot:
 - Does not support PDI type AVR series. *However, there are plans to add support in the future, as the differences in hardware requirements are small.*
 - JTAG communication, SWD/SWO, dWire, and OCD functions are not supported. (No plans)
 - High-voltage programming is not supported on the 14P package (AVR16-32DU14) because there are no extra pins. To use all functions simultaneously, a 28P/32P package is required.
-- DEBUG build (PRINTF) cannot be used on the 16KiB model because there is no free space.
+- DEBUG build (PRINTF) cannot be used on 14P/20P models because there are insufficient pins, and on 16KiB models because there is no free space.
 
 For details on pinout/signal assignments for each package type of the AVR-DU family, see [<configuration.h>](src/configuration.h).
 
@@ -97,7 +97,7 @@ The following signal arrangement is recommended for converting to the AVR-ICSP M
 
 If the target device is `AVR64DU28`, a minimum connection test can be performed with the following command line.
 
-```
+```console
 avrdude -c pickit4_updi -p avr64du28 -v -U sib:r:-:r
 ```
 
@@ -142,7 +142,7 @@ All connections are open-drain with built-in pull-up resistors.
 
 If the target device is `ATiny10`, a minimum connection test can be performed with the following command line.
 
-```
+```console
 avrdude -c pickit4_tpi -p attiny10 -v
 ```
 
@@ -179,7 +179,6 @@ avrdude: writing output file <stdout>
 avrdude done.  Thank you.
 ```
 
-> The 14P model does not have the TPI control function. \
 > In this example, the *Blinking LED* sketch binary for the PB2 terminal is read. \
 > If you want to pull out the UART of the ATtiny102 and ATtiny104 to the 6P connector and connect it to the VCP, you will need to use some ingenuity. PA0/TCLK and PB3/RXD must be shorted, and PA0 must be left unused as a GPIO in principle.
 

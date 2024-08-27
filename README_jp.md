@@ -72,8 +72,7 @@ AVR-DUファミリーの存在は 2021年春に公表されたものの、すぐ
 - PDIタイプの AVRシリーズはサポート対象外。*ただしハードウェア要件の違いは少ないため、将来追加対応の計画はある。*
 - JTAG通信機能、SWD/SWO機能、dWire機能、OCD機能はサポートされない。（計画はない）
 - 14P外囲器製品（AVR16-32DU14）には余剰ピンがないため、高電圧書込サポートはできない。全機能を同時に使用するには、28P/32P外囲器製品が必要。
-  - TPIタイプ操作もできない。
-- 16KiB品種では、空き容量がないため DEBUGビルド（PRINTF）は使用できない。
+- 14P/20Pではピン数が不足、16KiB品種では、空き容量がないため DEBUGビルド（PRINTF）は使用できない。
 
 AVR-DUファミリーの外囲器種別毎のピン配列／信号割当の詳細については、[<configuration.h>](src/configuration.h)を参照。
 
@@ -99,7 +98,7 @@ AVR-ICSP MIL/6Pコネクタに変換するには、以下の信号配列を推�
 
 仮に、`AVR64DU28`を対象デバイスとした場合、最低限の接続テストは以下のコマンドラインで可能だ。
 
-```
+```console
 avrdude -c pickit4_updi -p avr64du28 -v -U sib:r:-:r
 ```
 
@@ -144,7 +143,7 @@ TPI制御の場合、対象デバイスに必須の配線は "VCC" "GND" "TDAT" 
 
 仮に、`ATiny10`を対象デバイスとした場合、最低限の接続テストは以下のコマンドラインで可能だ。
 
-```
+```console
 avrdude -c pickit4_tpi -p attiny10 -v
 ```
 
@@ -181,7 +180,6 @@ avrdude: writing output file <stdout>
 avrdude done.  Thank you.
 ```
 
-> 14Pモデルには、TPI制御機能なし。\
 > この例では PB2端子用の *Lチカ* スケッチバイナリが読み出されている。\
 > ATtiny102とATtiny104の UARTを6Pコネクタに引き出して VCPと接続したい場合は工夫が必要。PA0/TCLKとPB3/RXDは短絡し、かつPA0は原則としてGPIO未使用としなければならない。
 

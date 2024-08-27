@@ -27,11 +27,11 @@
  * NOTE:
  *
  * USB VID:PID pair value
- * 
+ *
  *   The default VID:PID is 0x04DB:0x0B15 (Microchip:CDC-ACM).
  *   AVRDUDE won't recognize it out of the box.
  *   Change the first 8 bytes of the EEPROM to your desired value.
- * 
+ *
  * USB Vendor and Manufacturer Strings
  *
  *   If using V-USB shared VID:PID pairs,
@@ -289,6 +289,9 @@ namespace USB {
   }
 
   void ep_cci_listen (void) {
+    if ((_send_break + 1) > 1 && _send_break > USB_CCI_INTERVAL) {
+      _send_break -= USB_CCI_INTERVAL;
+    }
     EP_CCI.CNT = 10;
     EP_CCI.MCNT = 0;
     loop_until_bit_is_clear(USB0_INTFLAGSB, USB_RMWBUSY_bp);
@@ -396,9 +399,7 @@ namespace USB {
     /* If the break value is between 1 and 65534, it will count down. */
     if ((_send_break + 1) > 1) {
       if (_send_break > USB_CCI_INTERVAL) {
-        _send_break -= USB_CCI_INTERVAL;
-        if (bit_is_set(EP_CCI.STATUS, USB_BUSNAK_bp))
-          ep_cci_listen();
+        if (bit_is_set(EP_CCI.STATUS, USB_BUSNAK_bp)) ep_cci_listen();
       }
       else {
         _send_break = 0;
@@ -688,9 +689,9 @@ namespace USB {
   void handling_bus_events (void) {
     uint8_t busstate = USB0_INTFLAGSA;
     USB0_INTFLAGSA = busstate;
-  #if defined(PIN_USB_VDETECT)
+  #ifdef PIN_SYS_VDETECT
     /* This section is still experimental. */
-    if (digitalReadMacro(PIN_USB_VDETECT)) {
+    if (digitalReadMacro(PIN_SYS_VDETECT)) {
       if (!USB0_CTRLA) {
         setup_device(true);
         return;

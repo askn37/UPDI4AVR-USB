@@ -5,8 +5,8 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.32.40+
- * @date 2024-07-10
+ * @version 1.32.45+
+ * @date 2024-08-26
  * @copyright Copyright (c) 2024 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -463,6 +463,7 @@ namespace SYS {
   void LED_Flash (void);
   void LED_Blink (void);
   void LED_Fast (void);
+  void power_reset (void);
   void reset_enter (void);
   void reset_leave (void);
   void reboot (void);
@@ -492,6 +493,7 @@ namespace UPDI {
   bool recv_bytes (uint8_t* _data, size_t _len);
   bool recv (void);
   bool send_bytes (const uint8_t* _data, size_t _len);
+  bool send_bytes_fill (size_t _len);
   bool send (const uint8_t _data);
   bool recv_byte (uint32_t _dwAddr);
   bool send_byte (uint32_t _dwAddr, uint8_t _data);
