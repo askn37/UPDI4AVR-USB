@@ -9332,8 +9332,8 @@ setup():
     2cae:	80 eb       	ldi	r24, 0xB0	; 176
     2cb0:	80 b9       	out	0x00, r24	; 0
 /Users/askn/Documents/Zinnia-tools/Products/software/UPDI4AVR-USB/src/sys.cpp:121
-    VPORTD_DIR = _BV(0) | _BV(4) | _BV(5);  /* DTR HVSL1 HVSL2 */
-    2cb2:	81 e3       	ldi	r24, 0x31	; 49
+    VPORTD_DIR = _BV(1) | _BV(4) | _BV(5);  /* DTR HVSL1 HVSL2 */
+    2cb2:	82 e3       	ldi	r24, 0x32	; 50
     2cb4:	8c b9       	out	0x0c, r24	; 12
 /Users/askn/Documents/Zinnia-tools/Products/software/UPDI4AVR-USB/src/sys.cpp:122
     VPORTF_DIR = _BV(3) | _BV(4) | _BV(5);  /* LED1 VPW PDIS */
@@ -11298,7 +11298,7 @@ set_line_state():
     357e:	0c c0       	rjmp	.+24     	; 0x3598 <main+0x9f6>
 /Users/askn/Documents/Zinnia-tools/Products/software/UPDI4AVR-USB/src/usart.cpp:194
       digitalWriteMacro(PIN_VCP_DTR, LOW);
-    3580:	68 98       	cbi	0x0d, 0	; 13
+    3580:	69 98       	cbi	0x0d, 1	; 13
 /Users/askn/Documents/Zinnia-tools/Products/software/UPDI4AVR-USB/src/usart.cpp:208
       digitalWriteMacro(PIN_VCP_RTS, HIGH);
   #endif
@@ -11331,7 +11331,7 @@ set_line_state():
       digitalWriteMacro(PIN_VCP_DTR, LOW);
     else
       digitalWriteMacro(PIN_VCP_DTR, HIGH);
-    3598:	68 9a       	sbi	0x0d, 0	; 13
+    3598:	69 9a       	sbi	0x0d, 1	; 13
     359a:	f3 cf       	rjmp	.-26     	; 0x3582 <main+0x9e0>
 request_class():
 /Users/askn/Documents/Zinnia-tools/Products/software/UPDI4AVR-USB/src/usb.cpp:638

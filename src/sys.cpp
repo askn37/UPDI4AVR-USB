@@ -118,7 +118,7 @@ namespace SYS {
     #endif
 
     VPORTA_DIR = _BV(4) | _BV(5) | _BV(7);  /* WO4 WO5 HVSW */
-    VPORTD_DIR = _BV(0) | _BV(4) | _BV(5);  /* DTR HVSL1 HVSL2 */
+    VPORTD_DIR = _BV(1) | _BV(4) | _BV(5);  /* DTR HVSL1 HVSL2 */
     VPORTF_DIR = _BV(3) | _BV(4) | _BV(5);  /* LED1 VPW PDIS */
 
     PORTMUX_EVSYSROUTEA   = PORTMUX_EVOUTA_ALT1_gc;     /* EVOUTA -> PIN_PA7 */

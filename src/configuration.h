@@ -396,8 +396,8 @@
   #define PORTMUX_USART_NONE  (PORTMUX_USART0_NONE_gc    | PORTMUX_USART1_ALT2_gc)
   #define PIN_VCP_TXD         PIN_USART0_TXD_ALT2
   #define PIN_VCP_RXD         PIN_USART0_RXD_ALT2
-  #define PIN_VCP_DTR         PIN_PD0
-  #define PIN_VCP_CTS         PIN_PD1
+  #define PIN_VCP_CTS         PIN_PD0
+  #define PIN_VCP_DTR         PIN_PD1
   #define PIN_PGM_TDAT        PIN_USART0_TXD
   #define PIN_PGM_TRST        PIN_USART0_RXD
   #define PIN_PGM_TCLK        PIN_USART0_XCK
