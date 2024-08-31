@@ -207,7 +207,7 @@ avrdude done.  Thank you.
 - FRISKケースサイズのオールインワンモデル。
 - CNANOをドーターボードとして装着する拡張ボードモデル。
 
-<img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_VIEW_MZU2410A.drawio.svg" width="400">
+<img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_VIEW_MZU2410A.drawio.svg" width="400"> <img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_VIEW_MZU2411A.drawio.svg" width="400">
 
 ## Build and installation
 

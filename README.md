@@ -206,7 +206,7 @@ Currently, two projects are underway.
 - A candy box sized all-in-one model.
 - An expansion board model that allows you to attach a CNANO as a daughter board.
 
-<img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_VIEW_MZU2410A.drawio.svg" width="400">
+<img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_VIEW_MZU2410A.drawio.svg" width="400"> <img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_VIEW_MZU2411A.drawio.svg" width="400">
 
 ## Build and installation
 
