@@ -74,7 +74,7 @@ namespace SYS {
     pinControlRegister(PIN_PGM_TCLK) = PORT_PULLUPEN_bm | PORT_ISC_INPUT_DISABLE_gc;
 
     VPORTC_DIR = _BV(3);  /* PIN_SYS_LED0 */
-    VPORTD_DIR = _BV(7);  /* PIN_PGM_PDISEL */
+    VPORTD_DIR = _BV(7);  /* PIN_PGM_PDISEL or PIN_SYS_LED1 */
 
     /*** VUSB Bus-Powerd ***/
     SYSCFG_VUSBCTRL = SYSCFG_USBVREG_bm;
@@ -83,6 +83,16 @@ namespace SYS {
     CCL_TRUTH1    = CCL_TRUTH_1_bm     | CCL_TRUTH_2_bm;
     CCL_LUT1CTRLB = CCL_INSEL0_TCA0_gc | CCL_INSEL1_TCB1_gc;
     CCL_LUT1CTRLA = CCL_ENABLE_bm      | CCL_OUTEN_bm;  /* LED0 -> PIN_PC3 */
+
+    #ifndef CONFIG_PGM_PDI_ENABLE
+    /*** LED1 Flash generator ***/
+    PORTMUX_EVSYSROUTEA   = PORTMUX_EVOUTD_ALT1_gc;     /* EVOUTD -> PIN_PD7 */
+    EVSYS_USEREVSYSEVOUTD = EVSYS_CHANNEL_CCL_LUT3_gc;  /* LUT3_OUT -> EVOUTD */
+
+    CCL_TRUTH3    = CCL_TRUTH_0_bm       | CCL_TRUTH_1_bm | CCL_TRUTH_2_bm;
+    CCL_LUT3CTRLB = CCL_INSEL0_USART0_gc | CCL_INSEL1_EVENTA_gc;
+    CCL_LUT3CTRLA = CCL_ENABLE_bm;                      /* LED1 */
+    #endif
 
   #elif (CONFIG_HAL_TYPE == HAL_BAREMETAL_20P)
     /* In this profile, all pins are used. */

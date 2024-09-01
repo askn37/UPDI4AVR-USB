@@ -283,7 +283,10 @@
 /*
  * Enable PDI type programming support. (Not yet implemented)
  *
+ * 3.3V operating voltage support is required. 5V operation is prohibited.
  * Not compatible with VCP without external support circuitry.
+ *
+ * On 14P models, LED1 and PDIS are mutually exclusive.
  */
 
 // #define CONFIG_PGM_PDI_ENABLE
@@ -367,6 +370,7 @@
   #define PIN_PGM_TCLK        PIN_USART0_XCK_ALT3
   #define PIN_PGM_PDISEL      PIN_PD7
   #define PIN_SYS_LED0        PIN_LUT1_OUT
+  #define PIN_SYS_LED1        PIN_PD7
   #define PIN_SYS_SW0         PIN_PF6
 
 #elif (CONFIG_HAL_TYPE == HAL_BAREMETAL_20P)
