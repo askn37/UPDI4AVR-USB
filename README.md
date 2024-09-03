@@ -182,6 +182,16 @@ avrdude done.  Thank you.
 > In this example, the *Blinking LED* sketch binary for the PB2 terminal is read. \
 > If you want to pull out the UART of the ATtiny102 and ATtiny104 to the 6P connector and connect it to the VCP, you will need to use some ingenuity. PA0/TCLK and PB3/RXD must be shorted, and PA0 must be left unused as a GPIO in principle.
 
+### PDI control
+
+PDI type control is currently being planned, but it requires an external support circuit for the following reasons, so it cannot be used with the CNANO series alone.
+
+- PDI type AVR silicon is limited to an operating voltage of 3.3V.
+- On the other hand, the CNANO series does not provide a way to change the operating voltage from 5V to another voltage.
+- For this reason, it is unavoidable to add a 3.3V generator and a logic level conversion circuit.
+
+Note that PDI type devices do not need to support HV control, so it is possible to create a PDI writer even from the AVR-DU14, which does not have a large number of pins.
+
 ### LED blinking
 
 The orange LED can have several different states depending on the situation.
@@ -191,7 +201,7 @@ The orange LED can have several different states depending on the situation.
 - Long blink - SW0 is pressed down. Not programming. Target device is resetting (if possible).
 - Short blink - Programming in progress. VCP communication is disabled.
 
-> No LED control terminals are provided for VCP TxD/RxD communication indication.
+> Additional LEDs can be provided to indicate VCP communication activity.
 
 ### Other pinouts
 
