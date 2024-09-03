@@ -383,15 +383,16 @@
   #define PIN_PGM_TDAT        PIN_USART0_TXD
   #define PIN_PGM_TRST        PIN_USART0_RXD
   #define PIN_PGM_TCLK        PIN_USART0_XCK
-  #define PIN_PGM_PDISEL      PIN_PA4
-  #define PIN_PGM_VPOWER      PIN_PA5
   #define PIN_HVC_FEEDBACK    PIN_AC0_AINP4
   #define PIN_HVC_SWITCH      PIN_AC0_OUT
-  #define PIN_HVC_SELECT1     PIN_PD6
-  #define PIN_HVC_SELECT2     PIN_PD7
+  #define PIN_HVC_SELECT1     PIN_PA4
+  #define PIN_HVC_SELECT2     PIN_PA5
+  #define PIN_PGM_VPOWER      PIN_PD6
+  #define PIN_PGM_PDISEL      PIN_PD7
   #define PIN_HVC_CHGPUMP1    PIN_TCA0_WO4_ALT3
   #define PIN_HVC_CHGPUMP2    PIN_TCA0_WO5_ALT3
   #define PIN_SYS_LED0        PIN_LUT0_OUT_ALT1
+  #define PIN_SYS_LED1        PIN_PD7
   #define PIN_SYS_SW0         PIN_PF6
 
 #elif (CONFIG_HAL_TYPE == HAL_CNANO)

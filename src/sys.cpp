@@ -102,10 +102,11 @@ namespace SYS {
     pinControlRegister(PIN_HVC_FEEDBACK) = PORT_ISC_INTDISABLE_gc;
     #endif
 
-    VPORTA_DIR = _BV(4) | _BV(5) | _BV(6) | _BV(7); /* PDIS VPW LED0 HVSW*/
-    VPORTD_DIR = _BV(4) | _BV(5) | _BV(6) | _BV(7); /* HVCP1 HVCP2 HVSL1 HVSL2 */
+    VPORTA_DIR = _BV(4) | _BV(5) | _BV(6) | _BV(7); /* SL1 SL2 LED0 HVSW */
+    VPORTD_DIR = _BV(4) | _BV(5) | _BV(6) | _BV(7); /* HVCP1 HVCP2 VPW PDIS(or LED1) */
 
     PORTMUX_CCLROUTEA = PORTMUX_LUT0_ALT1_gc;       /* LUT0_OUT -> PIN_PA6 */
+    PORTMUX_TCAROUTEA = PORTMUX_TCA0_PORTD_gc;      /* TCA0_WO -> PORTD(ALT3) */
 
     /*** VUSB Bus-Powerd ***/
     SYSCFG_VUSBCTRL = SYSCFG_USBVREG_bm;
@@ -114,6 +115,17 @@ namespace SYS {
     CCL_TRUTH0    = CCL_TRUTH_1_bm     | CCL_TRUTH_2_bm;
     CCL_LUT0CTRLB = CCL_INSEL0_TCA0_gc | CCL_INSEL1_TCB1_gc;
     CCL_LUT0CTRLA = CCL_ENABLE_bm      | CCL_OUTEN_bm;  /* LED0 -> LUT0_OUT */
+
+    #ifndef CONFIG_PGM_PDI_ENABLE
+    /*** LED1 Flash generator ***/
+    PORTMUX_EVSYSROUTEA   = PORTMUX_EVOUTD_ALT1_gc;     /* EVOUTD -> PIN_PD7 */
+    EVSYS_USEREVSYSEVOUTD = EVSYS_CHANNEL_CCL_LUT3_gc;  /* LUT3_OUT -> EVOUTD */
+    EVSYS_USERCCLLUT3A    = EVSYS_USER_CHANNEL4_gc;     /* <- VRxD */
+
+    CCL_TRUTH3    = CCL_TRUTH_0_bm       | CCL_TRUTH_1_bm | CCL_TRUTH_2_bm;
+    CCL_LUT3CTRLB = CCL_INSEL0_USART0_gc | CCL_INSEL1_EVENTA_gc;
+    CCL_LUT3CTRLA = CCL_ENABLE_bm;                      /* LED1 */
+    #endif
 
     AC0_MUXCTRL = AC_INVERT_bm | AC_MUXPOS_AINP4_gc | AC_MUXNEG_DACREF_gc;
 
