@@ -5,8 +5,8 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.32.40+
- * @date 2024-07-10
+ * @version 1.32.45+
+ * @date 2024-08-26
  * @copyright Copyright (c) 2024 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -19,7 +19,7 @@
 #include "prototype.h"
 
 /*
- * NOTE: 
+ * NOTE:
  *
  * UPDI command payloads use the JTAGICE3 standard.
  * Multibyte fields are in little endian format.
@@ -27,7 +27,7 @@
  * The UPDI communications protocol uses the same access layer command set as PDI.
  * The hardware layer also uses the same 12-bit frames UART as PDI/TPI.
  * It is a single-wire bidirectional communication like RS485.
- * 
+ *
  * The difference is that all commands are preceded by a sync character,
  * allowing auto-synchronization of the baudrate without the need for an XCLK.
  */
@@ -100,6 +100,13 @@ namespace UPDI {
     return true;
   }
 
+  bool send_bytes_fill (size_t _len) {
+    do {
+      if (!send(0xFF)) return false;
+    } while (--_len);
+    return true;
+  }
+
   /* Returns whether there is an error or not. */
   /* The acquired data is stored in RXDATA.    */
   bool recv_byte (uint32_t _dwAddr) {
@@ -128,15 +135,6 @@ namespace UPDI {
       0x55, 0xC3, 0x04  /* UPDIDIS */
     };
     return send_bytes(_reset, _leave ? 9 : 6);
-  }
-
-  void power_reset (void) {
-  #ifdef PIN_HV_POWER
-    /* If the previous connect attempt failed, power off the device if possible. */
-    digitalWriteMacro(PIN_HV_POWER, LOW);
-    delay_millis(200);
-    digitalWriteMacro(PIN_HV_POWER, HIGH);
-  #endif
   }
 
   bool set_rsd (void) {
@@ -180,6 +178,18 @@ namespace UPDI {
       && set_rsd()
       && send_bytes(_set_repeat, sizeof(_set_repeat))
       && send_bytes(&packet.out.memData[0], _wLength)
+      && clear_rsd();
+  }
+
+  bool send_bytes_block_fill (uint32_t _dwAddr, size_t _wLength) {
+    _CAPS32(_set_ptr24[2])->dword = _dwAddr;
+    _set_repeat[2] = _wLength - 1;
+    _set_repeat[4] = 0x64;  /* ST PTR++ DATA1 */
+    return send_bytes(_set_ptr24, 5)
+      && is_ack()
+      && set_rsd()
+      && send_bytes(_set_repeat, sizeof(_set_repeat))
+      && send_bytes_fill(_wLength)
       && clear_rsd();
   }
 
@@ -280,7 +290,7 @@ namespace UPDI {
     uint32_t _dwAddr = packet.out.dwAddr;
     size_t  _wLength = packet.out.dwLength;
     if (bit_is_clear(PGCONF, PGCONF_UPDI_bp)
-     || m_type != 0xC5 
+     || m_type != 0xC5
      || _wLength != Device_Descriptor.UPDI.user_sig_bytes
      || (uint16_t)_dwAddr != Device_Descriptor.UPDI.user_sig_base) return false;
     USART::drain();
@@ -336,19 +346,19 @@ namespace UPDI {
     _sib[0] = 0;
     _before_page = -1L;
     NVM::V1::setup();   /* default is dummy callback */
-    openDrainWriteMacro(PIN_PG_TRST, LOW);
+    openDrainWriteMacro(PIN_PGM_TRST, LOW);
     nop();
 
     /* External Reset */
     if (packet.out.bMType) {
       D1PRINTF("<PWRST>\r\n");
-      power_reset();
-  #ifdef CONFIG_HVCTRL_ENABLE
+      SYS::power_reset();
+  #ifdef CONFIG_HVC_ENABLE
       /* High-Voltage control */
   #endif
     }
 
-    openDrainWriteMacro(PIN_PG_TRST, HIGH);
+    openDrainWriteMacro(PIN_PGM_TRST, HIGH);
     USART::drain();
     long_break();
     if (send_bytes(_init, sizeof(_init))) {
@@ -382,9 +392,9 @@ namespace UPDI {
     bool _result = sys_reset(true);
     PGCONF = 0;
     D1PRINTF(" <RST:%d>\r\n", _result);
-    openDrainWriteMacro(PIN_PG_TRST, LOW);
+    openDrainWriteMacro(PIN_PGM_TRST, LOW);
     nop();
-    openDrainWriteMacro(PIN_PG_TRST, HIGH);
+    openDrainWriteMacro(PIN_PGM_TRST, HIGH);
     return _result;
   }
 
