@@ -5,8 +5,8 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.32.45+
- * @date 2024-08-26
+ * @version 1.32.40+
+ * @date 2024-07-10
  * @copyright Copyright (c) 2024 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -23,10 +23,9 @@ namespace USART {
 
   void setup (void) {
     SYS::LED_Fast();
-    PGCONF = 0;
     disable_vcp();
     pinModeMacro(PIN_VCP_RXD, INPUT_PULLUP);  /* USART0_DEFAULT or USART0_ALT2 */
-    pinModeMacro(PIN_PGM_TRST, INPUT_PULLUP); /* USART0_ALT3 or USART0_DEFAULT */
+    pinModeMacro(PIN_PG_TRST, INPUT_PULLUP);  /* USART0_ALT3 or USART0_DEFAULT */
   }
 
   /*** Calculate the baud rate for VCP asynchronous mode. ***/
@@ -50,35 +49,36 @@ namespace USART {
 
   /*** Stop the VCP and release the ports in use. ***/
   void disable_vcp (void) {
-    if (USART0_CTRLB) {
-      D1PRINTF(" UART=OFF\r\n");
-      /* Allow time to move USART0_TXDATA */
-      delay_micros(4);
-      ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-        /* Simply clearing the CTRLB does not disable the USART completely.                    */
-        /* This errata is not documented for the AVR-DU, but is the same as for tinyAVR-0 etc. */
-        USART0_CTRLB = 0;
-        USART0_CTRLA = 0;
-        RXSTAT = 0;
-        RXDATA = 0;
-        PORTMUX_USARTROUTEA = PORTMUX_USART_VCP;
-        bit_clear(GPCONF, GPCONF_VCP_bp);
-      }
-      pinModeMacro(PIN_PGM_TDAT, INPUT_PULLUP);   /* open-drain */
-      pinModeMacro(PIN_VCP_TXD, INPUT_PULLUP);    /* open-drain */
-      openDrainWriteMacro(PIN_VCP_TXD, HIGH);
-  #if (PIN_PGM_TCLK != PIN_VCP_TXD)
-      pinModeMacro(PIN_PGM_TCLK, INPUT_PULLUP);   /* open-drain */
-      openDrainWriteMacro(PIN_PGM_TCLK, HIGH);
-  #endif
+    D1PRINTF(" UART=OFF\r\n");
+    /* Allow time to move USART0_TXDATA */
+    delay_micros(4);
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+      /* Simply clearing the CTRLB does not disable the USART completely.                    */
+      /* This errata is not documented for the AVR-DU, but is the same as for tinyAVR-0 etc. */
+      USART0_CTRLB = 0;
+      USART0_CTRLA = 0;
+      RXSTAT = 0;
+      RXDATA = 0;
+      PGCONF = 0;
+      PORTMUX_USARTROUTEA = PORTMUX_USART_VCP;
+      bit_clear(GPCONF, GPCONF_VCP_bp);
     }
+    pinModeMacro(PIN_PG_TDAT, INPUT_PULLUP);  /* open-drain */
+    /* TXD changes to INPUT when USART is disabled. */
+    /* Force OUTPUT to maintain BREAK state.        */
+  #ifdef CONFIG_VCP_TXD_ODM
+    pinModeMacro(PIN_VCP_TXD, INPUT_PULLUP);  /* open-drain */
+    openDrainWriteMacro(PIN_VCP_TXD, HIGH);
+  #else
+    pinModeMacro(PIN_VCP_TXD, OUTPUT);        /* push-pull : There are problems when using TPI. */
+  #endif
   }
 
   /*** Sets up single-wire asynchronous mode for UPDI operation. ***/
   void change_updi (void) {
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
       D1PRINTF(" UART=UPDI\r\n");
-      PORTMUX_USARTROUTEA = PORTMUX_USART_PGM;
+      PORTMUX_USARTROUTEA = PORTMUX_USART_UPDI;
       USART0_STATUS = USART_DREIF_bm;
       USART0_BAUD  = calk_baud_khz(_xclk);
       USART0_CTRLC = USART_CHSIZE_8BIT_gc | USART_PMODE_EVEN_gc | USART_SBMODE_2BIT_gc;
@@ -99,8 +99,8 @@ namespace USART {
       uint32_t _baud = ((F_CPU / 1000L) / _xclk + 1) / 2;
       _baud <<= 6;
       if (_baud < 64) _baud = 64;
-      PORTMUX_USARTROUTEA = PORTMUX_USART_PGM;
-      pinModeMacro(PIN_PGM_TCLK, OUTPUT); /* push-pull */
+      PORTMUX_USARTROUTEA = PORTMUX_USART_UPDI;
+      pinModeMacro(PIN_VCP_TXD, INPUT_PULLUP);
       USART0_STATUS = USART_DREIF_bm;
       USART0_BAUD  = _baud;
       USART0_CTRLC = USART_CHSIZE_8BIT_gc | USART_PMODE_EVEN_gc | USART_CMODE_SYNCHRONOUS_gc | USART_SBMODE_2BIT_gc;
@@ -113,12 +113,10 @@ namespace USART {
   /*** Activates VCP operation. ***/
   /* Detailed parameters are specified in SET_LINE_ENCODING. */
   void change_vcp (void) {
-  #ifdef CONFIG_VCP_TXD_PUSHPULL
-    uint8_t _ctrlb = USART_RXEN_bm | USART_TXEN_bm;
-    digitalWrite(PIN_VCP_TXD, HIGH);
-    pinModeMacro(PIN_VCP_TXD, OUTPUT);    /* push-pull */
-  #else
+  #ifdef CONFIG_VCP_TXD_ODM
     uint8_t _ctrlb = USART_RXEN_bm | USART_TXEN_bm | USART_ODME_bm;
+  #else
+    uint8_t _ctrlb = USART_RXEN_bm | USART_TXEN_bm;
   #endif
     uint32_t _baud = _set_line_encoding.dwDTERate;
     /* If the BAUD value is small, select double speed mode. */

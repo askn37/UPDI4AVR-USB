@@ -57,7 +57,7 @@ namespace /* NAMELESS */ {
   /* JTAG parameter */
   NOINIT uint32_t _before_page;
   NOINIT uint16_t _vtarget;         /* LSB=1V/1000 <- SYS::get_vdd() */
-  uint16_t _xclk = PGM_CLK / 1000;  /* LSB=1KHz using USART_CMODE_SYNCHRONOUS_gc */
+  uint16_t _xclk = UPDI_CLK / 1000; /* LSB=1KHz using USART_CMODE_SYNCHRONOUS_gc */
   uint8_t _jtag_vpow = 1;
   NOINIT uint8_t _jtag_hvctrl;
   NOINIT uint8_t _jtag_unlock;
@@ -103,7 +103,7 @@ int main (void) {
   #endif
   interrupts();
 
-  #if !defined(PIN_SYS_VDETECT)
+  #if !defined(PIN_USB_VDETECT)
   /* If you do not use VBD, insert the shortest possible delay instead. */
   delay_millis(250);
   USB::setup_device(true);

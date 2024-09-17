@@ -71,7 +71,7 @@ This software cannot:
 - Does not support PDI type AVR series. *However, there are plans to add support in the future, as the differences in hardware requirements are small.*
 - JTAG communication, SWD/SWO, dWire, and OCD functions are not supported. (No plans)
 - High-voltage programming is not supported on the 14P package (AVR16-32DU14) because there are no extra pins. To use all functions simultaneously, a 28P/32P package is required.
-- DEBUG build (PRINTF) cannot be used on 14P/20P models because there are insufficient pins, and on 16KiB models because there is no free space.
+- DEBUG build (PRINTF) cannot be used on the 16KiB model because there is no free space.
 
 For details on pinout/signal assignments for each package type of the AVR-DU family, see [<configuration.h>](src/configuration.h).
 
@@ -97,7 +97,7 @@ The following signal arrangement is recommended for converting to the AVR-ICSP M
 
 If the target device is `AVR64DU28`, a minimum connection test can be performed with the following command line.
 
-```console
+```
 avrdude -c pickit4_updi -p avr64du28 -v -U sib:r:-:r
 ```
 
@@ -142,7 +142,7 @@ All connections are open-drain with built-in pull-up resistors.
 
 If the target device is `ATiny10`, a minimum connection test can be performed with the following command line.
 
-```console
+```
 avrdude -c pickit4_tpi -p attiny10 -v
 ```
 
@@ -179,18 +179,9 @@ avrdude: writing output file <stdout>
 avrdude done.  Thank you.
 ```
 
+> The 14P model does not have the TPI control function. \
 > In this example, the *Blinking LED* sketch binary for the PB2 terminal is read. \
 > If you want to pull out the UART of the ATtiny102 and ATtiny104 to the 6P connector and connect it to the VCP, you will need to use some ingenuity. PA0/TCLK and PB3/RXD must be shorted, and PA0 must be left unused as a GPIO in principle.
-
-### PDI control
-
-PDI type control is currently being planned, but it requires an external support circuit for the following reasons, so it cannot be used with the CNANO series alone.
-
-- PDI type AVR silicon is limited to an operating voltage of 3.3V.
-- On the other hand, the CNANO series does not provide a way to change the operating voltage from 5V to another voltage.
-- For this reason, it is unavoidable to add a 3.3V generator and a logic level conversion circuit.
-
-Note that PDI type devices do not need to support HV control, so it is possible to create a PDI writer even from the AVR-DU14, which does not have a large number of pins.
 
 ### LED blinking
 
@@ -201,7 +192,7 @@ The orange LED can have several different states depending on the situation.
 - Long blink - SW0 is pressed down. Not programming. Target device is resetting (if possible).
 - Short blink - Programming in progress. VCP communication is disabled.
 
-> Additional LEDs can be provided to indicate VCP communication activity.
+> No LED control terminals are provided for VCP TxD/RxD communication indication.
 
 ### Other pinouts
 
@@ -216,7 +207,7 @@ Currently, two projects are underway.
 - A candy box sized all-in-one model.
 - An expansion board model that allows you to attach a CNANO as a daughter board.
 
-<img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_VIEW_MZU2410A.drawio.svg" width="400"> <img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_VIEW_MZU2411A.drawio.svg" width="400">
+<img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_VIEW_MZU2410A.drawio.svg" width="400">
 
 ## Build and installation
 
