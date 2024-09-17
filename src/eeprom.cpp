@@ -22,15 +22,15 @@
  *
  * The first 8 bytes of the EEPROM are CONFIG_USB_VIDPID.
  * The next 8 bytes are CONFIG_USB_SERIALNUMBER.
- *
+ * 
  * The defined contents will be written to the <vidpid.eep> Hex-format file.
  * You can change the default by writing this to the device.
- *
+ * 
  * Ex) Specifying values ​​directly in the CLI
  * avrdude -P usb -c pkobn_updi -p avr64du32 -DU eeprom:w:0xEB,0x03,0x77,0x21:m
- *
+ * 
  * Ex) Replace with configured <vidpid.eep>
- * avrdude -P usb -c pkobn_updi -p avr64du32 -DU eeprom:w:VIDPID_PICK4.eep:i *
+ * avrdude -P usb -c pkobn_updi -p avr64du32 -DU eeprom:w:VIDPID_PICK4.eep:i * 
  */
 
 #ifndef CONFIG_USB_VIDPID

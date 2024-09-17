@@ -23,31 +23,31 @@
  *
  * UPDI NVM version 0 is used in the tinyAVR-0, 1, 2 and megaAVR-0 series.
  * It has the following features:
- *
+ * 
  * - The total address range of the flash and data areas is 64KiB.
  *   Flash is mapped into the second half of the 64KiB address range.
  *   The offset value is different between tinyAVR and megaAVR.
- *
+ * 
  * - ACC only uses 16-bit addresses, but it can also use
  *   24-bit addresses with a zero high-order byte.
  *   The use of PDI-compatible 32-bit addresses is explicitly prohibited.
- *
+ * 
  * - The signature is located at address 0x1100.
- *
+ * 
  * - Fuse uses special commands to rewrite byte by byte.
- *
+ * 
  * - There is a special page buffer memory, it is not SRAM.
- *
+ * 
  * - EEPROM can be written in 32/64-byte units.
  *   It writes faster than other series.
  *   There is no page erase command.
- *
+ * 
  * - Flash can be written in 64/128-byte units.
  *   Page erase is only available for Flash memory.
- *
+ * 
  * - Erase/write command combinations are also available for flash memory.
  *   So normally, page erasure is not necessary.
- *
+ * 
  * - USERROW is an EEPROM type memory.
  */
 

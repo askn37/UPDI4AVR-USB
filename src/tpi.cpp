@@ -5,8 +5,8 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.32.45+
- * @date 2024-08-26
+ * @version 1.32.40+
+ * @date 2024-07-10
  * @copyright Copyright (c) 2024 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -20,11 +20,11 @@
 #include "prototype.h"
 
 /*
- * NOTE:
+ * NOTE: 
  *
  * The TPI command payload uses the STK600's XPRG standard,
  * with multi-byte fields in big endian format.
- *
+ * 
  * The TPI communications protocol is minimally proprietary,
  * but at the hardware layer it uses the same 12-bit frames USART as PDI/UPDI.
  * It is a single-wire bidirectional communication like RS485,
@@ -118,7 +118,7 @@ namespace TPI {
     else {
       /* 0x02: XPRG_ERASE_APP */
       /* 0x09: XPRG_ERASE_CONFIG */
-      /* Currently not called on AVRDUDE<=8.0. */
+      /* Currently not called on AVRDUDE<=7.3. */
       /* It may be called from terminal mode.  */
       D1PRINTF(" SECTION_ERASE=%04X\r\n", _dwAddr);
       if (nvm_wait()
@@ -210,7 +210,6 @@ namespace TPI {
 
   size_t connect (void) {
     PGCONF = PGCONF_FAIL_bm;
-    USART::disable_vcp();
 
     if (_packet_length > 6 && packet.out.tpi.bType) {
       /* External Reset : Activation High-Voltage mode */
@@ -220,20 +219,14 @@ namespace TPI {
 
     /*** Enter RESET (normal programing) ***/
     /* TRST remains LOW until program mode is exited. */
-    openDrainWriteMacro(PIN_PGM_TDAT, LOW);
-  #if (PIN_PGM_TCLK != PIN_VCP_TXD)
-    openDrainWriteMacro(PIN_PGM_TCLK, LOW);
-  #endif
-    openDrainWriteMacro(PIN_PGM_TRST, LOW);
-    SYS::power_reset();
+    openDrainWriteMacro(PIN_VCP_TXD, LOW);
+    openDrainWriteMacro(PIN_PG_TRST, LOW);
 
     /*** Activate clock ***/
     /* If a device is pushing or pulling a control pin at OUTPUT,     */
     /* the potential must be lowered for a sufficient period of time. */
     /* During the wait, TCLK will emit a sufficient number of pulses. */
-    delay_millis(10);
-    USART::change_tpi();
-    idle_clock(36);
+    delay_millis(200);
 
     /*** Set TPIPCR Guard Time : 4 clock ****/
     if (!set_sstcs(0x02, 0x05)) return 0;
@@ -259,7 +252,7 @@ namespace TPI {
 
     /*
      * Get the device signature.
-     * Currently AVRDUDE <= 8.0 does not report the device descriptor for reduceAVR cores.
+     * Currently AVRDUDE <= 7.3 does not report the device descriptor for reduceAVR cores.
      * So you'll need to find out for yourself.
      *
      * The ATtiny20 is written in 2 word chunks,
@@ -289,7 +282,7 @@ namespace TPI {
     /* Send the NVM exit command, wait a short while and release RESET. */
     delay_micros(100);
     openDrainWriteMacro(PIN_VCP_TXD, HIGH);
-    openDrainWriteMacro(PIN_PGM_TRST, HIGH);
+    openDrainWriteMacro(PIN_PG_TRST, HIGH);
     PGCONF = 0;
     return 1;
   }
@@ -298,7 +291,7 @@ namespace TPI {
   /*
    * Packets in this scope are a subset of STK600's XPRG.
    * Therefore, addresses and data lengths are big endian.
-   *
+   * 
    * When this scope is used, CMD3_SIGN_ON will not be called,
    * It doesn't seem to be implemented in the "mEDBG".
    * which means it will start immediately with XPRG_CMD_ENTER_PROGMODE.
@@ -309,6 +302,7 @@ namespace TPI {
     if (_cmd == 0x01) {             /* XPRG_CMD_ENTER_PROGMODE */
       D1PRINTF(" TPI_ENTER_PROGMODE\r\n");
       USART::setup();
+      USART::change_tpi();
       _rspsize = Timeout::command(&connect);
     }
     else if (_cmd == 0x02) {        /* XPRG_CMD_LEAVE_PROGMODE */

@@ -9,7 +9,7 @@ The pre-built files found here can be installed on the following products:
 
 AVRDUDE>=7.3 is required for this to work. Install it on your host PC in your preferred way.
 
-- [AVRDUDE releases](https://github.com/avrdudes/avrdude/releases)
+- [AVRDUDE v7.3 releases](https://github.com/avrdudes/avrdude/releases/tag/v7.3)
 
 > [!TIP]
 > AVRDUDE>=7.2 actually works, but it doesn't come with part definitions for the AVR-DU family.
@@ -20,13 +20,13 @@ Are you ready?
 
 Orient the AVR logo so it is readable, then connect a USB-C type cable between the programming port on the left and the host PC. Upload the file using the following command line:
 
-```console
+```
 avrdude -c pkobn_updi -p avr64du32 -e -U fuses:w:AVR64DU32_CNANO.fuse:i -U flash:w:AVR64DU32_CNANO.hex:i
 ```
 
 And then run an additional command line: This parameter tells AVRDUDE what type of writer to emulate. Let's assume it's PICKit4 for example.
 
-```console
+```
 avrdude -c pkobn_updi -p avr64du32 -U eeprom:w:0xEB,0x03,0x77,0x21:m
 ```
 
@@ -42,7 +42,7 @@ If everything works perfectly, the Orange LED will slowly light up and you will 
 
 Now try entering the following command. It will stop with an error because the target device is not yet connected, but you should be able to read the UPDI4AVR's firmware version, unique serial number, and operating voltage from the host PC.
 
-```console
+```
 avrdude -c pickit4_updi -p avr64du32 -v
 ```
 

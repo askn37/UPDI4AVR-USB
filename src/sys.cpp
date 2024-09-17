@@ -5,8 +5,8 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.32.45+
- * @date 2024-08-26
+ * @version 1.32.40+
+ * @date 2024-07-10
  * @copyright Copyright (c) 2024 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -41,190 +41,119 @@ namespace SYS {
   void setup (void) {
 
     /*
-     * Before reaching this point,
-     * `PORT<ALL>.PINCONFIG = PORT_ISC_INPUT_DISABLE_gc`
-     * is already executed.
-     *
-     * VCP control: Initial values ​​are all open-drain.
-     *
-     * PGM control: Initial values ​​are all open-drain.
-     * TCLK is changed to push-pull when in use.
-     *
-     * SW0 detection: Input negative logic.
-     * Use CCL in conjunction to separate the falling edge and rising edge interrupts.
-     * For the falling edge, use the CCL filter function to remove chattering noise.
-     *
-     * Charge pump feedback: AC0 Input positive logic.
-     * No pull-up. Compared with DAC setting voltage.
-     *
-     * Charge pump voltage control; AC0 Output negative logic.
-     *
-     * V-Target power control: output negative logic.
+     * GPIO - VCP
      */
 
-    pinControlRegister(PIN_VCP_TXD)  = PORT_PULLUPEN_bm | PORT_ISC_INTDISABLE_gc;
-    pinControlRegister(PIN_VCP_RXD)  = PORT_PULLUPEN_bm | PORT_ISC_INTDISABLE_gc;
-    pinControlRegister(PIN_PGM_TDAT) = PORT_PULLUPEN_bm | PORT_ISC_INTDISABLE_gc;
-    pinControlRegister(PIN_PGM_TRST) = PORT_PULLUPEN_bm | PORT_ISC_INPUT_DISABLE_gc;
-    pinControlRegister(PIN_SYS_SW0)  = PORT_PULLUPEN_bm | PORT_ISC_RISING_gc;
+  #if defined(PIN_VCP_DTR)
+    pinModeMacro(PIN_VCP_DTR, OUTPUT);
+  #endif
+  #if defined(PIN_VCP_RTS)
+    pinModeMacro(PIN_VCP_RTS, OUTPUT);
+  #endif
+  #if defined(PIN_VCP_CTS) && defined(CONFIG_VCP_CTS_ENABLE)
+    pinControlRegister(PIN_VCP_CTS) = PORT_PULLUPEN_bm;
+  #endif
+  #if defined(PIN_VCP_DCD)
+    pinControlRegister(PIN_VCP_DCD) = PORT_PULLUPEN_bm;
+  #endif
+  #if defined(PIN_VCP_DSR)
+    pinControlRegister(PIN_VCP_DSR) = PORT_PULLUPEN_bm;
+  #endif
+  #if defined(PIN_VCP_RI)
+    pinControlRegister(PIN_VCP_RI) = PORT_PULLUPEN_bm;
+  #endif
+
+    /*
+     * GPIO - HVCTRL
+     */
+
+  #if defined(PIN_HV_SELECT)
+    /* HV control selection: Output 0=TRST, 1=TDAT */
+    pinModeMacro(PIN_HV_SELECT, OUTPUT);
+  #endif
+  #if defined(PIN_HV_CHGPUMP)
+    /* Charge pump pulse: TCA0_WO4 output */
+    pinModeMacro(PIN_HV_CHGPUMP, OUTPUT);
+  #endif
+  #if defined(PIN_HV_FEEDBACK)
+    /* Charge pump feedback: AC0 Input positive logic. */
+    /* No pull-up. Compared with DAC setting voltage.  */
+    pinControlRegister(PIN_HV_FEEDBACK) = 0;
+  #endif
+  #if defined(PIN_HV_SWITCH)
+    /* Charge pump voltage control; AC0 Output negative logic */
+    pinControlRegister(PIN_HV_SWITCH) = PORT_INVEN_bm;
+    pinModeMacro(PIN_HV_SWITCH, OUTPUT);
+  #endif
+  #if defined(PIN_HV_POWER)
+    /* Device power control: output positive logic */
+    pinModeMacro(PIN_HV_POWER, OUTPUT);
+    digitalWriteMacro(PIN_HV_POWER, HIGH);
+  #endif
+
+    /*
+     * GPIO - USB
+     */
+
+  #if defined(PIN_USB_VDETECT)
+    pinControlRegister(PIN_USB_VDETECT) = PORT_PULLUPEN_bm;
+  #endif
+
+    /*
+     * GPIO - SYS
+     */
+
+  #if defined(PIN_SYS_SW0)
+    /* SW0 detection: Input negative logic. */
+    /* Use CCL in conjunction to separate the falling edge and rising edge interrupts. */
+    /* For the falling edge, use the CCL filter function to remove chattering noise.   */
+    pinControlRegister(PIN_SYS_SW0) = PORT_PULLUPEN_bm | PORT_ISC_RISING_gc;
+    portRegister(PIN_SYS_SW0).EVGENCTRLA = pinPosition(PIN_SYS_SW0);
+    #if (PIN_SYS_SW0 & 0xF0) == 176
+    EVSYS_CHANNEL3 = EVSYS_CHANNEL_PORTF_EVGEN0_gc;
+    #elif (PIN_SYS_SW0 & 0xF0) == 112
+    EVSYS_CHANNEL3 = EVSYS_CHANNEL_PORTD_EVGEN0_gc;
+    #elif (PIN_SYS_SW0 & 0xF0) == 16
+    EVSYS_CHANNEL3 = EVSYS_CHANNEL_PORTA_EVGEN0_gc;
+    #endif
+  #endif
+
+    /*
+     * GPIO - LED
+     */
 
   #if (CONFIG_HAL_TYPE == HAL_BAREMETAL_14P)
-    /* HV-control is not available in this package. */
-
-    pinControlRegister(PIN_PGM_TCLK) = PORT_PULLUPEN_bm | PORT_ISC_INPUT_DISABLE_gc;
-
-    VPORTC_DIR = _BV(3);  /* PIN_SYS_LED0 */
-    VPORTD_DIR = _BV(7);  /* PIN_PGM_PDISEL or PIN_SYS_LED1 */
-
-    /*** VUSB Bus-Powerd ***/
-    SYSCFG_VUSBCTRL = SYSCFG_USBVREG_bm;
-
-    /*** LED0 Heart-Beat generator ***/
-    CCL_TRUTH1    = CCL_TRUTH_1_bm     | CCL_TRUTH_2_bm;
-    CCL_LUT1CTRLB = CCL_INSEL0_TCA0_gc | CCL_INSEL1_TCB1_gc;
-    CCL_LUT1CTRLA = CCL_ENABLE_bm      | CCL_OUTEN_bm;  /* LED0 -> PIN_PC3 */
-
-    #ifndef CONFIG_PGM_PDI_ENABLE
-    /*** LED1 Flash generator ***/
-    PORTMUX_EVSYSROUTEA   = PORTMUX_EVOUTD_ALT1_gc;     /* EVOUTD -> PIN_PD7 */
-    EVSYS_USEREVSYSEVOUTD = EVSYS_CHANNEL_CCL_LUT3_gc;  /* LUT3_OUT -> EVOUTD */
-    EVSYS_USERCCLLUT3A    = EVSYS_USER_CHANNEL4_gc;     /* <- VRxD */
-
-    CCL_TRUTH3    = CCL_TRUTH_0_bm       | CCL_TRUTH_1_bm | CCL_TRUTH_2_bm;
-    CCL_LUT3CTRLB = CCL_INSEL0_USART0_gc | CCL_INSEL1_EVENTA_gc;
-    CCL_LUT3CTRLA = CCL_ENABLE_bm;                      /* LED1 */
-    #endif
-
-  #elif (CONFIG_HAL_TYPE == HAL_BAREMETAL_20P)
-    /* In this profile, all pins are used. */
-
-    #ifdef CONFIG_HVC_ENABLE
-    pinControlRegister(PIN_HVC_FEEDBACK) = PORT_ISC_INTDISABLE_gc;
-    #endif
-
-    VPORTA_DIR = _BV(4) | _BV(5) | _BV(6) | _BV(7); /* SL1 SL2 LED0 HVSW */
-    VPORTD_DIR = _BV(4) | _BV(5) | _BV(6) | _BV(7); /* HVCP1 HVCP2 VPW PDIS(or LED1) */
-
-    PORTMUX_CCLROUTEA = PORTMUX_LUT0_ALT1_gc;       /* LUT0_OUT -> PIN_PA6 */
-    PORTMUX_TCAROUTEA = PORTMUX_TCA0_PORTD_gc;      /* TCA0_WO -> PORTD(ALT3) */
-
-    /*** VUSB Bus-Powerd ***/
-    SYSCFG_VUSBCTRL = SYSCFG_USBVREG_bm;
-
-    /*** LED0 Heart-Beat generator ***/
-    CCL_TRUTH0    = CCL_TRUTH_1_bm     | CCL_TRUTH_2_bm;
+    /* PORTMUX LUT0OUT -> PIN_PC3 */
+    /* TRUTH0: 001 010 is ON */
+    CCL_TRUTH0    = CCL_TRUTH_1_bm | CCL_TRUTH_2_bm;
     CCL_LUT0CTRLB = CCL_INSEL0_TCA0_gc | CCL_INSEL1_TCB1_gc;
-    CCL_LUT0CTRLA = CCL_ENABLE_bm      | CCL_OUTEN_bm;  /* LED0 -> LUT0_OUT */
-
-    #ifndef CONFIG_PGM_PDI_ENABLE
-    /*** LED1 Flash generator ***/
-    PORTMUX_EVSYSROUTEA   = PORTMUX_EVOUTD_ALT1_gc;     /* EVOUTD -> PIN_PD7 */
-    EVSYS_USEREVSYSEVOUTD = EVSYS_CHANNEL_CCL_LUT3_gc;  /* LUT3_OUT -> EVOUTD */
-    EVSYS_USERCCLLUT3A    = EVSYS_USER_CHANNEL4_gc;     /* <- VRxD */
-
-    CCL_TRUTH3    = CCL_TRUTH_0_bm       | CCL_TRUTH_1_bm | CCL_TRUTH_2_bm;
-    CCL_LUT3CTRLB = CCL_INSEL0_USART0_gc | CCL_INSEL1_EVENTA_gc;
-    CCL_LUT3CTRLA = CCL_ENABLE_bm;                      /* LED1 */
-    #endif
-
-    AC0_MUXCTRL = AC_INVERT_bm | AC_MUXPOS_AINP4_gc | AC_MUXNEG_DACREF_gc;
-
+    CCL_LUT0CTRLA = CCL_ENABLE_bm | CCL_OUTEN_bm; /* PIN_PC3 */
   #elif (CONFIG_HAL_TYPE == HAL_CNANO)
-    /* In this profile, PA6 and PD3 remain unused. */
-
-    pinControlRegister(PIN_SYS_LED0) = PORT_INVEN_bm | PORT_ISC_INPUT_DISABLE_gc;
-    #ifdef CONFIG_HVC_ENABLE
-    pinControlRegister(PIN_HVC_FEEDBACK) = PORT_ISC_INTDISABLE_gc;
-    #endif
-    #ifdef CONFIG_VCP_CTS_ENABLE
-    pinControlRegister(PIN_VCP_CTS) = PORT_PULLUPEN_bm | PORT_ISC_INTDISABLE_gc;
-    #endif
-
-    VPORTA_DIR = _BV(4) | _BV(5) | _BV(7);  /* WO4 WO5 HVSW */
-    VPORTD_DIR = _BV(1) | _BV(4) | _BV(5);  /* DTR HVSL1 HVSL2 */
-    VPORTF_DIR = _BV(3) | _BV(4) | _BV(5);  /* LED1 VPW PDIS */
-
-    PORTMUX_EVSYSROUTEA   = PORTMUX_EVOUTA_ALT1_gc;     /* EVOUTA -> PIN_PA7 */
-    EVSYS_CHANNEL0        = EVSYS_CHANNEL_CCL_LUT0_gc;  /* <- LED0 */
-    EVSYS_USEREVSYSEVOUTF = EVSYS_USER_CHANNEL0_gc;     /* LED0 -> EVOUTF:PIN_PF2 */
-    EVSYS_USEREVSYSEVOUTA = EVSYS_CHANNEL_AC0_OUT_gc;   /* AC0_OUT -> EVOUTA */
-    EVSYS_USERCCLLUT3A    = EVSYS_USER_CHANNEL4_gc;     /* <- VRxD */
-
-    /*** LED0 Heart-Beat generator ***/
-    CCL_TRUTH0    = CCL_TRUTH_1_bm     | CCL_TRUTH_2_bm;
+    /* PORTMUX LUT0OUT -> EVSYSOUTF -> PIN_PF2 Invert */
+    pinControlRegister(PIN_PF2) = PORT_INVEN_bm;
+    EVSYS_CHANNEL0 = EVSYS_CHANNEL_CCL_LUT0_gc;
+    EVSYS_USEREVSYSEVOUTF = EVSYS_USER_CHANNEL0_gc;
+    /* TRUTH0: 000 001 010 011 is ON */
+    CCL_TRUTH0    = CCL_TRUTH_1_bm | CCL_TRUTH_2_bm;
     CCL_LUT0CTRLB = CCL_INSEL0_TCA0_gc | CCL_INSEL1_TCB1_gc;
-    CCL_LUT0CTRLA = CCL_ENABLE_bm;                      /* LED0 */
-
-    /*** LED1 Flash generator ***/
-    CCL_TRUTH3    = CCL_TRUTH_0_bm       | CCL_TRUTH_1_bm | CCL_TRUTH_2_bm;
-    CCL_LUT3CTRLB = CCL_INSEL0_USART0_gc | CCL_INSEL1_EVENTA_gc;
-    CCL_LUT3CTRLA = CCL_ENABLE_bm        | CCL_OUTEN_bm;  /* LED1 -> PIN_PF3 */
-
-    AC0_MUXCTRL = AC_INVERT_bm | AC_MUXPOS_AINP0_gc | AC_MUXNEG_DACREF_gc;
-
-  #else /* (CONFIG_HAL_TYPE == HAL_BAREMETAL_28P) || (CONFIG_HAL_TYPE == HAL_BAREMETAL_32P) */
-    /* In this profile, PF1 to PF5 remain unused. */
-
-    pinControlRegister(PIN_SYS_VDETECT)  = PORT_PULLUPEN_bm | PORT_ISC_INTDISABLE_gc;
-    #ifdef CONFIG_HVC_ENABLE
-    pinControlRegister(PIN_HVC_FEEDBACK) = PORT_ISC_INTDISABLE_gc;
-    #endif
-
-    VPORTA_DIR = _BV(6) | _BV(7);   /* LED0 LED1 */
-    VPORTD_DIR = _BV(0) | _BV(1) | _BV(2) | _BV(3) | _BV(4) | _BV(5);
-                                    /* HVSL1 HVSL2 HVSW VPW HVCP1 HVCP2 */
-    VPORTF_DIR = _BV(0);            /* PDIS */
-
-    PORTMUX_CCLROUTEA   = PORTMUX_LUT0_ALT1_gc;         /* LUT0_OUT -> PIN_PA6 */
-    PORTMUX_EVSYSROUTEA = PORTMUX_EVOUTA_ALT1_gc;       /* EVOUTA -> PIN_PA7 */
-
-    EVSYS_USEREVSYSEVOUTA = EVSYS_CHANNEL_CCL_LUT3_gc;  /* LED1 -> EVOUTA */
-    EVSYS_USEREVSYSEVOUTD = EVSYS_CHANNEL_AC0_OUT_gc;   /* AC0_OUT -> EVOUTD:PIN_PD2 */
-    EVSYS_USERCCLLUT3A    = EVSYS_USER_CHANNEL4_gc;     /* <- VRxD */
-
-    /*** LED0 Heart-Beat generator ***/
-    CCL_TRUTH0    = CCL_TRUTH_1_bm     | CCL_TRUTH_2_bm;
-    CCL_LUT0CTRLB = CCL_INSEL0_TCA0_gc | CCL_INSEL1_TCB1_gc;
-    CCL_LUT0CTRLA = CCL_ENABLE_bm      | CCL_OUTEN_bm;  /* LED0 -> LUT0_OUT */
-
-    /*** LED1 Flash generator ***/
-    CCL_TRUTH3    = CCL_TRUTH_0_bm       | CCL_TRUTH_1_bm | CCL_TRUTH_2_bm;
-    CCL_LUT3CTRLB = CCL_INSEL0_USART0_gc | CCL_INSEL1_EVENTA_gc;
-    CCL_LUT3CTRLA = CCL_ENABLE_bm;                      /* LED1 */
-
-    AC0_MUXCTRL = AC_INVERT_bm | AC_MUXPOS_AINP4_gc | AC_MUXNEG_DACREF_gc;
-
-  #endif
-
-  #if (PIN_SYS_SW0 & 0xF0) == 176
-    EVSYS_CHANNEL3 = EVSYS_CHANNEL_PORTF_EVGEN0_gc;
-  #elif (PIN_SYS_SW0 & 0xF0) == 112
-    EVSYS_CHANNEL3 = EVSYS_CHANNEL_PORTD_EVGEN0_gc;
-  #elif (PIN_SYS_SW0 & 0xF0) == 16
-    EVSYS_CHANNEL3 = EVSYS_CHANNEL_PORTA_EVGEN0_gc;
-  #endif
-
-  #if (PIN_VCP_RXD & 0xF0) == 176
-    EVSYS_CHANNEL4 = EVSYS_CHANNEL_PORTF_EVGEN1_gc;
-  #elif (PIN_VCP_RXD & 0xF0) == 112
-    EVSYS_CHANNEL4 = EVSYS_CHANNEL_PORTD_EVGEN1_gc;
-  #elif (PIN_VCP_RXD & 0xF0) == 16
-    EVSYS_CHANNEL4 = EVSYS_CHANNEL_PORTA_EVGEN1_gc;
-  #endif
-
-  #if (PIN_SYS_SW0 & 0xF0) == (PIN_VCP_RXD & 0xF0)
-    portRegister(PIN_SYS_SW0).EVGENCTRLA = pinPosition(PIN_SYS_SW0) | (pinPosition(PIN_VCP_RXD) << 4);
+    CCL_LUT0CTRLA = CCL_ENABLE_bm;
   #else
-    portRegister(PIN_SYS_SW0).EVGENCTRLA = pinPosition(PIN_SYS_SW0);
-    portRegister(PIN_VCP_RXD).EVGENCTRLA = pinPosition(PIN_VCP_RXD) << 4;
+    /* PORTMUX LUT1OUT -> PIN_PA6 */
+    PORTMUX_CCLROUTEA = PORTMUX_LUT0_ALT1_gc;
+    /* TRUTH1: 001 010 is ON */
+    CCL_TRUTH1    = CCL_TRUTH_1_bm | CCL_TRUTH_2_bm;
+    CCL_LUT1CTRLB = CCL_INSEL0_TCA0_gc | CCL_INSEL1_TCB1_gc;
+    CCL_LUT1CTRLA = CCL_ENABLE_bm | CCL_OUTEN_bm; /* PIN_PA6 */
   #endif
 
-    /*** SW0 FALLING Interrupt generator ***/
-    EVSYS_USERCCLLUT2A = EVSYS_USER_CHANNEL3_gc;  /* <- SW0 */
-    CCL_TRUTH2    = CCL_TRUTH_1_bm;
-    CCL_LUT2CTRLB = CCL_INSEL0_EVENTA_gc;
-    CCL_LUT2CTRLA = CCL_ENABLE_bm | CCL_FILTSEL_FILTER_gc;
-    CCL_INTCTRL0  = CCL_INTMODE2_FALLING_gc;
+  #if defined(PIN_SYS_SW0)
+    /* SW0 -> CH3 -> LUT3OUT -> INTFLAGS:INT3 */
+    EVSYS_USERCCLLUT3A = EVSYS_USER_CHANNEL3_gc;
+    CCL_TRUTH3    = CCL_TRUTH_1_bm;
+    CCL_LUT3CTRLB = CCL_INSEL0_EVENTA_gc;
+    CCL_LUT3CTRLA = CCL_ENABLE_bm | CCL_FILTSEL_FILTER_gc;
+    CCL_INTCTRL0  = CCL_INTMODE3_FALLING_gc;
+  #endif
 
     /*** CCL enable ***/
     /* One of the CCL's is the LED output control. */
@@ -300,14 +229,6 @@ namespace SYS {
    * Target Reset
    */
 
-  void power_reset (void) {
-  #ifdef PIN_PGM_VPOWER
-    digitalWriteMacro(PIN_PGM_VPOWER, HIGH);
-    delay_millis(200);
-    digitalWriteMacro(PIN_PGM_VPOWER, LOW);
-  #endif
-  }
-
   /*** Low level TDAT stream manipulation ***/
   /* UPDI commands are sent from TDAT using only TCA0 and bit manipulation, without switching USART. */
   /* 128kbps is the lowest limit that can be achieved with an 8-bit timer at 32MHz or less. */
@@ -318,9 +239,9 @@ namespace SYS {
       uint8_t _d = (_bitmap[i >> 3]) >> (i & 7);
       loop_until_bit_is_set(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_HUNF_bp);
       if (bit_is_set(_d, 0))
-        openDrainWriteMacro(PIN_PGM_TDAT, HIGH);
+        openDrainWriteMacro(PIN_PG_TDAT, HIGH);
       else
-        openDrainWriteMacro(PIN_PGM_TDAT, LOW);
+        openDrainWriteMacro(PIN_PG_TDAT, LOW);
       bit_set(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_HUNF_bp);
     }
     TCA0_SPLIT_CTRLA = 0;
@@ -333,7 +254,7 @@ namespace SYS {
   void reset_enter (void) {
     LED_Blink();
     if (_jtag_arch == 5) {
-      /*
+      /* 
        * Puts a tinyAVR-0 which does not have a reset pad into reset state.
        * This applies to all chips which have an enabled UPDI pad.
        * Does not affect TPI/PDI types.
@@ -341,7 +262,7 @@ namespace SYS {
       _updi_bitmap[10] = 0x59; /* SYSRST */
       send_bitmap(_updi_bitmap, sizeof(_updi_bitmap) * 8);
     }
-    openDrainWriteMacro(PIN_PGM_TRST, LOW);
+    openDrainWriteMacro(PIN_PG_TRST, LOW);
     D1PRINTF("<RST:IN>\r\n");
     bit_clear(GPCONF, GPCONF_FAL_bp);
   }
@@ -356,7 +277,7 @@ namespace SYS {
       _updi_bitmap[10] = 0x00; /* SYSRUN */
       send_bitmap(_updi_bitmap, sizeof(_updi_bitmap) * 8);
     }
-    openDrainWriteMacro(PIN_PGM_TRST, HIGH);
+    openDrainWriteMacro(PIN_PG_TRST, HIGH);
   #ifdef CONFIG_VCP_DTR_RESET
     /* A delay of 64ms or more between when the bootloader starts and when RxD opens. */
     delay_millis(100);
@@ -402,7 +323,7 @@ namespace SYS {
 
   /*
    * Measure self operating voltage.
-   *
+   * 
    * Vdd/10 goes into MUXPOS and is divided by the internal reference voltage of 1.024V.
    * A delay of 1250us is required for the voltage to stabilize.
    * The result is 10-bit, so multiply by 10.0 to convert to 1V * 0.0001.
@@ -435,7 +356,7 @@ ISR(portIntrruptVector(PIN_SYS_SW0)) {
 }
 
 ISR(CCL_CCL_vect) {
-  /* SW0 Falling Intrrupt from CCL2 */
+  /* SW0 Falling Intrrupt */
   CCL_INTFLAGS = ~0;
   bit_set(GPCONF, GPCONF_FAL_bp);
 }
