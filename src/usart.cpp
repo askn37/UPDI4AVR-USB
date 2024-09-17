@@ -96,7 +96,8 @@ namespace USART {
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
       D1PRINTF(" UART=TPI\r\n");
       /* In synchronous mode the formula is different. */
-      uint32_t _baud = ((F_CPU / 1000L) / _xclk + 1) / 2;
+      /* The target device typically runs at 1MHz, so a safe communication speed is 100kHz. */
+      uint32_t _baud = ((F_CPU / 1000L) / 100 + 1) / 2;
       _baud <<= 6;
       if (_baud < 64) _baud = 64;
       PORTMUX_USARTROUTEA = PORTMUX_USART_PGM;

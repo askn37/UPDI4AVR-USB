@@ -261,7 +261,8 @@ namespace UPDI {
   bool chip_erase (void) {
     USART::drain();
     if (!set_erase_key()) return false;
-    delay_millis(200);
+    SYS::delay_125ms();
+    SYS::delay_125ms();
     USART::drain();
     do { sys_status(); } while(bit_is_set(RXDATA, 5));    /* wait clear RSTSYS */
     do { sys_status(); } while(bit_is_set(RXDATA, 0));    /* wait clear LOCKSTATUS */
@@ -347,21 +348,50 @@ namespace UPDI {
     _before_page = -1L;
     NVM::V1::setup();   /* default is dummy callback */
     openDrainWriteMacro(PIN_PGM_TRST, LOW);
-    nop();
 
+  #ifdef CONFIG_HVC_ENABLE
     /* External Reset */
-    if (packet.out.bMType) {
+    if (_packet_length >= 7 && packet.out.bMType) {
       D1PRINTF("<PWRST>\r\n");
       SYS::power_reset();
-  #ifdef CONFIG_HVC_ENABLE
       /* High-Voltage control */
-  #endif
+      if (_jtag_hvctrl) {
+        uint8_t _v = Device_Descriptor.UPDI.hvupdi_variant;
+        if (_v == 0) {
+          D1PRINTF("<HVC:TypeA>\r\n");
+          DFLUSH();
+          SYS::hvc_enter_updi_a();
+        }
+        else if (_v == 2) {
+          D1PRINTF("<HVC:TypeB>\r\n");
+          DFLUSH();
+          SYS::hvc_enter_updi_b();
+        }
+      }
+      openDrainWriteMacro(PIN_PGM_TRST, HIGH);
+      send(0xFE);
+      loop_until_bit_is_set(VPORTA_IN, 0);
+      delay_millis(4);
+      D1PRINTF("<HVC:leave>\r\n");
+      DFLUSH();
     }
-
+    else {
+      openDrainWriteMacro(PIN_PGM_TRST, HIGH);
+      USART::drain();
+      long_break();
+    }
+  #else
+    if (_packet_length >= 7 && packet.out.bMType) {
+      D1PRINTF("<PWRST>\r\n");
+      SYS::power_reset();
+    }
     openDrainWriteMacro(PIN_PGM_TRST, HIGH);
     USART::drain();
     long_break();
+  #endif
+
     if (send_bytes(_init, sizeof(_init))) {
+      D1PRINTF("<STAT:%02X>", RXDATA);
       do { sys_status(); } while(bit_is_set(RXDATA, 4));  /* wait clear INSLEEP */
       D1PRINTF("<STAT:%02X>", RXDATA);
       if (send_bytes(_sib256, sizeof(_sib256))
@@ -401,16 +431,22 @@ namespace UPDI {
   size_t enter_progmode (void) {
     if (bit_is_set(PGCONF, PGCONF_PROG_bp)) return 1;
     if (!set_nvmprog_key()) return 0;
+    D1PRINTF(" PROGSTART=");
+    /* Some chips take time to enter PROGSTART. Wait up to 25ms here. */
     uint8_t _count = 0;
     do {
       /* Do not wait for the global timeout to ensure that LOCKSTAT cannot */
       /* be released. Aborting the ACC instruction set here will adversely */
       /* affect subsequent USERROW writes or chip erases. */
-      if (0 == ++_count) return 0;
-      delay_micros(50);
+      if (0 == ++_count) {
+        D1PRINTF("%02X\r\n", RXDATA);
+        return 0;
+      }
+      SYS::delay_100us();
       sys_status();
     } while (bit_is_clear(RXDATA, 3));  /* wait set PROGSTART */
-    D1PRINTF(" PROGSTART=%02X\r\n", RXDATA);
+    D1PRINTF("%02X\r\n", RXDATA);
+    D2PRINTF(" CNT=%d\r\n", _count);
     bit_set(PGCONF, PGCONF_PROG_bp);
     return (*Command_Table.prog_init)();
   }

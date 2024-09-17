@@ -30,6 +30,7 @@
 #endif
 
 #undef Serial
+#define DFLUSH()
 #define D0PRINTF(FMT, ...)
 #define D1PRINTF(FMT, ...)
 #define D2PRINTF(FMT, ...)
@@ -41,6 +42,8 @@
 #if defined(DEBUG)
   #include "peripheral.h" /* from Micro_API : import Serial (Debug) */
   #define Serial Serial1C /* PIN_PD6:TxD, PIN_PD7:RxD */
+  #undef  DFLUSH
+  #define DFLUSH() Serial.flush()
   #undef  D0PRINTF
   #define D0PRINTF(FMT, ...) Serial.printf(F(FMT), ##__VA_ARGS__)
   #undef  D0PRINTHEX
@@ -123,6 +126,8 @@
   #define PGCONF_PROG_bm  (1 << 1)
   #define PGCONF_ERSE_bp  2         /* Chip erase completed */
   #define PGCONF_ERSE_bm  (1 << 2)
+  #define PGCONF_HVEN_bp  6         /* HV control in TPI */
+  #define PGCONF_HVEN_bm  (1 << 6)
   #define PGCONF_FAIL_bp  7         /* Initialization failed (timeout) */
   #define PGCONF_FAIL_bm  (1 << 7)
 
@@ -463,12 +468,18 @@ namespace SYS {
   void LED_Flash (void);
   void LED_Blink (void);
   void LED_Fast (void);
-  void power_reset (void);
+  void power_reset (bool _off = true, bool _on = true);
   void reset_enter (void);
   void reset_leave (void);
   void reboot (void);
   bool is_boundary_flash_page (uint32_t _dwAddr);
   uint16_t get_vdd (void);
+  void hvc_leave (void);
+  void hvc_enter_updi_a (void);
+  void hvc_enter_updi_b (void);
+  void hvc_enter_tpi (void);
+  void delay_100us (void);
+  void delay_125ms (void);
 };
 
 namespace Timeout {

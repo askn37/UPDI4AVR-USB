@@ -234,11 +234,9 @@ namespace JTAG {
           /* Called with `-xvtarget_switch=0,1` HAS_VTARG_SWITCH */
           D1PRINTF(" TARGET_POWER=%02X\r\n", _data);
           _jtag_vpow = _data;       /* 0,1 */
-  #if defined(PIN_HV_POWER)
-          if (_data)
-            digitalWriteMacro(PIN_HV_POWER, HIGH);
-          else
-            digitalWriteMacro(PIN_HV_POWER, LOW);
+  #if defined(PIN_PGM_VPOWER)
+          if (_data) SYS::power_reset(false, true);   /* VPW on  */
+          else       SYS::power_reset(true, false);   /* VPW off */
   #endif
         }
       }
@@ -382,7 +380,9 @@ namespace JTAG {
   void jtag_scope_branch (void) {
     size_t _rspsize = 0;
     uint8_t _scope  = packet.out.scope;
-    D1PRINTF("SCOPE=%02X,C=%02X,S=%02X,L=%02X\r\n",
+    D1PRINTF("SQ=%d:%d>SCOPE=%02X,C=%02X,S=%02X,L=%02X\r\n",
+      packet.out.sequence,
+      _packet_length,
       _scope,
       packet.out.cmd,
       packet.out.section,

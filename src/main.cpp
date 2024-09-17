@@ -82,6 +82,9 @@ void setup_mcu (void) { initVariant(); }
 
 int main (void) {
 
+  SYS::setup();
+  Timeout::setup();
+
 #if defined(DEBUG)
   Serial.begin(CONSOLE_BAUD).println(F("\n<startup>"));
   Serial.print(F("F_CPU = ")).println(F_CPU, DEC);
@@ -89,8 +92,6 @@ int main (void) {
   Serial.print(F("__AVR_ARCH__ = ")).println(__AVR_ARCH__, DEC);
 #endif
 
-  SYS::setup();
-  Timeout::setup();
   USART::setup();
 
   loop_until_bit_is_clear(WDT_STATUS, WDT_SYNCBUSY_bp);
@@ -105,7 +106,8 @@ int main (void) {
 
   #if !defined(PIN_SYS_VDETECT)
   /* If you do not use VBD, insert the shortest possible delay instead. */
-  delay_millis(250);
+  SYS::delay_125ms();
+  SYS::delay_125ms();
   USB::setup_device(true);
   #else
   SYS::LED_Flash();

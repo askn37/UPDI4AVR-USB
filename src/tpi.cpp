@@ -211,21 +211,24 @@ namespace TPI {
   size_t connect (void) {
     PGCONF = PGCONF_FAIL_bm;
     USART::disable_vcp();
-
-    if (_packet_length > 6 && packet.out.tpi.bType) {
-      /* External Reset : Activation High-Voltage mode */
-      D1PRINTF("<HVEN>\r\n");
-      /* STUB */
-    }
-
-    /*** Enter RESET (normal programing) ***/
-    /* TRST remains LOW until program mode is exited. */
     openDrainWriteMacro(PIN_PGM_TDAT, LOW);
   #if (PIN_PGM_TCLK != PIN_VCP_TXD)
     openDrainWriteMacro(PIN_PGM_TCLK, LOW);
   #endif
-    openDrainWriteMacro(PIN_PGM_TRST, LOW);
-    SYS::power_reset();
+
+    if (_packet_length > 6 && packet.out.tpi.bType) {
+      /* External Reset : Activation High-Voltage mode */
+      D1PRINTF("<HVEN>\r\n");
+      SYS::power_reset();
+      SYS::hvc_enter_tpi();
+      bit_set(PGCONF, PGCONF_HVEN_bp);
+    }
+    else {
+      /*** Enter RESET (normal programing) ***/
+      /* TRST remains LOW until program mode is exited. */
+      openDrainWriteMacro(PIN_PGM_TRST, LOW);
+      SYS::power_reset();
+    }
 
     /*** Activate clock ***/
     /* If a device is pushing or pulling a control pin at OUTPUT,     */
@@ -287,9 +290,16 @@ namespace TPI {
     set_sstcs(0x00, 0x00);
     D1PRINTF(" TPISR<00\r\n");
     /* Send the NVM exit command, wait a short while and release RESET. */
-    delay_micros(100);
+    SYS::delay_100us();
+    if (bit_is_set(PGCONF, PGCONF_HVEN_bp)) {
+      SYS::hvc_leave();
+      digitalWriteMacro(PIN_HVC_SELECT2, LOW);
+      D1PRINTF("<HVLV>\r\n");
+    }
+
     openDrainWriteMacro(PIN_VCP_TXD, HIGH);
     openDrainWriteMacro(PIN_PGM_TRST, HIGH);
+    SYS::power_reset();
     PGCONF = 0;
     return 1;
   }
