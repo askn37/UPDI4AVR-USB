@@ -202,14 +202,16 @@ namespace JTAG {
     }
     else if (_cmd == 0x10) {        /* CMD3_SIGN_ON */
       D1PRINTF(" GEN_SIGN_ON\r\n");
+      bit_set(GPCONF, GPCONF_PGM_bp);
       _jtag_hvctrl = 0;
-      _jtag_unlock = 0;
+      _jtag_unlock = 0;   /* This is not used. */
       _jtag_arch = 0;
-      _tpi_setmode = 0;
+      _xclk = PGM_CLK;
       packet.in.res = 0x80;         /* RSP3_OK */
     }
     else if (_cmd == 0x11) {        /* CMD3_SIGN_OFF */
       D1PRINTF(" GEN_SIGN_OFF\r\n");
+      bit_clear(GPCONF, GPCONF_PGM_bp);
       packet.in.res = 0x80;         /* RSP3_OK */
     }
     else {
@@ -234,11 +236,9 @@ namespace JTAG {
           /* Called with `-xvtarget_switch=0,1` HAS_VTARG_SWITCH */
           D1PRINTF(" TARGET_POWER=%02X\r\n", _data);
           _jtag_vpow = _data;       /* 0,1 */
-  #if defined(PIN_HV_POWER)
-          if (_data)
-            digitalWriteMacro(PIN_HV_POWER, HIGH);
-          else
-            digitalWriteMacro(PIN_HV_POWER, LOW);
+  #if defined(PIN_PGM_VPOWER)
+          SYS::power_reset(true, false);              /* VPW off */
+          if (_data) SYS::power_reset(false, true);   /* VPW on  */
   #endif
         }
       }
@@ -276,7 +276,7 @@ namespace JTAG {
         }
         else if (_index == 1) {     /* PARM3_SESS_PURPOSE */
           D1PRINTF(" SESS_PURPOSE=%02X\r\n", _data);
-          _jtag_sess = _data;       /* */
+          _jtag_sess = _data;
         }
       }
       else if (_section == 1) {     /* SET_GET_CTXT_PHYSICAL */
@@ -382,7 +382,10 @@ namespace JTAG {
   void jtag_scope_branch (void) {
     size_t _rspsize = 0;
     uint8_t _scope  = packet.out.scope;
-    D1PRINTF("SCOPE=%02X,C=%02X,S=%02X,L=%02X\r\n",
+    wdt_reset();
+    D1PRINTF("SQ=%d:%d>SCOPE=%02X,C=%02X,S=%02X,L=%02X\r\n",
+      packet.out.sequence,
+      _packet_length,
       _scope,
       packet.out.cmd,
       packet.out.section,

@@ -5,8 +5,8 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.32.40+
- * @date 2024-07-10
+ * @version 1.33.46+
+ * @date 2024-08-26
  * @copyright Copyright (c) 2024 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -30,6 +30,7 @@
 #endif
 
 #undef Serial
+#define DFLUSH()
 #define D0PRINTF(FMT, ...)
 #define D1PRINTF(FMT, ...)
 #define D2PRINTF(FMT, ...)
@@ -41,6 +42,8 @@
 #if defined(DEBUG)
   #include "peripheral.h" /* from Micro_API : import Serial (Debug) */
   #define Serial Serial1C /* PIN_PD6:TxD, PIN_PD7:RxD */
+  #undef  DFLUSH
+  #define DFLUSH() Serial.flush()
   #undef  D0PRINTF
   #define D0PRINTF(FMT, ...) Serial.printf(F(FMT), ##__VA_ARGS__)
   #undef  D0PRINTHEX
@@ -111,6 +114,8 @@
   #define GPCONF_BRK_bm   (1 << 3)
   #define GPCONF_OPN_bp   4         /* VCP-RxD open */
   #define GPCONF_OPN_bm   (1 << 4)
+  #define GPCONF_PGM_bp   5         /* JTAG watchdog */
+  #define GPCONF_PGM_bm   (1 << 5)
   #define GPCONF_RIS_bp   6         /* SW0 release event */
   #define GPCONF_RIS_bm   (1 << 6)
   #define GPCONF_FAL_bp   7         /* SW0 push event */
@@ -123,6 +128,8 @@
   #define PGCONF_PROG_bm  (1 << 1)
   #define PGCONF_ERSE_bp  2         /* Chip erase completed */
   #define PGCONF_ERSE_bm  (1 << 2)
+  #define PGCONF_HVEN_bp  6         /* HV control in TPI */
+  #define PGCONF_HVEN_bm  (1 << 6)
   #define PGCONF_FAIL_bp  7         /* Initialization failed (timeout) */
   #define PGCONF_FAIL_bm  (1 << 7)
 
@@ -433,7 +440,6 @@ extern "C" {
     extern uint8_t _sib[32];
 
     /* TPI parameter */
-    extern uint8_t _tpi_setmode;
     extern uint8_t _tpi_cmd_addr;
     extern uint8_t _tpi_csr_addr;
     extern uint8_t _tpi_chunks;
@@ -463,11 +469,17 @@ namespace SYS {
   void LED_Flash (void);
   void LED_Blink (void);
   void LED_Fast (void);
+  void power_reset (bool _off = true, bool _on = true);
   void reset_enter (void);
   void reset_leave (void);
   void reboot (void);
   bool is_boundary_flash_page (uint32_t _dwAddr);
   uint16_t get_vdd (void);
+  void hvc_enable (void);
+  void hvc_leave (void);
+  void delay_100us (void);
+  void delay_800us (void);
+  void delay_125ms (void);
 };
 
 namespace Timeout {
@@ -475,7 +487,7 @@ namespace Timeout {
   void start (uint16_t _ms);
   void stop (void) __attribute__((used, naked, noinline));
   void extend (uint16_t _ms);
-  size_t command (size_t (*func_p)(void), uint16_t _ms = 800);
+  size_t command (size_t (*func_p)(void), size_t (*fail_p)(void) = nullptr, uint16_t _ms = 250);
 };
 
 namespace TPI {
@@ -492,6 +504,7 @@ namespace UPDI {
   bool recv_bytes (uint8_t* _data, size_t _len);
   bool recv (void);
   bool send_bytes (const uint8_t* _data, size_t _len);
+  bool send_bytes_fill (size_t _len);
   bool send (const uint8_t _data);
   bool recv_byte (uint32_t _dwAddr);
   bool send_byte (uint32_t _dwAddr, uint8_t _data);
@@ -515,7 +528,7 @@ namespace UPDI {
 namespace USART {
   void setup (void);
   uint16_t calk_baud_khz (uint16_t _khz);
-  void drain (size_t _delay = 0);
+  void drain (size_t _delay = 1024);
   void disable_vcp (void);
   void change_vcp (void);
   void change_updi (void);

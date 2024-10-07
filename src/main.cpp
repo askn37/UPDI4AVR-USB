@@ -57,7 +57,7 @@ namespace /* NAMELESS */ {
   /* JTAG parameter */
   NOINIT uint32_t _before_page;
   NOINIT uint16_t _vtarget;         /* LSB=1V/1000 <- SYS::get_vdd() */
-  uint16_t _xclk = UPDI_CLK / 1000; /* LSB=1KHz using USART_CMODE_SYNCHRONOUS_gc */
+  uint16_t _xclk;                   /* LSB=1KHz using USART_CMODE_SYNCHRONOUS_gc */
   uint8_t _jtag_vpow = 1;
   NOINIT uint8_t _jtag_hvctrl;
   NOINIT uint8_t _jtag_unlock;
@@ -70,7 +70,6 @@ namespace /* NAMELESS */ {
   NOINIT uint8_t _sib[32];
 
   /* TPI parameter */
-  NOINIT uint8_t _tpi_setmode;
   NOINIT uint8_t _tpi_cmd_addr;
   NOINIT uint8_t _tpi_csr_addr;
   NOINIT uint8_t _tpi_chunks;
@@ -82,6 +81,9 @@ void setup_mcu (void) { initVariant(); }
 
 int main (void) {
 
+  SYS::setup();
+  Timeout::setup();
+
 #if defined(DEBUG)
   Serial.begin(CONSOLE_BAUD).println(F("\n<startup>"));
   Serial.print(F("F_CPU = ")).println(F_CPU, DEC);
@@ -89,8 +91,6 @@ int main (void) {
   Serial.print(F("__AVR_ARCH__ = ")).println(__AVR_ARCH__, DEC);
 #endif
 
-  SYS::setup();
-  Timeout::setup();
   USART::setup();
 
   loop_until_bit_is_clear(WDT_STATUS, WDT_SYNCBUSY_bp);
@@ -103,9 +103,10 @@ int main (void) {
   #endif
   interrupts();
 
-  #if !defined(PIN_USB_VDETECT)
+  #if !defined(PIN_SYS_VDETECT)
   /* If you do not use VBD, insert the shortest possible delay instead. */
-  delay_millis(250);
+  SYS::delay_125ms();
+  SYS::delay_125ms();
   USB::setup_device(true);
   #else
   SYS::LED_Flash();
@@ -114,7 +115,7 @@ int main (void) {
   /* From here on, it's an endless loop. */
   D1PRINTF("<WAITING>\r\n");
   while (true) {
-    wdt_reset();
+    if (bit_is_clear(GPCONF, GPCONF_PGM_bp)) wdt_reset();
 
     /*** USB control handling ***/
     USB::handling_bus_events();

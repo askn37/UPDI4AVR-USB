@@ -5,7 +5,7 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.32.40+
+ * @version 1.33.46+
  * @date 2024-07-10
  * @copyright Copyright (c) 2024 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
@@ -23,10 +23,10 @@ namespace Timeout {
 
   void setup (void) {
     RTC_PITEVGENCTRLA = RTC_EVGEN0SEL_DIV32_gc | RTC_EVGEN1SEL_DIV128_gc;
-    EVSYS_CHANNEL1 = EVSYS_CHANNEL_RTC_EVGEN0_gc; /* 1024Hz periodic.  */
-    EVSYS_CHANNEL2 = EVSYS_CHANNEL_RTC_EVGEN1_gc; /* 32Hz periodic.    */
-    EVSYS_USERTCB0COUNT = EVSYS_USER_CHANNEL1_gc; /* TCB0_CLK = 1024Hz */
-    EVSYS_USERTCB1COUNT = EVSYS_USER_CHANNEL2_gc; /* TCB1_CLK = 32Hz   */
+    EVSYS_CHANNEL0 = EVSYS_CHANNEL_RTC_EVGEN0_gc; /* 1024Hz periodic.  */
+    EVSYS_CHANNEL1 = EVSYS_CHANNEL_RTC_EVGEN1_gc; /* 32Hz periodic.    */
+    EVSYS_USERTCB0COUNT = EVSYS_USER_CHANNEL0_gc; /* TCB0_CLK = 1024Hz */
+    EVSYS_USERTCB1COUNT = EVSYS_USER_CHANNEL1_gc; /* TCB1_CLK = 32Hz   */
     RTC_PITCTRLA = RTC_PITEN_bm;
   }
 
@@ -71,20 +71,24 @@ namespace Timeout {
    * Does not work with interrupts disabled.
    * RETI must be called after the interrupt is suspended.
    */
-  size_t command (size_t (*func_p)(void), uint16_t _ms) {
+  size_t command (size_t (*func_p)(void), size_t (*fail_p)(void), uint16_t _ms) {
     volatile size_t _result = 0;
-    if (setjmp(TIMEOUT_CONTEXT) == 0) {
-      Timeout::start(_ms);
-      _result = (*func_p)();
-      bit_clear(PGCONF, PGCONF_FAIL_bp);
+    while (_result == 0) {
+      if (setjmp(TIMEOUT_CONTEXT) == 0) {
+        Timeout::start(_ms);
+        _result = (*func_p)();
+        Timeout::stop();
+        bit_clear(PGCONF, PGCONF_FAIL_bp);
+        D1PRINTF("<RS:%d>\r\n", _result);
+        break;
+      }
+      Timeout::stop();
+      D1PRINTF("[TIMEOUT]");
+      if (!fail_p) break;
+      wdt_reset();
+      D1PRINTF("[RETRY]");
+      if (!(*fail_p)()) break;
     }
-    else {
-      /* Stack dump. */
-      /* An unused register is borrowed to store the SP. */
-      D1PRINTF("\r\n!TIMEOUT:%04X>", RTC_CMP);
-      D1PRINTHEX((const void*)(RTC_CMP + 1), 16);
-    }
-    Timeout::stop();
     return _result;
   }
 
@@ -100,9 +104,6 @@ ISR(TCB0_INT_vect, ISR_NAKED) {
     There is no return to the source of the interrupt.
   ***/
   __asm__ __volatile__ ("EOR R1,R1");
-#if defined(DEBUG)
-  RTC_CMP = SP;
-#endif
   TCB0_CTRLA = 0;
   TCB0_INTFLAGS = TCB_CAPT_bm;
   longjmp(TIMEOUT_CONTEXT, 2);
