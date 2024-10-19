@@ -114,8 +114,8 @@
   #define GPCONF_BRK_bm   (1 << 3)
   #define GPCONF_OPN_bp   4         /* VCP-RxD open */
   #define GPCONF_OPN_bm   (1 << 4)
-  #define GPCONF_PGM_bp   5         /* JTAG watchdog */
-  #define GPCONF_PGM_bm   (1 << 5)
+  #define GPCONF_HLD_bp   5         /* SW0 holding */
+  #define GPCONF_HLD_bm   (1 << 5)
   #define GPCONF_RIS_bp   6         /* SW0 release event */
   #define GPCONF_RIS_bm   (1 << 6)
   #define GPCONF_FAL_bp   7         /* SW0 push event */
@@ -128,6 +128,8 @@
   #define PGCONF_PROG_bm  (1 << 1)
   #define PGCONF_ERSE_bp  2         /* Chip erase completed */
   #define PGCONF_ERSE_bm  (1 << 2)
+  #define PGCONF_XDIR_bp  3         /* DATA direction */
+  #define PGCONF_XDIR_bm  (1 << 3)
   #define PGCONF_HVEN_bp  6         /* HV control in TPI */
   #define PGCONF_HVEN_bm  (1 << 6)
   #define PGCONF_FAIL_bp  7         /* Initialization failed (timeout) */
@@ -428,6 +430,7 @@ extern "C" {
     extern uint32_t _before_page; /* before flash page section */
     extern uint16_t _vtarget;     /* LSB = 1V / 1000 */
     extern uint16_t _xclk;        /* LSB = 1KHz */
+    extern uint16_t _xclk_bak;    /* LSB = 1KHz */
     extern uint8_t _jtag_vpow;    /* 1:VPOW_ON */
     extern uint8_t _jtag_hvctrl;  /* 1:ENABLE */
     extern uint8_t _jtag_unlock;  /* 1:ENABLE */
@@ -460,7 +463,12 @@ namespace NVM::V4 { bool setup (void); };
 namespace NVM::V5 { bool setup (void); };
 
 namespace PDI {
-  /* STUB */
+  size_t connect (void);
+  size_t disconnect (void);
+  size_t erase_memory (void);
+  size_t read_memory (void);
+  size_t write_memory (void);
+  size_t jtag_scope_xmega (void);
 }
 
 namespace SYS {
@@ -477,8 +485,10 @@ namespace SYS {
   uint16_t get_vdd (void);
   void hvc_enable (void);
   void hvc_leave (void);
+  void delay_55us (void);
   void delay_100us (void);
   void delay_800us (void);
+  void delay_2500us (void);
   void delay_125ms (void);
 };
 
@@ -487,7 +497,7 @@ namespace Timeout {
   void start (uint16_t _ms);
   void stop (void) __attribute__((used, naked, noinline));
   void extend (uint16_t _ms);
-  size_t command (size_t (*func_p)(void), size_t (*fail_p)(void) = nullptr, uint16_t _ms = 250);
+  size_t command (size_t (*func_p)(void), size_t (*fail_p)(void) = nullptr, uint16_t _ms = 800);
 };
 
 namespace TPI {
@@ -533,6 +543,7 @@ namespace USART {
   void change_vcp (void);
   void change_updi (void);
   void change_tpi (void);
+  void change_pdi (void);
   void set_line_encoding (LineEncoding_t* _buff);
   void set_line_state (uint8_t _line_state);
   LineEncoding_t& get_line_encoding (void);

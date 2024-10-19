@@ -304,27 +304,6 @@ namespace USB {
 
   void ep_cdi_listen (void) {
     /* Send the VCP-RxD buffer to the host. */
-  #ifdef _This_might_be_too_much_
-    if (bit_is_clear(GPCONF, GPCONF_OPN_bp)) {
-      /* No sending allowed while port is closed.  */
-      /* If the buffer overflows, it is discarded. */
-      if (_send_count == 64) _send_count = 0;
-      return;
-    }
-    if (bit_is_clear(EP_CDI.STATUS, USB_BUSNAK_bp)) {
-      /* If EP_CDI is in use, wait up to 4ms. */
-      bit_set(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_HUNF_bp);
-      TCA0_SPLIT_HCNT  = F_CPU / 256000L;
-      while (bit_is_clear(EP_CDI.STATUS, USB_BUSNAK_bp)) {
-        if (bit_is_set(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_HUNF_bp)) break;
-      }
-      if (bit_is_clear(EP_CDI.STATUS, USB_BUSNAK_bp)) {
-        /* If the buffer overflows, it is discarded. */
-        if (_send_count == 64) _send_count = 0;
-        return;
-      }
-    }
-  #else
     /* If our math is correct, then if each side of the double */
     /* buffer can complete the transmission of 64 characters   */
     /* in 1 ms, then it can support 640 kbps. */
@@ -335,7 +314,6 @@ namespace USB {
       if (_send_count == 64) _send_count = 0;
       return;
     }
-  #endif
     D2PRINTF(" VI=%02X:", _send_count);
     D2PRINTHEX(bit_is_set(GPCONF, GPCONF_DBL_bp)
       ? &EP_MEM.cdi_data[64]

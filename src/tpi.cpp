@@ -34,6 +34,9 @@
 #define TCLK_IN portRegister(PIN_PGM_TCLK).IN
 #define TCLK_bp pinPosition(PIN_PGM_TCLK)
 
+#define pinLogicPush(PIN) openDrainWriteMacro(PIN, LOW)
+#define pinLogicOpen(PIN) openDrainWriteMacro(PIN, HIGH)
+
 namespace TPI {
   const static uint8_t nvmprog_key[] = {
     0xE0, 0xFF, 0x88, 0xD8, 0xCD, 0x45, 0xAB, 0x89, 0x12
@@ -220,17 +223,18 @@ namespace TPI {
   // MARK: TPI Session
 
   size_t connect (void) {
-    PGCONF = PGCONF_FAIL_bm;
-    bit_set(GPCONF, GPCONF_PGM_bp);
+    PGCONF = 0;
     USART::setup();
 
-    openDrainWriteMacro(PIN_PGM_TRST, LOW);
+    pinLogicPush(PIN_PGM_TRST);
     SYS::power_reset();
+    SYS::delay_2500us();
 
     /* Called with `-xhvtpi` hvtpi_support */
-    if (_packet_length > 6 && packet.out.tpi.bType) {
+    /* or SW0 holding start */
+    if ((_packet_length > 6 && packet.out.tpi.bType) || bit_is_set(GPCONF, GPCONF_HLD_bp)) {
       /* External Reset : Activation High-Voltage mode */
-      openDrainWriteMacro(PIN_PGM_TRST, HIGH);
+      pinLogicOpen(PIN_PGM_TRST);
       SYS::hvc_enable();
       digitalWriteMacro(PIN_HVC_SELECT2, HIGH);
       D1PRINTF("<HVEN>");
@@ -244,56 +248,53 @@ namespace TPI {
     USART::change_tpi();
     idle_clock(20);
 
-    /*** Set TPIPCR Guard Time : 4 clock ****/
-    if (!set_sstcs(0x02, 0x05)) return 0;
-    D1PRINTF(" TPIPCR<05\r\n");
+    /*** Set TPIPCR Guard Time : 2 clock ****/
+    if (!set_sstcs(0x02, 0x06)) return 0;
 
     /*** Check TPIIR code : Fixed 0x80 ***/
     while (!(get_sldcs(0x0F) && (RXDATA == 0x80)));
-    D1PRINTF(" TPIIR>%02X\r\n", RXDATA);
     bit_set(PGCONF, PGCONF_UPDI_bp);
 
     /*** Activate NVMPROG mode ***/
-    while (!(get_sldcs(0x00) && RXDATA == 0x02)) {  /* get TPISR */
+    do {
       D1PRINTF(" SKEY\r\n");
       for (uint8_t i = 0; i < (uint8_t)sizeof(nvmprog_key); i++) {
-        if (!send(nvmprog_key[i])) {
-          return 0;
-        }
-        idle_clock(4);
+        if (!send(nvmprog_key[i])) return 0;
       }
-    };
-    D1PRINTF(" TPISR>%02X\r\n", RXDATA);
-
-    /*
-     * Get the device signature.
-     * Currently AVRDUDE <= 8.0 does not report the device descriptor for reduceAVR cores.
-     * So you'll need to find out for yourself.
-     *
-     * The ATtiny20 is written in 2 word chunks,
-     * The ATtiny40 is written in 4 word chunks,
-     * Other is written in 1 word chunks.
-     *
-     * The original PICKit4 probably does the same thing,
-     * since the JTAG3 protocol does not include these notifications.
-     */
-    uint16_t _signature = 0;
-    if (set_sstpr(0x3FC1) && get_sld()) {
-      _CAPS16(_signature)->bytes[1] = RXDATA;
-      if (get_sld()) _CAPS16(_signature)->bytes[0] = RXDATA;
-    }
-    _tpi_chunks = _signature == 0x920E ? 8  /* ATtiny40 */
-                : _signature == 0x910F ? 4  /* ATtiny20 */
-                : 2;                        /* Othres   */
-    D1PRINTF(" SIG>%04X:%02X\r\n", _signature, _tpi_chunks);
-    bit_set(PGCONF, PGCONF_PROG_bp);
-    return 1;
+      for (uint8_t _i = 0; _i < 8; _i++) {
+        idle_clock(20);
+        if (get_sldcs(0x00) && RXDATA == 0x02) {  /* get TPISR */
+          /*
+          * Get the device signature.
+          * Currently AVRDUDE <= 8.0 does not report the device descriptor for reduceAVR cores.
+          * So you'll need to find out for yourself.
+          *
+          * The ATtiny20 is written in 2 word chunks,
+          * The ATtiny40 is written in 4 word chunks,
+          * Other is written in 1 word chunks.
+          *
+          * The original PICKit4 probably does the same thing,
+          * since the JTAG3 protocol does not include these notifications.
+          */
+          uint16_t _signature = 0;
+          if (set_sstpr(0x3FC1) && get_sld()) {
+            _CAPS16(_signature)->bytes[1] = RXDATA;
+            if (get_sld()) _CAPS16(_signature)->bytes[0] = RXDATA;
+          }
+          _tpi_chunks = _signature == 0x920E ? 8  /* ATtiny40 */
+                      : _signature == 0x910F ? 4  /* ATtiny20 */
+                      : 2;                        /* Othres   */
+          D1PRINTF(" SIG>%04X:%02X\r\n", _signature, _tpi_chunks);
+          bit_set(PGCONF, PGCONF_PROG_bp);
+          return 1;
+        }
+      }
+    } while (true);
   }
 
   size_t disconnect (void) {
     /*** leave RESET (normal programing) ***/
     set_sstcs(0x00, 0x00);
-    D1PRINTF(" TPISR<00\r\n");
     /* Send the NVM exit command, wait a short while and release RESET. */
     idle_clock(28);
   #ifdef CONFIG_HVC_ENABLE
@@ -304,9 +305,6 @@ namespace TPI {
       D1PRINTF("<HVC:OFF>\r\n");
     }
   #endif
-    openDrainWriteMacro(PIN_PGM_TCLK, HIGH);
-    openDrainWriteMacro(PIN_PGM_TRST, HIGH);
-    SYS::power_reset();
     return 1;
   }
 
@@ -328,15 +326,19 @@ namespace TPI {
       D1PRINTF(" TPI_ENTER_PROGMODE\r\n");
       _vtarget = SYS::get_vdd();
       D1PRINTF(" VTARGET=%d\r\n", _vtarget);
+      _jtag_arch = 0;
       _rspsize = Timeout::command(&connect);
     }
     else if (_cmd == 0x02) {        /* XPRG_CMD_LEAVE_PROGMODE */
       D1PRINTF(" TPI_LEAVE_PROGMODE\r\n");
       _rspsize = bit_is_set(PGCONF, PGCONF_UPDI_bp) ? disconnect() : 1;
+      pinLogicOpen(PIN_PGM_TCLK);
+      pinLogicOpen(PIN_PGM_TRST);
+      SYS::power_reset();
+      SYS::delay_2500us();
       PGCONF = 0;
       USART::setup();
       USART::change_vcp();
-      bit_clear(GPCONF, GPCONF_PGM_bp);
     }
     else if (_cmd == 0x07) {        /* XPRG_CMD_SET_PARAM */
   #ifdef _Use_hardcoded_code_instead_

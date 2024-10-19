@@ -6,7 +6,7 @@
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
  * @version 1.33.46+
- * @date 2024-08-26
+ * @date 2024-10-07
  * @copyright Copyright (c) 2024 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -28,41 +28,43 @@
 #define HAL_BAREMETAL_28P 28  /* AVR16-64DU28 : UPDI4AVR-USB Type-F Reference Design */
 #define HAL_BAREMETAL_32P 32  /* AVR16-64DU32 : alias 28P */
 #define HAL_CNANO         33  /* AVR64DU32 Curiosity Nano, 5V only LED=PF2 SW=PF6 DBG_UART=PD6 */
+#define HAL_PDIP          29  /* AVR16-64DU28 : PDI test, 3V3 only LED=PA7 SW=PF6 DBG_UART=PD6 */
 
 /*** Choose a symbol from the list above. *+*/
 /* If disabled, it will be automatically detected */
 
 // #define CONFIG_HAL_TYPE HAL_CNANO
+// #define CONFIG_HAL_TYPE HAL_PDIP
 
 /*
  * Pin layout by package:
  *
- *         14P   20P   28P   32P   CNANO
- *    PA0  VTxD  TDAT  TDAT  TDAT  TDAT
- *    PA1  VRxD  VPW   VPW   VPW   TRST
- *    PA2  -     VTxD  VTxD  VTxD  VTxD     : Shared with TCLK
- *    PA3  -     VRxD  VRxD  VRxD  VRxD
- *    PA4  -     PDAT  PDAT  PDAT  PDAT
- *    PA5  -     HVSL1 SW0   SW0   N.C.
- *    PA6  -     TRST  TRST  TRST  PCLK     : 20/28/32P TRST shared internal with PCLK
- *    PA7  -     HVSL2 N.C.  N.C.  N.C.
- *    PC3  LED1  LED1  LED1  LED1  Not available
- *    PD0  -     -     HVSL1 HVSL1 HVSL1
- *    PD1  -     -     HVSL2 HVSL2 HVSL2
- *    PD2  -     -     HVSL3 HVSL3 HVSL3
- *    PD3  -     -     LED0  LED0  N.C.
- *    PD4  TDAT  HVCP1 HVCP1 HVCP1 HVCP1
- *    PD5  TRST  HVCP2 HVCP2 HVCP2 HVCP2
- *    PD6  TCLK  LED0  DTxD  DTxD  DTxD     : 14P TCLK is shared outside with VTxD
- *    PD7  LED0  HVSL3 DRxD  DRxD  DRxD
- *    PF0  -     -     N.C.  N.C.  Not available
- *    PF1  -     -     N.C.  N.C.  Not available
- *    PF2  -     -     -     N.C.  LED0
- *    PF3  -     -     -     N.C.  LED1
- *    PF4  -     -     -     N.C.  VPW
- *    PF5  -     -     -     N.C.  N.C.
- *    PF6  SW0   SW0   DnRST DnRST SW0
- *    PF7  DUPDI DUPDI DUPDI DUPDI DUPDI
+ *         14P   20P   28P   32P   PDIP  CNANO
+ *    PA0  VTxD  TDAT  TDAT  TDAT  TDAT  TDAT
+ *    PA1  VRxD  VPW   VPW   VPW   VPW   TRST
+ *    PA2  -     VTxD  VTxD  VTxD  VTxD  VTxD     : Shared with TCLK
+ *    PA3  -     VRxD  VRxD  VRxD  VRxD  VRxD
+ *    PA4  -     PDAT  PDAT  PDAT  PDAT  PDAT
+ *    PA5  -     HVSL1 SW0   SW0   PRxD  N.C.
+ *    PA6  -     TRST  TRST  TRST  TRST  PCLK     : 20/28/32P/DIPDI TRST shared internal with PCLK
+ *    PA7  -     HVSL2 N.C.  N.C.  LED0  N.C.
+ *    PC3  LED1  LED1  LED1  LED1  LED1  Not available
+ *    PD0  -     -     HVSL1 HVSL1 HVSL1 HVSL1
+ *    PD1  -     -     HVSL2 HVSL2 HVSL2 HVSL2
+ *    PD2  -     -     HVSL3 HVSL3 HVSL3 HVSL3
+ *    PD3  -     -     LED0  LED0  N.C.  N.C.
+ *    PD4  TDAT  HVCP1 HVCP1 HVCP1 HVCP1 HVCP1
+ *    PD5  TRST  HVCP2 HVCP2 HVCP2 HVCP2 HVCP2
+ *    PD6  TCLK  LED0  DTxD  DTxD  DTxD  DTxD     : 14P TCLK is shared outside with VTxD
+ *    PD7  LED0  HVSL3 DRxD  DRxD  DRxD  DRxD
+ *    PF0  -     -     N.C.  N.C.  N.C.  Not available
+ *    PF1  -     -     N.C.  N.C.  N.C.  Not available
+ *    PF2  -     -     -     N.C.  N.C.  LED0
+ *    PF3  -     -     -     N.C.  N.C.  LED1
+ *    PF4  -     -     -     N.C.  N.C.  VPW
+ *    PF5  -     -     -     N.C.  N.C.  N.C.
+ *    PF6  SW0   SW0   DnRST DnRST SW0   SW0
+ *    PF7  DUPDI DUPDI DUPDI DUPDI DUPDI DUPDI
  *
  *    * SW0 refers to the SW1 component on the drawing except for CNANO.
  *
@@ -124,18 +126,19 @@
 // #define DEBUG 2
 
 /*
- * UPDI/PDI Program interface operating clock
+ * UPDI/PDI Program interface operating clock.
  * In avrdude this can be changed with `-B125khz` etc.
  */
 
-#define PGM_CLK 225
+#define UPDI_CLK 225
+#define PDI_CLK  250
 
 /*
- * TPI Program interface operating clock: default is 100kHz.
+ * TPI Program interface operating clock.
  * This cannot be changed with avrdude and will always use this value.
  */
 
-#define TPI_CLK 100
+#define TPI_CLK  250
 
 /*** CONFIG_SYS ***/
 
@@ -214,6 +217,15 @@
 
 #define CONFIG_VCP_DTR_RESET
 
+/*
+ * Supports VCP interrupts.
+ *
+ * Used to notify the host PC of VCP errors and RS232 contact status.
+ * There is little harm in disabling it.
+ */
+
+// #define CONFIG_VCP_INTERRUPT_SUPPRT
+
 /*** CONFIG_HVC ***/
 
 /*
@@ -226,6 +238,12 @@
 #define CONFIG_HVC_ENABLE
 
 /*** CONFIG_PGM ***/
+
+/*
+ * Enable UPDI type programming support.
+ */
+
+#define CONFIG_PGM_UPDI_ENABLE
 
 /*
  * Enable TPI type programming support.
@@ -243,7 +261,7 @@
  * Enable PDI type programming support.
  *
  * 3.3V operating voltage support is required. 5V operation is prohibited.
- * Cannot be used without external support circuitry.
+ * Cannot be used with CNANO without external support circuitry.
  */
 
 #define CONFIG_PGM_PDI_ENABLE
@@ -365,6 +383,30 @@
   #define PIN_HVC_CHGPUMP2    PIN_TCA0_WO5_ALT3
   #define PIN_SYS_LED0        PIN_EVOUTF
   #define PIN_SYS_LED1        PIN_EVOUTA_ALT1
+  #define PIN_SYS_SW0         PIN_PF6
+
+#elif (CONFIG_HAL_TYPE == HAL_PDIP)
+  #define CONFIG_PGM_TYPE 2
+  #define PORTMUX_USART_VCP   (PORTMUX_USART0_ALT2_gc    | PORTMUX_USART1_ALT2_gc)
+  #define PORTMUX_USART_PGM   (PORTMUX_USART0_DEFAULT_gc | PORTMUX_USART1_ALT2_gc)
+  #define PORTMUX_USART_PDI   (PORTMUX_USART0_ALT1_gc    | PORTMUX_USART1_ALT2_gc)
+  #define PORTMUX_USART_NONE  (PORTMUX_USART0_NONE_gc    | PORTMUX_USART1_ALT2_gc)
+  #define PIN_VCP_TXD         PIN_USART0_TXD_ALT2
+  #define PIN_VCP_RXD         PIN_USART0_RXD_ALT2
+  #define PIN_PGM_TDAT        PIN_USART0_TXD
+  #define PIN_PGM_TRST        PIN_PA6
+  #define PIN_PGM_TCLK        PIN_USART0_XCK
+  #define PIN_PGM_PDAT        PIN_USART0_TXD_ALT1
+  #define PIN_PGM_PRXD        PIN_USART0_RXD_ALT1
+  #define PIN_PGM_PCLK        PIN_USART0_XCK_ALT1
+  #define PIN_PGM_VPOWER      PIN_PA1
+  #define PIN_HVC_SELECT1     PIN_PD0
+  #define PIN_HVC_SELECT2     PIN_PD1
+  #define PIN_HVC_SELECT3     PIN_PD2
+  #define PIN_HVC_CHGPUMP1    PIN_TCA0_WO4_ALT3
+  #define PIN_HVC_CHGPUMP2    PIN_TCA0_WO5_ALT3
+  #define PIN_SYS_LED0        PIN_EVOUTA_ALT1
+  #define PIN_SYS_LED1        PIN_LUT1_OUT
   #define PIN_SYS_SW0         PIN_PF6
 
 #else /* (CONFIG_HAL_TYPE == HAL_BAREMETAL_28P) || (CONFIG_HAL_TYPE == HAL_BAREMETAL_32P) */

@@ -56,9 +56,9 @@ namespace /* NAMELESS */ {
 
   /* JTAG parameter */
   NOINIT uint32_t _before_page;
-  NOINIT uint16_t _vtarget;         /* LSB=1V/1000 <- SYS::get_vdd() */
-  uint16_t _xclk;                   /* LSB=1KHz using USART_CMODE_SYNCHRONOUS_gc */
-  uint8_t _jtag_vpow = 1;
+  NOINIT uint16_t _vtarget;           /* LSB=1/1000V <- SYS::get_vdd() */
+  NOINIT uint16_t _xclk, _xclk_bak;   /* LSB=1KHz */
+  NOINIT uint8_t _jtag_vpow;
   NOINIT uint8_t _jtag_hvctrl;
   NOINIT uint8_t _jtag_unlock;
   NOINIT uint8_t _jtag_arch;
@@ -94,7 +94,7 @@ int main (void) {
   USART::setup();
 
   loop_until_bit_is_clear(WDT_STATUS, WDT_SYNCBUSY_bp);
-  _PROTECTED_WRITE(WDT_CTRLA, WDT_PERIOD_1KCLK_gc);
+  _PROTECTED_WRITE(WDT_CTRLA, WDT_PERIOD_2KCLK_gc);
 
   #if defined(PIN_SYS_SW0)
   /* Clear the dirty flag before enabling interrupts. */
@@ -115,7 +115,7 @@ int main (void) {
   /* From here on, it's an endless loop. */
   D1PRINTF("<WAITING>\r\n");
   while (true) {
-    if (bit_is_clear(GPCONF, GPCONF_PGM_bp)) wdt_reset();
+    wdt_reset();
 
     /*** USB control handling ***/
     USB::handling_bus_events();

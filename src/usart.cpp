@@ -6,7 +6,7 @@
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
  * @version 1.33.46+
- * @date 2024-08-26
+ * @date 2024-10-08
  * @copyright Copyright (c) 2024 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -19,32 +19,48 @@
 #include "configuration.h"
 #include "prototype.h"
 
+#define pinLogicPush(PIN) openDrainWriteMacro(PIN, LOW)
+#define pinLogicOpen(PIN) openDrainWriteMacro(PIN, HIGH)
+
 namespace USART {
 
   void setup (void) {
     SYS::LED_Fast();
-    PGCONF = 0;
     disable_vcp();
   #if CONFIG_PGM_TYPE == 1
-    openDrainWriteMacro(PIN_PGM_TDAT, HIGH);
-    openDrainWriteMacro(PIN_PGM_TRST, HIGH);
-    openDrainWriteMacro(PIN_PGM_TCLK, HIGH);
+    pinLogicOpen(PIN_PGM_TDAT);
+    pinLogicOpen(PIN_PGM_TRST);
+    pinLogicOpen(PIN_PGM_TCLK);
   #elif CONFIG_PGM_TYPE == 2
-    openDrainWriteMacro(PIN_PGM_TDAT, HIGH);
-    openDrainWriteMacro(PIN_PGM_TRST, HIGH);
-    openDrainWriteMacro(PIN_PGM_PDAT, HIGH);
+    if (_jtag_arch == 3) {
+      pinControlRegister(PIN_PGM_TDAT) &= ~PORT_PULLUPEN_bm;
+      pinLogicPush(PIN_PGM_PDAT);
+    }
+    else {
+      pinLogicOpen(PIN_PGM_PDAT);
+    }
+    pinLogicOpen(PIN_PGM_TDAT);
+    pinLogicOpen(PIN_PGM_TRST);
   #else
-    openDrainWriteMacro(PIN_PGM_TDAT, HIGH);
-    openDrainWriteMacro(PIN_PGM_TRST, HIGH);
-    openDrainWriteMacro(PIN_PGM_TCLK, HIGH);
-    openDrainWriteMacro(PIN_PGM_PDAT, HIGH);
-    openDrainWriteMacro(PIN_PGM_PCLK, HIGH);
+    pinLogicOpen(PIN_PGM_TDAT);
+    pinLogicOpen(PIN_PGM_TRST);
+    pinLogicOpen(PIN_PGM_TCLK);
+    pinLogicOpen(PIN_PGM_PDAT);
+    pinLogicOpen(PIN_PGM_PCLK);
   #endif
   }
 
   /*** Calculate the baud rate for VCP asynchronous mode. ***/
   uint16_t calk_baud_khz (uint16_t _khz) {
     uint32_t _baud = ((F_CPU / 1000L * 8L) / _khz + 1) / 2;
+    if (_baud < 64) _baud = 64;
+    else if (_baud > 0xFFFFU) _baud = 0xFFFF;
+    return _baud;
+  }
+
+  uint16_t sync_baud_khz (uint16_t _khz) {
+    uint32_t _baud = ((F_CPU / 1000) / _khz + 1) / 2;
+    _baud <<= 6;
     if (_baud < 64) _baud = 64;
     else if (_baud > 0xFFFFU) _baud = 0xFFFF;
     return _baud;
@@ -64,7 +80,7 @@ namespace USART {
   /*** Stop the VCP and release the ports in use. ***/
   void disable_vcp (void) {
     if (USART0_CTRLB) {
-      D1PRINTF(" VCP=OFF\r\n");
+      // D1PRINTF(" VCP=OFF\r\n");
       /* Allow time to move USART0_TXDATA */
       delay_micros(4);
       ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
@@ -74,18 +90,18 @@ namespace USART {
         USART0_CTRLA = 0;
         RXSTAT = 0;
         RXDATA = 0;
-        PORTMUX_USARTROUTEA = PORTMUX_USART_VCP;
+        PORTMUX_USARTROUTEA = PORTMUX_USART_NONE;
         bit_clear(GPCONF, GPCONF_VCP_bp);
       }
-      openDrainWriteMacro(PIN_VCP_TXD, HIGH); /* CONFIG_PGM_TYPE!=1 is internal shared TCLK */
-      openDrainWriteMacro(PIN_VCP_RXD, HIGH);
+      pinControlRegister(PIN_VCP_TXD) = PORT_PULLUPEN_bm;
+      pinLogicOpen(PIN_VCP_TXD);  /* CONFIG_PGM_TYPE!=1 is internal shared TCLK */
+      pinLogicOpen(PIN_VCP_RXD);
     }
   }
 
   /*** Sets up single-wire asynchronous mode for UPDI operation. ***/
   void change_updi (void) {
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-      D1PRINTF(" USART=UPDI\r\n");
       PORTMUX_USARTROUTEA = PORTMUX_USART_PGM;
       USART0_STATUS = USART_DREIF_bm;
       USART0_BAUD  = calk_baud_khz(_xclk);
@@ -94,30 +110,44 @@ namespace USART {
       /* Without it, an additional delay is required before sending a byte. */
       USART0_CTRLA = USART_LBME_bm | USART_RS485_INT_gc;
       USART0_CTRLB = USART_RXEN_bm | USART_TXEN_bm | USART_ODME_bm;
-      D1PRINTF(" BAUD=%04X:%02X\r\n", USART0_BAUD, USART0_CTRLB);
+      D1PRINTF(" USART=UPDI XCLK=%d BAUD=%04X\r\n", _xclk, USART0_BAUD);
     }
   }
 
   /*** Set up single-wire synchronous mode for TPI operation. ***/
   /* The VCD-TxD is repurposed to transmit the synchronous clock. */
   void change_tpi (void) {
+    // #if defined(CONFIG_PGM_TPI_ENABLE)
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-      D1PRINTF(" USART=TPI\r\n");
-      /* In synchronous mode the formula is different. */
-      uint32_t _baud = (F_CPU / TPI_CLK + 1) / 2;
-      _baud <<= 6;
-      D2PRINTF(" BAUD=%08lX\r\n", _baud);
-      if (_baud < 64) _baud = 64;
-      else if (_baud > 0xFFFFU) _baud = 0xFFFF;
       PORTMUX_USARTROUTEA = PORTMUX_USART_PGM;
-      openDrainWriteMacro(PIN_PGM_TCLK, LOW); /* CONFIG_PGM_TYPE!=1 is internal shared VTxD */
+      pinControlRegister(PIN_PGM_TCLK) = PORT_INVEN_bm;
+      pinLogicPush(PIN_PGM_TCLK);   /* CONFIG_PGM_TYPE!=1 is internal shared VTxD */
       USART0_STATUS = USART_DREIF_bm;
-      USART0_BAUD  = _baud;
+      USART0_BAUD  = sync_baud_khz(TPI_CLK);
       USART0_CTRLC = USART_CHSIZE_8BIT_gc | USART_PMODE_EVEN_gc | USART_CMODE_SYNCHRONOUS_gc | USART_SBMODE_2BIT_gc;
       USART0_CTRLA = USART_LBME_bm | USART_RS485_INT_gc;
       USART0_CTRLB = USART_RXEN_bm | USART_TXEN_bm | USART_ODME_bm;
-      D1PRINTF(" BAUD=%04X:%02X\r\n", USART0_BAUD, USART0_CTRLB);
+      D1PRINTF(" USART=TPI BAUD=%04X\r\n", USART0_BAUD);
     }
+    // #endif
+  }
+
+  /*** Set up single-wire synchronous mode for PDI operation. ***/
+  /* The TRST is repurposed to transmit the synchronous clock. */
+  void change_pdi (void) {
+    #if defined(CONFIG_PGM_PDI_ENABLE)
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+      PORTMUX_USARTROUTEA = PORTMUX_USART_PDI;
+      pinControlRegister(PIN_PGM_PCLK) = PORT_INVEN_bm;
+      pinLogicPush(PIN_PGM_PCLK);   /* Everything except CNANO is shared with TRST */
+      USART0_STATUS = USART_DREIF_bm;
+      USART0_BAUD  = sync_baud_khz(_xclk);
+      USART0_CTRLC = USART_CHSIZE_8BIT_gc | USART_PMODE_EVEN_gc | USART_CMODE_SYNCHRONOUS_gc | USART_SBMODE_2BIT_gc;
+      USART0_CTRLA = USART_LBME_bm | USART_RS485_INT_gc;
+      USART0_CTRLB = USART_RXEN_bm;
+      D1PRINTF(" USART=PDI BAUD=%04X\r\n", USART0_BAUD);
+    }
+    #endif
   }
 
   /*** Activates VCP operation. ***/
@@ -170,6 +200,7 @@ namespace USART {
       /* If outside the supported range, the USART will remain in the BREAK state. */
       D1PRINTF(" VCP=FAIL\r\n");
     }
+    bit_clear(GPCONF, GPCONF_HLD_bp);
     if (bit_is_set(GPCONF, GPCONF_USB_bp))
       SYS::LED_HeartBeat();
     else

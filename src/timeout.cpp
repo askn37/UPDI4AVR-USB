@@ -6,7 +6,7 @@
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
  * @version 1.33.46+
- * @date 2024-07-10
+ * @date 2024-10-07
  * @copyright Copyright (c) 2024 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -78,15 +78,12 @@ namespace Timeout {
         Timeout::start(_ms);
         _result = (*func_p)();
         Timeout::stop();
-        bit_clear(PGCONF, PGCONF_FAIL_bp);
-        D1PRINTF("<RS:%d>\r\n", _result);
         break;
       }
       Timeout::stop();
-      D1PRINTF("[TIMEOUT]");
+      D1PRINTF("[TO]");
       if (!fail_p) break;
       wdt_reset();
-      D1PRINTF("[RETRY]");
       if (!(*fail_p)()) break;
     }
     return _result;

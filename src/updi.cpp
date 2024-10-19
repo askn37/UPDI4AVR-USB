@@ -32,9 +32,13 @@
  * allowing auto-synchronization of the baudrate without the need for an XCLK.
  */
 
+#define UPDI_GETVAL 0x05
+#define UPDI_CTRLAV (0x90 + UPDI_GETVAL)
+
+#define pinLogicPush(PIN) openDrainWriteMacro(PIN, LOW)
+#define pinLogicOpen(PIN) openDrainWriteMacro(PIN, HIGH)
+
 namespace UPDI {
-  #define UPDI_GETVAL 0x06
-  #define UPDI_CTRLAV (0x10 + UPDI_GETVAL)
 
   /* This fixed data is stored in SRAM for speed. */
 
@@ -57,26 +61,25 @@ namespace UPDI {
   // MARK: UPDI Low level
 
   bool send_break (void) {
-    D2PRINTF("<BRK>");
-    DFLUSH();
-    USART0_BAUD = USART0_BAUD + (USART0_BAUD << 1);
+    USART0_BAUD = USART0_BAUD + (USART0_BAUD >> 1);
     send(0x00);
     USART0_BAUD = USART::calk_baud_khz(_xclk);
-    return false;
+    return true;
   }
 
   void long_break (void) {
-    D2PRINTF("<BREAK>");
-    DFLUSH();
     USART0_BAUD = USART::calk_baud_khz(_xclk >> 2);
     send(0x00);
     USART0_BAUD = USART::calk_baud_khz(_xclk);
   }
 
   bool recv (void) {
-    loop_until_bit_is_set(USART0_STATUS, USART_RXCIF_bp);
-    RXSTAT = USART0_RXDATAH ^ 0x80;
+    do {
+      RXSTAT = USART0_RXDATAH;
+    } while (bit_is_clear(RXSTAT, USART_RXCIF_bp));
     RXDATA = USART0_RXDATAL;
+    // D1PRINTF("(%02X:%02X)", RXSTAT, RXDATA);
+    RXSTAT ^= 0x80;
     return RXSTAT == 0;
   }
 
@@ -94,6 +97,7 @@ namespace UPDI {
 
   bool send (const uint8_t _data) {
     loop_until_bit_is_set(USART0_STATUS, USART_DREIF_bp);
+    // D1PRINTF("\r\n[%02X]", _data);
     USART0_TXDATAL = _data;
     return recv() && _data == RXDATA;
   }
@@ -139,8 +143,6 @@ namespace UPDI {
       0x55, 0xC8, 0x00, /* SYSRUN */
       0x55, 0xC3, 0x04  /* UPDIDIS */
     };
-    D1PRINTF("<RST>");
-    DFLUSH();
     return send_bytes(_reset, _leave ? 9 : 6);
   }
 
@@ -251,32 +253,32 @@ namespace UPDI {
   }
 
   bool key_wait_set (uint8_t _bit) {
+    SYS::delay_55us();
     do {
-      SYS::delay_100us();
       key_status();
     } while (bit_is_clear(RXDATA, _bit));
     return true;
   }
 
   bool key_wait_clear (uint8_t _bit) {
+    SYS::delay_55us();
     do {
-      SYS::delay_100us();
       key_status();
     } while (bit_is_set(RXDATA, _bit));
     return true;
   }
 
   bool sys_wait_set (uint8_t _bit) {
+    SYS::delay_55us();
     do {
-      SYS::delay_100us();
       sys_status();
     } while (bit_is_clear(RXDATA, _bit));
     return true;
   }
 
   bool sys_wait_clear (uint8_t _bit) {
+    SYS::delay_55us();
     do {
-      SYS::delay_100us();
       sys_status();
     } while (bit_is_set(RXDATA, _bit));
     return true;
@@ -381,10 +383,10 @@ namespace UPDI {
 
   size_t timeout_fallback (void) {
     /* If a timeout occurs, the communication speed will be reduced. */
-    if (_xclk == 40) return 0;
-    _xclk -= 25;
-    if (_xclk < 40) _xclk = 40;
-    USART::change_updi();
+    RXDATA = _xclk - 10;
+    if (RXDATA < 40) return 0;
+    _xclk = RXDATA;
+    send_break();
     send_break();
     return clear_rsd();
   }
@@ -395,35 +397,75 @@ namespace UPDI {
    * - Ignore communication collisions
    * - Make guard time short enough
    */
-  size_t updi_activate (void) {
+  size_t connect (void) {
     const static uint8_t _init[] = {
       0x55, 0xC8, 0x59, /* SYSRST */
       0x55, 0xC3, 0x08, /* CCDETDIS */
       0x55, 0xC2, UPDI_CTRLAV,
-      0x55, 0x89        /* ASI_CTRLA */
+      0x55, 0x82        /* LDCS CTRLA */
     };
+    const static uint8_t _sib256[] = {
+      0x55, 0xE6        /* SIB 256bits */
+    };
+    uint8_t _hvvar = Device_Descriptor.UPDI.hvupdi_variant;
+    bool _hven = (_packet_length >= 7 && packet.out.bMType && _jtag_hvctrl)
+              || bit_is_set(GPCONF, GPCONF_HLD_bp);
+    _sib[0] = 0;
+    _before_page = -1L;
+    NVM::V1::setup();   /* default is dummy callback */
+    USART::setup();
 
-    /* When operating at 40kHz or above, a BREAK character length of 2.5ms is sufficient. */
-    openDrainWriteMacro(PIN_PGM_TDAT, LOW);
-    delay_micros(2500);
-    openDrainWriteMacro(PIN_PGM_TDAT, HIGH);
+    /* If possible, perform a hardware reset of the device. */
+    digitalWriteMacro(PIN_PGM_TDAT, LOW);
+    digitalWriteMacro(PIN_PGM_TRST, LOW);
+    pinLogicPush(PIN_PGM_TRST);
+    SYS::power_reset();
+    SYS::delay_2500us();
+    pinLogicOpen(PIN_PGM_TRST);
 
-    nop();
+    /* High-Voltage control */
+    if (_hven && _hvvar != 1) {
+    #ifdef CONFIG_HVC_ENABLE
+      SYS::hvc_enable();
+      if (_hvvar == 0) {
+        D1PRINTF("<HVC:V0>");
+        digitalWriteMacro(PIN_HVC_SELECT1, HIGH);
+      }
+      else if (_hvvar == 2) {
+        D1PRINTF("<HVC:V2+>");
+        digitalWriteMacro(PIN_HVC_SELECT3, HIGH);
+      }
+      /* Most early silicon requires a pulse of 700us or more. */
+      SYS::delay_800us();
+      SYS::hvc_leave();
+      digitalWriteMacro(PIN_HVC_SELECT1, LOW);
+      digitalWriteMacro(PIN_HVC_SELECT3, LOW);
+      /* From this point onwards, UPDI activation must be successful within 64ms. */
+    #endif
+    }
+
+    /* In most cases, a 2.5 ms LOW signal is sufficient to initiate UPDI activation. */
+    pinLogicPush(PIN_PGM_TDAT);
+    SYS::delay_2500us();
+    pinLogicOpen(PIN_PGM_TDAT);
+
+    /* When UPDI is activated, it becomes a HIGH signal. */
     while (!digitalReadMacro(PIN_PGM_TDAT));
-
     USART::change_updi();
-    SYS::delay_100us();
 
-    /* It is considered a failure if the ASI_CTRA register does not return 0x03. */
-    return ((send_bytes(_init, sizeof(_init)) && recv() && 0x03 == RXDATA));
-  }
+    /* It will send a series of commands and check the response. */
+    /* If the response is invalid, it will send a BREAK character and try again. */
+    /* If UPDI does not respond, a timeout occurs. */
+    while (!(send_bytes(_init, sizeof(_init)) && recv() && (RXDATA == UPDI_CTRLAV))) {
+      send_break();
+      send_break();
+    }
 
-  size_t read_sib (void) {
-    const static uint8_t _sib256[] = { 0x55, 0xE6 };
+    /* Read the SIB from the ACC. */
+    /* This can be done even on a locked device. */
     if (send_bytes(_sib256, sizeof(_sib256)) && recv_bytes(_sib, 32)) {
       size_t _result = 0;
-      D1PRINTF(" SIB=\"%s\"\r\n", _sib);
-      D1PRINTF(" <NVM:%02X>\r\n", _sib[10]);
+      D1PRINTF(" NVM:%02X,SIB=\"%s\"\r\n", _sib[10], _sib);
       /* Depending on the SIB, different low-level methods are executed. */
       if      (_sib[10] == '5') _result = NVM::V5::setup();
       else if (_sib[10] == '4') _result = NVM::V4::setup();
@@ -431,71 +473,14 @@ namespace UPDI {
       else if (_sib[10] == '2') _result = NVM::V2::setup();
       else if (_sib[10] == '0') _result = NVM::V0::setup();
       if (_result) {
-        /* If the SIB is obtained, the first 4-characters are returned.       */
+        /* If the SIB is obtained, the first 4-characters are returned. */
         /* If the 1st character is blank, the next 4-characters are returned. */
         memcpy(&packet.in.data[0], _sib[0] == ' ' ? &_sib[4] : &_sib[0], 4);
         bit_set(PGCONF, PGCONF_UPDI_bp);
         return 5;
       }
     }
-    return 0;
-  }
-
-  size_t connect (void) {
-    PGCONF = 0;
-    _sib[0] = 0;
-    _before_page = -1L;
-    NVM::V1::setup();   /* default is dummy callback */
-    USART::setup();
-
-    openDrainWriteMacro(PIN_PGM_TRST, LOW);
-    SYS::power_reset();
-    openDrainWriteMacro(PIN_PGM_TRST, HIGH);
-
-    /* External Reset */
-    if (_packet_length >= 7 && packet.out.bMType) {
-  #ifdef CONFIG_HVC_ENABLE
-      /* High-Voltage control */
-      uint8_t _v = Device_Descriptor.UPDI.hvupdi_variant;
-      if (_jtag_hvctrl && _v != 1) {
-        SYS::hvc_enable();
-        if (_v == 0) {
-          D1PRINTF("<HVC:V0>");
-          digitalWriteMacro(PIN_HVC_SELECT1, HIGH);
-        }
-        else if (_v == 2) {
-          D1PRINTF("<HVC:V2+>");
-          digitalWriteMacro(PIN_HVC_SELECT3, HIGH);
-        }
-        /* Most early silicon requires a pulse of 700us or more. */
-        SYS::delay_800us();
-        SYS::hvc_leave();
-        digitalWriteMacro(PIN_HVC_SELECT1, LOW);
-        digitalWriteMacro(PIN_HVC_SELECT3, LOW);
-        bit_set(PGCONF, PGCONF_HVEN_bp);
-        /* From this point onwards, UPDI activation must be successful within 64ms. */
-      }
-  #endif
-    }
-
-    /* Fallback Retry */
-    /* It must complete within a maximum of 64 milliseconds, */
-    /* so a maximum of three attempts will be made. */
-    uint16_t _bak = _xclk;
-    for (uint8_t _r = 0; _r < 4; _r++) {
-      wdt_reset();
-      if (Timeout::command(&updi_activate, nullptr, 20)) {
-        size_t _result = Timeout::command(&read_sib, nullptr, 20);
-        if (_result) return _result;
-      }
-      /* If UPDI activation fails, the communication speed will be reduced. */
-      _xclk -= 25;
-      if (_xclk < 40) _xclk = 40;
-      USART::setup();
-    }
-
-    /* If HV mode is enabled, the specified speed will be restored on error exit. */
-    if (_jtag_hvctrl) _xclk = _bak;
+    D1PRINTF(" FAIL:%02X,%02X\r\n", RXSTAT, RXDATA);
     return 0;
   }
 
@@ -515,7 +500,7 @@ namespace UPDI {
       bit_set(PGCONF, PGCONF_PROG_bp);
       (*Command_Table.prog_init)();
     }
-    D1PRINTF("<ST:%02X>\r\n", RXDATA);
+    D1PRINTF("%02X\r\n", RXDATA);
 
     /* In either case it returns success. */
     return 1;
@@ -529,7 +514,12 @@ namespace UPDI {
     uint8_t _cmd = packet.out.cmd;
     if (_cmd == 0x10) {             /* CMD3_SIGN_ON */
       D1PRINTF(" UPDI_SIGN_ON=EXT:%02X\r\n", packet.out.bMType);
-      _rspsize = connect();
+      _xclk = _xclk_bak;
+      _rspsize = Timeout::command(&connect, nullptr, 300);
+      if (!_rspsize) {
+        if (100 < _xclk && _vtarget > 3500) _xclk = 100;
+        _rspsize = Timeout::command(&connect, nullptr, 300);
+      }
       /* If it fails here, it is expected to try again, giving it a chance at HV control. */
       packet.in.res = _rspsize ? 0x84 : 0xA0; /* RSP3_DATA : RSP3_FAILED */
       return _rspsize;
@@ -540,9 +530,10 @@ namespace UPDI {
       _rspsize = bit_is_set(PGCONF, PGCONF_UPDI_bp) ? Timeout::command(&disconnect) : 1;
       SYS::delay_100us();
       USART::setup();
-      openDrainWriteMacro(PIN_PGM_TRST, LOW);
+      pinLogicPush(PIN_PGM_TRST);
       SYS::power_reset();
-      openDrainWriteMacro(PIN_PGM_TRST, HIGH);
+      SYS::delay_2500us();
+      pinLogicOpen(PIN_PGM_TRST);
       PGCONF = 0;
       USART::change_vcp();
     }
@@ -550,10 +541,12 @@ namespace UPDI {
       D1PRINTF(" UPDI_ENTER_PROG\r\n");
       /* On failure, RSP3_OK is returned if a UPDI connection is available. */
       /* Locked devices are given the opportunity to write to USERROW and erase the chip. */
-      _rspsize = Timeout::command(&enter_progmode, &timeout_fallback) || bit_is_set(PGCONF, PGCONF_UPDI_bp);
+      _rspsize = Timeout::command(&enter_progmode, &timeout_fallback, 300)
+              || bit_is_set(PGCONF, PGCONF_UPDI_bp);
     }
     else if (_cmd == 0x16) {        /* CMD3_LEAVE_PROGMODE */
       D1PRINTF(" UPDI_LEAVE_PROG\r\n");
+      D1PRINTF(" LAST_XCLK=%d\r\n", _xclk);
       /* There is nothing to do. */
       /* The actual termination process is delayed until CMD3_SIGN_OFF. */
       _rspsize = 1;
@@ -561,7 +554,7 @@ namespace UPDI {
     else if (_cmd == 0x20) {        /* CMD3_ERASE_MEMORY */
       D1PRINTF(" UPDI_ERASE=%02X:%06lX\r\n",
         packet.out.bEType, packet.out.dwPageAddr);
-      _rspsize = Timeout::command(Command_Table.erase_memory, &timeout_fallback, 800);
+      _rspsize = Timeout::command(Command_Table.erase_memory, &timeout_fallback);
     }
     else if (bit_is_clear(PGCONF, PGCONF_UPDI_bp)) { /* empty */ }
     else if (_cmd == 0x21) {        /* CMD3_READ_MEMORY */
@@ -575,7 +568,7 @@ namespace UPDI {
         _rspsize = _wLength + 1;
       }
       else if (bit_is_set(PGCONF, PGCONF_PROG_bp)) {
-        _rspsize = Timeout::command(Command_Table.read_memory, &timeout_fallback);
+        _rspsize = Timeout::command(Command_Table.read_memory, &timeout_fallback, 400);
       }
       /* If not in PROGMODE, respond with a dummy. */
       /* A dummy SIG will be returned for locked devices. */
