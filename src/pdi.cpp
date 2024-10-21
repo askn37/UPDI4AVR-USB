@@ -23,6 +23,9 @@
  * NOTE:
  *
  * PDI command payloads use the JTAGICE3 standard.
+ * 
+ * This mode is only used by the ATxmega series and is for 3.3V operation only.
+ * There is no HV control mode.
  *
  * The PDI communications protocol uses the same access layer command set as UPDI.
  * The hardware layer also uses the same 12-bit frames USART as UPDI/TPI.
@@ -30,8 +33,13 @@
  * synchronized by the XCLK just like TPI.
  *
  * ACC handles 32-bit addresses:
- *   high order byte 0 specifies the code space.
- *   high order byte 1 specifies the data space.
+ *   If the high word is in the 0x0100 area, it points to DATA space.
+ *   If the high word is in the 0x0080 area, it points to NVM space.
+ * 
+ * PDI_DATA is a special signal line. The device pulls it down with 22kohm
+ * by default. To activate PDI, from the device's point of view, TxD mode must
+ * be Push-Pull and RxD mode must be Hi-Z. Therefore, it is recommended to add
+ * an external translator buffer with direction control.
  */
 
 #define PCLK_IN portRegister(PIN_PGM_PCLK).IN
@@ -54,6 +62,8 @@ namespace PDI {
     0x6B, 0, 0, 0, 0  /* ST(0x60) PTR(0x08) ADDR4(0x03) */
   };
 
+  /* The repeat instruction allows a 16-bit count mode, */
+  /* but this has been removed in UPDI. */
   static uint8_t _set_repeat[] = {
     0xA1, 0x00, 0x00, /* repeat2 */
     0x00              /* LD/ST */
@@ -69,11 +79,16 @@ namespace PDI {
     return true;
   }
 
+  /* To run push-pull TxD in single-wire mode with loopback, */
+  /* controlling the USART becomes a bit more complicated.   */
   bool start_txd (void) {
     if (bit_is_clear(PGCONF, PGCONF_XDIR_bp)) {
       idle_clock(1);
       digitalWriteMacro(PIN_PGM_PDAT, HIGH);
       pinLogicPush(PIN_PGM_PDAT);
+  #ifdef PIN_PGM_XDIR
+      digitalWriteMacro(PIN_PGM_XDIR, HIGH);
+  #endif
       USART0_CTRLB = USART_RXEN_bm | USART_TXEN_bm;
       bit_set(PGCONF, PGCONF_XDIR_bp);
     }
@@ -84,6 +99,9 @@ namespace PDI {
     if (bit_is_set(PGCONF, PGCONF_XDIR_bp)) {
       idle_clock(1);
       pinLogicOpen(PIN_PGM_PDAT);
+  #ifdef PIN_PGM_XDIR
+      digitalWriteMacro(PIN_PGM_XDIR, LOW);
+  #endif
       USART0_CTRLB = USART_RXEN_bm | USART_ODME_bm;
       bit_clear(PGCONF, PGCONF_XDIR_bp);
     }
@@ -104,8 +122,8 @@ namespace PDI {
 
   bool recv (void) {
     do { RXSTAT = USART0_RXDATAH; } while (!RXSTAT);
-    RXSTAT ^= 0x80;
     RXDATA = USART0_RXDATAL;
+    RXSTAT ^= 0x80;
     // D2PRINTF("(%02X:%02X)", RXSTAT, RXDATA);
     return RXSTAT == 0;
   }
@@ -135,8 +153,6 @@ namespace PDI {
     return true;
   }
 
-  /* Returns whether there is an error or not. */
-  /* The acquired data is stored in RXDATA.    */
   bool recv_byte (uint32_t _dwAddr) {
     static uint8_t _set_ptr[] = {
       0x0C, 0, 0, 0, 0    /* LDS ADDR4 DATA1 */
@@ -205,6 +221,8 @@ namespace PDI {
       /* XMEGA_ERASE_CHIP */
       if (!(nvm_cmd(0x40) && nvm_cmdex() && pdibus_wait() && nvm_wait())) return 0;
     }
+    /* Section erasure is only used with USERSIG. */
+    /* Unlike READ/WRITE, the address is given as an absolute value. */
     else if (e_type == 0x07) {
       /* XMEGA_ERASE_USERSIG */
       if (!(nvm_cmd(0x18)
@@ -213,7 +231,8 @@ namespace PDI {
          && send(0xFF)
          && nvm_wait())) return 0;
     }
-    /* Page erase will not be used if received. */
+    /* Any other sections specified will be ignored, */
+    /* but the command will return successful completion. */
     return 1;
   }
 
@@ -315,7 +334,7 @@ namespace PDI {
     digitalWriteMacro(PIN_PGM_PDAT, LOW);
     pinLogicPush(PIN_PGM_PDAT);
     pinLogicPush(PIN_PGM_PCLK);
-    if (_packet_length >= 7 && packet.out.bMType) SYS::power_reset();
+    SYS::power_reset();
     digitalWriteMacro(PIN_PGM_PDAT, HIGH);
     SYS::delay_55us();
 

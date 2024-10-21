@@ -33,7 +33,7 @@
  */
 
 #define UPDI_GETVAL 0x05
-#define UPDI_CTRLAV (0x90 + UPDI_GETVAL)
+#define UPDI_CTRLAV (0x10 + UPDI_GETVAL)
 
 #define pinLogicPush(PIN) openDrainWriteMacro(PIN, LOW)
 #define pinLogicOpen(PIN) openDrainWriteMacro(PIN, HIGH)
@@ -60,30 +60,51 @@ namespace UPDI {
 
   // MARK: UPDI Low level
 
-  bool send_break (void) {
-    USART0_BAUD = USART0_BAUD + (USART0_BAUD >> 1);
-    send(0x00);
-    USART0_BAUD = USART::calk_baud_khz(_xclk);
+  bool start_txd (void) {
+  #ifdef PIN_PGM_XDIR
+    if (bit_is_clear(PGCONF, PGCONF_XDIR_bp)) {
+      digitalWriteMacro(PIN_PGM_XDIR, HIGH);
+      bit_set(PGCONF, PGCONF_XDIR_bp);
+    }
+  #endif
     return true;
   }
 
+  bool stop_txd (void) {
+  #ifdef PIN_PGM_XDIR
+    if (bit_is_set(PGCONF, PGCONF_XDIR_bp)) {
+      digitalWriteMacro(PIN_PGM_XDIR, LOW);
+      bit_clear(PGCONF, PGCONF_XDIR_bp);
+    }
+  #endif
+    return true;
+  }
+
+  bool send_break (void) {
+    start_txd();
+    USART0_BAUD = USART0_BAUD + (USART0_BAUD >> 1);
+    send(0x00);
+    USART0_BAUD = USART::calk_baud_khz(_xclk);
+    return start_txd();
+  }
+
   void long_break (void) {
+    start_txd();
     USART0_BAUD = USART::calk_baud_khz(_xclk >> 2);
     send(0x00);
     USART0_BAUD = USART::calk_baud_khz(_xclk);
   }
 
   bool recv (void) {
-    do {
-      RXSTAT = USART0_RXDATAH;
-    } while (bit_is_clear(RXSTAT, USART_RXCIF_bp));
+    do { RXSTAT = USART0_RXDATAH; } while (!RXSTAT);
     RXDATA = USART0_RXDATAL;
-    // D1PRINTF("(%02X:%02X)", RXSTAT, RXDATA);
     RXSTAT ^= 0x80;
+    // D1PRINTF("(%02X:%02X)", RXSTAT, RXDATA);
     return RXSTAT == 0;
   }
 
   bool recv_bytes (uint8_t* _data, size_t _len) {
+    stop_txd();
     do {
       if (!recv()) return false;
       *_data++ = RXDATA;
@@ -92,7 +113,7 @@ namespace UPDI {
   }
 
   bool is_ack (void) {
-    return recv() && 0x40 == RXDATA;
+    return stop_txd() && recv() && 0x40 == RXDATA;
   }
 
   bool send (const uint8_t _data) {
@@ -103,6 +124,7 @@ namespace UPDI {
   }
 
   bool send_bytes (const uint8_t* _data, size_t _len) {
+    start_txd();
     do {
       if (!send(*_data++)) return false;
     } while (--_len);
@@ -123,7 +145,7 @@ namespace UPDI {
       0x55, 0x08, 0, 0, 0, 0  /* LDS ADDR3 DATA1 */
     };
     _CAPS32(_set_ptr[2])->dword = _dwAddr;
-    return send_bytes(_set_ptr, 5) && recv();
+    return send_bytes(_set_ptr, 5) && stop_txd() && recv();
   }
 
   bool send_byte (uint32_t _dwAddr, uint8_t _data) {
@@ -133,6 +155,7 @@ namespace UPDI {
     _CAPS32(_set_ptr[2])->dword = _dwAddr;
     return send_bytes(_set_ptr, 5)
       && is_ack()
+      && start_txd()
       && send(_data)
       && is_ack();
   }
@@ -194,6 +217,7 @@ namespace UPDI {
     _set_repeat[4] = 0x64;  /* ST PTR++ DATA1 */
     return send_bytes(_set_ptr24, 5)
       && is_ack()
+      && start_txd()
       && set_rsd()
       && send_bytes(_set_repeat, sizeof(_set_repeat))
       && send_bytes(&packet.out.memData[0], _wLength)
@@ -206,6 +230,7 @@ namespace UPDI {
     _set_repeat[4] = 0x64;  /* ST PTR++ DATA1 */
     return send_bytes(_set_ptr24, 5)
       && is_ack()
+      && start_txd()
       && set_rsd()
       && send_bytes(_set_repeat, sizeof(_set_repeat))
       && send_bytes_fill(_wLength)
@@ -220,6 +245,7 @@ namespace UPDI {
     _set_repeat[4] = 0x65;  /* ST PTR++ DATA2 */
     return send_bytes(_set_ptr24, 5)
       && is_ack()
+      && start_txd()
       && set_rsd()
       && send_bytes(_set_repeat, sizeof(_set_repeat))
       && send_bytes(&packet.out.memData[0], _wLength & ~1)
@@ -383,10 +409,9 @@ namespace UPDI {
 
   size_t timeout_fallback (void) {
     /* If a timeout occurs, the communication speed will be reduced. */
-    RXDATA = _xclk - 10;
+    RXDATA = _xclk - 25;
     if (RXDATA < 40) return 0;
     _xclk = RXDATA;
-    send_break();
     send_break();
     return clear_rsd();
   }
@@ -541,7 +566,7 @@ namespace UPDI {
       D1PRINTF(" UPDI_ENTER_PROG\r\n");
       /* On failure, RSP3_OK is returned if a UPDI connection is available. */
       /* Locked devices are given the opportunity to write to USERROW and erase the chip. */
-      _rspsize = Timeout::command(&enter_progmode, &timeout_fallback, 300)
+      _rspsize = Timeout::command(&enter_progmode, &timeout_fallback, 400)
               || bit_is_set(PGCONF, PGCONF_UPDI_bp);
     }
     else if (_cmd == 0x16) {        /* CMD3_LEAVE_PROGMODE */

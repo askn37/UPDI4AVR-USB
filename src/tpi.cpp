@@ -33,6 +33,7 @@
 
 #define TCLK_IN portRegister(PIN_PGM_TCLK).IN
 #define TCLK_bp pinPosition(PIN_PGM_TCLK)
+#define TPI_GVAL 0x05
 
 #define pinLogicPush(PIN) openDrainWriteMacro(PIN, LOW)
 #define pinLogicOpen(PIN) openDrainWriteMacro(PIN, HIGH)
@@ -44,6 +45,26 @@ namespace TPI {
 
   // MARK: TPI Low level
 
+  bool start_txd (void) {
+  #ifdef PIN_PGM_XDIR
+    if (bit_is_clear(PGCONF, PGCONF_XDIR_bp)) {
+      digitalWriteMacro(PIN_PGM_XDIR, HIGH);
+      bit_set(PGCONF, PGCONF_XDIR_bp);
+    }
+  #endif
+    return true;
+  }
+
+  bool stop_txd (void) {
+  #ifdef PIN_PGM_XDIR
+    if (bit_is_set(PGCONF, PGCONF_XDIR_bp)) {
+      digitalWriteMacro(PIN_PGM_XDIR, LOW);
+      bit_clear(PGCONF, PGCONF_XDIR_bp);
+    }
+  #endif
+    return true;
+  }
+
   void idle_clock (const size_t clock) {
     for (size_t i = 0; i < clock; i++) {
       loop_until_bit_is_set(TCLK_IN, TCLK_bp);
@@ -52,13 +73,14 @@ namespace TPI {
   }
 
   bool recv (void) {
-    loop_until_bit_is_set(USART0_STATUS, USART_RXCIF_bp);
-    RXSTAT = USART0_RXDATAH ^ 0x80;
+    do { RXSTAT = USART0_RXDATAH; } while (!RXSTAT);
     RXDATA = USART0_RXDATAL;
+    RXSTAT ^= 0x80;
     return RXSTAT == 0;
   }
 
   bool send (const uint8_t _data) {
+    start_txd();
     loop_until_bit_is_set(USART0_STATUS, USART_DREIF_bp);
     USART0_TXDATAL = _data;
     return (recv() && _data == RXDATA);
@@ -68,7 +90,7 @@ namespace TPI {
 
   bool get_sldcs (const uint8_t _addr) {
     D2PRINTF("[SLDCS:%02X]\r\n", _addr);
-    return (send(0x80 | _addr) && recv());
+    return (send(0x80 | _addr) && stop_txd() && recv());
   }
 
   bool set_sstcs (const uint8_t _addr, const uint8_t _data) {
@@ -83,7 +105,7 @@ namespace TPI {
 
   bool get_sin (const uint8_t _addr) {
     D2PRINTF("[SIN:%02X]\r\n", _addr);
-    return (send(0x10 | _addr) && recv());
+    return (send(0x10 | _addr) && stop_txd() && recv());
   }
 
   bool set_sstpr (const uint16_t _addr) {
@@ -93,7 +115,7 @@ namespace TPI {
 
   bool get_sld (void) {
     D2PRINTF("[SLD]\r\n");
-    return (send(0x24) && recv());
+    return (send(0x24) && stop_txd() && recv());
   }
 
   bool set_sst (const uint8_t _data) {
@@ -248,8 +270,8 @@ namespace TPI {
     USART::change_tpi();
     idle_clock(20);
 
-    /*** Set TPIPCR Guard Time : 2 clock ****/
-    if (!set_sstcs(0x02, 0x06)) return 0;
+    /*** Set TPIPCR Guard Time ****/
+    if (!set_sstcs(0x02, TPI_GVAL)) return 0;
 
     /*** Check TPIIR code : Fixed 0x80 ***/
     while (!(get_sldcs(0x0F) && (RXDATA == 0x80)));

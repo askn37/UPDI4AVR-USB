@@ -367,6 +367,9 @@ namespace SYS {
 
   void power_reset (bool _off, bool _on) {
     if (_off) {
+  #ifdef PIN_PGM_XDIR
+      digitalWriteMacro(PIN_PGM_XDIR, LOW);
+  #endif
   #ifdef PIN_PGM_VPOWER
       digitalWriteMacro(PIN_PGM_VPOWER, HIGH);  /* VTG off */
       /* Temporarily disable the pullup to stop current leakage when VTG=OFF. */
