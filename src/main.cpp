@@ -94,7 +94,7 @@ int main (void) {
   USART::setup();
 
   loop_until_bit_is_clear(WDT_STATUS, WDT_SYNCBUSY_bp);
-  _PROTECTED_WRITE(WDT_CTRLA, WDT_PERIOD_2KCLK_gc);
+  _PROTECTED_WRITE(WDT_CTRLA, WDT_PERIOD_1KCLK_gc);
 
   #if defined(PIN_SYS_SW0)
   /* Clear the dirty flag before enabling interrupts. */
@@ -114,8 +114,9 @@ int main (void) {
 
   /* From here on, it's an endless loop. */
   D1PRINTF("<WAITING>\r\n");
+  uint8_t _count = 1;
   while (true) {
-    wdt_reset();
+    if (_count) wdt_reset();
 
     /*** USB control handling ***/
     USB::handling_bus_events();
@@ -146,7 +147,17 @@ int main (void) {
     if (bit_is_set(GPCONF, GPCONF_BRK_bp)) USB::cci_break_count();
 
     /*** If CMSIS-DAP is not received, return to the top. ***/
-    if (USB::is_not_dap()) continue;
+    if (USB::is_not_dap()) {
+      /* To force exit from a non-responsive terminal mode, press SW0. */
+      if (bit_is_set(PGCONF, PGCONF_PROG_bp)) {
+        if (_count) _count++;
+        else if (bit_is_clear(GPCONF, GPCONF_RIS_bp)) _count = 1;
+        bit_clear(GPCONF, GPCONF_RIS_bp);
+        /* If no response is received for more than 1 second, a WDT reset will fire. */
+      }
+      continue;
+    }
+    _count = 1;
 
     /*** CMSIS-DAP and JTAG3 packet receiver ***/
     if (JTAG::dap_command_check()) JTAG::jtag_scope_branch();
