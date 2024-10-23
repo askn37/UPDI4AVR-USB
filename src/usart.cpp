@@ -200,7 +200,7 @@ namespace USART {
       /* If outside the supported range, the USART will remain in the BREAK state. */
       D1PRINTF(" VCP=FAIL\r\n");
     }
-    bit_clear(GPCONF, GPCONF_HLD_bp);
+    GPCONF &= ~(GPCONF_HLD_bm | GPCONF_RIS_bm | GPCONF_FAL_bm);
     if (bit_is_set(GPCONF, GPCONF_USB_bp))
       SYS::LED_HeartBeat();
     else

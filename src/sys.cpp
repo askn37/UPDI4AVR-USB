@@ -479,9 +479,7 @@ namespace SYS {
       else
         LED_Flash();      /* USB is not yet enabled. */
     }
-    bit_clear(GPCONF, GPCONF_HLD_bp);
-    bit_clear(GPCONF, GPCONF_FAL_bp);
-    bit_clear(GPCONF, GPCONF_RIS_bp);
+    GPCONF &= ~(GPCONF_HLD_bm | GPCONF_RIS_bm | GPCONF_FAL_bm);
   }
 
   /*

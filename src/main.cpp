@@ -114,9 +114,9 @@ int main (void) {
 
   /* From here on, it's an endless loop. */
   D1PRINTF("<WAITING>\r\n");
-  uint8_t _count = 1;
+  bool _wdt = true;
   while (true) {
-    if (_count) wdt_reset();
+    if (_wdt) wdt_reset();
 
     /*** USB control handling ***/
     USB::handling_bus_events();
@@ -150,14 +150,13 @@ int main (void) {
     if (USB::is_not_dap()) {
       /* To force exit from a non-responsive terminal mode, press SW0. */
       if (bit_is_set(PGCONF, PGCONF_PROG_bp)) {
-        if (_count) _count++;
-        else if (bit_is_clear(GPCONF, GPCONF_RIS_bp)) _count = 1;
+        if (bit_is_set(GPCONF, GPCONF_RIS_bp)) _wdt = false;
         bit_clear(GPCONF, GPCONF_RIS_bp);
         /* If no response is received for more than 1 second, a WDT reset will fire. */
       }
       continue;
     }
-    _count = 1;
+    _wdt = true;
 
     /*** CMSIS-DAP and JTAG3 packet receiver ***/
     if (JTAG::dap_command_check()) JTAG::jtag_scope_branch();
