@@ -34,37 +34,36 @@
 /* If disabled, it will be automatically detected */
 
 // #define CONFIG_HAL_TYPE HAL_CNANO
-// #define CONFIG_HAL_TYPE HAL_PDIP
 
 /*
- * Pin layout by package:
+ * Pin layout by package: Design Type MZU2410A2
  *
- *         14P   20P   28P   32P   PDIP  CNANO
- *    PA0  VTxD  TDAT  TDAT  TDAT  TDAT  TDAT
- *    PA1  VRxD  VPW   VPW   VPW   VPW   TRST
- *    PA2  -     VTxD  VTxD  VTxD  VTxD  VTxD     : Shared with TCLK
- *    PA3  -     VRxD  VRxD  VRxD  VRxD  VRxD
- *    PA4  -     PDAT  PDAT  PDAT  PDAT  PDAT
- *    PA5  -     HVSL1 SW0   SW0   PRxD  N.C.
- *    PA6  -     TRST  TRST  TRST  TRST  PCLK     : 20/28/32P/DIPDI TRST shared internal with PCLK
- *    PA7  -     HVSL2 N.C.  N.C.  LED0  N.C.
- *    PC3  LED1  LED1  LED1  LED1  LED1  Not available
- *    PD0  -     -     HVSL1 HVSL1 HVSL1 HVSL1
- *    PD1  -     -     HVSL2 HVSL2 HVSL2 HVSL2
- *    PD2  -     -     HVSL3 HVSL3 HVSL3 HVSL3
- *    PD3  -     -     LED0  LED0  N.C.  N.C.
- *    PD4  TDAT  HVCP1 HVCP1 HVCP1 HVCP1 HVCP1
- *    PD5  TRST  HVCP2 HVCP2 HVCP2 HVCP2 HVCP2
- *    PD6  TCLK  LED0  DTxD  DTxD  DTxD  DTxD     : 14P TCLK is shared outside with VTxD
- *    PD7  LED0  HVSL3 DRxD  DRxD  DRxD  DRxD
- *    PF0  -     -     N.C.  N.C.  N.C.  Not available
- *    PF1  -     -     N.C.  N.C.  N.C.  Not available
- *    PF2  -     -     -     N.C.  N.C.  LED0
- *    PF3  -     -     -     N.C.  N.C.  LED1
- *    PF4  -     -     -     N.C.  N.C.  VPW
- *    PF5  -     -     -     N.C.  N.C.  N.C.
- *    PF6  SW0   SW0   DnRST DnRST SW0   SW0
- *    PF7  DUPDI DUPDI DUPDI DUPDI DUPDI DUPDI
+ *         14P   20P   28P   32P   CNANO
+ *    PA0  VTxD  TDAT  TDAT  TDAT  TDAT
+ *    PA1  VRxD  VPW   VPW   VPW   TRST
+ *    PA2  -     VTxD  VTxD  VTxD  VTxD     : Shared with TCLK
+ *    PA3  -     VRxD  VRxD  VRxD  VRxD
+ *    PA4  -     N.C.  N.C.  N.C.  PDAT
+ *    PA5  -     HVSL1 SW0   SW0   N.C.
+ *    PA6  -     TRST  TRST  TRST  PCLK
+ *    PA7  -     HVSL2 N.C.  N.C.  N.C.
+ *    PC3  LED1  LED1  LED1  LED1  N.A.
+ *    PD0  -     -     HVSL1 HVSL1 HVSL1
+ *    PD1  -     -     HVSL2 HVSL2 HVSL2
+ *    PD2  -     -     HVSL3 HVSL3 HVSL3
+ *    PD3  -     -     LED0  LED0  N.C.
+ *    PD4  TDAT  HVCP1 HVCP1 HVCP1 HVCP1
+ *    PD5  TRST  HVCP2 HVCP2 HVCP2 HVCP2
+ *    PD6  TCLK  LED0  DTxD  DTxD  DTxD     : 14P TCLK is shared outside with VTxD
+ *    PD7  LED0  HVSL3 DRxD  DRxD  DRxD
+ *    PF0  -     -     N.C.  N.C.  N.A.
+ *    PF1  -     -     N.C.  N.C.  N.A.
+ *    PF2  -     -     -     N.C.  LED0
+ *    PF3  -     -     -     N.C.  LED1
+ *    PF4  -     -     -     N.C.  VPW
+ *    PF5  -     -     -     N.C.  N.C.
+ *    PF6  SW0   SW0   DnRST DnRST SW0
+ *    PF7  DUPDI DUPDI DUPDI DUPDI DUPDI
  *
  *    * SW0 refers to the SW1 component on the drawing except for CNANO.
  *
@@ -131,7 +130,7 @@
  */
 
 #define UPDI_CLK 225
-#define PDI_CLK  250
+#define PDI_CLK  500
 
 /*
  * TPI Program interface operating clock.
@@ -163,6 +162,8 @@
  *   Enable any of the following if desired.
  *   If all are disabled, the defaults will be selected.
  *   This information is stored in the file for the EEPROM.
+ *
+ *   The default value is `0x04D8,0x0B15`.
  *
  * WARNING:
  *
@@ -240,28 +241,11 @@
 /*** CONFIG_PGM ***/
 
 /*
- * Enable UPDI type programming support.
- */
-
-#define CONFIG_PGM_UPDI_ENABLE
-
-/*
- * Enable TPI type programming support.
- *
- * VCP is available with limitations on ATtiny102/104.
- *
- *   The connection between VRxD and PB2 (TxD) always works.
- *   VTxD must be connected to PA0 (TCLK) and PB3 (RxD),
- *   and PA0 (TCLK) should not be used as a GPIO.
- */
-
-#define CONFIG_PGM_TPI_ENABLE
-
-/*
  * Enable PDI type programming support.
  *
+ * This option can currently only be enabled on CNANO.
  * 3.3V operating voltage support is required. 5V operation is prohibited.
- * Cannot be used with CNANO without external support circuitry.
+ * CNANO must be pre-configured for 3.3V operation.
  */
 
 #define CONFIG_PGM_PDI_ENABLE
@@ -314,9 +298,6 @@
 #ifdef CONFIG_HVC_DISABLE
   #undef CONFIG_HVC_ENABLE
 #endif
-#ifdef CONFIG_PGM_TPI_DISABLE
-  #undef CONFIG_PGM_TPI_ENABLE
-#endif
 #ifdef CONFIG_PGM_PDI_DISABLE
   #undef CONFIG_PGM_PDI_ENABLE
 #endif
@@ -340,22 +321,20 @@
 
 #elif (CONFIG_HAL_TYPE == HAL_BAREMETAL_20P)
   #undef DEBUG
+  #undef CONFIG_PGM_PDI_ENABLE
   #define CONFIG_PGM_TYPE 2
   #define PORTMUX_USART_VCP   (PORTMUX_USART0_ALT2_gc    | PORTMUX_USART1_ALT2_gc)
   #define PORTMUX_USART_PGM   (PORTMUX_USART0_DEFAULT_gc | PORTMUX_USART1_ALT2_gc)
-  #define PORTMUX_USART_PDI   (PORTMUX_USART0_ALT1_gc    | PORTMUX_USART1_ALT2_gc)
   #define PORTMUX_USART_NONE  (PORTMUX_USART0_NONE_gc    | PORTMUX_USART1_ALT2_gc)
   #define PIN_VCP_TXD         PIN_USART0_TXD_ALT2
   #define PIN_VCP_RXD         PIN_USART0_RXD_ALT2
   #define PIN_PGM_TDAT        PIN_USART0_TXD
   #define PIN_PGM_TRST        PIN_PA6
   #define PIN_PGM_TCLK        PIN_USART0_XCK
-  #define PIN_PGM_PDAT        PIN_USART0_TXD_ALT1
-  #define PIN_PGM_PCLK        PIN_USART0_XCK_ALT1
   #define PIN_PGM_VPOWER      PIN_PA1
   #define PIN_HVC_SELECT1     PIN_PD6
   #define PIN_HVC_SELECT2     PIN_PD7
-  #define PIN_HVC_SELECT4     PIN_PA5
+  #define PIN_HVC_SELECT3     PIN_PA5
   #define PIN_HVC_CHGPUMP1    PIN_TCA0_WO4_ALT3
   #define PIN_HVC_CHGPUMP2    PIN_TCA0_WO5_ALT3
   #define PIN_SYS_LED0        PIN_EVOUTA_ALT1
@@ -385,43 +364,17 @@
   #define PIN_SYS_LED1        PIN_EVOUTA_ALT1
   #define PIN_SYS_SW0         PIN_PF6
 
-#elif (CONFIG_HAL_TYPE == HAL_PDIP)
-  #define CONFIG_PGM_TYPE 2
-  #define PORTMUX_USART_VCP   (PORTMUX_USART0_ALT2_gc    | PORTMUX_USART1_ALT2_gc)
-  #define PORTMUX_USART_PGM   (PORTMUX_USART0_DEFAULT_gc | PORTMUX_USART1_ALT2_gc)
-  #define PORTMUX_USART_PDI   (PORTMUX_USART0_ALT1_gc    | PORTMUX_USART1_ALT2_gc)
-  #define PORTMUX_USART_NONE  (PORTMUX_USART0_NONE_gc    | PORTMUX_USART1_ALT2_gc)
-  #define PIN_VCP_TXD         PIN_USART0_TXD_ALT2
-  #define PIN_VCP_RXD         PIN_USART0_RXD_ALT2
-  #define PIN_PGM_TDAT        PIN_USART0_TXD
-  #define PIN_PGM_TRST        PIN_PA6
-  #define PIN_PGM_TCLK        PIN_USART0_XCK
-  #define PIN_PGM_PDAT        PIN_USART0_TXD_ALT1
-  #define PIN_PGM_PRXD        PIN_USART0_RXD_ALT1
-  #define PIN_PGM_PCLK        PIN_USART0_XCK_ALT1
-  #define PIN_PGM_VPOWER      PIN_PA1
-  #define PIN_HVC_SELECT1     PIN_PD0
-  #define PIN_HVC_SELECT2     PIN_PD1
-  #define PIN_HVC_SELECT3     PIN_PD2
-  #define PIN_HVC_CHGPUMP1    PIN_TCA0_WO4_ALT3
-  #define PIN_HVC_CHGPUMP2    PIN_TCA0_WO5_ALT3
-  #define PIN_SYS_LED0        PIN_EVOUTA_ALT1
-  #define PIN_SYS_LED1        PIN_LUT1_OUT
-  #define PIN_SYS_SW0         PIN_PF6
-
 #else /* (CONFIG_HAL_TYPE == HAL_BAREMETAL_28P) || (CONFIG_HAL_TYPE == HAL_BAREMETAL_32P) */
+  #undef CONFIG_PGM_PDI_ENABLE
   #define CONFIG_PGM_TYPE 2
   #define PORTMUX_USART_VCP   (PORTMUX_USART0_ALT2_gc    | PORTMUX_USART1_ALT2_gc)
   #define PORTMUX_USART_PGM   (PORTMUX_USART0_DEFAULT_gc | PORTMUX_USART1_ALT2_gc)
-  #define PORTMUX_USART_PDI   (PORTMUX_USART0_ALT1_gc    | PORTMUX_USART1_ALT2_gc)
   #define PORTMUX_USART_NONE  (PORTMUX_USART0_NONE_gc    | PORTMUX_USART1_ALT2_gc)
   #define PIN_VCP_TXD         PIN_USART0_TXD_ALT2
   #define PIN_VCP_RXD         PIN_USART0_RXD_ALT2
   #define PIN_PGM_TDAT        PIN_USART0_TXD
-  #define PIN_PGM_TRST        PIN_PA6
   #define PIN_PGM_TCLK        PIN_USART0_XCK
-  #define PIN_PGM_PDAT        PIN_USART0_TXD_ALT1
-  #define PIN_PGM_PCLK        PIN_USART0_XCK_ALT1
+  #define PIN_PGM_TRST        PIN_PA6
   #define PIN_PGM_VPOWER      PIN_PA1
   #define PIN_HVC_SELECT1     PIN_PD0
   #define PIN_HVC_SELECT2     PIN_PD1

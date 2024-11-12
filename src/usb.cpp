@@ -52,7 +52,7 @@ namespace USB {
   const uint8_t PROGMEM device_descriptor[] = {
     /* This device descriptor contains the VID:PID, default is MCHP:CDC-ACM. */
     0x12, 0x01, 0x00, 0x02, 0xEF, 0x02, 0x01, 0x40,
-    0xDB, 0x04, 0x15, 0x0B, 0x00, 0x01, 0x01, 0x02, 0x03, 0x01
+    0xD8, 0x04, 0x15, 0x0B, 0x00, 0x01, 0x01, 0x02, 0x03, 0x01
   };
   const uint8_t PROGMEM qualifier_descriptor[] = {
     /* This descriptor selects Full-Speed (USB 2.0) ​​for USB 3.0. */
@@ -338,14 +338,6 @@ namespace USB {
     }
     loop_until_bit_is_clear(USB0_INTFLAGSB, USB_RMWBUSY_bp);
     USB_EP_STATUS_CLR(USB_EP_CDO) = ~USB_TOGGLE_bm;
-  }
-
-  void ep0_stalled (void) {
-    D1PRINTF("[STALLED]\r\n");
-    loop_until_bit_is_clear(USB0_INTFLAGSB, USB_RMWBUSY_bp);
-    USB_EP_STATUS_SET(USB_EP_RES) = USB_STALLED_bm;
-    loop_until_bit_is_clear(USB0_INTFLAGSB, USB_RMWBUSY_bp);
-    USB_EP_STATUS_SET(USB_EP_REQ) = USB_STALLED_bm;
   }
 
   void complete_dap_out (void) {
@@ -662,9 +654,6 @@ namespace USB {
     if (_listen) {
       ep_res_listen();
       ep_req_listen();
-    }
-    else {
-      ep0_stalled();
     }
     USB0_INTFLAGSB |= USB_EPSETUP_bp;
   }

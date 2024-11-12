@@ -60,36 +60,14 @@ namespace UPDI {
 
   // MARK: UPDI Low level
 
-  bool start_txd (void) {
-  #ifdef PIN_PGM_XDIR
-    if (bit_is_clear(PGCONF, PGCONF_XDIR_bp)) {
-      digitalWriteMacro(PIN_PGM_XDIR, HIGH);
-      bit_set(PGCONF, PGCONF_XDIR_bp);
-    }
-  #endif
-    return true;
-  }
-
-  bool stop_txd (void) {
-  #ifdef PIN_PGM_XDIR
-    if (bit_is_set(PGCONF, PGCONF_XDIR_bp)) {
-      digitalWriteMacro(PIN_PGM_XDIR, LOW);
-      bit_clear(PGCONF, PGCONF_XDIR_bp);
-    }
-  #endif
-    return true;
-  }
-
   bool send_break (void) {
-    start_txd();
     USART0_BAUD = USART0_BAUD + (USART0_BAUD >> 1);
     send(0x00);
     USART0_BAUD = USART::calk_baud_khz(_xclk);
-    return start_txd();
+    return true;
   }
 
   void long_break (void) {
-    start_txd();
     USART0_BAUD = USART::calk_baud_khz(_xclk >> 2);
     send(0x00);
     USART0_BAUD = USART::calk_baud_khz(_xclk);
@@ -104,7 +82,6 @@ namespace UPDI {
   }
 
   bool recv_bytes (uint8_t* _data, size_t _len) {
-    stop_txd();
     do {
       if (!recv()) return false;
       *_data++ = RXDATA;
@@ -113,7 +90,7 @@ namespace UPDI {
   }
 
   bool is_ack (void) {
-    return stop_txd() && recv() && 0x40 == RXDATA;
+    return recv() && 0x40 == RXDATA;
   }
 
   bool send (const uint8_t _data) {
@@ -124,16 +101,8 @@ namespace UPDI {
   }
 
   bool send_bytes (const uint8_t* _data, size_t _len) {
-    start_txd();
     do {
       if (!send(*_data++)) return false;
-    } while (--_len);
-    return true;
-  }
-
-  bool send_bytes_fill (size_t _len) {
-    do {
-      if (!send(0xFF)) return false;
     } while (--_len);
     return true;
   }
@@ -145,7 +114,7 @@ namespace UPDI {
       0x55, 0x08, 0, 0, 0, 0  /* LDS ADDR3 DATA1 */
     };
     _CAPS32(_set_ptr[2])->dword = _dwAddr;
-    return send_bytes(_set_ptr, 5) && stop_txd() && recv();
+    return send_bytes(_set_ptr, 5) && recv();
   }
 
   bool send_byte (uint32_t _dwAddr, uint8_t _data) {
@@ -155,7 +124,6 @@ namespace UPDI {
     _CAPS32(_set_ptr[2])->dword = _dwAddr;
     return send_bytes(_set_ptr, 5)
       && is_ack()
-      && start_txd()
       && send(_data)
       && is_ack();
   }
@@ -217,23 +185,9 @@ namespace UPDI {
     _set_repeat[4] = 0x64;  /* ST PTR++ DATA1 */
     return send_bytes(_set_ptr24, 5)
       && is_ack()
-      && start_txd()
       && set_rsd()
       && send_bytes(_set_repeat, sizeof(_set_repeat))
       && send_bytes(&packet.out.memData[0], _wLength)
-      && clear_rsd();
-  }
-
-  bool send_bytes_block_fill (uint32_t _dwAddr, size_t _wLength) {
-    _CAPS32(_set_ptr24[2])->dword = _dwAddr;
-    _set_repeat[2] = _wLength - 1;
-    _set_repeat[4] = 0x64;  /* ST PTR++ DATA1 */
-    return send_bytes(_set_ptr24, 5)
-      && is_ack()
-      && start_txd()
-      && set_rsd()
-      && send_bytes(_set_repeat, sizeof(_set_repeat))
-      && send_bytes_fill(_wLength)
       && clear_rsd();
   }
 
@@ -245,7 +199,6 @@ namespace UPDI {
     _set_repeat[4] = 0x65;  /* ST PTR++ DATA2 */
     return send_bytes(_set_ptr24, 5)
       && is_ack()
-      && start_txd()
       && set_rsd()
       && send_bytes(_set_repeat, sizeof(_set_repeat))
       && send_bytes(&packet.out.memData[0], _wLength & ~1)
@@ -449,8 +402,8 @@ namespace UPDI {
     pinLogicOpen(PIN_PGM_TRST);
 
     /* High-Voltage control */
-    if (_hven && _hvvar != 1) {
     #ifdef CONFIG_HVC_ENABLE
+    if (_hven && _hvvar != 1) {
       SYS::hvc_enable();
       if (_hvvar == 0) {
         D1PRINTF("<HVC:V0>");
@@ -466,8 +419,8 @@ namespace UPDI {
       digitalWriteMacro(PIN_HVC_SELECT1, LOW);
       digitalWriteMacro(PIN_HVC_SELECT3, LOW);
       /* From this point onwards, UPDI activation must be successful within 64ms. */
-    #endif
     }
+    #endif
 
     /* In most cases, a 2.5 ms LOW signal is sufficient to initiate UPDI activation. */
     pinLogicPush(PIN_PGM_TDAT);
@@ -540,11 +493,7 @@ namespace UPDI {
     if (_cmd == 0x10) {             /* CMD3_SIGN_ON */
       D1PRINTF(" UPDI_SIGN_ON=EXT:%02X\r\n", packet.out.bMType);
       _xclk = _xclk_bak;
-      _rspsize = Timeout::command(&connect, nullptr, 300);
-      if (!_rspsize) {
-        if (100 < _xclk && _vtarget > 3500) _xclk = 100;
-        _rspsize = Timeout::command(&connect, nullptr, 300);
-      }
+      while (!(_rspsize = Timeout::command(&connect, nullptr, 150))) _xclk -= 25;
       /* If it fails here, it is expected to try again, giving it a chance at HV control. */
       packet.in.res = _rspsize ? 0x84 : 0xA0; /* RSP3_DATA : RSP3_FAILED */
       return _rspsize;

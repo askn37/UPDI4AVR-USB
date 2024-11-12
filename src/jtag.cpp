@@ -273,8 +273,10 @@ namespace JTAG {
           D1PRINTF(" ARCH=%02X\r\n", _data);
           _jtag_arch = _data;       /* 5:UPDI 3:PDI */
           if (_jtag_arch == 3) {
+            #ifdef PIN_PGM_PDAT
             openDrainWriteMacro(PIN_PGM_PDAT, LOW);
             // pinControlRegister(PIN_PGM_PDAT) |= PORT_PULLUPEN_bm;
+            #endif
           }
           _xclk = _data == 5 ? UPDI_CLK : PDI_CLK;
           _xclk_bak = _xclk;
@@ -306,38 +308,38 @@ namespace JTAG {
           memcpy(&Device_Descriptor, &packet.out.setData[0], _length & 63);
   #if DEBUG >= 1
           if (_jtag_arch == 5) {
-            D1PRINTF("(UPDI)  prog_base=%02X:%04X\r\n", Device_Descriptor.UPDI.prog_base_msb, Device_Descriptor.UPDI.prog_base);
-            D1PRINTF("  flash_page_size=%02X:%02X\r\n", Device_Descriptor.UPDI.flash_page_size_msb, Device_Descriptor.UPDI.flash_page_size);
-            D1PRINTF("      flash_bytes=%06lX\r\n", Device_Descriptor.UPDI.flash_bytes);
-            D1PRINTF("     eeprom_bytes=%04X\r\n", Device_Descriptor.UPDI.eeprom_bytes);
-            D1PRINTF("   user_sig_bytes=%04X\r\n", Device_Descriptor.UPDI.user_sig_bytes);
-            D1PRINTF("      fuses_bytes=%04X\r\n", Device_Descriptor.UPDI.fuses_bytes);
-            D1PRINTF("      eeprom_base=%04X\r\n", Device_Descriptor.UPDI.eeprom_base);
-            D1PRINTF("    user_sig_base=%04X\r\n", Device_Descriptor.UPDI.user_sig_base);
-            D1PRINTF("   signature_base=%04X\r\n", Device_Descriptor.UPDI.signature_base);
-            D1PRINTF("       fuses_base=%04X\r\n", Device_Descriptor.UPDI.fuses_base);
-            D1PRINTF("    lockbits_base=%04X\r\n", Device_Descriptor.UPDI.lockbits_base);
-            D1PRINTF("     address_mode=%02X\r\n", Device_Descriptor.UPDI.address_mode);
-            D1PRINTF("   hvupdi_variant=%02X\r\n", Device_Descriptor.UPDI.hvupdi_variant);
+            D2PRINTF("(UPDI)  prog_base=%02X:%04X\r\n", Device_Descriptor.UPDI.prog_base_msb, Device_Descriptor.UPDI.prog_base);
+            D2PRINTF("  flash_page_size=%02X:%02X\r\n", Device_Descriptor.UPDI.flash_page_size_msb, Device_Descriptor.UPDI.flash_page_size);
+            D2PRINTF("      flash_bytes=%06lX\r\n", Device_Descriptor.UPDI.flash_bytes);
+            D2PRINTF("     eeprom_bytes=%04X\r\n", Device_Descriptor.UPDI.eeprom_bytes);
+            D2PRINTF("   user_sig_bytes=%04X\r\n", Device_Descriptor.UPDI.user_sig_bytes);
+            D2PRINTF("      fuses_bytes=%04X\r\n", Device_Descriptor.UPDI.fuses_bytes);
+            D2PRINTF("      eeprom_base=%04X\r\n", Device_Descriptor.UPDI.eeprom_base);
+            D2PRINTF("    user_sig_base=%04X\r\n", Device_Descriptor.UPDI.user_sig_base);
+            D2PRINTF("   signature_base=%04X\r\n", Device_Descriptor.UPDI.signature_base);
+            D2PRINTF("       fuses_base=%04X\r\n", Device_Descriptor.UPDI.fuses_base);
+            D2PRINTF("    lockbits_base=%04X\r\n", Device_Descriptor.UPDI.lockbits_base);
+            D2PRINTF("     address_mode=%02X\r\n", Device_Descriptor.UPDI.address_mode);
+            D2PRINTF("   hvupdi_variant=%02X\r\n", Device_Descriptor.UPDI.hvupdi_variant);
             /* Even with all this, the BOOTROW information is still undefined! */
             /* Re-analysis of newer ICE FW is needed! */
           }
           else if (_jtag_arch == 3) {
-            D1PRINTF("(Xmega) nvm_app_offset=%08lX\r\n", Device_Descriptor.Xmega.nvm_app_offset);
-            D1PRINTF("       nvm_boot_offset=%08lX\r\n", Device_Descriptor.Xmega.nvm_boot_offset);
-            D1PRINTF("     nvm_eeprom_offset=%08lX\r\n", Device_Descriptor.Xmega.nvm_eeprom_offset);
-            D1PRINTF("       nvm_fuse_offset=%08lX\r\n", Device_Descriptor.Xmega.nvm_fuse_offset);
-            D1PRINTF("       nvm_lock_offset=%08lX\r\n", Device_Descriptor.Xmega.nvm_lock_offset);
-            D1PRINTF("   nvm_user_sig_offset=%08lX\r\n", Device_Descriptor.Xmega.nvm_user_sig_offset);
-            D1PRINTF("   nvm_prod_sig_offset=%08lX\r\n", Device_Descriptor.Xmega.nvm_prod_sig_offset);
-            D1PRINTF("       nvm_data_offset=%08lX\r\n", Device_Descriptor.Xmega.nvm_data_offset);
-            D1PRINTF("              app_size=%08lX\r\n", Device_Descriptor.Xmega.app_size);
-            D1PRINTF("             boot_size=%04X\r\n", Device_Descriptor.Xmega.boot_size);
-            D1PRINTF("       flash_page_size=%04X\r\n", Device_Descriptor.Xmega.flash_page_size);
-            D1PRINTF("           eeprom_size=%04X\r\n", Device_Descriptor.Xmega.eeprom_size);
-            D1PRINTF("      eeprom_page_size=%02X\r\n", Device_Descriptor.Xmega.eeprom_page_size);
-            D1PRINTF("         nvm_base_addr=%04X\r\n", Device_Descriptor.Xmega.nvm_base_addr);
-            D1PRINTF("         mcu_base_addr=%04X\r\n", Device_Descriptor.Xmega.mcu_base_addr);
+            D2PRINTF("(Xmega) nvm_app_offset=%08lX\r\n", Device_Descriptor.Xmega.nvm_app_offset);
+            D2PRINTF("       nvm_boot_offset=%08lX\r\n", Device_Descriptor.Xmega.nvm_boot_offset);
+            D2PRINTF("     nvm_eeprom_offset=%08lX\r\n", Device_Descriptor.Xmega.nvm_eeprom_offset);
+            D2PRINTF("       nvm_fuse_offset=%08lX\r\n", Device_Descriptor.Xmega.nvm_fuse_offset);
+            D2PRINTF("       nvm_lock_offset=%08lX\r\n", Device_Descriptor.Xmega.nvm_lock_offset);
+            D2PRINTF("   nvm_user_sig_offset=%08lX\r\n", Device_Descriptor.Xmega.nvm_user_sig_offset);
+            D2PRINTF("   nvm_prod_sig_offset=%08lX\r\n", Device_Descriptor.Xmega.nvm_prod_sig_offset);
+            D2PRINTF("       nvm_data_offset=%08lX\r\n", Device_Descriptor.Xmega.nvm_data_offset);
+            D2PRINTF("              app_size=%08lX\r\n", Device_Descriptor.Xmega.app_size);
+            D2PRINTF("             boot_size=%04X\r\n", Device_Descriptor.Xmega.boot_size);
+            D2PRINTF("       flash_page_size=%04X\r\n", Device_Descriptor.Xmega.flash_page_size);
+            D2PRINTF("           eeprom_size=%04X\r\n", Device_Descriptor.Xmega.eeprom_size);
+            D2PRINTF("      eeprom_page_size=%02X\r\n", Device_Descriptor.Xmega.eeprom_page_size);
+            D2PRINTF("         nvm_base_addr=%04X\r\n", Device_Descriptor.Xmega.nvm_base_addr);
+            D2PRINTF("         mcu_base_addr=%04X\r\n", Device_Descriptor.Xmega.mcu_base_addr);
           }
           /* STUB: And other descriptors. */
   #endif
@@ -389,9 +391,7 @@ namespace JTAG {
   #ifdef CONFIG_PGM_PDI_ENABLE
     else if (_jtag_arch == 0x03) _rspsize = PDI::jtag_scope_xmega();    /* XMEGA support */
   #endif
-  #ifdef CONFIG_PGM_UPDI_ENABLE
     else if (_jtag_arch == 0x05) _rspsize = UPDI::jtag_scope_updi();    /* UPDI support */
-  #endif
     else packet.in.res = 0xA0;      /* RSP3_FAILED */
     return _rspsize;
   } /* jtag_scope_avr_core */
@@ -415,10 +415,7 @@ namespace JTAG {
     else if (_scope == 0x13) _rspsize = AVR32::jtag_scope_avr32();  /* SCOPE_AVR32 */
   #endif
     else if (_scope == 0x12) _rspsize = jtag_scope_avr_core();      /* SCOPE_AVR */
-  #ifdef CONFIG_PGM_TPI_ENABLE
-    /* The 14P models have limited TPI support due to insufficient pin count. */
     else if (_scope == 0x14) _rspsize = TPI::jtag_scope_tpi();      /* SCOPE_AVR_TPI */
-  #endif
     else if (_scope == 0x20) _rspsize = jtag_scope_edbg();          /* SCOPE_EDBG */
     complete_jtag_transactions(_rspsize);
   } /* jtag_scope_branch */

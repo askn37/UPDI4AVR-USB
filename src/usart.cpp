@@ -27,25 +27,16 @@ namespace USART {
   void setup (void) {
     SYS::LED_Fast();
     disable_vcp();
-  #if CONFIG_PGM_TYPE == 1
     pinLogicOpen(PIN_PGM_TDAT);
     pinLogicOpen(PIN_PGM_TRST);
     pinLogicOpen(PIN_PGM_TCLK);
-  #elif CONFIG_PGM_TYPE == 2
+  #if CONFIG_PGM_TYPE == 0
     if (_jtag_arch == 3) {
-      pinControlRegister(PIN_PGM_TDAT) &= ~PORT_PULLUPEN_bm;
       pinLogicPush(PIN_PGM_PDAT);
     }
     else {
       pinLogicOpen(PIN_PGM_PDAT);
     }
-    pinLogicOpen(PIN_PGM_TDAT);
-    pinLogicOpen(PIN_PGM_TRST);
-  #else
-    pinLogicOpen(PIN_PGM_TDAT);
-    pinLogicOpen(PIN_PGM_TRST);
-    pinLogicOpen(PIN_PGM_TCLK);
-    pinLogicOpen(PIN_PGM_PDAT);
     pinLogicOpen(PIN_PGM_PCLK);
   #endif
   }
@@ -117,7 +108,6 @@ namespace USART {
   /*** Set up single-wire synchronous mode for TPI operation. ***/
   /* The VCD-TxD is repurposed to transmit the synchronous clock. */
   void change_tpi (void) {
-    // #if defined(CONFIG_PGM_TPI_ENABLE)
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
       PORTMUX_USARTROUTEA = PORTMUX_USART_PGM;
       pinControlRegister(PIN_PGM_TCLK) = PORT_INVEN_bm;
@@ -129,7 +119,6 @@ namespace USART {
       USART0_CTRLB = USART_RXEN_bm | USART_TXEN_bm | USART_ODME_bm;
       D1PRINTF(" USART=TPI BAUD=%04X\r\n", USART0_BAUD);
     }
-    // #endif
   }
 
   /*** Set up single-wire synchronous mode for PDI operation. ***/

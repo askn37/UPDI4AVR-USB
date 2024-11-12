@@ -19,6 +19,8 @@
 #include "configuration.h"
 #include "prototype.h"
 
+#ifdef CONFIG_PGM_PDI_ENABLE
+
 /*
  * NOTE:
  *
@@ -86,9 +88,6 @@ namespace PDI {
       idle_clock(1);
       digitalWriteMacro(PIN_PGM_PDAT, HIGH);
       pinLogicPush(PIN_PGM_PDAT);
-  #ifdef PIN_PGM_XDIR
-      digitalWriteMacro(PIN_PGM_XDIR, HIGH);
-  #endif
       USART0_CTRLB = USART_RXEN_bm | USART_TXEN_bm;
       bit_set(PGCONF, PGCONF_XDIR_bp);
     }
@@ -99,9 +98,6 @@ namespace PDI {
     if (bit_is_set(PGCONF, PGCONF_XDIR_bp)) {
       idle_clock(1);
       pinLogicOpen(PIN_PGM_PDAT);
-  #ifdef PIN_PGM_XDIR
-      digitalWriteMacro(PIN_PGM_XDIR, LOW);
-  #endif
       USART0_CTRLB = USART_RXEN_bm | USART_ODME_bm;
       bit_clear(PGCONF, PGCONF_XDIR_bp);
     }
@@ -128,6 +124,18 @@ namespace PDI {
     return RXSTAT == 0;
   }
 
+  bool recv_byte (void) {
+    return stop_txd() && recv();
+  }
+
+  bool recv_byte (uint32_t _dwAddr) {
+    static uint8_t _set_ptr[] = {
+      0x0C, 0, 0, 0, 0    /* LDS ADDR4 DATA1 */
+    };
+    _CAPS32(_set_ptr[1])->dword = _dwAddr;
+    return send_bytes(_set_ptr, sizeof(_set_ptr)) && recv_byte();
+  }
+
   bool recv_bytes (uint8_t* _data, size_t _len) {
     stop_txd();
     do {
@@ -144,21 +152,8 @@ namespace PDI {
     return recv() && _data == RXDATA;
   }
 
-  bool send_bytes (const uint8_t* _data, size_t _len) {
-    start_txd();
-    // D2PRINTF("\r\n");
-    do {
-      if (!send(*_data++)) return false;
-    } while (--_len);
-    return true;
-  }
-
-  bool recv_byte (uint32_t _dwAddr) {
-    static uint8_t _set_ptr[] = {
-      0x0C, 0, 0, 0, 0    /* LDS ADDR4 DATA1 */
-    };
-    _CAPS32(_set_ptr[1])->dword = _dwAddr;
-    return send_bytes(_set_ptr, sizeof(_set_ptr)) && stop_txd() && recv();
+  bool send_byte (const uint8_t _data) {
+    return start_txd() && send(_data);
   }
 
   bool send_byte (uint32_t _dwAddr, uint8_t _data) {
@@ -169,12 +164,20 @@ namespace PDI {
     return send_bytes(_set_ptr, sizeof(_set_ptr)) && send(_data);
   }
 
+  bool send_bytes (const uint8_t* _data, size_t _len) {
+    start_txd();
+    do {
+      if (!send(*_data++)) return false;
+    } while (--_len);
+    return true;
+  }
+
   bool pdibus_wait (void) {
     do {
       /* ACC STATUS check */
       idle_clock(2);
-      if (start_txd() && send(0x80)) {
-        if (stop_txd() && recv() && bit_is_set(RXDATA, 1)) return true;
+      if (send_byte(0x80)) {
+        if (recv_byte() && bit_is_set(RXDATA, 1)) return true;
       }
       else break;
     } while (true);
@@ -342,14 +345,14 @@ namespace PDI {
     USART::change_pdi();
     idle_clock(16);
 
-    if (send_bytes(_init, sizeof(_init)) && stop_txd() && recv() && RXDATA == PDI_GVAL) {
-      start_txd();
-      D1PRINTF(" PDION;GVAL=%02X\r\n", RXDATA);
-      bit_set(PGCONF, PGCONF_UPDI_bp);
-      return 1;
+    while (!(send_bytes(_init, sizeof(_init)) && recv_byte() && RXDATA == PDI_GVAL)) {
+      send_break();
+      send_break();
     }
 
-    return 0;
+    D1PRINTF(" PDION;GVAL=%02X\r\n", RXDATA);
+    bit_set(PGCONF, PGCONF_UPDI_bp);
+    return 1;
   }
 
   size_t disconnect (void) {
@@ -435,5 +438,7 @@ namespace PDI {
   }
 
 };
+
+#endif
 
 // end of code

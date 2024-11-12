@@ -85,10 +85,13 @@ int main (void) {
   Timeout::setup();
 
 #if defined(DEBUG)
-  Serial.begin(CONSOLE_BAUD).println(F("\n<startup>"));
-  Serial.print(F("F_CPU = ")).println(F_CPU, DEC);
-  Serial.print(F("_AVR_IOXXX_H_ = ")).println(F(_AVR_IOXXX_H_));
-  Serial.print(F("__AVR_ARCH__ = ")).println(__AVR_ARCH__, DEC);
+  Serial.begin(CONSOLE_BAUD);
+  delay_millis(600);
+  D1PRINTF("\n<startup>\r\n");
+  D1PRINTF("F_CPU = %ld\r\n", F_CPU);
+  D1PRINTF("_AVR_IOXXX_H_ = " _AVR_IOXXX_H_ "\r\n");
+  D1PRINTF("__AVR_ARCH__ = %d\r\n", __AVR_ARCH__);
+  DFLUSH();
 #endif
 
   USART::setup();

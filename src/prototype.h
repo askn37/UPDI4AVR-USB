@@ -103,7 +103,11 @@
 #define EP_CDI  USB_EP(USB_EP_CDI)
 #define EP_CDO  USB_EP(USB_EP_CDO)
 
-#define GPCONF GPR_GPR0
+/* The last received data and state of UPDI are stored in the GP Register. */
+#define RXSTAT GPR_GPR0
+#define RXDATA GPR_GPR1
+
+#define GPCONF GPR_GPR2
   #define GPCONF_USB_bp   0         /* USB interface is active */
   #define GPCONF_USB_bm   (1 << 0)
   #define GPCONF_VCP_bp   1         /* VCP enabled */
@@ -121,23 +125,19 @@
   #define GPCONF_FAL_bp   7         /* SW0 push event */
   #define GPCONF_FAL_bm   (1 << 7)
 
-#define PGCONF GPR_GPR1
+#define PGCONF GPR_GPR3
   #define PGCONF_UPDI_bp  0         /* UPDI active (SIB read successful) or TPI active */
   #define PGCONF_UPDI_bm  (1 << 0)
   #define PGCONF_PROG_bp  1         /* Programmable (memory access unlocked) */
   #define PGCONF_PROG_bm  (1 << 1)
   #define PGCONF_ERSE_bp  2         /* Chip erase completed */
   #define PGCONF_ERSE_bm  (1 << 2)
-  #define PGCONF_XDIR_bp  3         /* DATA direction */
+  #define PGCONF_XDIR_bp  3         /* PDI_DATA direction */
   #define PGCONF_XDIR_bm  (1 << 3)
   #define PGCONF_HVEN_bp  6         /* HV control in TPI */
   #define PGCONF_HVEN_bm  (1 << 6)
   #define PGCONF_FAIL_bp  7         /* Initialization failed (timeout) */
   #define PGCONF_FAIL_bm  (1 << 7)
-
-/* The last received data and state of UPDI are stored in the GP Register. */
-#define RXSTAT GPR_GPR2
-#define RXDATA GPR_GPR3
 
 /*
  * Global struct
@@ -463,6 +463,7 @@ namespace NVM::V4 { bool setup (void); };
 namespace NVM::V5 { bool setup (void); };
 
 namespace PDI {
+  bool send_bytes (const uint8_t* _data, size_t _len);
   size_t connect (void);
   size_t disconnect (void);
   size_t erase_memory (void);
@@ -501,6 +502,7 @@ namespace Timeout {
 };
 
 namespace TPI {
+  void idle_clock (const size_t clock);
   size_t connect (void);
   size_t disconnect (void);
   size_t erase_memory (void);
@@ -511,13 +513,13 @@ namespace TPI {
 
 namespace UPDI {
   bool send_break (void);
-  bool recv_bytes (uint8_t* _data, size_t _len);
   bool recv (void);
-  bool send_bytes (const uint8_t* _data, size_t _len);
-  bool send_bytes_fill (size_t _len);
-  bool send (const uint8_t _data);
+  bool recv_byte (void);
   bool recv_byte (uint32_t _dwAddr);
+  bool recv_bytes (uint8_t* _data, size_t _len);
+  bool send (const uint8_t _data);
   bool send_byte (uint32_t _dwAddr, uint8_t _data);
+  bool send_bytes (const uint8_t* _data, size_t _len);
   bool is_ack (void);
   bool recv_bytes_block (uint32_t _dwAddr, size_t _wLength);
   bool recv_words_block (uint32_t _dwAddr, size_t _wLength);

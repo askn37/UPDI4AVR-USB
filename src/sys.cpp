@@ -118,7 +118,6 @@ namespace SYS {
     pinControlRegister(PIN_VCP_RXD)      = PORT_PULLUPEN_bm;
     pinControlRegister(PIN_PGM_TDAT)     = PORT_PULLUPEN_bm;
     pinControlRegister(PIN_PGM_TRST)     = PORT_PULLUPEN_bm;
-    pinControlRegister(PIN_PGM_PDAT)     = 0;
     pinControlRegister(PIN_SYS_SW0)      = PORT_PULLUPEN_bm | PORT_ISC_RISING_gc;
     pinControlRegister(PIN_HVC_CHGPUMP1) = PORT_INVEN_bm    | PORT_ISC_INPUT_DISABLE_gc;
     /* PDAT in/output is shared outside connection with TDAT */
@@ -163,7 +162,7 @@ namespace SYS {
     pinControlRegister(PIN_VCP_RXD)      = PORT_PULLUPEN_bm;
     pinControlRegister(PIN_PGM_TDAT)     = PORT_PULLUPEN_bm;
     pinControlRegister(PIN_PGM_TRST)     = PORT_PULLUPEN_bm;
-    pinControlRegister(PIN_PGM_PDAT)     = PORT_PULLUPEN_bm;
+    pinControlRegister(PIN_PGM_PDAT)     = 0;
     pinControlRegister(PIN_PGM_PCLK)     = PORT_PULLUPEN_bm;
     pinControlRegister(PIN_SYS_SW0)      = PORT_PULLUPEN_bm | PORT_ISC_RISING_gc;
     pinControlRegister(PIN_SYS_LED0)     = PORT_INVEN_bm    | PORT_ISC_INPUT_DISABLE_gc;
@@ -198,65 +197,17 @@ namespace SYS {
     CCL_LUT2CTRLB = CCL_INSEL0_TCA0_gc | CCL_INSEL1_TCB1_gc;
     CCL_LUT2CTRLA = CCL_ENABLE_bm;                                /* -> CH3 */
 
-  #elif (CONFIG_HAL_TYPE == HAL_PDIP)
-
-    /* Output GPIO */
-    VPORTA_DIR = 0b00000010;    /* VPW LED0 */
-    VPORTD_DIR = 0b00110111;    /* HVSL1 HVSL2 HVSL3 HVCP1 HVCP2 */
-
-    /* Pull-Up GPIO */
-    pinControlRegister(PIN_VCP_TXD)      = PORT_PULLUPEN_bm;
-    pinControlRegister(PIN_VCP_RXD)      = PORT_PULLUPEN_bm;
-    pinControlRegister(PIN_PGM_TDAT)     = PORT_PULLUPEN_bm;
-    pinControlRegister(PIN_PGM_TRST)     = PORT_PULLUPEN_bm;    /* shared internal PCLK */
-    pinControlRegister(PIN_PGM_PDAT)     = 0;
-    pinControlRegister(PIN_SYS_SW0)      = PORT_PULLUPEN_bm | PORT_ISC_RISING_gc;
-    pinControlRegister(PIN_HVC_CHGPUMP1) = PORT_INVEN_bm    | PORT_ISC_INPUT_DISABLE_gc;
-    /* PDAT in/output is shared outside connection with TDAT */
-    /* PCLK disable/output is shared internal connection with TRST */
-
-    /* PORTx event generator */
-    portRegister(PIN_SYS_SW0).EVGENCTRLA = pinPosition(PIN_SYS_SW0);
-    portRegister(PIN_VCP_RXD).EVGENCTRLA = pinPosition(PIN_VCP_RXD) << 4;
-
-    /*** Multiplexer ***/
-    PORTMUX_EVSYSROUTEA   = PORTMUX_EVOUTA_ALT1_gc;         /* EVOUTA_ALT1 -> PIN_PA7 */
-    PORTMUX_TCAROUTEA     = PORTMUX_TCA0_PORTD_gc;          /* TCA0_WOn_ALT3 -> PORTD */
-    EVSYS_CHANNEL3        = EVSYS_CHANNEL_CCL_LUT2_gc;      /* <- LED0 */
-    EVSYS_CHANNEL4        = EVSYS_CHANNEL_PORTA_EVGEN1_gc;  /* <- VRxD */
-    EVSYS_CHANNEL5        = EVSYS_CHANNEL_PORTF_EVGEN0_gc;  /* <- SW0  */
-    EVSYS_USEREVSYSEVOUTA = EVSYS_USER_CHANNEL3_gc;         /* LUT2_OUT -> EVOUTA */
-    EVSYS_USERCCLLUT1A    = EVSYS_USER_CHANNEL4_gc;         /* <- VRxD */
-    EVSYS_USERCCLLUT0A    = EVSYS_USER_CHANNEL5_gc;         /* <- SW0 */
-
-    /*** SW0 FALLING Interrupt generator ***/
-    CCL_TRUTH0    = CCL_TRUTH_1_bm;
-    CCL_LUT0CTRLB = CCL_INSEL0_EVENTA_gc;                         /* <- CH5 */
-    CCL_LUT0CTRLA = CCL_ENABLE_bm | CCL_FILTSEL_FILTER_gc;
-    CCL_INTCTRL0  = CCL_INTMODE0_FALLING_gc;
-
-    /*** LED1 generator ***/
-    CCL_TRUTH1    = CCL_TRUTH_0_bm       | CCL_TRUTH_1_bm | CCL_TRUTH_2_bm;
-    CCL_LUT1CTRLB = CCL_INSEL0_USART0_gc | CCL_INSEL1_EVENTA_gc;  /* <- CH4 */
-    CCL_LUT1CTRLA = CCL_ENABLE_bm        | CCL_OUTEN_bm;          /* -> PIN_PC3 */
-
-    /*** LED0 Heart-Beat generator ***/
-    CCL_TRUTH2    = CCL_TRUTH_1_bm     | CCL_TRUTH_2_bm;
-    CCL_LUT2CTRLB = CCL_INSEL0_TCA0_gc | CCL_INSEL1_TCB1_gc;
-    CCL_LUT2CTRLA = CCL_ENABLE_bm;  /* -> CH3 */
-
   #else /* (CONFIG_HAL_TYPE == HAL_BAREMETAL_28P) || (CONFIG_HAL_TYPE == HAL_BAREMETAL_32P) */
 
     /* Output GPIO */
-    VPORTA_DIR = 0b00000010;    /* VPW */
-    VPORTD_DIR = 0b00110111;    /* HVSL1 HVSL2 HVSL3 HVCP1 HVCP2 */
+    VPORTA_DIR = 0b00000010;    /* 1:VPW */
+    VPORTD_DIR = 0b00111111;    /* 5:HVCP2 4:HVCP1 3:LED0 2:HVSL3 1:HVSL2 0:HVSL1 */
 
     /* Pull-Up GPIO */
     pinControlRegister(PIN_VCP_TXD)      = PORT_PULLUPEN_bm;
     pinControlRegister(PIN_VCP_RXD)      = PORT_PULLUPEN_bm;
     pinControlRegister(PIN_PGM_TDAT)     = PORT_PULLUPEN_bm;
-    pinControlRegister(PIN_PGM_TRST)     = PORT_PULLUPEN_bm;  /* shared internal PCLK */
-    pinControlRegister(PIN_PGM_PDAT)     = 0;
+    pinControlRegister(PIN_PGM_TRST)     = PORT_PULLUPEN_bm;
     pinControlRegister(PIN_SYS_SW0)      = PORT_PULLUPEN_bm | PORT_ISC_RISING_gc;
     pinControlRegister(PIN_HVC_CHGPUMP1) = PORT_INVEN_bm    | PORT_ISC_INPUT_DISABLE_gc;
     /* PDAT in/output is shared outside connection with TDAT */
@@ -367,56 +318,36 @@ namespace SYS {
 
   void power_reset (bool _off, bool _on) {
     if (_off) {
-  #ifdef PIN_PGM_XDIR
-      digitalWriteMacro(PIN_PGM_XDIR, LOW);
-  #endif
   #ifdef PIN_PGM_VPOWER
       digitalWriteMacro(PIN_PGM_VPOWER, HIGH);  /* VTG off */
       /* Temporarily disable the pullup to stop current leakage when VTG=OFF. */
       /* It would be easier to just set the pin output LOW,                   */
       /* but we do it this way because of possible conflicts.                 */
-    #if CONFIG_PGM_TYPE == 1
-      pinControlRegister(PIN_PGM_TRST) &= ~PORT_PULLUPEN_bm;
-      pinControlRegister(PIN_PGM_TDAT) &= ~PORT_PULLUPEN_bm;
-      pinControlRegister(PIN_VCP_TXD)  &= ~PORT_PULLUPEN_bm;  /* outside shared TCLK */
-      pinControlRegister(PIN_VCP_RXD)  &= ~PORT_PULLUPEN_bm;
-    #elif CONFIG_PGM_TYPE == 2
-      pinControlRegister(PIN_PGM_TRST) &= ~PORT_PULLUPEN_bm;  /* internal shared PCLK */
-      pinControlRegister(PIN_PGM_TDAT) &= ~PORT_PULLUPEN_bm;  /* outside shared PDAT */
-      pinControlRegister(PIN_VCP_TXD)  &= ~PORT_PULLUPEN_bm;  /* internal shared TCLK */
-      pinControlRegister(PIN_VCP_RXD)  &= ~PORT_PULLUPEN_bm;
-    #else
-      pinControlRegister(PIN_PGM_TRST) &= ~PORT_PULLUPEN_bm;
-      pinControlRegister(PIN_PGM_PCLK) &= ~PORT_PULLUPEN_bm;
-      pinControlRegister(PIN_PGM_TDAT) &= ~PORT_PULLUPEN_bm;
-      pinControlRegister(PIN_PGM_PDAT) &= ~PORT_PULLUPEN_bm;
-      pinControlRegister(PIN_VCP_TXD)  &= ~PORT_PULLUPEN_bm;  /* internal shared TCLK */
-      pinControlRegister(PIN_VCP_RXD)  &= ~PORT_PULLUPEN_bm;
+    #if CONFIG_PGM_TYPE == 0  /* HAL_CNANO */
+      if (_jtag_arch != 0x03) {
+        pinControlRegister(PIN_PGM_PDAT) &= ~PORT_PULLUPEN_bm;
+        pinControlRegister(PIN_PGM_PCLK) &= ~PORT_PULLUPEN_bm;
+      }
     #endif
+      pinControlRegister(PIN_PGM_TRST) &= ~PORT_PULLUPEN_bm;
+      pinControlRegister(PIN_PGM_TDAT) &= ~PORT_PULLUPEN_bm;
+      pinControlRegister(PIN_VCP_TXD)  &= ~PORT_PULLUPEN_bm;  /* internal shared TCLK */
+      pinControlRegister(PIN_VCP_RXD)  &= ~PORT_PULLUPEN_bm;
   #endif
     }
     if (_on) {
   #ifdef PIN_PGM_VPOWER
       delay_125ms();  /* discharge duration */
       digitalWriteMacro(PIN_PGM_VPOWER, LOW);   /* VTG on */
-    #if CONFIG_PGM_TYPE == 1
-      pinControlRegister(PIN_VCP_TXD)  |= PORT_PULLUPEN_bm;   /* outside shared TCLK */
-      pinControlRegister(PIN_VCP_RXD)  |= PORT_PULLUPEN_bm;
-      pinControlRegister(PIN_PGM_TDAT) |= PORT_PULLUPEN_bm;
-      pinControlRegister(PIN_PGM_TRST) |= PORT_PULLUPEN_bm;
-    #elif CONFIG_PGM_TYPE == 2
-      pinControlRegister(PIN_VCP_TXD)  |= PORT_PULLUPEN_bm;   /* internal shared TCLK */
-      pinControlRegister(PIN_VCP_RXD)  |= PORT_PULLUPEN_bm;
-      if (_jtag_arch != 3)
-        pinControlRegister(PIN_PGM_TDAT) |= PORT_PULLUPEN_bm; /* outside shared PDAT */
-      pinControlRegister(PIN_PGM_TRST) |= PORT_PULLUPEN_bm;   /* internal shared PCLK */
-    #else
       pinControlRegister(PIN_VCP_TXD)  |= PORT_PULLUPEN_bm;   /* internal shared TCLK */
       pinControlRegister(PIN_VCP_RXD)  |= PORT_PULLUPEN_bm;
       pinControlRegister(PIN_PGM_TDAT) |= PORT_PULLUPEN_bm;
-      pinControlRegister(PIN_PGM_PDAT) |= PORT_PULLUPEN_bm;
-      pinControlRegister(PIN_PGM_PCLK) |= PORT_PULLUPEN_bm;
       pinControlRegister(PIN_PGM_TRST) |= PORT_PULLUPEN_bm;
+    #if CONFIG_PGM_TYPE == 0
+      if (_jtag_arch != 0x03) {
+        pinControlRegister(PIN_PGM_PDAT) |= PORT_PULLUPEN_bm;
+        pinControlRegister(PIN_PGM_PCLK) |= PORT_PULLUPEN_bm;
+      }
     #endif
   #endif
     }
@@ -445,16 +376,19 @@ namespace SYS {
    * May be called multiple times due to chattering.
    */
   void reset_enter (void) {
-    LED_Blink();
-    pinLogicPush(PIN_PGM_TRST);
-    /*
-     * Puts a tinyAVR-0 which does not have a reset pad into reset state.
-     * This applies to all chips which have an enabled UPDI pad.
-     * Does not affect chips with an active reset pad or TPI/PDI type chips.
-     */
-    send_bitmap(_updi_bitmap_reset, sizeof(_updi_bitmap_reset) * 8);
-    D1PRINTF("<RST:IN>\r\n");
-    bit_set(GPCONF, GPCONF_HLD_bp);
+    if (bit_is_clear(GPCONF, GPCONF_HLD_bp)) {
+      LED_Blink();
+      pinLogicPush(PIN_PGM_TRST);
+      /*
+      * Puts a tinyAVR-0 which does not have a reset pad into reset state.
+      * This applies to all chips which have an enabled UPDI pad.
+      * Does not affect chips with an active reset pad or TPI/PDI type chips.
+      */
+      send_bitmap(_updi_bitmap_reset, sizeof(_updi_bitmap_reset) * 8);
+      D1PRINTF("<RST:IN>\r\n");
+      DFLUSH();
+      bit_set(GPCONF, GPCONF_HLD_bp);
+    }
     bit_clear(GPCONF, GPCONF_FAL_bp);
   }
 
@@ -472,6 +406,7 @@ namespace SYS {
       delay_125ms();
   #endif
       D1PRINTF("<RST:OUT>\r\n");
+      DFLUSH();
       if (bit_is_set(GPCONF, GPCONF_USB_bp))
         LED_HeartBeat();  /* The USB is ready. */
       else if (!USB0_ADDR)
@@ -488,10 +423,8 @@ namespace SYS {
    * Always run it after the USB has stopped.
    */
   void reboot (void) {
-  #if defined(DEBUG)
-    D0PRINTF("<REBOOT>\r\n");
-    Serial.flush();
-  #endif
+    D1PRINTF("<REBOOT>\r\n");
+    DFLUSH();
     _PROTECTED_WRITE(WDT_CTRLA, WDT_PERIOD_8CLK_gc);
     for (;;);
   }

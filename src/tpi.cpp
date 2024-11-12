@@ -45,26 +45,6 @@ namespace TPI {
 
   // MARK: TPI Low level
 
-  bool start_txd (void) {
-  #ifdef PIN_PGM_XDIR
-    if (bit_is_clear(PGCONF, PGCONF_XDIR_bp)) {
-      digitalWriteMacro(PIN_PGM_XDIR, HIGH);
-      bit_set(PGCONF, PGCONF_XDIR_bp);
-    }
-  #endif
-    return true;
-  }
-
-  bool stop_txd (void) {
-  #ifdef PIN_PGM_XDIR
-    if (bit_is_set(PGCONF, PGCONF_XDIR_bp)) {
-      digitalWriteMacro(PIN_PGM_XDIR, LOW);
-      bit_clear(PGCONF, PGCONF_XDIR_bp);
-    }
-  #endif
-    return true;
-  }
-
   void idle_clock (const size_t clock) {
     for (size_t i = 0; i < clock; i++) {
       loop_until_bit_is_set(TCLK_IN, TCLK_bp);
@@ -80,47 +60,49 @@ namespace TPI {
   }
 
   bool send (const uint8_t _data) {
-    start_txd();
     loop_until_bit_is_set(USART0_STATUS, USART_DREIF_bp);
     USART0_TXDATAL = _data;
-    return (recv() && _data == RXDATA);
+    return recv() && _data == RXDATA;
   }
 
   /*** TPI control and CSS area command ***/
 
   bool get_sldcs (const uint8_t _addr) {
     D2PRINTF("[SLDCS:%02X]\r\n", _addr);
-    return (send(0x80 | _addr) && stop_txd() && recv());
+    return send(0x80 | _addr) && recv();
   }
 
   bool set_sstcs (const uint8_t _addr, const uint8_t _data) {
     D2PRINTF("[SSTCS:%02X:%02X]\r\n", _addr, _data);
-    return (send(0xC0 | _addr) && send(_data));
+    return send(0xC0 | _addr) && send(_data);
   }
 
   bool set_sout (const uint8_t _addr, const uint8_t _data) {
     D2PRINTF("[SOUT:%02X:%02X]\r\n", _addr, _data);
-    return (send(0x90 | _addr) && send(_data));
+    return send(0x90 | _addr) && send(_data);
   }
 
   bool get_sin (const uint8_t _addr) {
     D2PRINTF("[SIN:%02X]\r\n", _addr);
-    return (send(0x10 | _addr) && stop_txd() && recv());
+    return send(0x10 | _addr) && recv();
   }
 
   bool set_sstpr (const uint16_t _addr) {
     D2PRINTF("[SSTPR:%04X]\r\n", _addr);
-    return (send(0x68) && send(_addr & 0xFF) && send(0x69) && send(_addr >> 8));
+    return send(0x68)
+        && send(_addr & 0xFF)
+        && send(0x69)
+        && send(_addr >> 8);
   }
 
   bool get_sld (void) {
     D2PRINTF("[SLD]\r\n");
-    return (send(0x24) && stop_txd() && recv());
+    return send(0x24) && recv();
   }
 
   bool set_sst (const uint8_t _data) {
     D2PRINTF("[SST:%02X]\r\n", _data);
-    return (send(0x64) && send(_data));
+    return send(0x64) && send(_data);
   }
 
   // MARK: TPI NVM Control
@@ -254,6 +236,7 @@ namespace TPI {
 
     /* Called with `-xhvtpi` hvtpi_support */
     /* or SW0 holding start */
+  #ifdef CONFIG_HVC_ENABLE
     if ((_packet_length > 6 && packet.out.tpi.bType) || bit_is_set(GPCONF, GPCONF_HLD_bp)) {
       /* External Reset : Activation High-Voltage mode */
       pinLogicOpen(PIN_PGM_TRST);
@@ -262,6 +245,7 @@ namespace TPI {
       D1PRINTF("<HVEN>");
       bit_set(PGCONF, PGCONF_HVEN_bp);
     }
+  #endif
 
     /* Required rest time after PoR, 32-128 ms */
     SYS::delay_125ms();
