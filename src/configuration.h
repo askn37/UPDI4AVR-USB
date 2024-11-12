@@ -28,7 +28,6 @@
 #define HAL_BAREMETAL_28P 28  /* AVR16-64DU28 : UPDI4AVR-USB Type-F Reference Design */
 #define HAL_BAREMETAL_32P 32  /* AVR16-64DU32 : alias 28P */
 #define HAL_CNANO         33  /* AVR64DU32 Curiosity Nano, 5V only LED=PF2 SW=PF6 DBG_UART=PD6 */
-#define HAL_PDIP          29  /* AVR16-64DU28 : PDI test, 3V3 only LED=PA7 SW=PF6 DBG_UART=PD6 */
 
 /*** Choose a symbol from the list above. *+*/
 /* If disabled, it will be automatically detected */
@@ -36,16 +35,16 @@
 // #define CONFIG_HAL_TYPE HAL_CNANO
 
 /*
- * Pin layout by package: Design Type MZU2410A2
+ * Pin layout by package: Design Type MZU2410A2 (28P/32P)
  *
  *         14P   20P   28P   32P   CNANO
  *    PA0  VTxD  TDAT  TDAT  TDAT  TDAT
- *    PA1  VRxD  VPW   VPW   VPW   TRST
+ *    PA1  VRxD  TRST  VPW   VPW   TRST
  *    PA2  -     VTxD  VTxD  VTxD  VTxD     : Shared with TCLK
  *    PA3  -     VRxD  VRxD  VRxD  VRxD
  *    PA4  -     N.C.  N.C.  N.C.  PDAT
- *    PA5  -     HVSL1 SW0   SW0   N.C.
- *    PA6  -     TRST  TRST  TRST  PCLK
+ *    PA5  -     HVSL1 SW0   SW0   VPW
+ *    PA6  -     N.C.  TRST  TRST  PCLK
  *    PA7  -     HVSL2 N.C.  N.C.  N.C.
  *    PC3  LED1  LED1  LED1  LED1  N.A.
  *    PD0  -     -     HVSL1 HVSL1 HVSL1
@@ -60,7 +59,7 @@
  *    PF1  -     -     N.C.  N.C.  N.A.
  *    PF2  -     -     -     N.C.  LED0
  *    PF3  -     -     -     N.C.  LED1
- *    PF4  -     -     -     N.C.  VPW
+ *    PF4  -     -     -     N.C.  N.C.
  *    PF5  -     -     -     N.C.  N.C.
  *    PF6  SW0   SW0   DnRST DnRST SW0
  *    PF7  DUPDI DUPDI DUPDI DUPDI DUPDI
@@ -72,7 +71,7 @@
  *
  *         14P   20P   28P   32P   CNANO
  *    CCL0 -     -     -     -     -        : SW0 Falling interrupt
- *    CCL1 PC3   PC3   PC3   PC3   (PA7)    : LED1
+ *    CCL1 PC3   PC3   PC3   PC3   (PF3)    : LED1
  *    CCL2 (PD7) (PA7) PD3   PD3   (PF2)    : LED0
  *    WO4  -     PD4   PD4   PD4   PD4
  *    WO5  -     PD5   PD5   PD5   PD5
@@ -84,8 +83,8 @@
  *        TDAT - PIN_PGM_TDAT     TPI-Data or UPDI-Interface (open-drain, pull-up)
  *        TRST - PIN_PGM_TRST     TPI-Reset or UPDI-Reset (open-drain, pull-up)
  *        TCLK - PIN_PGM_TCLK     TPI-Clock (push-pull)
- *        PDAT - PIN_PGM_PDAT     PDI-Data (TDAT and Bridge, open-drain, no-pull-up)
- *        PCLK - PIN_PGM_PCLK     PDI-Clock (TRST and Bridge, push-pull)
+ *        PDAT - PIN_PGM_PDAT     PDI-Data (push-pull, no pull-up)
+ *        PCLK - PIN_PGM_PCLK     PDI-Clock (push-pull)
  *         VPW - PIN_PGM_VPOWER   V-Target Power Control (negative logic, push-pull)
  *
  *    VCP
@@ -329,15 +328,14 @@
   #define PIN_VCP_TXD         PIN_USART0_TXD_ALT2
   #define PIN_VCP_RXD         PIN_USART0_RXD_ALT2
   #define PIN_PGM_TDAT        PIN_USART0_TXD
-  #define PIN_PGM_TRST        PIN_PA6
+  #define PIN_PGM_TRST        PIN_PA1
   #define PIN_PGM_TCLK        PIN_USART0_XCK
-  #define PIN_PGM_VPOWER      PIN_PA1
-  #define PIN_HVC_SELECT1     PIN_PD6
-  #define PIN_HVC_SELECT2     PIN_PD7
-  #define PIN_HVC_SELECT3     PIN_PA5
+  #define PIN_HVC_SELECT1     PIN_PA5
+  #define PIN_HVC_SELECT2     PIN_PA7
+  #define PIN_HVC_SELECT3     PIN_PD7
   #define PIN_HVC_CHGPUMP1    PIN_TCA0_WO4_ALT3
   #define PIN_HVC_CHGPUMP2    PIN_TCA0_WO5_ALT3
-  #define PIN_SYS_LED0        PIN_EVOUTA_ALT1
+  #define PIN_SYS_LED0        PIN_LUT2_OUT_ALT1
   #define PIN_SYS_LED1        PIN_LUT1_OUT
   #define PIN_SYS_SW0         PIN_PF6
 
@@ -354,7 +352,7 @@
   #define PIN_PGM_TCLK        PIN_USART0_XCK
   #define PIN_PGM_PDAT        PIN_USART0_TXD_ALT1
   #define PIN_PGM_PCLK        PIN_USART0_XCK_ALT1
-  #define PIN_PGM_VPOWER      PIN_PF4
+  #define PIN_PGM_VPOWER      PIN_PA5
   #define PIN_HVC_SELECT1     PIN_PD0
   #define PIN_HVC_SELECT2     PIN_PD1
   #define PIN_HVC_SELECT3     PIN_PD2

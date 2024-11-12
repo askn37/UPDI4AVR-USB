@@ -65,7 +65,7 @@ namespace SYS {
     /* HV-control and PDI support is not available in this package. */
 
     /* Output GPIO */
-    VPORTD_DIR = 0b10000000;    /* PIN_SYS_LED0 */
+    VPORTD_DIR = 0b10000000;    /* 7:LED0 */
 
     /* Pull-Up GPIO */
     pinControlRegister(PIN_VCP_TXD)  = PORT_PULLUPEN_bm;
@@ -110,8 +110,8 @@ namespace SYS {
   #elif (CONFIG_HAL_TYPE == HAL_BAREMETAL_20P)
 
     /* Output GPIO */
-    VPORTA_DIR = 0b10100010;    /* VPW HVSL1 HVSL2 */
-    VPORTD_DIR = 0b10110000;    /* HVCP1 HVCP2 HVSL2 */
+    VPORTA_DIR = 0b10100000;    /* 7:HVSL2 5;HVSL1 */
+    VPORTD_DIR = 0b10110000;    /* 7:HVSL3 5:HVCP2 4:HVCP1 */
 
     /* Pull-Up GPIO */
     pinControlRegister(PIN_VCP_TXD)      = PORT_PULLUPEN_bm;
@@ -154,8 +154,9 @@ namespace SYS {
   #elif (CONFIG_HAL_TYPE == HAL_CNANO)
 
     /* Output GPIO */
-    VPORTD_DIR = 0b00110111;    /* HVSL1 HVSL2 HVSL3 HVCP1 HVCP2 */
-    VPORTF_DIR = 0b00010100;    /* LED0 VPW */
+    VPORTA_DIR = 0b01110000;    /* 6:PCLK 5:VPW 4:PDAT */
+    VPORTD_DIR = 0b00110111;    /* 5:HVCP2 4:HVCP1 2:HVSL3 1:HVSL2 0:HVSL1 */
+    VPORTF_DIR = 0b00000100;    /* 2:LED0 */
 
     /* Pull-Up GPIO */
     pinControlRegister(PIN_VCP_TXD)      = PORT_PULLUPEN_bm;
@@ -163,7 +164,7 @@ namespace SYS {
     pinControlRegister(PIN_PGM_TDAT)     = PORT_PULLUPEN_bm;
     pinControlRegister(PIN_PGM_TRST)     = PORT_PULLUPEN_bm;
     pinControlRegister(PIN_PGM_PDAT)     = 0;
-    pinControlRegister(PIN_PGM_PCLK)     = PORT_PULLUPEN_bm;
+    pinControlRegister(PIN_PGM_PCLK)     = 0;
     pinControlRegister(PIN_SYS_SW0)      = PORT_PULLUPEN_bm | PORT_ISC_RISING_gc;
     pinControlRegister(PIN_SYS_LED0)     = PORT_INVEN_bm    | PORT_ISC_INPUT_DISABLE_gc;
     pinControlRegister(PIN_HVC_CHGPUMP1) = PORT_INVEN_bm    | PORT_ISC_INPUT_DISABLE_gc;

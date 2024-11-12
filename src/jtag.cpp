@@ -275,7 +275,6 @@ namespace JTAG {
           if (_jtag_arch == 3) {
             #ifdef PIN_PGM_PDAT
             openDrainWriteMacro(PIN_PGM_PDAT, LOW);
-            // pinControlRegister(PIN_PGM_PDAT) |= PORT_PULLUPEN_bm;
             #endif
           }
           _xclk = _data == 5 ? UPDI_CLK : PDI_CLK;
