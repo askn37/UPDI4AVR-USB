@@ -266,8 +266,8 @@ namespace JTAG {
     uint8_t _index   = packet.out.index;
     uint8_t _length  = packet.out.length;
     if (_cmd == 0x01) {             /* CMD3_SET_PARAMETER */
-      uint16_t _data = packet.out.wValue & 0xFF;
-      D1PRINTF(" AVR_SET_PARAM=%02X:%02X:%02X:%02X\r\n", _section, _index, _length, _data);
+      uint16_t _data = packet.out.wValue;
+      D1PRINTF(" AVR_SET_PARAM=%02X:%02X:%02X:%04X\r\n", _section, _index, _length, _data);
       if (_section == 0) {          /* SET_GET_CTXT_CONFIG */
         if (_index == 0) {          /* PARM3_ARCH */
           D1PRINTF(" ARCH=%02X\r\n", _data);

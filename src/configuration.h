@@ -129,7 +129,7 @@
  */
 
 #define UPDI_CLK 225
-#define PDI_CLK  500
+#define PDI_CLK  2500
 
 /*
  * TPI Program interface operating clock.
