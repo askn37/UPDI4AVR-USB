@@ -17,10 +17,10 @@
 #include "configuration.h"
 
 /*
- * Note: 
+ * Note:
  *
  * These are the recommended FUSE arrays.
- * 
+ *
  * - SYSCFG0->FUSE_UPDIPINCFG_bm is True by default
  * - SYSCFG0->FUSE_RSTPINCFG_bm varies depending on SW0 usage
  * - SYSCFG0->FUSE_EESAVE_bm is True to preserve VID:PID information

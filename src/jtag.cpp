@@ -5,8 +5,8 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.32.40+
- * @date 2024-07-10
+ * @version 1.33.46+
+ * @date 2024-10-08
  * @copyright Copyright (c) 2024 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -187,8 +187,6 @@ namespace JTAG {
       else if (_section == 1) {     /* SET_GET_CTXT_PHYSICAL */
         if (_index == 0 || _index == 0x20) {  /* PARM3_VTARGET */
           /* Called with `-xvtarget` HAS_VTARG_READ */
-          _vtarget = SYS::get_vdd();
-          D1PRINTF(" VTARGET=%d\r\n", _vtarget);
           packet.in.wValue = _vtarget;
         }
         else {                      /* PARM3_ANALOG_XXXX */
@@ -202,10 +200,13 @@ namespace JTAG {
     }
     else if (_cmd == 0x10) {        /* CMD3_SIGN_ON */
       D1PRINTF(" GEN_SIGN_ON\r\n");
+      PGCONF = 0;
       _jtag_hvctrl = 0;
-      _jtag_unlock = 0;
+      _jtag_unlock = 0;   /* This is not used. */
       _jtag_arch = 0;
-      _tpi_setmode = 0;
+      _jtag_vpow = 1;
+      _vtarget = SYS::get_vdd();
+      D1PRINTF(" VTARGET=%d\r\n", _vtarget);
       packet.in.res = 0x80;         /* RSP3_OK */
     }
     else if (_cmd == 0x11) {        /* CMD3_SIGN_OFF */
@@ -234,11 +235,9 @@ namespace JTAG {
           /* Called with `-xvtarget_switch=0,1` HAS_VTARG_SWITCH */
           D1PRINTF(" TARGET_POWER=%02X\r\n", _data);
           _jtag_vpow = _data;       /* 0,1 */
-  #if defined(PIN_HV_POWER)
-          if (_data)
-            digitalWriteMacro(PIN_HV_POWER, HIGH);
-          else
-            digitalWriteMacro(PIN_HV_POWER, LOW);
+  #if defined(PIN_PGM_VPOWER)
+          SYS::power_reset(true, false);              /* VPW off */
+          if (_data) SYS::power_reset(false, true);   /* VPW on  */
   #endif
         }
       }
@@ -268,15 +267,23 @@ namespace JTAG {
     uint8_t _length  = packet.out.length;
     if (_cmd == 0x01) {             /* CMD3_SET_PARAMETER */
       uint16_t _data = packet.out.wValue;
-      D1PRINTF(" AVR_SET_PARAM=%02X:%02X:%02X:%02X\r\n", _section, _index, _length, _data);
+      D1PRINTF(" AVR_SET_PARAM=%02X:%02X:%02X:%04X\r\n", _section, _index, _length, _data);
       if (_section == 0) {          /* SET_GET_CTXT_CONFIG */
         if (_index == 0) {          /* PARM3_ARCH */
           D1PRINTF(" ARCH=%02X\r\n", _data);
-          _jtag_arch = _data;       /* 5:PARM3_ARCH_UPDI */
+          _jtag_arch = _data;       /* 5:UPDI 3:PDI */
+          if (_jtag_arch == 3) {
+            #ifdef PIN_PGM_PDAT
+            openDrainWriteMacro(PIN_PGM_PDAT, LOW);
+            #endif
+          }
+          _xclk = _data == 5 ? UPDI_CLK : PDI_CLK;
+          _xclk_bak = _xclk;
+          D1PRINTF(" XCLK=%d\r\n", _xclk);
         }
         else if (_index == 1) {     /* PARM3_SESS_PURPOSE */
           D1PRINTF(" SESS_PURPOSE=%02X\r\n", _data);
-          _jtag_sess = _data;       /* */
+          _jtag_sess = _data;
         }
       }
       else if (_section == 1) {     /* SET_GET_CTXT_PHYSICAL */
@@ -285,27 +292,23 @@ namespace JTAG {
           _jtag_conn = _data;       /* 8:PARM3_CONN_UPDI */
         }
         else if (_index == 0x31) {  /* PARM3_CLK_XMEGA_PDI */
-          _xclk = _data;
-          D1PRINTF(" XCLK=%d\r\n", _xclk);
-          if (_jtag_arch == 5) {
-            /* Called with `-B xclk[unit]`. */
-            /* XCLK Range Limitation : LSB=kHz */
-            if (_xclk > 240) _xclk = 240;
-            else if (_xclk < 40) _xclk = 40;
+          /* Called with `-B xclk[unit]`. */
+          /* XCLK Range Limitation : LSB=kHz */
+          if (_data < 40) _data = 40;
   #if defined(DEBUG)
-            if (_xclk != _data) D1PRINTF(" FIX_CLK=%d\r\n", _xclk);
+          if (_xclk != _data) D1PRINTF(" FIX_XCLK=%d\r\n", _xclk);
   #endif
-          }
+          _xclk = _xclk_bak = _data;
         }
       }
       else if (_section == 2) {     /* SET_GET_CTXT_DEVICE */
         if (_index == 0) {          /* PARM3_DEVICEDESC */
           D1PRINTF(" DEVICEDESC=%X\r\n", _length);
           memcpy(&Device_Descriptor, &packet.out.setData[0], _length & 63);
-  #if defined(DEBUG) && (DEBUG >= 2)
+  #if DEBUG >= 1
           if (_jtag_arch == 5) {
-            D2PRINTF("(UPDI)  prog_base=%02X,%04X\r\n", Device_Descriptor.UPDI.prog_base_msb, Device_Descriptor.UPDI.prog_base);
-            D2PRINTF("  flash_page_size=%02X,%02X\r\n", Device_Descriptor.UPDI.flash_page_size_msb, Device_Descriptor.UPDI.flash_page_size);
+            D2PRINTF("(UPDI)  prog_base=%02X:%04X\r\n", Device_Descriptor.UPDI.prog_base_msb, Device_Descriptor.UPDI.prog_base);
+            D2PRINTF("  flash_page_size=%02X:%02X\r\n", Device_Descriptor.UPDI.flash_page_size_msb, Device_Descriptor.UPDI.flash_page_size);
             D2PRINTF("      flash_bytes=%06lX\r\n", Device_Descriptor.UPDI.flash_bytes);
             D2PRINTF("     eeprom_bytes=%04X\r\n", Device_Descriptor.UPDI.eeprom_bytes);
             D2PRINTF("   user_sig_bytes=%04X\r\n", Device_Descriptor.UPDI.user_sig_bytes);
@@ -320,11 +323,24 @@ namespace JTAG {
             /* Even with all this, the BOOTROW information is still undefined! */
             /* Re-analysis of newer ICE FW is needed! */
           }
-          /* STUB: And other descriptors. */
-  #elif defined(DEBUG)
-          if (_jtag_arch == 5) {
-            D1PRINTF(" HVTYPE=%02X\r\n", Device_Descriptor.UPDI.hvupdi_variant);
+          else if (_jtag_arch == 3) {
+            D2PRINTF("(Xmega) nvm_app_offset=%08lX\r\n", Device_Descriptor.Xmega.nvm_app_offset);
+            D2PRINTF("       nvm_boot_offset=%08lX\r\n", Device_Descriptor.Xmega.nvm_boot_offset);
+            D2PRINTF("     nvm_eeprom_offset=%08lX\r\n", Device_Descriptor.Xmega.nvm_eeprom_offset);
+            D2PRINTF("       nvm_fuse_offset=%08lX\r\n", Device_Descriptor.Xmega.nvm_fuse_offset);
+            D2PRINTF("       nvm_lock_offset=%08lX\r\n", Device_Descriptor.Xmega.nvm_lock_offset);
+            D2PRINTF("   nvm_user_sig_offset=%08lX\r\n", Device_Descriptor.Xmega.nvm_user_sig_offset);
+            D2PRINTF("   nvm_prod_sig_offset=%08lX\r\n", Device_Descriptor.Xmega.nvm_prod_sig_offset);
+            D2PRINTF("       nvm_data_offset=%08lX\r\n", Device_Descriptor.Xmega.nvm_data_offset);
+            D2PRINTF("              app_size=%08lX\r\n", Device_Descriptor.Xmega.app_size);
+            D2PRINTF("             boot_size=%04X\r\n", Device_Descriptor.Xmega.boot_size);
+            D2PRINTF("       flash_page_size=%04X\r\n", Device_Descriptor.Xmega.flash_page_size);
+            D2PRINTF("           eeprom_size=%04X\r\n", Device_Descriptor.Xmega.eeprom_size);
+            D2PRINTF("      eeprom_page_size=%02X\r\n", Device_Descriptor.Xmega.eeprom_page_size);
+            D2PRINTF("         nvm_base_addr=%04X\r\n", Device_Descriptor.Xmega.nvm_base_addr);
+            D2PRINTF("         mcu_base_addr=%04X\r\n", Device_Descriptor.Xmega.mcu_base_addr);
           }
+          /* STUB: And other descriptors. */
   #endif
         }
       }
@@ -368,9 +384,11 @@ namespace JTAG {
       _rspsize = _length + 1;
     }
   #ifdef _Not_yet_implemented_stub_
-    else if (_jtag_arch == 0x01) _rspsize = DWIRE::jtag_scope_tiny();   /* dWire? */
-    else if (_jtag_arch == 0x02) _rspsize = MEGA::jtag_scope_mega();    /* MEGA */
-    else if (_jtag_arch == 0x03) _rspsize = XMEGA::jtag_scope_xmega();  /* XMEGA */
+    else if (_jtag_arch == 0x01) _rspsize = DWI::jtag_scope_tiny();     /* dWire? */
+    else if (_jtag_arch == 0x02) _rspsize = ISP::jtag_scope_mega();     /* MEGA */
+  #endif
+  #ifdef CONFIG_PGM_PDI_ENABLE
+    else if (_jtag_arch == 0x03) _rspsize = PDI::jtag_scope_xmega();    /* XMEGA support */
   #endif
     else if (_jtag_arch == 0x05) _rspsize = UPDI::jtag_scope_updi();    /* UPDI support */
     else packet.in.res = 0xA0;      /* RSP3_FAILED */
@@ -382,7 +400,9 @@ namespace JTAG {
   void jtag_scope_branch (void) {
     size_t _rspsize = 0;
     uint8_t _scope  = packet.out.scope;
-    D1PRINTF("SCOPE=%02X,C=%02X,S=%02X,L=%02X\r\n",
+    D1PRINTF("SQ=%d:%d>SCOPE=%02X,C=%02X,S=%02X,L=%02X\r\n",
+      packet.out.sequence,
+      _packet_length,
       _scope,
       packet.out.cmd,
       packet.out.section,
@@ -394,10 +414,7 @@ namespace JTAG {
     else if (_scope == 0x13) _rspsize = AVR32::jtag_scope_avr32();  /* SCOPE_AVR32 */
   #endif
     else if (_scope == 0x12) _rspsize = jtag_scope_avr_core();      /* SCOPE_AVR */
-  #ifdef CONFIG_PGM_TPI_ENABLE
-    /* The 14P models have limited TPI support due to insufficient pin count. */
     else if (_scope == 0x14) _rspsize = TPI::jtag_scope_tpi();      /* SCOPE_AVR_TPI */
-  #endif
     else if (_scope == 0x20) _rspsize = jtag_scope_edbg();          /* SCOPE_EDBG */
     complete_jtag_transactions(_rspsize);
   } /* jtag_scope_branch */

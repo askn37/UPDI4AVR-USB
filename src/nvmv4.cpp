@@ -30,7 +30,7 @@
  *
  * - Signature is at address 0x1080.
  *
- * - There is no page buffer memory. Data space flash (i.e. USERROW) 
+ * - There is no page buffer memory. Data space flash (i.e. USERROW)
  *   is heavily affected by this, so RSD fast writes cannot be used.
  *
  * - EEPROM can be written in units of up to 2 bytes.

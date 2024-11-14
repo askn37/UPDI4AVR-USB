@@ -5,8 +5,8 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.32.40+
- * @date 2024-07-10
+ * @version 1.33.46+
+ * @date 2024-08-26
  * @copyright Copyright (c) 2024 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -30,6 +30,7 @@
 #endif
 
 #undef Serial
+#define DFLUSH()
 #define D0PRINTF(FMT, ...)
 #define D1PRINTF(FMT, ...)
 #define D2PRINTF(FMT, ...)
@@ -41,6 +42,8 @@
 #if defined(DEBUG)
   #include "peripheral.h" /* from Micro_API : import Serial (Debug) */
   #define Serial Serial1C /* PIN_PD6:TxD, PIN_PD7:RxD */
+  #undef  DFLUSH
+  #define DFLUSH() Serial.flush()
   #undef  D0PRINTF
   #define D0PRINTF(FMT, ...) Serial.printf(F(FMT), ##__VA_ARGS__)
   #undef  D0PRINTHEX
@@ -100,7 +103,11 @@
 #define EP_CDI  USB_EP(USB_EP_CDI)
 #define EP_CDO  USB_EP(USB_EP_CDO)
 
-#define GPCONF GPR_GPR0
+/* The last received data and state of UPDI are stored in the GP Register. */
+#define RXSTAT GPR_GPR0
+#define RXDATA GPR_GPR1
+
+#define GPCONF GPR_GPR2
   #define GPCONF_USB_bp   0         /* USB interface is active */
   #define GPCONF_USB_bm   (1 << 0)
   #define GPCONF_VCP_bp   1         /* VCP enabled */
@@ -111,24 +118,26 @@
   #define GPCONF_BRK_bm   (1 << 3)
   #define GPCONF_OPN_bp   4         /* VCP-RxD open */
   #define GPCONF_OPN_bm   (1 << 4)
+  #define GPCONF_HLD_bp   5         /* SW0 holding */
+  #define GPCONF_HLD_bm   (1 << 5)
   #define GPCONF_RIS_bp   6         /* SW0 release event */
   #define GPCONF_RIS_bm   (1 << 6)
   #define GPCONF_FAL_bp   7         /* SW0 push event */
   #define GPCONF_FAL_bm   (1 << 7)
 
-#define PGCONF GPR_GPR1
+#define PGCONF GPR_GPR3
   #define PGCONF_UPDI_bp  0         /* UPDI active (SIB read successful) or TPI active */
   #define PGCONF_UPDI_bm  (1 << 0)
   #define PGCONF_PROG_bp  1         /* Programmable (memory access unlocked) */
   #define PGCONF_PROG_bm  (1 << 1)
   #define PGCONF_ERSE_bp  2         /* Chip erase completed */
   #define PGCONF_ERSE_bm  (1 << 2)
+  #define PGCONF_XDIR_bp  3         /* PDI_DATA direction */
+  #define PGCONF_XDIR_bm  (1 << 3)
+  #define PGCONF_HVEN_bp  6         /* HV control in TPI */
+  #define PGCONF_HVEN_bm  (1 << 6)
   #define PGCONF_FAIL_bp  7         /* Initialization failed (timeout) */
   #define PGCONF_FAIL_bm  (1 << 7)
-
-/* The last received data and state of UPDI are stored in the GP Register. */
-#define RXSTAT GPR_GPR2
-#define RXDATA GPR_GPR3
 
 /*
  * Global struct
@@ -421,6 +430,7 @@ extern "C" {
     extern uint32_t _before_page; /* before flash page section */
     extern uint16_t _vtarget;     /* LSB = 1V / 1000 */
     extern uint16_t _xclk;        /* LSB = 1KHz */
+    extern uint16_t _xclk_bak;    /* LSB = 1KHz */
     extern uint8_t _jtag_vpow;    /* 1:VPOW_ON */
     extern uint8_t _jtag_hvctrl;  /* 1:ENABLE */
     extern uint8_t _jtag_unlock;  /* 1:ENABLE */
@@ -433,7 +443,6 @@ extern "C" {
     extern uint8_t _sib[32];
 
     /* TPI parameter */
-    extern uint8_t _tpi_setmode;
     extern uint8_t _tpi_cmd_addr;
     extern uint8_t _tpi_csr_addr;
     extern uint8_t _tpi_chunks;
@@ -454,7 +463,13 @@ namespace NVM::V4 { bool setup (void); };
 namespace NVM::V5 { bool setup (void); };
 
 namespace PDI {
-  /* STUB */
+  bool send_bytes (const uint8_t* _data, size_t _len);
+  size_t connect (void);
+  size_t disconnect (void);
+  size_t erase_memory (void);
+  size_t read_memory (void);
+  size_t write_memory (void);
+  size_t jtag_scope_xmega (void);
 }
 
 namespace SYS {
@@ -463,11 +478,19 @@ namespace SYS {
   void LED_Flash (void);
   void LED_Blink (void);
   void LED_Fast (void);
+  void power_reset (bool _off = true, bool _on = true);
   void reset_enter (void);
   void reset_leave (void);
   void reboot (void);
   bool is_boundary_flash_page (uint32_t _dwAddr);
   uint16_t get_vdd (void);
+  void hvc_enable (void);
+  void hvc_leave (void);
+  void delay_55us (void);
+  void delay_100us (void);
+  void delay_800us (void);
+  void delay_2500us (void);
+  void delay_125ms (void);
 };
 
 namespace Timeout {
@@ -475,10 +498,11 @@ namespace Timeout {
   void start (uint16_t _ms);
   void stop (void) __attribute__((used, naked, noinline));
   void extend (uint16_t _ms);
-  size_t command (size_t (*func_p)(void), uint16_t _ms = 800);
+  size_t command (size_t (*func_p)(void), size_t (*fail_p)(void) = nullptr, uint16_t _ms = 800);
 };
 
 namespace TPI {
+  void idle_clock (const size_t clock);
   size_t connect (void);
   size_t disconnect (void);
   size_t erase_memory (void);
@@ -489,12 +513,13 @@ namespace TPI {
 
 namespace UPDI {
   bool send_break (void);
-  bool recv_bytes (uint8_t* _data, size_t _len);
   bool recv (void);
-  bool send_bytes (const uint8_t* _data, size_t _len);
-  bool send (const uint8_t _data);
+  bool recv_byte (void);
   bool recv_byte (uint32_t _dwAddr);
+  bool recv_bytes (uint8_t* _data, size_t _len);
+  bool send (const uint8_t _data);
   bool send_byte (uint32_t _dwAddr, uint8_t _data);
+  bool send_bytes (const uint8_t* _data, size_t _len);
   bool is_ack (void);
   bool recv_bytes_block (uint32_t _dwAddr, size_t _wLength);
   bool recv_words_block (uint32_t _dwAddr, size_t _wLength);
@@ -515,11 +540,12 @@ namespace UPDI {
 namespace USART {
   void setup (void);
   uint16_t calk_baud_khz (uint16_t _khz);
-  void drain (size_t _delay = 0);
+  void drain (size_t _delay = 1024);
   void disable_vcp (void);
   void change_vcp (void);
   void change_updi (void);
   void change_tpi (void);
+  void change_pdi (void);
   void set_line_encoding (LineEncoding_t* _buff);
   void set_line_state (uint8_t _line_state);
   LineEncoding_t& get_line_encoding (void);

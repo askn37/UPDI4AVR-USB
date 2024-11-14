@@ -1,0 +1,56 @@
+###
+### make -f Makefile.AVR64DU32_CNANO all
+###
+
+SOURCE = UPDI4AVR-USB
+TARGET = AVR64DU32
+TARGET1 = AVR64DU32_CNANO
+TARGET2 = AVR64DU32_CNANO_DEBUG1
+
+MF := $(MAKEFILE_LIST)
+
+BUILD_OPT1 = --build-property "build.buildopt=-DNDEBUG=1"
+BUILD_OPT2 = --build-property "build.buildopt=-DDEBUG=1"
+
+### arduino-cli @1.0.x is required. ###
+
+ACLIPATH =
+SDKURL = --additional-urls https://askn37.github.io/package_multix_zinnia_index.json
+FQBN = --fqbn MultiX-Zinnia:modernAVR:AVRDU_noloader:01_variant=22_AVR64DU32,02_clock=11_20MHz,11_BODMODE=01_disabled,12_BODLVL=BODLEVEL0,21_resetpin=02_gpio,22_updipin=01_updi,24_eeprom=01_keep,25_bootrow=01_erase,26_userrow=02_keep,27_fusefile=03_upload,52_macroapi=01_Enable,53_printf=01_default,54_console_select=04_UART1_D6_LF2_SF6,90_console_baud=14_500000bps,95_bootloader=00_woBootloader
+
+# If you have MPLAB installed, the executable path will already be there.
+# If not, you should specify the path to the Arduino tools.
+
+AVRROOT =
+OBJCOPY = $(AVRROOT)avr-objcopy
+OBJDUMP = $(AVRROOT)avr-objdump
+LISTING = $(OBJDUMP) --disassemble --source --line-numbers --demangle --section=.text --section=.data --section=.eeprom --section=.nvmem --section=.fuse --section=.user_signatures --section=.boot_signatures
+
+JOINING = -j .text -j .data -j --set-section-flags
+
+### Make rule ###
+
+hex/updi4avr-usb/$(TARGET)%.hex: build/$(TARGET)%.ino.elf
+	@$(OBJCOPY) $(JOINING) -O ihex $< $@
+	@$(LISTING) $< > hex/updi4avr-usb/$(TARGET)$*.lst
+	@cp -f build/$(SOURCE).ino.fuse hex/updi4avr-usb/$(TARGET)$*.fuse
+	ls -la hex/updi4avr-usb/$(TARGET)$*.*
+
+build/$(TARGET1).ino.elf: src/$(SRCS:.cpp=.o) src/$(SRCS:.c=.o)
+	$(ACLIPATH)arduino-cli compile $(FQBN) $(BUILD_OPT1) $(SDKURL) --build-path build --no-color
+	@mv -f build/$(SOURCE).ino.elf build/$(TARGET1).ino.elf
+
+build/$(TARGET2).ino.elf: src/$(SRCS:.cpp=.o) src/$(SRCS:.c=.o)
+	$(ACLIPATH)arduino-cli compile $(FQBN) $(BUILD_OPT2) $(SDKURL) --build-path build --no-color
+	@mv -f build/$(SOURCE).ino.elf build/$(TARGET2).ino.elf
+
+all:
+	$(MAKE) -f $(MF) hex/updi4avr-usb/$(TARGET1).hex
+	$(MAKE) -f $(MF) hex/updi4avr-usb/$(TARGET2).hex
+	$(MAKE) -f $(MF) clean
+
+clean:
+	@touch ./build/__temp
+	rm -rf ./build/*
+
+# end of script

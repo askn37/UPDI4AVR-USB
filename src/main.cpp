@@ -56,9 +56,9 @@ namespace /* NAMELESS */ {
 
   /* JTAG parameter */
   NOINIT uint32_t _before_page;
-  NOINIT uint16_t _vtarget;         /* LSB=1V/1000 <- SYS::get_vdd() */
-  uint16_t _xclk = UPDI_CLK / 1000; /* LSB=1KHz using USART_CMODE_SYNCHRONOUS_gc */
-  uint8_t _jtag_vpow = 1;
+  NOINIT uint16_t _vtarget;           /* LSB=1/1000V <- SYS::get_vdd() */
+  NOINIT uint16_t _xclk, _xclk_bak;   /* LSB=1KHz */
+  NOINIT uint8_t _jtag_vpow;
   NOINIT uint8_t _jtag_hvctrl;
   NOINIT uint8_t _jtag_unlock;
   NOINIT uint8_t _jtag_arch;
@@ -70,7 +70,6 @@ namespace /* NAMELESS */ {
   NOINIT uint8_t _sib[32];
 
   /* TPI parameter */
-  NOINIT uint8_t _tpi_setmode;
   NOINIT uint8_t _tpi_cmd_addr;
   NOINIT uint8_t _tpi_csr_addr;
   NOINIT uint8_t _tpi_chunks;
@@ -82,15 +81,19 @@ void setup_mcu (void) { initVariant(); }
 
 int main (void) {
 
-#if defined(DEBUG)
-  Serial.begin(CONSOLE_BAUD).println(F("\n<startup>"));
-  Serial.print(F("F_CPU = ")).println(F_CPU, DEC);
-  Serial.print(F("_AVR_IOXXX_H_ = ")).println(F(_AVR_IOXXX_H_));
-  Serial.print(F("__AVR_ARCH__ = ")).println(__AVR_ARCH__, DEC);
-#endif
-
   SYS::setup();
   Timeout::setup();
+
+#if defined(DEBUG)
+  Serial.begin(CONSOLE_BAUD);
+  delay_millis(600);
+  D1PRINTF("\n<startup>\r\n");
+  D1PRINTF("F_CPU = %ld\r\n", F_CPU);
+  D1PRINTF("_AVR_IOXXX_H_ = " _AVR_IOXXX_H_ "\r\n");
+  D1PRINTF("__AVR_ARCH__ = %d\r\n", __AVR_ARCH__);
+  DFLUSH();
+#endif
+
   USART::setup();
 
   loop_until_bit_is_clear(WDT_STATUS, WDT_SYNCBUSY_bp);
@@ -103,9 +106,10 @@ int main (void) {
   #endif
   interrupts();
 
-  #if !defined(PIN_USB_VDETECT)
+  #if !defined(PIN_SYS_VDETECT)
   /* If you do not use VBD, insert the shortest possible delay instead. */
-  delay_millis(250);
+  SYS::delay_125ms();
+  SYS::delay_125ms();
   USB::setup_device(true);
   #else
   SYS::LED_Flash();
@@ -113,8 +117,9 @@ int main (void) {
 
   /* From here on, it's an endless loop. */
   D1PRINTF("<WAITING>\r\n");
+  bool _wdt = true;
   while (true) {
-    wdt_reset();
+    if (_wdt) wdt_reset();
 
     /*** USB control handling ***/
     USB::handling_bus_events();
@@ -145,7 +150,16 @@ int main (void) {
     if (bit_is_set(GPCONF, GPCONF_BRK_bp)) USB::cci_break_count();
 
     /*** If CMSIS-DAP is not received, return to the top. ***/
-    if (USB::is_not_dap()) continue;
+    if (USB::is_not_dap()) {
+      /* To force exit from a non-responsive terminal mode, press SW0. */
+      if (bit_is_set(PGCONF, PGCONF_PROG_bp)) {
+        if (bit_is_set(GPCONF, GPCONF_RIS_bp)) _wdt = false;
+        bit_clear(GPCONF, GPCONF_RIS_bp);
+        /* If no response is received for more than 1 second, a WDT reset will fire. */
+      }
+      continue;
+    }
+    _wdt = true;
 
     /*** CMSIS-DAP and JTAG3 packet receiver ***/
     if (JTAG::dap_command_check()) JTAG::jtag_scope_branch();
