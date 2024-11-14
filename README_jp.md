@@ -306,8 +306,8 @@ Arduino IDEに、次のリンク先の SDK を導入すると、ベアメタル�
 ## Related link and documentation
 
 - リポジトリフロントページ (このページ): We're looking for contributors to help us out.
-  - [日本語(Native)](README_jp.md), [English](README.md)
-- [UPDI4AVR-USB QUICK INSTALLATION GUIDE](hex/updi4avr/README.md)
+  - __日本語(Native)__, [English](README.md)
+- [UPDI4AVR-USB QUICK INSTALLATION GUIDE](https://github.com/askn37/UPDI4AVR-USB/blob/v1.33.46/hex/updi4avr-usb/README.md)
 - [UPDI4AVR](https://askn37.github.io/product/UPDI4AVR) : 前作となる USBシリアル通信版
 - [AVRDUDE](https://github.com/avrdudes/avrdude) @8.0+ （AVR-DUシリーズは8.0以降で正式サポート）
 - [euboot](https://github.com/askn37/euboot) : DFU の代用となる AVR-DUシリーズ専用 EDBG USBブートローダー（AVRDUDE>=8.0が必須）

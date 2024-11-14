@@ -304,9 +304,9 @@ For build options, see [<UPDI4AVR-USB.ino>](UPDI4AVR-USB.ino).
 ## Related link and documentation
 
 - Repository front page (This page): We're looking for contributors to help us out.
-  - [日本語(Native)](README_jp.md), [English](README.md)
+  - [日本語(Native)](README_jp.md), __English__
 
-- [UPDI4AVR-USB QUICK INSTALLATION GUIDE](hex/updi4avr/README.md)
+- [UPDI4AVR-USB QUICK INSTALLATION GUIDE](https://github.com/askn37/UPDI4AVR-USB/blob/v1.33.46/hex/updi4avr-usb/README.md)
 - [UPDI4AVR](https://askn37.github.io/product/UPDI4AVR): The previous version, USB serial communication version
 - [AVRDUDE](https://github.com/avrdudes/avrdude) @8.0+ (AVR-DU series is officially supported from 8.0 onwards)
 - [euboot](https://github.com/askn37/euboot): EDBG USB bootloader for AVR-DU series only, which is a substitute for DFU (AVRDUDE>=8.0 required)

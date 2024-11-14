@@ -7,12 +7,13 @@ The pre-built files found here can be installed on the following products:
 > [!NOTE]
 > Don't buy/use the wrong product. Only this model number is correct.
 
-AVRDUDE>=7.3 is required for this to work. Install it on your host PC in your preferred way.
+AVRDUDE>=8.0 is required for this to work. Install it on your host PC in your preferred way.
 
-- [AVRDUDE releases](https://github.com/avrdudes/avrdude/releases)
+- [AVRDUDE releases](https://github.com/avrdudes/avrdude/releases) @8.0+
 
 > [!TIP]
-> AVRDUDE>=7.2 actually works, but it doesn't come with part definitions for the AVR-DU family.
+> AVRDUDE<=7.3 actually works, but it doesn't come with part definitions for the AVR-DU family.
+> You need to edit the configuration file yourself.
 
 ## Setting up Curiosity Nano
 
@@ -20,13 +21,13 @@ Are you ready?
 
 Orient the AVR logo so it is readable, then connect a USB-C type cable between the programming port on the left and the host PC. Upload the file using the following command line:
 
-```console
+```sh
 avrdude -c pkobn_updi -p avr64du32 -e -U fuses:w:AVR64DU32_CNANO.fuse:i -U flash:w:AVR64DU32_CNANO.hex:i
 ```
 
-And then run an additional command line: This parameter tells AVRDUDE what type of writer to emulate. Let's assume it's PICKit4 for example.
+Then run an additional command line. This parameter tells AVRDUDE what kind of writer you want to emulate. Let's say it's PICKit4. This is required if you want to use AVRDUDE<=7.3.
 
-```console
+```sh
 avrdude -c pkobn_updi -p avr64du32 -U eeprom:w:0xEB,0x03,0x77,0x21:m
 ```
 
@@ -42,42 +43,56 @@ If everything works perfectly, the Orange LED will slowly light up and you will 
 
 Now try entering the following command. It will stop with an error because the target device is not yet connected, but you should be able to read the UPDI4AVR's firmware version, unique serial number, and operating voltage from the host PC.
 
-```console
+```sh
 avrdude -c pickit4_updi -p avr64du32 -v
 ```
 
-```
-avrdude: Version 7.3
-         Copyright the AVRDUDE authors;
-         see https://github.com/avrdudes/avrdude/blob/main/AUTHORS
+```console
+Avrdude version 8.0-20241010 (0b92721a)
+Copyright see https://github.com/avrdudes/avrdude/blob/main/AUTHORS
 
-         System wide configuration file is C:\usr\avrdude-v7.3-windows_mingw-x64\avrdude.conf
+System wide configuration file is /usr/local/etc/avrdude.conf
+User configuration file is /Users/user/.avrduderc
 
-         Using port            : usb
-         Using programmer      : pickit4_updi
-         AVR Part              : AVR64DU32
-         Programming modes     : UPDI, SPM
-         Programmer Type       : JTAGICE3_UPDI
-         Description           : MPLAB(R) PICkit 4 in UPDI mode
-         ICE HW version        : 0
-         ICE FW version        : 1.32 (rel. 40)
-         Serial number         : **********
-         Vtarget               : 5.01 V
-         PDI/UPDI clk          : 225 kHz
+Using port            : usb
+Using programmer      : pickit4_updi
+AVR part              : AVR64DU32
+Programming modes     : SPM, UPDI
+Programmer type       : JTAGICE3_UPDI
+Description           : MPLAB(R) PICkit 4 in UPDI mode
+ICE HW version        : 0
+ICE FW version        : 1.33 (rel. 46)
+Serial number         : **********
+Vtarget               : 5.01 V
+PDI/UPDI clk          : 225 kHz
 
-avrdude: bad response to AVR sign-on command: 0xa0
-avrdude: retrying with external reset applied
-avrdude: bad response to AVR sign-on command: 0xa0
-avrdude: retrying with external reset applied
-avrdude main() error: initialization failed, rc=-1
-        - double check the connections and try again
-        - use -B to set lower the bit clock frequency, e.g. -B 125kHz
-        - use -F to override this check
+Error: hid_read_timeout(usb, 64, 10000) failed
+Retrying with external reset applied
+Error: unable to write 64 bytes to USB
+Jtag3_edbg_send(): unable to send command to serial port
+Error: unable to write 64 bytes to USB
+Jtag3_edbg_recv_frame(): unable to send CMSIS-DAP vendor command
+Retrying with external reset applied
+Error: initialization failed  (rc = -1)
+ - double check the connections and try again
+ - use -B to set lower the bit clock frequency, e.g. -B 125kHz
+ - use -F to override this check
+...
 
-avrdude done.  Thank you.
+Avrdude done.  Thank you.
 ```
 
 *Congratulations!* Your "Curiosity Nano" has new life!
+
+----
+
+If you are using AVRDUDE>=8.0, you can use `-Pusb:vid:pid` syntax to identify the USB port without rewriting the VID:PID in an additional HEX file. In this case, the `-c` option allows you to choose between different options such as `jtag3updi`, `atmelice_updi`, `xplainedmini_updi`, `pickit4_updi`, `pkobn_updi`, etc.
+
+```sh
+avrdude -P usb:04d8:0b15 -c jtag3updi ...
+```
+
+Essentially the behavior and results are exactly the same, but there are differences in the available `-x<opt>` options.
 
 ## Practical Usage
 
