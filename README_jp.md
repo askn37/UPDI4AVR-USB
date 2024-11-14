@@ -96,7 +96,7 @@ AVR-ICSP MIL/6Pコネクタに変換するには、以下の信号配列を推�
 
 仮に、`AVR64DU28`を対象デバイスとした場合、最低限の接続テストは以下のコマンドラインで可能だ。
 
-```console
+```sh
 avrdude -Pusb:04d8:0b15 -cjtag3updi -pavr64du28 -v -Usib:r:-:r
 ```
 
@@ -144,7 +144,7 @@ TPI制御の場合、対象デバイスに必須の配線は "VCC" "GND" "TDAT" 
 
 仮に、`ATiny10`を対象デバイスとした場合、最低限の接続テストは以下のコマンドラインで可能だ。
 
-```console
+```sh
 avrdude -Pusb:04d8:0b15 -catmelice_tpi -v -pt10 -Uflash:r:-:I
 ```
 
@@ -193,7 +193,7 @@ Avrdude done.  Thank you.
 
 "AVR64DU32 Curiosity Nano"を使用する場合、まず __デバッガーファームウェアを MPLAB-X を使用して最新版に更新__ しなければならない。少なくとも`1.31 (rel. 39)`以降であれば、`-xvtarg=<dbl>`オプションを使用して、PF4端子の隣にある `VTG/VCC` 端子出力の電圧を `5.0`、`3.3`、`1.8` から選択して恒久的に変更することができる。
 
-```console
+```sh
 avrdude -cpkobn_updi -pavr64du32 -xvtarg=3.3
 ```
 
@@ -214,7 +214,7 @@ Changing target voltage from 3.30 to 3.30V
 
 <img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_PDI.drawio.svg" width="400">
 
-```console
+```sh
 avrdude -Pusb:04d8:0b15 -cjtag3pdi -px128a4u -v -Uprodsig:r:-:I
 ```
 
@@ -235,7 +235,7 @@ ICE HW version        : 0
 ICE FW version        : 1.33 (rel. 46)
 Serial number         : **********
 Vtarget               : 3.30 V
-PDI/UPDI clk          : 500 kHz
+PDI/UPDI clk          : 2500 kHz
 
 Silicon revision: 0.0
 

@@ -94,7 +94,7 @@ The following signal arrangement is recommended for converting to the AVR-ICSP M
 
 If the target device is `AVR64DU28`, a minimum connection test can be performed with the following command line.
 
-```console
+```sh
 avrdude -Pusb:04d8:0b15 -cjtag3updi -pavr64du28 -v -Usib:r:-:r
 ```
 
@@ -142,7 +142,7 @@ Note that VCC must be supplied with 4.5V or more in order to rewrite the NVM. 3.
 
 If the target device is `ATiny10`, a minimum connection test can be performed with the following command line.
 
-```console
+```sh
 avrdude -Pusb:04d8:0b15 -catmelice_tpi -v -pt10 -Uflash:r:-:I
 ```
 
@@ -191,7 +191,7 @@ PDI control, which is mainly used in the ATxmega series, requires special consid
 
 When using "AVR64DU32 Curiosity Nano", __you must first update the debugger firmware to the latest version using MPLAB-X.__ As of at least `1.31 (rel. 39)`, you can use the `-xvtarg=<dbl>` option to permanently change the voltage of the `VTG/VCC` terminal output next to the PF4 terminal to one of `5.0`, `3.3`, or `1.8`.
 
-```console
+```sh
 avrdude -cpkobn_updi -pavr64du32 -xvtarg=3.3
 ```
 
@@ -212,7 +212,7 @@ Once the above setup is done correctly, you can *safely* connect the following w
 
 <img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_PDI.drawio.svg" width="400">
 
-```console
+```sh
 avrdude -Pusb:04d8:0b15 -cjtag3pdi -px128a4u -v -Uprodsig:r:-:I
 ```
 
@@ -233,7 +233,7 @@ ICE HW version        : 0
 ICE FW version        : 1.33 (rel. 46)
 Serial number         : **********
 Vtarget               : 3.30 V
-PDI/UPDI clk          : 500 kHz
+PDI/UPDI clk          : 2500 kHz
 
 Silicon revision: 0.0
 
