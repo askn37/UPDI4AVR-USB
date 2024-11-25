@@ -187,6 +187,8 @@ namespace JTAG {
       else if (_section == 1) {     /* SET_GET_CTXT_PHYSICAL */
         if (_index == 0 || _index == 0x20) {  /* PARM3_VTARGET */
           /* Called with `-xvtarget` HAS_VTARG_READ */
+          _vtarget = SYS::get_vdd();
+          D1PRINTF(" VTARGET=%d\r\n", _vtarget);
           packet.in.wValue = _vtarget;
         }
         else {                      /* PARM3_ANALOG_XXXX */
@@ -270,8 +272,9 @@ namespace JTAG {
       D1PRINTF(" AVR_SET_PARAM=%02X:%02X:%02X:%04X\r\n", _section, _index, _length, _data);
       if (_section == 0) {          /* SET_GET_CTXT_CONFIG */
         if (_index == 0) {          /* PARM3_ARCH */
-          D1PRINTF(" ARCH=%02X\r\n", _data);
+          _data &= 0xFF;
           _jtag_arch = _data;       /* 5:UPDI 3:PDI */
+          D1PRINTF(" ARCH=%02X\r\n", _data);
           if (_jtag_arch == 3) {
             #ifdef PIN_PGM_PDAT
             openDrainWriteMacro(PIN_PGM_PDAT, LOW);
@@ -288,13 +291,14 @@ namespace JTAG {
       }
       else if (_section == 1) {     /* SET_GET_CTXT_PHYSICAL */
         if (_index == 0) {          /* PARM3_CONNECTION */
+          _data &= 0xFF;
           D1PRINTF(" CONNECTION=%02X\r\n", _data);
           _jtag_conn = _data;       /* 8:PARM3_CONN_UPDI */
         }
         else if (_index == 0x31) {  /* PARM3_CLK_XMEGA_PDI */
           /* Called with `-B xclk[unit]`. */
           /* XCLK Range Limitation : LSB=kHz */
-          if (_data < 40) _data = 40;
+          if (_data < 100) _data = 100;
   #if defined(DEBUG)
           if (_xclk != _data) D1PRINTF(" FIX_XCLK=%d\r\n", _xclk);
   #endif

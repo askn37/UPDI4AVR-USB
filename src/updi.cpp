@@ -405,12 +405,11 @@ namespace UPDI {
     #ifdef CONFIG_HVC_ENABLE
     if (_hven && _hvvar != 1) {
       SYS::hvc_enable();
+      D1PRINTF("<HVC:V%d>", _hvvar);
       if (_hvvar == 0) {
-        D1PRINTF("<HVC:V0>");
         digitalWriteMacro(PIN_HVC_SELECT1, HIGH);
       }
       else if (_hvvar == 2) {
-        D1PRINTF("<HVC:V2+>");
         digitalWriteMacro(PIN_HVC_SELECT3, HIGH);
       }
       /* Most early silicon requires a pulse of 700us or more. */
@@ -490,10 +489,17 @@ namespace UPDI {
   size_t jtag_scope_updi (void) {
     size_t _rspsize = 0;
     uint8_t _cmd = packet.out.cmd;
+    uint8_t _step = 50;
     if (_cmd == 0x10) {             /* CMD3_SIGN_ON */
       D1PRINTF(" UPDI_SIGN_ON=EXT:%02X\r\n", packet.out.bMType);
+      if ((bit_is_set(GPCONF, GPCONF_HLD_bp) || _jtag_hvctrl) && _xclk_bak > 125) {
+        _xclk_bak = 125;
+        _step = 25;
+      }
       _xclk = _xclk_bak;
-      while (!(_rspsize = Timeout::command(&connect, nullptr, 150))) _xclk -= 25;
+      while (_xclk >= 75 && !(_rspsize = Timeout::command(&connect, nullptr, 160))) {
+        _xclk -= _step;
+      }
       /* If it fails here, it is expected to try again, giving it a chance at HV control. */
       packet.in.res = _rspsize ? 0x84 : 0xA0; /* RSP3_DATA : RSP3_FAILED */
       return _rspsize;

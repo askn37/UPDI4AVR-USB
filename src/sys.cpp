@@ -201,7 +201,7 @@ namespace SYS {
   #else /* (CONFIG_HAL_TYPE == HAL_BAREMETAL_28P) || (CONFIG_HAL_TYPE == HAL_BAREMETAL_32P) */
 
     /* Output GPIO */
-    VPORTA_DIR = 0b00000010;    /* 1:VPW */
+    VPORTA_DIR = 0b00100000;    /* 5:VPW */
     VPORTD_DIR = 0b00111111;    /* 5:HVCP2 4:HVCP1 3:LED0 2:HVSL3 1:HVSL2 0:HVSL1 */
 
     /* Pull-Up GPIO */
@@ -215,13 +215,13 @@ namespace SYS {
     /* PCLK disable/output is shared internal connection with TRST */
 
     /* PORTx event generator */
-    portRegister(PIN_SYS_SW0).EVGENCTRLA = pinPosition(PIN_SYS_SW0)
-                                         | pinPosition(PIN_VCP_RXD) << 4;
+    portRegister(PIN_SYS_SW0).EVGENCTRLA = pinPosition(PIN_SYS_SW0);
+    portRegister(PIN_VCP_RXD).EVGENCTRLA = pinPosition(PIN_VCP_RXD) << 4;
 
     /*** Multiplexer ***/
     PORTMUX_TCAROUTEA     = PORTMUX_TCA0_PORTD_gc;          /* TCA0_WOn_ALT3 -> PORTD */
     EVSYS_CHANNEL4        = EVSYS_CHANNEL_PORTA_EVGEN1_gc;  /* <- VRxD */
-    EVSYS_CHANNEL5        = EVSYS_CHANNEL_PORTA_EVGEN0_gc;  /* <- SW0  */
+    EVSYS_CHANNEL5        = EVSYS_CHANNEL_PORTF_EVGEN0_gc;  /* <- SW0  */
     EVSYS_USERCCLLUT1A    = EVSYS_USER_CHANNEL4_gc;         /* <- VRxD */
     EVSYS_USERCCLLUT0A    = EVSYS_USER_CHANNEL5_gc;         /* <- SW0 */
 
@@ -265,6 +265,8 @@ namespace SYS {
     TCB1_CCMP  = TCB1_FLASH;
     TCB1_CTRLA = TCB_ENABLE_bm | TCB_CLKSEL_EVENT_gc;
 
+    /* Voltage measurements may initially return erroneous values. */
+    _vtarget = get_vdd();
   }
 
   /*
@@ -410,10 +412,7 @@ namespace SYS {
       DFLUSH();
       if (bit_is_set(GPCONF, GPCONF_USB_bp))
         LED_HeartBeat();  /* The USB is ready. */
-      else if (!USB0_ADDR)
-        reboot();         /* USB disconnected, System reboot. */
-      else
-        LED_Flash();      /* USB is not yet enabled. */
+      else reboot();      /* USB disconnected, System reboot. */
     }
     GPCONF &= ~(GPCONF_HLD_bm | GPCONF_RIS_bm | GPCONF_FAL_bm);
   }

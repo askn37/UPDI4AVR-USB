@@ -35,16 +35,16 @@
 // #define CONFIG_HAL_TYPE HAL_CNANO
 
 /*
- * Pin layout by package: Design Type MZU2410A2 (28P/32P)
+ * Pin layout by package: Design Type MZU2410A4 (28P/32P)
  *
  *         14P   20P   28P   32P   CNANO
  *    PA0  VTxD  TDAT  TDAT  TDAT  TDAT
- *    PA1  VRxD  TRST  VPW   VPW   TRST
+ *    PA1  VRxD  TRST  TRST  TRST  TRST
  *    PA2  -     VTxD  VTxD  VTxD  VTxD     : Shared with TCLK
  *    PA3  -     VRxD  VRxD  VRxD  VRxD
  *    PA4  -     N.C.  N.C.  N.C.  PDAT
- *    PA5  -     HVSL1 SW0   SW0   VPW
- *    PA6  -     N.C.  TRST  TRST  PCLK
+ *    PA5  -     HVSL1 VPW   VPW   VPW
+ *    PA6  -     N.C.  N.C.  N.C.  PCLK
  *    PA7  -     HVSL2 N.C.  N.C.  N.C.
  *    PC3  LED1  LED1  LED1  LED1  N.A.
  *    PD0  -     -     HVSL1 HVSL1 HVSL1
@@ -61,7 +61,7 @@
  *    PF3  -     -     -     N.C.  LED1
  *    PF4  -     -     -     N.C.  N.C.
  *    PF5  -     -     -     N.C.  N.C.
- *    PF6  SW0   SW0   DnRST DnRST SW0
+ *    PF6  SW0   SW0   SW0   SW0   SW0
  *    PF7  DUPDI DUPDI DUPDI DUPDI DUPDI
  *
  *    * SW0 refers to the SW1 component on the drawing except for CNANO.
@@ -136,7 +136,7 @@
  * This cannot be changed with avrdude and will always use this value.
  */
 
-#define TPI_CLK  250
+#define TPI_CLK  125
 
 /*** CONFIG_SYS ***/
 
@@ -151,7 +151,7 @@
  * Columns: HW_VER, FW_MAJOR, FW_MINOR, FW_RELL, FW_RELH (all 1-byte decimal)
  */
 
-#define CONFIG_SYS_FWVER { 0, 1, 33, 46, 0 }
+#define CONFIG_SYS_FWVER { 0, 1, 34, 47, 0 }
 
 /*** CONFIG_USB ***/
 
@@ -372,8 +372,8 @@
   #define PIN_VCP_RXD         PIN_USART0_RXD_ALT2
   #define PIN_PGM_TDAT        PIN_USART0_TXD
   #define PIN_PGM_TCLK        PIN_USART0_XCK
-  #define PIN_PGM_TRST        PIN_PA6
-  #define PIN_PGM_VPOWER      PIN_PA1
+  #define PIN_PGM_TRST        PIN_PA1
+  #define PIN_PGM_VPOWER      PIN_PA5
   #define PIN_HVC_SELECT1     PIN_PD0
   #define PIN_HVC_SELECT2     PIN_PD1
   #define PIN_HVC_SELECT3     PIN_PD2
@@ -381,7 +381,7 @@
   #define PIN_HVC_CHGPUMP2    PIN_TCA0_WO5_ALT3
   #define PIN_SYS_LED0        PIN_LUT2_OUT
   #define PIN_SYS_LED1        PIN_LUT1_OUT
-  #define PIN_SYS_SW0         PIN_PA5
+  #define PIN_SYS_SW0         PIN_PF6
 
 #endif
 
