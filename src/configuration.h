@@ -27,7 +27,7 @@
 #define HAL_BAREMETAL_20P 20  /* AVR16-32DU20 */
 #define HAL_BAREMETAL_28P 28  /* AVR16-64DU28 : UPDI4AVR-USB Type-F Reference Design */
 #define HAL_BAREMETAL_32P 32  /* AVR16-64DU32 : alias 28P */
-#define HAL_CNANO         33  /* AVR64DU32 Curiosity Nano, 5V only LED=PF2 SW=PF6 DBG_UART=PD6 */
+#define HAL_CNANO         33  /* AVR64DU32 Curiosity Nano, LED=PF2 SW=PF6 DBG_UART=PD6 */
 
 /*** Choose a symbol from the list above. *+*/
 /* If disabled, it will be automatically detected */
@@ -65,7 +65,8 @@
  *    PF7  DUPDI DUPDI DUPDI DUPDI DUPDI
  *
  *    * SW0 refers to the SW1 component on the drawing except for CNANO.
- *
+ * 
+ *    * MEMO MZU2410A4; TRST=PA1 VPW=PA5 SW0=PF6
  *
  * Peripheral Function Input/Output:
  *

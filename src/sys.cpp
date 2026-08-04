@@ -265,6 +265,8 @@ namespace SYS {
     TCB1_CCMP  = TCB1_FLASH;
     TCB1_CTRLA = TCB_ENABLE_bm | TCB_CLKSEL_EVENT_gc;
 
+    /* Voltage measurements may initially return erroneous values. */
+    _vtarget = get_vdd();
   }
 
   /*
@@ -410,10 +412,7 @@ namespace SYS {
       DFLUSH();
       if (bit_is_set(GPCONF, GPCONF_USB_bp))
         LED_HeartBeat();  /* The USB is ready. */
-      else if (!USB0_ADDR)
-        reboot();         /* USB disconnected, System reboot. */
-      else
-        LED_Flash();      /* USB is not yet enabled. */
+      else reboot();      /* USB disconnected, System reboot. */
     }
     GPCONF &= ~(GPCONF_HLD_bm | GPCONF_RIS_bm | GPCONF_FAL_bm);
   }

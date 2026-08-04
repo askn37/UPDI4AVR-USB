@@ -22,7 +22,7 @@
  * NOTE:
  *
  * UPDI NVM version 4 is used in AVR-DU series.
- * Features include:
+ * It has the following features:
  *
  * - Data area is at the beginning of the 24-bit address space. (MSB=0)
  *   Flash area is at the end of the 24-bit address space. (MSB=1)

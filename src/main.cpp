@@ -125,6 +125,9 @@ int main (void) {
     USB::handling_bus_events();
     if (USB::is_ep_setup()) USB::handling_control_transactions();
 
+    /* If the USB port is not open, go back to the loop beginning. */
+    if (bit_is_clear(GPCONF, GPCONF_USB_bp)) continue;
+
     /* If SW0 was used, work here. */
     if (bit_is_clear(PGCONF, PGCONF_UPDI_bp)) {
       if      (bit_is_set(GPCONF, GPCONF_FAL_bp)) SYS::reset_enter();
