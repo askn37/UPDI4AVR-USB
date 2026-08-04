@@ -255,6 +255,14 @@ namespace USB {
     }
   }
 
+  void usb_detach (void) {
+    bit_clear(USB0_CTRLB, USB_ATTACH_bp);
+    bit_clear(GPCONF, GPCONF_USB_bp);
+    wdt_reset();
+    SYS::delay_125ms();
+    USB0_CTRLA = 0;
+  }
+
   // MARK: Endpoint
 
   bool is_ep_setup (void) { return bit_is_set(EP_REQ.STATUS, USB_EPSETUP_bp); }
@@ -674,6 +682,7 @@ namespace USB {
     }
     else if (USB0_CTRLA) {
       /* System reboot */
+      usb_detach();
       SYS::reboot();
     }
   #endif
@@ -702,6 +711,7 @@ namespace USB {
       /* This is only passed when the USB cable is unplugged. */
       if (bit_is_set(GPCONF, GPCONF_USB_bp)) {
         /* System reboot */
+        usb_detach();
         SYS::reboot();
       }
       bit_set(busstate, USB_RESET_bp);

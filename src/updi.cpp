@@ -61,7 +61,7 @@ namespace UPDI {
   // MARK: UPDI Low level
 
   bool send_break (void) {
-    USART0_BAUD = USART0_BAUD + (USART0_BAUD >> 1);
+    USART0_BAUD = USART0_BAUD << 1;
     send(0x00);
     USART0_BAUD = USART::calk_baud_khz(_xclk);
     return true;
@@ -436,7 +436,6 @@ namespace UPDI {
     /* If UPDI does not respond, a timeout occurs. */
     while (!(send_bytes(_init, sizeof(_init)) && recv() && (RXDATA == UPDI_CTRLAV))) {
       send_break();
-      send_break();
     }
 
     /* Read the SIB from the ACC. */
@@ -445,7 +444,8 @@ namespace UPDI {
       size_t _result = 0;
       D1PRINTF(" NVM:%02X,SIB=\"%s\"\r\n", _sib[10], _sib);
       /* Depending on the SIB, different low-level methods are executed. */
-      if      (_sib[10] == '5') _result = NVM::V5::setup();
+      if      (_sib[10] == '6') _result = NVM::V6::setup();
+      else if (_sib[10] == '5') _result = NVM::V5::setup();
       else if (_sib[10] == '4') _result = NVM::V4::setup();
       else if (_sib[10] == '3') _result = NVM::V3::setup();
       else if (_sib[10] == '2') _result = NVM::V2::setup();
@@ -502,6 +502,7 @@ namespace UPDI {
       D1PRINTF(" UPDI_SIGN_OFF\r\n");
       /* If UPDI control has failed, RSP3_OK is always returned. */
       _rspsize = bit_is_set(PGCONF, PGCONF_UPDI_bp) ? Timeout::command(&disconnect) : 1;
+      send_break();
       SYS::delay_100us();
       USART::setup();
       pinLogicPush(PIN_PGM_TRST);

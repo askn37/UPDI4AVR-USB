@@ -266,7 +266,7 @@ namespace JTAG {
     uint8_t _index   = packet.out.index;
     uint8_t _length  = packet.out.length;
     if (_cmd == 0x01) {             /* CMD3_SET_PARAMETER */
-      uint16_t _data = packet.out.wValue;
+      uint8_t _data = packet.out.wValue;
       D1PRINTF(" AVR_SET_PARAM=%02X:%02X:%02X:%04X\r\n", _section, _index, _length, _data);
       if (_section == 0) {          /* SET_GET_CTXT_CONFIG */
         if (_index == 0) {          /* PARM3_ARCH */
@@ -294,11 +294,12 @@ namespace JTAG {
         else if (_index == 0x31) {  /* PARM3_CLK_XMEGA_PDI */
           /* Called with `-B xclk[unit]`. */
           /* XCLK Range Limitation : LSB=kHz */
-          if (_data < 40) _data = 40;
+          uint16_t _newclk = packet.out.wValue;
+          if (_newclk < 40) _newclk = 40;
   #if defined(DEBUG)
-          if (_xclk != _data) D1PRINTF(" FIX_XCLK=%d\r\n", _xclk);
+          if (_xclk != _newclk) D1PRINTF(" FIX_XCLK=%d\r\n", _xclk);
   #endif
-          _xclk = _xclk_bak = _data;
+          _xclk = _xclk_bak = _newclk;
         }
       }
       else if (_section == 2) {     /* SET_GET_CTXT_DEVICE */
