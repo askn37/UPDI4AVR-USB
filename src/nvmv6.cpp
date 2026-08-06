@@ -1,13 +1,13 @@
 /**
- * @file nvmv4.cpp
+ * @file nvmv6.cpp
  * @author askn (K.Sato) multix.jp
  * @brief UPDI4AVR-USB is a program writer for the AVR series, which are UPDI/TPI
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
- *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.32.40+
- * @date 2024-07-10
- * @copyright Copyright (c) 2024 askn37 at github.com
+ *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=8.2.
+ * @version 1.32.48+
+ * @date 2026-08-04
+ * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
  */
@@ -21,7 +21,7 @@
 /*
  * NOTE:
  *
- * UPDI NVM version 4 is used in AVR-DU series.
+ * UPDI NVM version 6 is used in AVR-Sx series.
  * It has the following features:
  *
  * - Data area is at the beginning of the 24-bit address space. (MSB=0)
@@ -49,10 +49,10 @@
  *   so it must be erased before it can be rewritten.
  */
 
-namespace NVM::V4 {
+namespace NVM::V6 {
 
   constexpr auto NVM_CTRL   = 0x1000;
-  constexpr auto NVM_STATUS = 0x1006;
+  constexpr auto NVM_STATUS = 0x1007;
   constexpr auto PROD_SIG   = 0x1080;
   constexpr auto PROG_START = 0x800000;
 
@@ -70,9 +70,9 @@ namespace NVM::V4 {
   }
 
   bool erase_flash_page (uint32_t _dwAddr) {
-    D2PRINTF(" NVM_V4_FLPER=%06lX\r\n", _dwAddr);
+    D2PRINTF(" NVM_V6_FLPER=%06lX\r\n", _dwAddr);
     return (
-      nvm_ctrl_change(0x08)   /* NVM_V4_CMD_FLPER */
+      nvm_ctrl_change(0x08)   /* NVM_V6_CMD_FLPER */
       && UPDI::send_byte(_dwAddr, 0xFF)
       && (nvm_wait() & 0x73) == 0
       && nvm_ctrl_change(0x00)
@@ -82,9 +82,9 @@ namespace NVM::V4 {
   bool write_words_flash (uint32_t _dwAddr, size_t _wLength) {
     if (bit_is_clear(PGCONF, PGCONF_ERSE_bp)
       && SYS::is_boundary_flash_page(_dwAddr)) erase_flash_page(_dwAddr);
-    D2PRINTF(" NVM_V4_FLWR=%06lX\r\n", _dwAddr);
+    D2PRINTF(" NVM_V6_FLWR=%06lX\r\n", _dwAddr);
     return (
-      nvm_ctrl_change(0x02)   /* NVM_V4_CMD_FLWR */
+      nvm_ctrl_change(0x02)   /* NVM_V6_CMD_FLWR */
       && UPDI::send_words_block(_dwAddr, _wLength)
       && (nvm_wait() & 0x73) == 0
       && nvm_ctrl_change(0x00)
@@ -93,9 +93,9 @@ namespace NVM::V4 {
 
   bool write_bytes_flash (uint32_t _dwAddr, size_t _wLength) {
     if (SYS::is_boundary_flash_page(_dwAddr)) erase_flash_page(_dwAddr);
-    D2PRINTF(" NVM_V4_FLWR=%06lX\r\n", _dwAddr);
+    D2PRINTF(" NVM_V6_FLWR=%06lX\r\n", _dwAddr);
     return (
-      nvm_ctrl_change(0x02)   /* NVM_V4_CMD_FLWR */
+      nvm_ctrl_change(0x02)   /* NVM_V6_CMD_FLWR */
       && UPDI::send_bytes_block_slow(_dwAddr, _wLength)
       && (nvm_wait() & 0x73) == 0
       && nvm_ctrl_change(0x00)
@@ -103,9 +103,9 @@ namespace NVM::V4 {
   }
 
   bool write_eeprom (uint32_t _dwAddr, size_t _wLength) {
-    D2PRINTF(" NVM_V4_EEERWR=%06lX\r\n", _dwAddr);
+    D2PRINTF(" NVM_V6_EEERWR=%06lX\r\n", _dwAddr);
     return (
-      nvm_ctrl_change(0x13)   /* NVM_V4_CMD_EEERWR */
+      nvm_ctrl_change(0x13)   /* NVM_V6_CMD_EEERWR */
       && UPDI::send_bytes_block_slow(_dwAddr, _wLength)
       && (nvm_wait() & 0x73) == 0
       && nvm_ctrl_change(0x00)

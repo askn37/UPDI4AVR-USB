@@ -461,6 +461,7 @@ namespace NVM::V2 { bool setup (void); };
 namespace NVM::V3 { bool setup (void); };
 namespace NVM::V4 { bool setup (void); };
 namespace NVM::V5 { bool setup (void); };
+namespace NVM::V6 { bool setup (void); };
 
 namespace PDI {
   bool send_bytes (const uint8_t* _data, size_t _len);
@@ -555,6 +556,7 @@ namespace USART {
 namespace USB {
   bool is_ep_setup (void);
   bool is_not_dap (void);
+  void usb_detach (void);
   void ep_dpi_pending (void);
   void ep_cdo_pending (void);
   void complete_dap_out (void);

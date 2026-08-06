@@ -61,7 +61,7 @@ namespace UPDI {
   // MARK: UPDI Low level
 
   bool send_break (void) {
-    USART0_BAUD = USART0_BAUD + (USART0_BAUD >> 1);
+    USART0_BAUD = USART0_BAUD << 1;
     send(0x00);
     USART0_BAUD = USART::calk_baud_khz(_xclk);
     return true;
@@ -404,13 +404,12 @@ namespace UPDI {
     /* High-Voltage control */
     #ifdef CONFIG_HVC_ENABLE
     if (_hven && _hvvar != 1) {
+      D1PRINTF("<HVC:V%d>", _hvvar);
       SYS::hvc_enable();
       if (_hvvar == 0) {
-        D1PRINTF("<HVC:V0>");
         digitalWriteMacro(PIN_HVC_SELECT1, HIGH);
       }
       else if (_hvvar == 2) {
-        D1PRINTF("<HVC:V2+>");
         digitalWriteMacro(PIN_HVC_SELECT3, HIGH);
       }
       /* Most early silicon requires a pulse of 700us or more. */
@@ -436,7 +435,6 @@ namespace UPDI {
     /* If UPDI does not respond, a timeout occurs. */
     while (!(send_bytes(_init, sizeof(_init)) && recv() && (RXDATA == UPDI_CTRLAV))) {
       send_break();
-      send_break();
     }
 
     /* Read the SIB from the ACC. */
@@ -445,7 +443,8 @@ namespace UPDI {
       size_t _result = 0;
       D1PRINTF(" NVM:%02X,SIB=\"%s\"\r\n", _sib[10], _sib);
       /* Depending on the SIB, different low-level methods are executed. */
-      if      (_sib[10] == '5') _result = NVM::V5::setup();
+      if      (_sib[10] == '6') _result = NVM::V6::setup();
+      else if (_sib[10] == '5') _result = NVM::V5::setup();
       else if (_sib[10] == '4') _result = NVM::V4::setup();
       else if (_sib[10] == '3') _result = NVM::V3::setup();
       else if (_sib[10] == '2') _result = NVM::V2::setup();
@@ -490,10 +489,17 @@ namespace UPDI {
   size_t jtag_scope_updi (void) {
     size_t _rspsize = 0;
     uint8_t _cmd = packet.out.cmd;
+    uint8_t _step = 50;
     if (_cmd == 0x10) {             /* CMD3_SIGN_ON */
       D1PRINTF(" UPDI_SIGN_ON=EXT:%02X\r\n", packet.out.bMType);
+      if ((bit_is_set(GPCONF, GPCONF_HLD_bp) || _jtag_hvctrl) && _xclk_bak > 125) {
+        _xclk_bak = 125;
+        _step = 25;
+      }
       _xclk = _xclk_bak;
-      while (!(_rspsize = Timeout::command(&connect, nullptr, 150))) _xclk -= 25;
+      while (_xclk >= 75 && !(_rspsize = Timeout::command(&connect, nullptr, 160))) {
+        _xclk -= _step;
+      }
       /* If it fails here, it is expected to try again, giving it a chance at HV control. */
       packet.in.res = _rspsize ? 0x84 : 0xA0; /* RSP3_DATA : RSP3_FAILED */
       return _rspsize;
@@ -502,6 +508,7 @@ namespace UPDI {
       D1PRINTF(" UPDI_SIGN_OFF\r\n");
       /* If UPDI control has failed, RSP3_OK is always returned. */
       _rspsize = bit_is_set(PGCONF, PGCONF_UPDI_bp) ? Timeout::command(&disconnect) : 1;
+      send_break();
       SYS::delay_100us();
       USART::setup();
       pinLogicPush(PIN_PGM_TRST);

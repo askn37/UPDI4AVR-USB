@@ -10,6 +10,13 @@
 
 The conventional *USB4AVR* is designed to use a USB-serial conversion circuit, but this *UPDI4AVR-USB* is a complete single-chip design that uses the USB peripheral circuit built into the MCU.
 
+### Recent Features
+
+v1.34.48
+- Support for NVMCTRL Version 6; AVR-SD famiry
+  - Robust protection mechanisms specific to the AVR-SD family (particularly FUSE settings) must be disabled as necessary.
+  - *The AVR-LA family is supported by the same NVMCTRL version 5 as the AVR-EB.*
+
 ## Quick Start
 
 The pre-built binaries can be uploaded to the ["AVR64DU32 Curiosity Nano : EV59F82A"](https://www.microchip.com/en-us/development-tool/ev59f82a) product for easy setup. [->Click Here](https://github.com/askn37/UPDI4AVR-USB/tree/main/hex/updi4avr-usb)
@@ -40,7 +47,7 @@ This software can:
 
 - Only install on the AVR-DU family.
 - Operates all released UPDI type AVR series:
-  - All tinyAVR-0/1/2, megaAVR-0, AVR-Dx, AVR-Ex products
+  - All tinyAVR-0/1/2, megaAVR-0, AVR-Dx, AVR-Ex, AVR-Lx, AVR-Sx products
 - Operates all released TPI type ATtiny series:
   - ATtiny4 ATtiny5 ATtiny9 ATtiny10 ATtiny20 ATtiny40 ATtiny102 ATtiny104 (8 types in total)
 - Operates (probably) all released PDI type ATxmega series:

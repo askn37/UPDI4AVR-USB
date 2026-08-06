@@ -10,6 +10,13 @@
 
 従来の *USB4AVR* は USBシリアル変換回路を使用する設計だが、この *UPDI4AVR-USB* は MCU内蔵USB周辺回路を使用する 1チップ完結設計である。
 
+### Recent Features
+
+v1.34.48
+- NVMCTRL version 6（AVR-SD 系統）への対応
+  - AVR-SD 系統特有の堅牢な保護メカニズム（特に FUSE 設定）については必要なだけ無効になっていなければならない。
+  - *AVR-LA 系統は AVR-EB と同様に NVMCTRL version 5 でサポートされている。*
+
 ## Quick Start
 
 ビルド済バイナリを ["AVR64DU32 Curiosity Nano : EV59F82A"](https://www.microchip.com/en-us/development-tool/ev59f82a) 製品にアップロードして、手早くセットアップできる。
@@ -42,7 +49,7 @@ AVR-DUファミリーの存在は 2021年春に公表されたものの、すぐ
 
 - AVR-DUファミリーにのみインストールできる。
 - 発売済の全ての UPDIタイプ AVRシリーズを操作できる：
-  - tinyAVR-0/1/2、megaAVR-0、AVR-Dx、AVR-Ex の全ての製品
+  - tinyAVR-0/1/2、megaAVR-0、AVR-Dx、AVR-Ex, AVR-Lx、AVR-Sx の全ての製品
 - 発売済の全ての TPIタイプ ATtinyシリーズを操作できる：
   - ATtiny4 ATtiny5 ATtiny9 ATtiny10 ATtiny20 ATtiny40 ATtiny102 ATtiny104 （計8種類）
 - 発売済の（おそらく）全ての PDIタイプ ATxmegaシリーズを操作できる：

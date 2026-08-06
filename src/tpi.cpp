@@ -376,7 +376,7 @@ namespace TPI {
       );
       _rspsize = Timeout::command(&read_memory);
     }
-    else if (_vtarget < 4500)     { /* empty */ }
+    else if (_vtarget < 4200)     { /* empty */ }
     else if (_cmd == 0x03) {        /* XPRG_CMD_ERASE */
       D1PRINTF(" TPI_ERASE=%02X:%08lX\r\n",
         packet.out.tpi.read.bMType,

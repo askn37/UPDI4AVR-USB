@@ -23,6 +23,9 @@
  *
  * An implementation of UPDI NVM Version 1 does not exist yet.
  * This file is a template for the future.
+ *
+ * Do not rely on the "NVMCTRL id" listed in the DFP package's ATDF file;
+ * the truly correct value is the one read via "UPDI SIB".
  */
 
 namespace NVM::V1 {
