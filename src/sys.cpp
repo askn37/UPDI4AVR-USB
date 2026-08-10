@@ -5,31 +5,17 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.33.46+
- * @date 2024-08-26
- * @copyright Copyright (c) 2024 askn37 at github.com
+ * @version 1.34.49+
+ * @date 2026-08-09
+ * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
  */
 
 #include <avr/io.h>
-#include <math.h>           /* sqrt() */
-#include "peripheral.h"     /* import Serial (Debug) */
+#include <peripheral.h>     /* import Serial (Debug) */
 #include "configuration.h"
 #include "prototype.h"
-
-/*** LED Timer configuration ***/
-#define HBEAT_HZ   (0.5)    /* Periodic 0.5Hz */
-#define TCA0_STEP  ((uint8_t)(sqrt((F_CPU / 1024.0) * (1.0 / HBEAT_HZ)) - 0.5))
-#define TCB1_HBEAT (((TCA0_STEP /  2) << 8) + (TCA0_STEP - 1))
-#define TCB1_STEP  (170)    /* Periodic 0.67Hz */
-#define TCB1_BLINK (((TCB1_STEP /  2) << 8) + (TCB1_STEP - 1))
-#define TCB1_FLASH (((TCB1_STEP / 34) << 8) + (TCB1_STEP - 1))
-#define TCB1_FAST  (((TCB1_STEP / 10) << 8) + (TCB1_STEP / 5))
-#define HVC_CLK    5000000
-
-#define pinLogicPush(PIN) openDrainWriteMacro(PIN, LOW)
-#define pinLogicOpen(PIN) openDrainWriteMacro(PIN, HIGH)
 
 namespace SYS {
 
@@ -41,233 +27,6 @@ namespace SYS {
     0x7F, 0x55, 0x7E, 0xC8, 0x7F, 0x00, 0xFE, /* SYSRST */
     0x7F, 0x55, 0x7E, 0xC3, 0x7E, 0x04, 0xFF  /* UPDIDIS */
   };
-
-  void setup (void) {
-
-    /*
-     * Before reaching this point,
-     * `PORT<ALL>.PINCONFIG = PORT_ISC_INPUT_DISABLE_gc`
-     * is already executed.
-     *
-     * VCP control: Initial values ​​are all open-drain.
-     *
-     * PGM control: Initial values ​​are all open-drain.
-     * TCLK is changed to push-pull when in use.
-     *
-     * SW0 detection: Input negative logic.
-     * Use CCL in conjunction to separate the falling edge and rising edge interrupts.
-     * For the falling edge, use the CCL filter function to remove chattering noise.
-     *
-     * V-Target power control: output negative logic.
-     */
-
-  #if (CONFIG_HAL_TYPE == HAL_BAREMETAL_14P)
-    /* HV-control and PDI support is not available in this package. */
-
-    /* Output GPIO */
-    VPORTD_DIR = 0b10000000;    /* 7:LED0 */
-
-    /* Pull-Up GPIO */
-    pinControlRegister(PIN_VCP_TXD)  = PORT_PULLUPEN_bm;
-    pinControlRegister(PIN_VCP_RXD)  = PORT_PULLUPEN_bm;
-    pinControlRegister(PIN_PGM_TDAT) = PORT_PULLUPEN_bm;
-    pinControlRegister(PIN_PGM_TRST) = PORT_PULLUPEN_bm;
-    pinControlRegister(PIN_SYS_SW0)  = PORT_PULLUPEN_bm | PORT_ISC_RISING_gc;
-    /* TCLK disable/output is shared outside connection with VTxD */
-
-    /* PORTx event generator */
-    portRegister(PIN_SYS_SW0).EVGENCTRLA = pinPosition(PIN_SYS_SW0);
-    portRegister(PIN_VCP_RXD).EVGENCTRLA = pinPosition(PIN_VCP_RXD) << 4;
-
-    /*** Multiplexer ***/
-    PORTMUX_EVSYSROUTEA   = PORTMUX_EVOUTD_ALT1_gc;         /* EVOUTD_ALT1 -> PIN_PD7 */
-    EVSYS_CHANNEL3        = EVSYS_CHANNEL_CCL_LUT2_gc;      /* <- LED0 */
-    EVSYS_CHANNEL4        = EVSYS_CHANNEL_PORTA_EVGEN1_gc;  /* <- VRxD */
-    EVSYS_CHANNEL5        = EVSYS_CHANNEL_PORTF_EVGEN0_gc;  /* <- SW0  */
-    EVSYS_USEREVSYSEVOUTD = EVSYS_USER_CHANNEL3_gc;         /* LUT2_OUT -> EVOUTD */
-    EVSYS_USERCCLLUT1A    = EVSYS_USER_CHANNEL4_gc;         /* <- VRxD */
-    EVSYS_USERCCLLUT0A    = EVSYS_USER_CHANNEL5_gc;         /* <- SW0 */
-
-    /*** SW0 FALLING Interrupt generator ***/
-    CCL_TRUTH0    = CCL_TRUTH_1_bm;
-    CCL_LUT0CTRLB = CCL_INSEL0_EVENTA_gc;                         /* <- CH5 */
-    CCL_LUT0CTRLA = CCL_ENABLE_bm | CCL_FILTSEL_FILTER_gc;
-    CCL_INTCTRL0  = CCL_INTMODE0_FALLING_gc;
-
-    /*** LED1 generator ***/
-    CCL_TRUTH1    = CCL_TRUTH_0_bm       | CCL_TRUTH_1_bm | CCL_TRUTH_2_bm;
-    CCL_LUT1CTRLB = CCL_INSEL0_USART0_gc | CCL_INSEL1_EVENTA_gc;  /* <- CH4 */
-    CCL_LUT1CTRLA = CCL_ENABLE_bm        | CCL_OUTEN_bm;          /* -> PIN_PC3 */
-
-    /*** LED0 Heart-Beat generator ***/
-    CCL_TRUTH2    = CCL_TRUTH_1_bm     | CCL_TRUTH_2_bm;
-    CCL_LUT2CTRLB = CCL_INSEL0_TCA0_gc | CCL_INSEL1_TCB1_gc;
-    CCL_LUT2CTRLA = CCL_ENABLE_bm;  /* -> CH3 */
-
-    /*** VUSB Bus-Powerd ***/
-    SYSCFG_VUSBCTRL = SYSCFG_USBVREG_bm;
-
-  #elif (CONFIG_HAL_TYPE == HAL_BAREMETAL_20P)
-
-    /* Output GPIO */
-    VPORTA_DIR = 0b10100000;    /* 7:HVSL2 5;HVSL1 */
-    VPORTD_DIR = 0b10110000;    /* 7:HVSL3 5:HVCP2 4:HVCP1 */
-
-    /* Pull-Up GPIO */
-    pinControlRegister(PIN_VCP_TXD)      = PORT_PULLUPEN_bm;
-    pinControlRegister(PIN_VCP_RXD)      = PORT_PULLUPEN_bm;
-    pinControlRegister(PIN_PGM_TDAT)     = PORT_PULLUPEN_bm;
-    pinControlRegister(PIN_PGM_TRST)     = PORT_PULLUPEN_bm;
-    pinControlRegister(PIN_SYS_SW0)      = PORT_PULLUPEN_bm | PORT_ISC_RISING_gc;
-    pinControlRegister(PIN_HVC_CHGPUMP1) = PORT_INVEN_bm    | PORT_ISC_INPUT_DISABLE_gc;
-    /* PDAT in/output is shared outside connection with TDAT */
-    /* PCLK disable/output is shared internal connection with TRST */
-
-    /* PORTx event generator */
-    portRegister(PIN_SYS_SW0).EVGENCTRLA = pinPosition(PIN_SYS_SW0);
-    portRegister(PIN_VCP_RXD).EVGENCTRLA = pinPosition(PIN_VCP_RXD) << 4;
-
-    /*** Multiplexer ***/
-    PORTMUX_CCLROUTEA     = PORTMUX_LUT2_ALT1_gc;           /* CCL2_OUT_ALT1 -> PIN_PD6 */
-    PORTMUX_TCAROUTEA     = PORTMUX_TCA0_PORTD_gc;          /* TCA0_WOn_ALT3 -> PORTD */
-    EVSYS_CHANNEL4        = EVSYS_CHANNEL_PORTA_EVGEN1_gc;  /* <- VRxD */
-    EVSYS_CHANNEL5        = EVSYS_CHANNEL_PORTF_EVGEN0_gc;  /* <- SW0  */
-    EVSYS_USERCCLLUT1A    = EVSYS_USER_CHANNEL4_gc;         /* <- VRxD */
-    EVSYS_USERCCLLUT0A    = EVSYS_USER_CHANNEL5_gc;         /* <- SW0 */
-
-    /*** SW0 FALLING Interrupt generator ***/
-    CCL_TRUTH0    = CCL_TRUTH_1_bm;
-    CCL_LUT0CTRLB = CCL_INSEL0_EVENTA_gc;                         /* <- CH5 */
-    CCL_LUT0CTRLA = CCL_ENABLE_bm | CCL_FILTSEL_FILTER_gc;
-    CCL_INTCTRL0  = CCL_INTMODE0_FALLING_gc;
-
-    /*** LED1 generator ***/
-    CCL_TRUTH1    = CCL_TRUTH_0_bm       | CCL_TRUTH_1_bm | CCL_TRUTH_2_bm;
-    CCL_LUT1CTRLB = CCL_INSEL0_USART0_gc | CCL_INSEL1_EVENTA_gc;  /* <- CH4 */
-    CCL_LUT1CTRLA = CCL_ENABLE_bm        | CCL_OUTEN_bm;          /* -> PIN_PC3 */
-
-    /*** LED0 Heart-Beat generator ***/
-    CCL_TRUTH2    = CCL_TRUTH_1_bm     | CCL_TRUTH_2_bm;
-    CCL_LUT2CTRLB = CCL_INSEL0_TCA0_gc | CCL_INSEL1_TCB1_gc;
-    CCL_LUT2CTRLA = CCL_ENABLE_bm      | CCL_OUTEN_bm;            /* -> PIN_PD6 */
-
-  #elif (CONFIG_HAL_TYPE == HAL_CNANO)
-
-    /* Output GPIO */
-    VPORTA_DIR = 0b01110000;    /* 6:PCLK 5:VPW 4:PDAT */
-    VPORTD_DIR = 0b00110111;    /* 5:HVCP2 4:HVCP1 2:HVSL3 1:HVSL2 0:HVSL1 */
-    VPORTF_DIR = 0b00000100;    /* 2:LED0 */
-
-    /* Pull-Up GPIO */
-    pinControlRegister(PIN_VCP_TXD)      = PORT_PULLUPEN_bm;
-    pinControlRegister(PIN_VCP_RXD)      = PORT_PULLUPEN_bm;
-    pinControlRegister(PIN_PGM_TDAT)     = PORT_PULLUPEN_bm;
-    pinControlRegister(PIN_PGM_TRST)     = PORT_PULLUPEN_bm;
-    pinControlRegister(PIN_PGM_PDAT)     = 0;
-    pinControlRegister(PIN_PGM_PCLK)     = 0;
-    pinControlRegister(PIN_SYS_SW0)      = PORT_PULLUPEN_bm | PORT_ISC_RISING_gc;
-    pinControlRegister(PIN_SYS_LED0)     = PORT_INVEN_bm    | PORT_ISC_INPUT_DISABLE_gc;
-    pinControlRegister(PIN_HVC_CHGPUMP1) = PORT_INVEN_bm    | PORT_ISC_INPUT_DISABLE_gc;
-
-    /* PORTx event generator */
-    portRegister(PIN_SYS_SW0).EVGENCTRLA = pinPosition(PIN_SYS_SW0);
-    portRegister(PIN_VCP_RXD).EVGENCTRLA = pinPosition(PIN_VCP_RXD) << 4;
-
-    /*** Multiplexer ***/
-    PORTMUX_TCAROUTEA     = PORTMUX_TCA0_PORTD_gc;          /* TCA0_WOn_ALT3 -> PORTD */
-    EVSYS_CHANNEL3        = EVSYS_CHANNEL_CCL_LUT2_gc;      /* <- LED0 */
-    EVSYS_CHANNEL4        = EVSYS_CHANNEL_PORTA_EVGEN1_gc;  /* <- VRxD */
-    EVSYS_CHANNEL5        = EVSYS_CHANNEL_PORTF_EVGEN0_gc;  /* <- SW0  */
-    EVSYS_USEREVSYSEVOUTF = EVSYS_USER_CHANNEL3_gc;         /* LED0 -> EVOUTF:PIN_PF2 */
-    EVSYS_USERCCLLUT3A    = EVSYS_USER_CHANNEL4_gc;         /* <- VRxD */
-    EVSYS_USERCCLLUT0A    = EVSYS_USER_CHANNEL5_gc;         /* <- SW0 */
-
-    /*** SW0 FALLING Interrupt generator ***/
-    CCL_TRUTH0    = CCL_TRUTH_1_bm;
-    CCL_LUT0CTRLB = CCL_INSEL0_EVENTA_gc;                         /* <- CH5 */
-    CCL_LUT0CTRLA = CCL_ENABLE_bm | CCL_FILTSEL_FILTER_gc;
-    CCL_INTCTRL0  = CCL_INTMODE0_FALLING_gc;
-
-    /*** LED1 generator ***/
-    CCL_TRUTH3    = CCL_TRUTH_0_bm       | CCL_TRUTH_1_bm | CCL_TRUTH_2_bm;
-    CCL_LUT3CTRLB = CCL_INSEL0_USART0_gc | CCL_INSEL1_EVENTA_gc;  /* <- CH4 */
-    CCL_LUT3CTRLA = CCL_ENABLE_bm        | CCL_OUTEN_bm;          /* -> PIN_PF3 */
-
-    /*** LED0 Heart-Beat generator ***/
-    CCL_TRUTH2    = CCL_TRUTH_1_bm     | CCL_TRUTH_2_bm;
-    CCL_LUT2CTRLB = CCL_INSEL0_TCA0_gc | CCL_INSEL1_TCB1_gc;
-    CCL_LUT2CTRLA = CCL_ENABLE_bm;                                /* -> CH3 */
-
-  #else /* (CONFIG_HAL_TYPE == HAL_BAREMETAL_28P) || (CONFIG_HAL_TYPE == HAL_BAREMETAL_32P) */
-
-    /* Output GPIO */
-    VPORTA_DIR = 0b00000010;    /* 1:VPW */
-    VPORTD_DIR = 0b00111111;    /* 5:HVCP2 4:HVCP1 3:LED0 2:HVSL3 1:HVSL2 0:HVSL1 */
-
-    /* Pull-Up GPIO */
-    pinControlRegister(PIN_VCP_TXD)      = PORT_PULLUPEN_bm;
-    pinControlRegister(PIN_VCP_RXD)      = PORT_PULLUPEN_bm;
-    pinControlRegister(PIN_PGM_TDAT)     = PORT_PULLUPEN_bm;
-    pinControlRegister(PIN_PGM_TRST)     = PORT_PULLUPEN_bm;
-    pinControlRegister(PIN_SYS_SW0)      = PORT_PULLUPEN_bm | PORT_ISC_RISING_gc;
-    pinControlRegister(PIN_HVC_CHGPUMP1) = PORT_INVEN_bm    | PORT_ISC_INPUT_DISABLE_gc;
-    /* PDAT in/output is shared outside connection with TDAT */
-    /* PCLK disable/output is shared internal connection with TRST */
-
-    /* PORTx event generator */
-    portRegister(PIN_SYS_SW0).EVGENCTRLA = pinPosition(PIN_SYS_SW0)
-                                         | pinPosition(PIN_VCP_RXD) << 4;
-
-    /*** Multiplexer ***/
-    PORTMUX_TCAROUTEA     = PORTMUX_TCA0_PORTD_gc;          /* TCA0_WOn_ALT3 -> PORTD */
-    EVSYS_CHANNEL4        = EVSYS_CHANNEL_PORTA_EVGEN1_gc;  /* <- VRxD */
-    EVSYS_CHANNEL5        = EVSYS_CHANNEL_PORTA_EVGEN0_gc;  /* <- SW0  */
-    EVSYS_USERCCLLUT1A    = EVSYS_USER_CHANNEL4_gc;         /* <- VRxD */
-    EVSYS_USERCCLLUT0A    = EVSYS_USER_CHANNEL5_gc;         /* <- SW0 */
-
-    /*** SW0 FALLING Interrupt generator ***/
-    CCL_TRUTH0    = CCL_TRUTH_1_bm;
-    CCL_LUT0CTRLB = CCL_INSEL0_EVENTA_gc;                         /* <- CH5 */
-    CCL_LUT0CTRLA = CCL_ENABLE_bm | CCL_FILTSEL_FILTER_gc;
-    CCL_INTCTRL0  = CCL_INTMODE0_FALLING_gc;
-
-    /*** LED1 generator ***/
-    CCL_TRUTH1    = CCL_TRUTH_0_bm       | CCL_TRUTH_1_bm | CCL_TRUTH_2_bm;
-    CCL_LUT1CTRLB = CCL_INSEL0_USART0_gc | CCL_INSEL1_EVENTA_gc;  /* <- CH4 */
-    CCL_LUT1CTRLA = CCL_ENABLE_bm        | CCL_OUTEN_bm;          /* -> PIN_PC3 */
-
-    /*** LED0 Heart-Beat generator ***/
-    CCL_TRUTH2    = CCL_TRUTH_1_bm     | CCL_TRUTH_2_bm;
-    CCL_LUT2CTRLB = CCL_INSEL0_TCA0_gc | CCL_INSEL1_TCB1_gc;
-    CCL_LUT2CTRLA = CCL_ENABLE_bm      | CCL_OUTEN_bm;            /* -> PIN_PD3 */
-
-  #endif
-
-    /*** CCL enable ***/
-    /* One of the CCL's is the LED output control. */
-    CCL_CTRLA = CCL_ENABLE_bm;
-
-    /*** TCA0 ***/
-    /* TCA0 is split into two 8-bit timers. */
-    /* The lower timer controls the blinking rate of the LED. */
-    /* The top timer is used as a period timer */
-    /* and as the output for the charge pump.  */
-    TCA0_SPLIT_CTRLD = TCA_SPLIT_SPLITM_bm;
-    TCA0_SPLIT_LPER  = TCA0_STEP - 2;
-    TCA0_SPLIT_LCMP0 = TCA0_STEP / 2;
-
-    /*** TCB0 ***/
-    /* The TCB0 timer is configured in the <timeout.cpp> module. */
-
-    /*** TCB1 ***/
-    /* TCB1 is used to control the LED blinking rate. */
-    TCB1_CTRLB = TCB_ASYNC_bm | TCB_CNTMODE_PWM8_gc;
-    TCB1_CCMP  = TCB1_FLASH;
-    TCB1_CTRLA = TCB_ENABLE_bm | TCB_CLKSEL_EVENT_gc;
-
-    /* Voltage measurements may initially return erroneous values. */
-    _vtarget = get_vdd();
-  }
 
   /*
   * LED operation switching
@@ -319,14 +78,14 @@ namespace SYS {
    * Target Reset
    */
 
-  void power_reset (bool _off, bool _on) {
+  WEAK void power_reset (bool _off, bool _on) {
     if (_off) {
   #ifdef PIN_PGM_VPOWER
       digitalWriteMacro(PIN_PGM_VPOWER, HIGH);  /* VTG off */
       /* Temporarily disable the pullup to stop current leakage when VTG=OFF. */
       /* It would be easier to just set the pin output LOW,                   */
       /* but we do it this way because of possible conflicts.                 */
-    #if CONFIG_PGM_TYPE == 0  /* HAL_CNANO */
+    #ifdef CONFIG_PGM_PDI_ENABLE
       if (_jtag_arch != 0x03) {
         pinControlRegister(PIN_PGM_PDAT) &= ~PORT_PULLUPEN_bm;
         pinControlRegister(PIN_PGM_PCLK) &= ~PORT_PULLUPEN_bm;
@@ -340,13 +99,13 @@ namespace SYS {
     }
     if (_on) {
   #ifdef PIN_PGM_VPOWER
-      delay_125ms();  /* discharge duration */
+      if (_off) delay_125ms();  /* discharge duration */
       digitalWriteMacro(PIN_PGM_VPOWER, LOW);   /* VTG on */
       pinControlRegister(PIN_VCP_TXD)  |= PORT_PULLUPEN_bm;   /* internal shared TCLK */
       pinControlRegister(PIN_VCP_RXD)  |= PORT_PULLUPEN_bm;
       pinControlRegister(PIN_PGM_TDAT) |= PORT_PULLUPEN_bm;
       pinControlRegister(PIN_PGM_TRST) |= PORT_PULLUPEN_bm;
-    #if CONFIG_PGM_TYPE == 0
+    #ifdef CONFIG_PGM_PDI_ENABLE
       if (_jtag_arch != 0x03) {
         pinControlRegister(PIN_PGM_PDAT) |= PORT_PULLUPEN_bm;
         pinControlRegister(PIN_PGM_PCLK) |= PORT_PULLUPEN_bm;
@@ -368,7 +127,7 @@ namespace SYS {
       if (bit_is_set(_d, 0))
         pinLogicOpen(PIN_PGM_TDAT);
       else
-        pinLogicPush(PIN_PGM_TDAT);
+        pinLogicPull(PIN_PGM_TDAT);
       bit_set(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_HUNF_bp);
     }
     TCA0_SPLIT_CTRLA = 0;
@@ -381,7 +140,7 @@ namespace SYS {
   void reset_enter (void) {
     if (bit_is_clear(GPCONF, GPCONF_HLD_bp)) {
       LED_Blink();
-      pinLogicPush(PIN_PGM_TRST);
+      pinLogicPull(PIN_PGM_TRST);
       /*
       * Puts a tinyAVR-0 which does not have a reset pad into reset state.
       * This applies to all chips which have an enabled UPDI pad.
@@ -457,7 +216,7 @@ namespace SYS {
     ADC0_INTFLAGS = ~0;
     ADC0_SAMPLE = 0;
     ADC0_CTRLA = ADC_ENABLE_bm;
-    ADC0_CTRLB = ADC_PRESC_DIV4_gc;
+    ADC0_CTRLB = ADC_PRESC_DIV8_gc;
     ADC0_CTRLC = ADC_REFSEL_1V024_gc;
     ADC0_CTRLE = 250; /* (SAMPDUR + 0.5) * fCLK_ADC sample duration */
     ADC0_MUXPOS = ADC_MUXPOS_VDDDIV10_gc; /* ADC channel VDD * 0.1 */
@@ -510,7 +269,7 @@ namespace SYS {
     delay_millis(125);
   }
 
-};
+};  /* SYS */
 
 #if defined(PIN_SYS_SW0)
 /* If the level is not maintained for a sufficient period of time it will not function properly. */

@@ -5,9 +5,9 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.33.46+
- * @date 2024-10-08
- * @copyright Copyright (c) 2024 askn37 at github.com
+ * @version 1.34.49+
+ * @date 2026-08-09
+ * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
  */
@@ -15,8 +15,8 @@
 #include <avr/io.h>
 #include <avr/pgmspace.h>   /* PROGMEM memcpy_P */
 #include <string.h>         /* memcpy */
-#include "api/btools.h"     /* bswap16,32 */
-#include "peripheral.h"     /* import Serial (Debug) */
+#include <api/btools.h>     /* bswap16,32 */
+#include <peripheral.h>     /* import Serial (Debug) */
 #include "configuration.h"
 #include "prototype.h"
 
@@ -41,6 +41,8 @@ namespace JTAG {
   /* PARM3_HW_VER, PARM3_FW_MAJOR, PARM3_FW_MINOR, PARM3_FW_REL[2] */
   const uint8_t PROGMEM jtag_version[] = CONFIG_SYS_FWVER;
   const uint8_t PROGMEM jtag_physical[] = {0x90, 0x28, 0x00, 0x18, 0x38, 0x00, 0x00, 0x00};
+
+  // MARK: CMSIS-DAP
 
   /*** Only a subset of the CMSIS-DAP commands are implemented. ***/
   /*
@@ -169,6 +171,8 @@ namespace JTAG {
     D2PRINTHEX(&packet.in.token, _packet_length);
   }
 
+  // MARK: JTAG
+
   /*** Only a subset of JTAGICE3 commands are implemented. ***/
   size_t jtag_scope_general (void) {
     size_t  _rspsize = 0;
@@ -207,8 +211,8 @@ namespace JTAG {
       _jtag_unlock = 0;   /* This is not used. */
       _jtag_arch = 0;
       _jtag_vpow = 1;
-      _vtarget = SYS::get_vdd();
-      D1PRINTF(" VTARGET=%d\r\n", _vtarget);
+      // _vtarget = SYS::get_vdd();
+      // D1PRINTF(" VTARGET=%d\r\n", _vtarget);
       packet.in.res = 0x80;         /* RSP3_OK */
     }
     else if (_cmd == 0x11) {        /* CMD3_SIGN_OFF */
@@ -220,6 +224,8 @@ namespace JTAG {
     }
     return _rspsize;
   }
+
+  // MARK: EDBG
 
   /*** The EDBG scope provides access to the writer's hardware specifications. ***/
   /* There is no impact on operation if it is not called at all. */
@@ -260,6 +266,8 @@ namespace JTAG {
     return _rspsize;
   }
 
+  // MARK: SCOPE
+
   /* The AVR scope is further branched by the ARCH designator. */
   size_t jtag_scope_avr_core (void) {
     size_t  _rspsize = 0;
@@ -276,8 +284,8 @@ namespace JTAG {
           D1PRINTF(" ARCH=%02X\r\n", _data);
           _jtag_arch = _data;       /* 5:UPDI 3:PDI */
           if (_jtag_arch == 3) {
-            #ifdef PIN_PGM_PDAT
-            openDrainWriteMacro(PIN_PGM_PDAT, LOW);
+            #ifdef CONFIG_PGM_PDI_ENABLE
+            pinLogicPull(PIN_PGM_PDAT);
             #endif
           }
           _xclk = _data == 5 ? UPDI_CLK : PDI_CLK;
@@ -394,9 +402,14 @@ namespace JTAG {
     else if (_jtag_arch == 0x03) _rspsize = PDI::jtag_scope_xmega();    /* XMEGA support */
   #endif
     else if (_jtag_arch == 0x05) _rspsize = UPDI::jtag_scope_updi();    /* UPDI support */
-    else packet.in.res = 0xA0;      /* RSP3_FAILED */
+    else {
+      D1PRINTF(" ?:ARCH=%d\r\n", _jtag_arch);
+      packet.in.res = 0xA0;         /* RSP3_FAILED */
+    }
     return _rspsize;
   } /* jtag_scope_avr_core */
+
+  // MARK: BRANCH
 
   /* Processing branches depending on the scope specifier. */
   /* Currently, four types of scope are known: */
@@ -419,6 +432,7 @@ namespace JTAG {
     else if (_scope == 0x12) _rspsize = jtag_scope_avr_core();      /* SCOPE_AVR */
     else if (_scope == 0x14) _rspsize = TPI::jtag_scope_tpi();      /* SCOPE_AVR_TPI */
     else if (_scope == 0x20) _rspsize = jtag_scope_edbg();          /* SCOPE_EDBG */
+    else    { D1PRINTF(" ?:SCOPE=%02X\r\n", _scope); }
     complete_jtag_transactions(_rspsize);
   } /* jtag_scope_branch */
 

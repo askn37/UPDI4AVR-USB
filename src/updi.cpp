@@ -5,16 +5,16 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.33.46+
- * @date 2024-08-26
- * @copyright Copyright (c) 2024 askn37 at github.com
+ * @version 1.34.49+
+ * @date 2026-08-09
+ * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
  */
 
 #include <avr/io.h>
-#include "api/capsule.h"    /* _CAPS macro */
-#include "peripheral.h"     /* import Serial (Debug) */
+#include <api/capsule.h>    /* _CAPS macro */
+#include <peripheral.h>     /* import Serial (Debug) */
 #include "configuration.h"
 #include "prototype.h"
 
@@ -34,9 +34,6 @@
 
 #define UPDI_GETVAL 0x05
 #define UPDI_CTRLAV (0x10 + UPDI_GETVAL)
-
-#define pinLogicPush(PIN) openDrainWriteMacro(PIN, LOW)
-#define pinLogicOpen(PIN) openDrainWriteMacro(PIN, HIGH)
 
 namespace UPDI {
 
@@ -385,9 +382,6 @@ namespace UPDI {
     const static uint8_t _sib256[] = {
       0x55, 0xE6        /* SIB 256bits */
     };
-    uint8_t _hvvar = Device_Descriptor.UPDI.hvupdi_variant;
-    bool _hven = (_packet_length >= 7 && packet.out.bMType && _jtag_hvctrl)
-              || bit_is_set(GPCONF, GPCONF_HLD_bp);
     _sib[0] = 0;
     _before_page = -1L;
     NVM::V1::setup();   /* default is dummy callback */
@@ -396,13 +390,16 @@ namespace UPDI {
     /* If possible, perform a hardware reset of the device. */
     digitalWriteMacro(PIN_PGM_TDAT, LOW);
     digitalWriteMacro(PIN_PGM_TRST, LOW);
-    pinLogicPush(PIN_PGM_TRST);
+    pinLogicPull(PIN_PGM_TRST);
     SYS::power_reset();
     SYS::delay_2500us();
     pinLogicOpen(PIN_PGM_TRST);
 
     /* High-Voltage control */
-    #ifdef CONFIG_HVC_ENABLE
+  #ifdef CONFIG_HVC_ENABLE
+    uint8_t _hvvar = Device_Descriptor.UPDI.hvupdi_variant;
+    bool _hven = (_packet_length >= 7 && packet.out.bMType && _jtag_hvctrl)
+              || bit_is_set(GPCONF, GPCONF_HLD_bp);
     if (_hven && _hvvar != 1) {
       D1PRINTF("<HVC:V%d>", _hvvar);
       SYS::hvc_enable();
@@ -419,10 +416,10 @@ namespace UPDI {
       digitalWriteMacro(PIN_HVC_SELECT3, LOW);
       /* From this point onwards, UPDI activation must be successful within 64ms. */
     }
-    #endif
+  #endif
 
     /* In most cases, a 2.5 ms LOW signal is sufficient to initiate UPDI activation. */
-    pinLogicPush(PIN_PGM_TDAT);
+    pinLogicPull(PIN_PGM_TDAT);
     SYS::delay_2500us();
     pinLogicOpen(PIN_PGM_TDAT);
 
@@ -483,6 +480,20 @@ namespace UPDI {
     return 1;
   }
 
+  uint8_t sign_off (void) {
+    uint8_t _rsp = bit_is_set(PGCONF, PGCONF_UPDI_bp) ? Timeout::command(&disconnect) : 1;
+    send_break();
+    SYS::delay_100us();
+    USART::setup();
+    pinLogicPull(PIN_PGM_TRST);
+    SYS::power_reset();
+    SYS::delay_2500us();
+    pinLogicOpen(PIN_PGM_TRST);
+    PGCONF = 0;
+    USART::change_vcp();
+    return _rsp;
+  } 
+
   // MARK: JTAG SCOPE
 
   /* ARCH=UPDI scope Provides functionality. */
@@ -507,16 +518,7 @@ namespace UPDI {
     else if (_cmd == 0x11) {        /* CMD3_SIGN_OFF */
       D1PRINTF(" UPDI_SIGN_OFF\r\n");
       /* If UPDI control has failed, RSP3_OK is always returned. */
-      _rspsize = bit_is_set(PGCONF, PGCONF_UPDI_bp) ? Timeout::command(&disconnect) : 1;
-      send_break();
-      SYS::delay_100us();
-      USART::setup();
-      pinLogicPush(PIN_PGM_TRST);
-      SYS::power_reset();
-      SYS::delay_2500us();
-      pinLogicOpen(PIN_PGM_TRST);
-      PGCONF = 0;
-      USART::change_vcp();
+      _rspsize = sign_off();
     }
     else if (_cmd == 0x15) {        /* CMD3_ENTER_PROGMODE */
       D1PRINTF(" UPDI_ENTER_PROG\r\n");

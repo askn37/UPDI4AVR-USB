@@ -5,9 +5,9 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.33.46+
- * @date 2024-08-26
- * @copyright Copyright (c) 2024 askn37 at github.com
+ * @version 1.34.49+
+ * @date 2026-08-09
+ * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
  */
@@ -16,6 +16,7 @@
 #include <avr/io.h>
 #include <stddef.h>
 #include <setjmp.h>
+#include <math.h>           /* sqrt() */
 #include <api/memspace.h>
 #include "configuration.h"
 
@@ -29,6 +30,20 @@
   #define CONSOLE_BAUD 500000L
 #endif
 
+#define pinLogicPull(PIN) openDrainWriteMacro(PIN, LOW)
+#define pinLogicOpen(PIN) openDrainWriteMacro(PIN, HIGH)
+
+/*** LED Timer configuration ***/
+#define HBEAT_HZ   (0.5)    /* Periodic 0.5Hz */
+#define TCA0_STEP  ((uint8_t)(sqrt((F_CPU / 1024.0) * (1.0 / HBEAT_HZ)) - 0.5))
+#define TCB1_HBEAT (((TCA0_STEP /  2) << 8) + (TCA0_STEP - 1))
+#define TCB1_STEP  (170)    /* Periodic 0.67Hz */
+#define TCB1_BLINK (((TCB1_STEP /  2) << 8) + (TCB1_STEP - 1))
+#define TCB1_FLASH (((TCB1_STEP / 34) << 8) + (TCB1_STEP - 1))
+#define TCB1_FAST  (((TCB1_STEP / 10) << 8) + (TCB1_STEP / 5))
+#define HVC_CLK    5000000
+
+/*** Debug UART macro symbol ***/
 #undef Serial
 #define DFLUSH()
 #define D0PRINTF(FMT, ...)
@@ -40,7 +55,7 @@
 #define D2PRINTHEX(P,L)
 #define D3PRINTHEX(P,L)
 #if defined(DEBUG)
-  #include "peripheral.h" /* from Micro_API : import Serial (Debug) */
+  #include <peripheral.h> /* from Micro_API : import Serial (Debug) */
   #define Serial Serial1C /* PIN_PD6:TxD, PIN_PD7:RxD */
   #undef  DFLUSH
   #define DFLUSH() Serial.flush()
@@ -515,7 +530,6 @@ namespace TPI {
 namespace UPDI {
   bool send_break (void);
   bool recv (void);
-  bool recv_byte (void);
   bool recv_byte (uint32_t _dwAddr);
   bool recv_bytes (uint8_t* _data, size_t _len);
   bool send (const uint8_t _data);

@@ -5,22 +5,19 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.33.46+
- * @date 2024-10-08
- * @copyright Copyright (c) 2024 askn37 at github.com
+ * @version 1.34.49+
+ * @date 2026-08-09
+ * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
  */
 
 #include <avr/io.h>
 #include <string.h>         /* memcpy */
-#include "api/macro_api.h"  /* ATOMIC_BLOCK */
-#include "peripheral.h"     /* import Serial (Debug) */
+#include <api/macro_api.h>  /* ATOMIC_BLOCK */
+#include <peripheral.h>     /* import Serial (Debug) */
 #include "configuration.h"
 #include "prototype.h"
-
-#define pinLogicPush(PIN) openDrainWriteMacro(PIN, LOW)
-#define pinLogicOpen(PIN) openDrainWriteMacro(PIN, HIGH)
 
 namespace USART {
 
@@ -30,9 +27,9 @@ namespace USART {
     pinLogicOpen(PIN_PGM_TDAT);
     pinLogicOpen(PIN_PGM_TRST);
     pinLogicOpen(PIN_PGM_TCLK);
-  #if CONFIG_PGM_TYPE == 0
+  #ifdef CONFIG_PGM_PDI_ENABLE
     if (_jtag_arch == 3) {
-      pinLogicPush(PIN_PGM_PDAT);
+      pinLogicPull(PIN_PGM_PDAT);
     }
     else {
       pinLogicOpen(PIN_PGM_PDAT);
@@ -111,7 +108,7 @@ namespace USART {
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
       PORTMUX_USARTROUTEA = PORTMUX_USART_PGM;
       pinControlRegister(PIN_PGM_TCLK) = PORT_INVEN_bm;
-      pinLogicPush(PIN_PGM_TCLK);   /* CONFIG_PGM_TYPE!=1 is internal shared VTxD */
+      pinLogicPull(PIN_PGM_TCLK);   /* CONFIG_PGM_TYPE!=1 is internal shared VTxD */
       USART0_STATUS = USART_DREIF_bm;
       USART0_BAUD  = sync_baud_khz(TPI_CLK);
       USART0_CTRLC = USART_CHSIZE_8BIT_gc | USART_PMODE_EVEN_gc | USART_CMODE_SYNCHRONOUS_gc | USART_SBMODE_2BIT_gc;
@@ -128,7 +125,7 @@ namespace USART {
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
       PORTMUX_USARTROUTEA = PORTMUX_USART_PDI;
       pinControlRegister(PIN_PGM_PCLK) = PORT_INVEN_bm;
-      pinLogicPush(PIN_PGM_PCLK);   /* Everything except CNANO is shared with TRST */
+      pinLogicPull(PIN_PGM_PCLK);   /* Everything except CNANO is shared with TRST */
       USART0_STATUS = USART_DREIF_bm;
       USART0_BAUD  = sync_baud_khz(_xclk);
       USART0_CTRLC = USART_CHSIZE_8BIT_gc | USART_PMODE_EVEN_gc | USART_CMODE_SYNCHRONOUS_gc | USART_SBMODE_2BIT_gc;
@@ -145,6 +142,7 @@ namespace USART {
     uint8_t _ctrlb = USART_RXEN_bm | USART_TXEN_bm | USART_ODME_bm;
     uint32_t _baud = _set_line_encoding.dwDTERate;
     /* If the BAUD value is small, select double speed mode. */
+    if (!_baud) _baud = 9600UL;
     if (_baud) _baud = (((F_CPU * 8L) / _baud) + 1) >> 1;
     if (_baud < 96) {
       _baud <<= 1;

@@ -5,17 +5,17 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.33.46+
- * @date 2024-08-26
- * @copyright Copyright (c) 2024 askn37 at github.com
+ * @version 1.34.49+
+ * @date 2026-08-09
+ * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
  */
 
 #include <avr/io.h>
-#include "api/macro_api.h"  /* ATOMIC_BLOCK */
-#include "api/capsule.h"    /* _CAPS macro */
-#include "peripheral.h"     /* import Serial (Debug) */
+#include <api/macro_api.h>  /* ATOMIC_BLOCK */
+#include <api/capsule.h>    /* _CAPS macro */
+#include <peripheral.h>     /* import Serial (Debug) */
 #include "configuration.h"
 #include "prototype.h"
 
@@ -34,9 +34,6 @@
 #define TCLK_IN portRegister(PIN_PGM_TCLK).IN
 #define TCLK_bp pinPosition(PIN_PGM_TCLK)
 #define TPI_GVAL 0x05
-
-#define pinLogicPush(PIN) openDrainWriteMacro(PIN, LOW)
-#define pinLogicOpen(PIN) openDrainWriteMacro(PIN, HIGH)
 
 namespace TPI {
   const static uint8_t nvmprog_key[] = {
@@ -230,7 +227,7 @@ namespace TPI {
     PGCONF = 0;
     USART::setup();
 
-    pinLogicPush(PIN_PGM_TRST);
+    pinLogicPull(PIN_PGM_TRST);
     SYS::power_reset();
     SYS::delay_2500us();
 
@@ -314,6 +311,18 @@ namespace TPI {
     return 1;
   }
 
+  uint8_t sign_off (void) {
+    uint8_t _rsp = bit_is_set(PGCONF, PGCONF_UPDI_bp) ? disconnect() : 1;
+    pinLogicOpen(PIN_PGM_TCLK);
+    pinLogicOpen(PIN_PGM_TRST);
+    SYS::power_reset();
+    SYS::delay_2500us();
+    PGCONF = 0;
+    USART::setup();
+    USART::change_vcp();
+    return _rsp;
+  }
+
   // MARK: JTAG SCOPE
 
   /*** The TPI scope provides access to the reduceAVR chip. ***/
@@ -337,14 +346,7 @@ namespace TPI {
     }
     else if (_cmd == 0x02) {        /* XPRG_CMD_LEAVE_PROGMODE */
       D1PRINTF(" TPI_LEAVE_PROGMODE\r\n");
-      _rspsize = bit_is_set(PGCONF, PGCONF_UPDI_bp) ? disconnect() : 1;
-      pinLogicOpen(PIN_PGM_TCLK);
-      pinLogicOpen(PIN_PGM_TRST);
-      SYS::power_reset();
-      SYS::delay_2500us();
-      PGCONF = 0;
-      USART::setup();
-      USART::change_vcp();
+      _rspsize = sign_off();
     }
     else if (_cmd == 0x07) {        /* XPRG_CMD_SET_PARAM */
   #ifdef _Use_hardcoded_code_instead_
