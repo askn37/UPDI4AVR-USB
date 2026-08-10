@@ -43,14 +43,14 @@ namespace SYS {
     VPORTD_DIR = 0b00111111;    /* 5:HVCP2 4:HVCP1 3:LED0 2:HVSL3 1:HVSL2 0:HVSL1 */
 
   #ifdef PIN_PGM_VPOWER
-    vportRegister(PIN_PGM_VPOWER).DIR   |= PIN_PGM_VPOWER;
+    vportRegister(PIN_PGM_VPOWER).DIR   |= _BV(pinPosition(PIN_PGM_VPOWER));
   #endif
 
     /* Pull-Up GPIO */
     pinControlRegister(PIN_VCP_TXD)      = PORT_PULLUPEN_bm;
     pinControlRegister(PIN_VCP_RXD)      = PORT_PULLUPEN_bm;
     pinControlRegister(PIN_PGM_TDAT)     = PORT_PULLUPEN_bm;
-    pinControlRegister(PIN_PGM_TRST)     = PORT_PULLUPEN_bm;
+    pinControlRegister(PIN_PGM_TRST)     = PORT_PULLUPEN_bm | PORT_ISC_INPUT_DISABLE_gc;
   #ifdef CONFIG_PGM_PDI_ENABLE
     pinControlRegister(PIN_PGM_PDAT)     = 0;
     pinControlRegister(PIN_PGM_PCLK)     = PORT_ISC_INPUT_DISABLE_gc;

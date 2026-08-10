@@ -222,7 +222,9 @@
  * Do not change it after this. *
  ********************************/
 
-#include "usrdef.h"
+#ifndef HAL_PROFILE
+  #include "usrdef.h"
+#endif
 #ifndef HAL_PROFILE
   #if defined(__AVR_AVR64DU32__) && (LED_BUILTIN == PIN_PF2) && (SW_BUILTIN == PIN_PF6)
     #define HAL_PROFILE "HAL/AVRDU_CNANO.h"

@@ -22,14 +22,14 @@
  * Pin layout by design: AVR16/32/64DU32
  *
  *                  -- Target-PGM Type --
- *         32P      UPDI  TPI   PDI   ISP (Future plans)
- *    PA0  TDAT     UPDI  DATA
- *    PA1  TRST     RESET RESET       RESET
- *    PA2  VTxD           CLK
- *    PA3  VRxD 
- *    PA4  PDAT                 DATA  MOSI
- *    PA5  N.C.                       MISO
- *    PA6  PCLK                 CLK   SCK
+ *         32P      UPDI    TPI     PDI     ISP (Future plans)
+ *    PA0  TDAT     1:UPDI  1:DATA
+ *    PA1  TRST     5:RESET 5:RESET         5:RESET
+ *    PA2  VTxD     3:HTCR  3:CLK
+ *    PA3  VRxD     4:HRCT
+ *    PA4  PDAT                     1:DATA  1:MOSI
+ *    PA5  N.C.                             4:MISO
+ *    PA6  PCLK                     5:CLK   3:SCK
  *    PA7  N.C.
  *    PC3  LED1
  *    PD0  HVSL1
@@ -64,7 +64,7 @@
  *
  *    PGM
  *        TDAT - PIN_PGM_TDAT     TPI-Data or UPDI-Interface (open-drain, pull-up)(HV=12V)
- *        TRST - PIN_PGM_TRST     TPI-Reset or UPDI-Reset (open-drain, pull-up)(HV=12V/7.5V)
+ *        TRST - PIN_PGM_TRST     TPI-Reset or UPDI-Reset (open-drain, pull-up)(HV=12V/7V5)
  *        TCLK - PIN_PGM_TCLK     TPI-Clock (push-pull)
  *        PDAT - PIN_PGM_PDAT     PDI-Data (push-pull, no pull-up)
  *        PCLK - PIN_PGM_PCLK     PDI-Clock (push-pull)

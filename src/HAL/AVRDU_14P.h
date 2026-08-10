@@ -22,9 +22,9 @@
  * Pin layout by design: AVR16/32DU20
  *
  *                  -- Target-PGM Type --
- *         14P      UPDI  TPI
- *    PA0  VTxD
- *    PA1  VRxD
+ *         14P      UPDI   TPI
+ *    PA0  VTxD     3:HTCR
+ *    PA1  VRxD     4:HRCT
  *    PA2  -
  *    PA3  -
  *    PA4  -
@@ -36,9 +36,9 @@
  *    PD1  -
  *    PD2  -
  *    PD3  -
- *    PD4  TDAT    UPDI  TPI
- *    PD5  TRST    RESET RESET
- *    PD6  TCLK          CLK
+ *    PD4  TDAT     1:UPDI  1:TPI
+ *    PD5  TRST     5:RESET 5:RESET
+ *    PD6  TCLK             3:CLK
  *    PD7  LED0
  *    PF0  -
  *    PF1  -
@@ -68,8 +68,8 @@
  * Signal name details:
  *
  *    PGM
- *        TDAT - PIN_PGM_TDAT     TPI-Data or UPDI-Interface (open-drain, pull-up)(HV=12V)
- *        TRST - PIN_PGM_TRST     TPI-Reset or UPDI-Reset (open-drain, pull-up)(HV=12V/7.5V)
+ *        TDAT - PIN_PGM_TDAT     TPI-Data or UPDI-Interface (open-drain, pull-up)
+ *        TRST - PIN_PGM_TRST     TPI-Reset or UPDI-Reset (open-drain, pull-up)
  *        TCLK - PIN_PGM_TCLK     TPI-Clock (push-pull)
  *
  *    VCP

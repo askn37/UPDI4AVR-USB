@@ -19,19 +19,19 @@
 #define HAL_PROFILE "HAL/MZU2410A2.h"
 
 /*
- * Pin layout by design: MZU2410A2
+ * Pin layout by design: MZU2410A2 (AVR32DU28)
  *
  *    This profile does not support PDI/ISP (it's an outdated design).
  *
  *                  -- Target-PGM Type --
- *         28P      UPDI  TPI
- *    PA0  TDAT     UPDI  DATA
- *    PA1  VPW      RESET RESET
- *    PA2  VTxD           CLK
- *    PA3  VRxD 
- *    PA4  PDAT
+ *        MZU2410A2 UPDI    TPI     (PDI)
+ *    PA0  TDAT     1:UPDI  1:DATA
+ *    PA1  VPW
+ *    PA2  VTxD     3:HTCR  3:CLK
+ *    PA3  VRxD     4:HRCT
+ *    PA4 (PDAT)                    (1:DATA)
  *    PA5  SW0
- *    PA6  TRST
+ *    PA6  TRST     5:RESET 5:RESET (3:CLK)
  *    PA7  N.C.
  *    PC3  LED1
  *    PD0  HVSL1
@@ -42,14 +42,21 @@
  *    PD5  HVCP2
  *    PD6  DTxD     : USB-CDC-RX
  *    PD7  DRxD     : USB-CDC-TX
- *    PF0  -
- *    PF1  -
+ *    PF0  N.C.
+ *    PF1  N.C.
  *    PF2  -
  *    PF3  -
  *    PF4  -
  *    PF5  -
  *    PF6  DnRST
  *    PF7  DUPDI
+ *
+ *    - This implementation is a prototype designed to incorporate
+ *      PDI control into the HV control circuit. The PA4 (PDAT) and
+ *      PA0 (TDAT) pins are shorted externally to the package.
+ *      However, because the HV control circuit employs an open-drain
+ *      configuration, the PCLK signal was unable to overcome
+ *      the TRST pull-up resistor.
  *
  *
  * Peripheral Function Input/Output:
@@ -66,8 +73,10 @@
  *
  *    PGM
  *        TDAT - PIN_PGM_TDAT     TPI-Data or UPDI-Interface (open-drain, pull-up)(HV=12V)
- *        TRST - PIN_PGM_TRST     TPI-Reset or UPDI-Reset (open-drain, pull-up)(HV=12V/7.5V)
+ *        TRST - PIN_PGM_TRST     TPI-Reset or UPDI-Reset (open-drain, pull-up)(HV=12V/7V5)
  *        TCLK - PIN_PGM_TCLK     TPI-Clock (push-pull)
+ *        PDAT - PIN_PGM_PDAT     PDI-Data (push-pull, no pull-up)
+ *        PCLK - PIN_PGM_PCLK     PDI-Clock (push-pull)
  *         VPW - PIN_PGM_VPOWER   V-Target Power Control (negative logic, push-pull)
  *
  *    VCP
@@ -108,6 +117,8 @@
 #define PIN_PGM_TDAT        PIN_USART0_TXD
 #define PIN_PGM_TCLK        PIN_USART0_XCK
 #define PIN_PGM_TRST        PIN_PA6
+#define PIN_PGM_PDAT        PIN_USART0_TXD_ALT1
+#define PIN_PGM_PCLK        PIN_USART0_XCK_ALT1
 #define PIN_PGM_VPOWER      PIN_PA1
 #define PIN_HVC_SELECT1     PIN_PD0
 #define PIN_HVC_SELECT2     PIN_PD1
