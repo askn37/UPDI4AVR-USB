@@ -211,8 +211,6 @@ namespace JTAG {
       _jtag_unlock = 0;   /* This is not used. */
       _jtag_arch = 0;
       _jtag_vpow = 1;
-      // _vtarget = SYS::get_vdd();
-      // D1PRINTF(" VTARGET=%d\r\n", _vtarget);
       packet.in.res = 0x80;         /* RSP3_OK */
     }
     else if (_cmd == 0x11) {        /* CMD3_SIGN_OFF */
