@@ -25,11 +25,11 @@
 namespace /* NAMELESS */ {
 
   USED RODATA const uint8_t _usage[] =
-    "UPDI4AVR-USB " __QUOTE(FW_MAJOR) "." __QUOTE(FW_MINOR) "." __QUOTE(FW_RELL) "." HAL_PROFILE;
+    "UPDI4AVR-USB " __QUOTE(FW_MAJOR) "." __QUOTE(FW_MINOR) "." __QUOTE(FW_RELL) " " HAL_PROFILE;
 
   /* SYS */
   NOINIT jmp_buf TIMEOUT_CONTEXT;
-  uint8_t _led_mode = 0;
+  NOINIT uint8_t _led_mode;
 
   /* USB */
   alignas(2) NOINIT EP_TABLE_t EP_TABLE;
@@ -85,7 +85,6 @@ void setup_mcu (void) { initVariant(); }
 int main (void) {
 
   SYS::setup();
-  /* Timeout::setup(); // It has been integrated into the above. */
 
 #if defined(DEBUG)
   Serial.begin(CONSOLE_BAUD);
