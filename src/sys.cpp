@@ -175,8 +175,8 @@ namespace SYS {
       TCA0_SPLIT_CTRLA = 0;
       D1PRINTF(" LED:HBEAT\r\n");
       TCA0_SPLIT_CTRLD = TCA_SPLIT_SPLITM_bm;       /* SINGLESLOPE PWM */
-      TCA0_SPLIT_LPER  = TM_HBEAT;                  /* TOP WO[210] */
-      TCA0_SPLIT_LCMP0 = TM_HBEAT >> 1;             /* CMP WO0 */
+      TCA0_SPLIT_LPER  = _beat;                     /* TOP WO[210] */
+      TCA0_SPLIT_LCMP0 = _beat >> 1;                /* CMP WO0 */
       TCA0_SPLIT_CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV1024_gc;
       EVSYS_USERCCLLUT2A = EVSYS_USER_CHANNEL1_gc;  /* <- for RTC 128Hz */
       _led_mode = 1;
@@ -221,6 +221,27 @@ namespace SYS {
       GPCONF &= ~(GPCONF_HLD_bm | GPCONF_RIS_bm | GPCONF_FAL_bm);
     }
     #endif
+  }
+
+  /*
+   * Beat Calibration
+   *
+   * Measures the clock error between OSC32K and OSCHF
+   * and compensates for device-to-device variation.
+   */
+  void beat_tune (void) {
+    uint16_t _beat_capt;
+    EVSYS_USERTCB0CAPT = EVSYS_USER_CHANNEL0_gc;
+    TCB0_EVCTRL = TCB_CAPTEI_bm;
+    TCB0_CTRLB  = TCB_CNTMODE_FRQ_gc;
+    TCB0_CTRLA  = TCB_ENABLE_bm | TCB_CLKSEL_DIV1_gc;
+    loop_until_bit_is_set(TCB0_INTFLAGS, TCB_CAPT_bp);
+    _beat_capt = TCB0_CCMP;
+    loop_until_bit_is_set(TCB0_INTFLAGS, TCB_CAPT_bp);
+    _beat_capt = TCB0_CCMP;
+    TCB0_CTRLA = 0;
+    _beat = (_beat_capt + 1) >> 7;  /* Values ​​used for the heartbeat */
+    EVSYS_USERTCB0CAPT = EVSYS_USER_OFF_gc;
   }
 
   /*

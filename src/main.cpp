@@ -29,6 +29,7 @@ namespace /* NAMELESS */ {
 
   /* SYS */
   NOINIT jmp_buf TIMEOUT_CONTEXT;
+  NOINIT uint8_t _beat;
   NOINIT uint8_t _led_mode;
 
   /* USB */
@@ -85,21 +86,23 @@ void setup_mcu (void) { initVariant(); }
 int main (void) {
 
   SYS::setup();
+  SYS::beat_tune();
+  SYS::LED_Blink();
 
 #if defined(DEBUG)
   Serial.begin(CONSOLE_BAUD);
   delay_millis(600);  /* VCP setup delay */
   D1PRINTF("\n<startup>\r\n");
-  D1PRINTF("F_CPU = %ld\r\n", F_CPU);
-  D1PRINTF("_AVR_IOXXX_H_ = " _AVR_IOXXX_H_ "\r\n");
-  D1PRINTF("__AVR_ARCH__ = %d\r\n", __AVR_ARCH__);
-  D1PRINTF("HAL_PROFILE = " HAL_PROFILE "\r\n");
+  D1PRINTF("F_CPU=%ld\r\n", F_CPU);
+  D1PRINTF("_AVR_IOXXX_H_=" _AVR_IOXXX_H_ "\r\n");
+  D1PRINTF("__AVR_ARCH__=%d\r\n", __AVR_ARCH__);
+  D1PRINTF("HAL_PROFILE=" HAL_PROFILE "\r\n");
+  D1PRINTF("BEAT=%d:%d\r\n", _beat, TM_HBEAT);
   DFLUSH();
 #endif
 
   USART::setup();
 
-  loop_until_bit_is_clear(WDT_STATUS, WDT_SYNCBUSY_bp);
   _PROTECTED_WRITE(WDT_CTRLA, WDT_PERIOD_1KCLK_gc);
 
 #if defined(PIN_SYS_SW0)
@@ -107,8 +110,8 @@ int main (void) {
   vportRegister(PIN_SYS_SW0).INTFLAGS = ~0;
   CCL_INTFLAGS = ~0;
 #endif
+
   interrupts();
-  SYS::LED_Blink();
 
 #if !defined(PIN_SYS_VDETECT)
   /* If you do not use VBD, insert the shortest possible delay instead. */

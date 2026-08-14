@@ -421,6 +421,7 @@ extern "C" {
 
     /* SYSTEM */
     extern jmp_buf TIMEOUT_CONTEXT;
+    extern uint8_t _beat;
     extern uint8_t _led_mode;
 
     /* USB */
@@ -498,6 +499,7 @@ namespace PDI {
 
 namespace SYS {
   void setup (void);
+  void beat_tune (void);
   void LED_HeartBeat (void);
   void LED_Flash (void);
   void LED_Blink (void);
