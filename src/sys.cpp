@@ -236,12 +236,16 @@ namespace SYS {
     TCB0_CTRLB  = TCB_CNTMODE_FRQ_gc;
     TCB0_CTRLA  = TCB_ENABLE_bm | TCB_CLKSEL_DIV1_gc;
     loop_until_bit_is_set(TCB0_INTFLAGS, TCB_CAPT_bp);
-    _beat_capt = TCB0_CCMP;
+    _beat_capt  = TCB0_CCMP;
     loop_until_bit_is_set(TCB0_INTFLAGS, TCB_CAPT_bp);
-    _beat_capt = TCB0_CCMP;
-    TCB0_CTRLA = 0;
+    _beat_capt  = TCB0_CCMP;
+    TCB0_CTRLA  = 0;
+    TCB0_CTRLB  = 0;
+    TCB0_EVCTRL = 0;
+    TCB0_INTFLAGS = ~0;
     _beat = (_beat_capt + 1) >> 7;  /* Values ​​used for the heartbeat */
     EVSYS_USERTCB0CAPT = EVSYS_USER_OFF_gc;
+    // _beat = TM_HBEAT;
   }
 
   /*
@@ -279,9 +283,11 @@ namespace SYS {
   void send_bitmap (const uint8_t _bitmap[], const size_t _length) {
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
       TCB0_CNT      = 0;
+      TCB0_EVCTRL   = 0;
       TCB0_INTCTRL  = 0;
       TCB0_INTFLAGS = ~0;
       TCB0_CCMP     = F_CPU / 125000L;
+      TCB0_CTRLB    = 0;
       TCB0_CTRLA    = TCB_ENABLE_bm | TCB_CLKSEL_DIV1_gc;
     }
     for (uint8_t i = 0; i < _length; i++) {

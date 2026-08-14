@@ -31,7 +31,8 @@ namespace Timeout {
       TCB0_CNT = 0;
       TCB0_CCMP = _ms;
       TCB0_INTCTRL = TCB_CAPT_bm;
-      TCB0_INTFLAGS = TCB_CAPT_bm;
+      bit_set(TCB0_INTFLAGS, TCB_CAPT_bp);
+      TCB0_CTRLB = 0;
       TCB0_CTRLA = TCB_ENABLE_bm | TCB_CLKSEL_EVENT_gc; /* for EVSYS_USERTCB0COUNT */
     }
   }
@@ -96,7 +97,7 @@ ISR(TCB0_INT_vect, ISR_NAKED) {
   ***/
   __asm__ __volatile__ ("EOR R1,R1");
   TCB0_CTRLA = 0;
-  TCB0_INTFLAGS = TCB_CAPT_bm;
+  bit_set(TCB0_INTFLAGS, TCB_CAPT_bp);
   longjmp(TIMEOUT_CONTEXT, 2);
 }
 
