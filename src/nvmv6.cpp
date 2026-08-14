@@ -5,7 +5,7 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=8.2.
- * @version 1.34.49+
+ * @version 1.35.49+
  * @date 2026-08-09
  * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
