@@ -27,8 +27,8 @@
  *    PA1  TRST     5:RESET 5:RESET         5:RESET
  *    PA2  VTxD     3:HTCR  3:CLK
  *    PA3  VRxD     4:HRCT
- *    PA4  PDAT                     1:DATA  1:MOSI
- *    PA5  N.C.                             4:MISO
+ *    PA4  PDAT                     1:DATA  4:MOSI
+ *    PA5  N.C.                             1:MISO
  *    PA6  PCLK                     5:CLK   3:SCK
  *    PA7  N.C.
  *    PC3  LED1

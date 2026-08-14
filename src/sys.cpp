@@ -29,68 +29,16 @@ namespace SYS {
   };
 
   /*
-  * LED operation switching
-  */
-
-  /* Heartbeat (waiting) */
-  void LED_HeartBeat (void) {
-    if (_led_mode != 1) {
-      TCA0_SPLIT_CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV1024_gc;
-      TCB1_CNTL = 0;
-      TCB1_CCMP = TCB1_HBEAT;
-      TCB1_CTRLA = TCB_ENABLE_bm | TCB_CLKSEL_TCA0_gc;
-      _led_mode = 1;
-    }
-  }
-
-  void LED_TCB1 (uint8_t _mode, uint16_t _ccmp) {
-    if (_led_mode != _mode) {
-      TCA0_SPLIT_CTRLA = 0;
-      TCB1_CNTL = 0;
-      TCB1_CCMP = _ccmp;
-      TCB1_CTRLA = TCB_ENABLE_bm | TCB_CLKSEL_EVENT_gc;
-      _led_mode = _mode;
-    }
-  }
-
-  /* USB uplink is disabled indicator. */
-  void LED_Flash (void) {
-    /*
-     * AVR-DU Errata?
-     * Restarting TCBn in PWM8 mode may cause the duty
-     * cycle of TCBn_WO to invert. Solution unknown.
-     * This function is affected.
-     */
-    LED_TCB1(2, TCB1_FLASH);
-  }
-
-  /* SW0 is pressed indicator. */
-  void LED_Blink (void) {
-    LED_TCB1(3, TCB1_BLINK);
-  }
-
-  /* Programming in progress indicator. */
-  void LED_Fast (void) {
-    LED_TCB1(4, TCB1_FAST);
-  }
-
-  /*
    * Target Reset
    */
 
   WEAK void power_reset (bool _off, bool _on) {
     if (_off) {
-  #ifdef PIN_PGM_VPOWER
+  #ifdef CONFIG_PGM_VPOWER_ENABLE
       digitalWriteMacro(PIN_PGM_VPOWER, HIGH);  /* VTG off */
       /* Temporarily disable the pullup to stop current leakage when VTG=OFF. */
       /* It would be easier to just set the pin output LOW,                   */
       /* but we do it this way because of possible conflicts.                 */
-    #ifdef CONFIG_PGM_PDI_ENABLE
-      if (_jtag_arch != 0x03) {
-        pinControlRegister(PIN_PGM_PDAT) &= ~PORT_PULLUPEN_bm;
-        pinControlRegister(PIN_PGM_PCLK) &= ~PORT_PULLUPEN_bm;
-      }
-    #endif
       pinControlRegister(PIN_PGM_TRST) &= ~PORT_PULLUPEN_bm;
       pinControlRegister(PIN_PGM_TDAT) &= ~PORT_PULLUPEN_bm;
       pinControlRegister(PIN_VCP_TXD)  &= ~PORT_PULLUPEN_bm;  /* internal shared TCLK */
@@ -98,39 +46,39 @@ namespace SYS {
   #endif
     }
     if (_on) {
-  #ifdef PIN_PGM_VPOWER
+  #ifdef CONFIG_PGM_VPOWER_ENABLE
       if (_off) delay_125ms();  /* discharge duration */
       digitalWriteMacro(PIN_PGM_VPOWER, LOW);   /* VTG on */
       pinControlRegister(PIN_VCP_TXD)  |= PORT_PULLUPEN_bm;   /* internal shared TCLK */
       pinControlRegister(PIN_VCP_RXD)  |= PORT_PULLUPEN_bm;
       pinControlRegister(PIN_PGM_TDAT) |= PORT_PULLUPEN_bm;
       pinControlRegister(PIN_PGM_TRST) |= PORT_PULLUPEN_bm;
-    #ifdef CONFIG_PGM_PDI_ENABLE
-      if (_jtag_arch != 0x03) {
-        pinControlRegister(PIN_PGM_PDAT) |= PORT_PULLUPEN_bm;
-        pinControlRegister(PIN_PGM_PCLK) |= PORT_PULLUPEN_bm;
-      }
-    #endif
   #endif
     }
   }
 
   /*** Low level TDAT stream manipulation ***/
-  /* UPDI commands are sent from TDAT using only TCA0 and bit manipulation, without switching USART. */
-  /* 128kbps is the lowest limit that can be achieved with an 8-bit timer at 32MHz or less. */
+  /* UPDI commands are sent from TDAT using only TCAB
+     and bit manipulation, without switching USART. */
   void send_bitmap (const uint8_t _bitmap[], const size_t _length) {
-    TCA0_SPLIT_HPER  = F_CPU / 125000L;
-    TCA0_SPLIT_CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV1_gc;
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+      TCB0_CNT      = 0;
+      TCB0_INTCTRL  = 0;
+      TCB0_INTFLAGS = ~0;
+      TCB0_CCMP     = F_CPU / 125000L;
+      TCB0_CTRLA    = TCB_ENABLE_bm | TCB_CLKSEL_DIV1_gc;
+    }
     for (uint8_t i = 0; i < _length; i++) {
       uint8_t _d = (_bitmap[i >> 3]) >> (i & 7);
-      loop_until_bit_is_set(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_HUNF_bp);
+      loop_until_bit_is_set(TCB0_INTFLAGS, TCB_CAPT_bp);
       if (bit_is_set(_d, 0))
         pinLogicOpen(PIN_PGM_TDAT);
       else
         pinLogicPull(PIN_PGM_TDAT);
-      bit_set(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_HUNF_bp);
+      bit_set(TCB0_INTFLAGS, TCB_CAPT_bp);
+      wdt_reset();
     }
-    TCA0_SPLIT_CTRLA = 0;
+    TCB0_CTRLA = 0;
   }
 
   /*
@@ -277,12 +225,14 @@ ISR(portIntrruptVector(PIN_SYS_SW0)) {
   /* SW0 Raising Interrupt */
   vportRegister(PIN_SYS_SW0).INTFLAGS = ~0;
   bit_set(GPCONF, GPCONF_RIS_bp);
+  D2PRINTF("{R}");
 }
 
 ISR(CCL_CCL_vect) {
-  /* SW0 Falling Intrrupt from CCL2 */
+  /* SW0 Falling Intrrupt from CCLn */
   CCL_INTFLAGS = ~0;
   bit_set(GPCONF, GPCONF_FAL_bp);
+  D2PRINTF("{F}");
 }
 #endif
 

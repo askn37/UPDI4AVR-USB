@@ -12,6 +12,11 @@
 
 ### Recent Features
 
+v1.35.49
+- HAL profile 構造の導入
+  - ベアチップのピンレイアウト見直し
+  - CCL/TC* の運用を刷新
+
 v1.34.48
 - NVMCTRL version 6（AVR-SD 系統）への対応
   - AVR-SD 系統特有の堅牢な保護メカニズム（特に FUSE 設定）については必要なだけ無効になっていなければならない。
@@ -104,7 +109,7 @@ AVR-ICSP MIL/6Pコネクタに変換するには、以下の信号配列を推�
 仮に、`AVR64DU28`を対象デバイスとした場合、最低限の接続テストは以下のコマンドラインで可能だ。
 
 ```sh
-avrdude -Pusb:04d8:0b15 -cjtag3updi -pavr64du28 -v -Usib:r:-:r
+avrdude -Pusb:04d8:0b15 -cpickit4_updi -pavr64du28 -v -Usib:r:-:r
 ```
 
 > [!TIP]
@@ -112,21 +117,21 @@ avrdude -Pusb:04d8:0b15 -cjtag3updi -pavr64du28 -v -Usib:r:-:r
 > AVRDUDE<=7.3で使用するには、EEPROMに`-c`指定が要求する VID:PID を記憶させておく必要がある。
 
 ```console
-Avrdude version 8.0-20241010 (0b92721a)
+Avrdude version 8.2-20260803 (23f4caed)
 Copyright see https://github.com/avrdudes/avrdude/blob/main/AUTHORS
 
 System wide configuration file is /usr/local/etc/avrdude.conf
 User configuration file is /Users/user/.avrduderc
 
 Using port            : usb:04d8:0b15
-Using programmer      : jtag3updi
+Using programmer      : pickit4_updi
 AVR part              : AVR64DU28
 Programming modes     : SPM, UPDI
 Programmer type       : JTAGICE3_UPDI
-Description           : Atmel AVR JTAGICE3 in UPDI mode
+Description           : MPLAB(R) PICkit 4 in UPDI mode
 ICE HW version        : 0
-ICE FW version        : 1.33 (rel. 46)
-Serial number         : **********
+ICE FW version        : 1.34 (rel. 49)
+Serial number         : MX********
 Vtarget               : 5.02 V
 PDI/UPDI clk          : 225 kHz
 
@@ -152,26 +157,26 @@ TPI制御の場合、対象デバイスに必須の配線は "VCC" "GND" "TDAT" 
 仮に、`ATiny10`を対象デバイスとした場合、最低限の接続テストは以下のコマンドラインで可能だ。
 
 ```sh
-avrdude -Pusb:04d8:0b15 -catmelice_tpi -v -pt10 -Uflash:r:-:I
+avrdude -Pusb:04d8:0b15 -cpickit4_tpi -v -pt10 -Uflash:r:-:I
 ```
 
 ```console
-Avrdude version 8.0-20241010 (0b92721a)
+Avrdude version 8.2-20260803 (23f4caed)
 Copyright see https://github.com/avrdudes/avrdude/blob/main/AUTHORS
 
 System wide configuration file is /usr/local/etc/avrdude.conf
 User configuration file is /Users/user/.avrduderc
 
 Using port            : usb:04d8:0b15
-Using programmer      : atmelice_tpi
+Using programmer      : pickit4_tpi
 AVR part              : ATtiny10
 Programming modes     : TPI
 Programmer type       : JTAGICE3_TPI
-Description           : Atmel-ICE in TPI mode
+Description           : MPLAB(R) PICkit 4 in TPI mode
 ICE HW version        : 0
-ICE FW version        : 1.33 (rel. 46)
-Serial number         : **********
-Vtarget               : 5.02 V
+ICE FW version        : 1.34 (rel. 49)
+Serial number         : MX********
+Vtarget               : 5.00 V
 
 
 AVR device initialized and ready to accept instructions
@@ -219,28 +224,29 @@ Changing target voltage from 3.30 to 3.30V
 
 以上の設定が正しく完了したなら、PDIターゲットデバイスとは次の配線を *安全に* 接続することができる。少なくとも "VCC" "GND" "PDAT" "PCLK" の 4本が必要だ。これに任意で "VCP-TxD" "VCP-RxD" の 2本を加えることができる。
 
-<img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_PDI.drawio.svg" width="400">
+<img src="https://askn37.github.io/product/UPDI4AVR/images/IMG_3874.jpeg" width="400"> <img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_PDI.drawio.svg" width="400">
+
 
 ```sh
-avrdude -Pusb:04d8:0b15 -cjtag3pdi -px128a4u -v -Uprodsig:r:-:I
+avrdude -Pusb:04d8:0b15 -cpickit4_pdi -px128a4u -v -Uprodsig:r:-:I
 ```
 
 ```console
-Avrdude version 8.0-20241010 (0b92721a)
+Avrdude version 8.2-20260803 (23f4caed)
 Copyright see https://github.com/avrdudes/avrdude/blob/main/AUTHORS
 
 System wide configuration file is /usr/local/etc/avrdude.conf
 User configuration file is /Users/user/.avrduderc
 
 Using port            : usb:04d8:0b15
-Using programmer      : jtag3pdi
+Using programmer      : pickit4_pdi
 AVR part              : ATxmega128A4U
 Programming modes     : SPM, PDI
 Programmer type       : JTAGICE3_PDI
-Description           : Atmel AVR JTAGICE3 in PDI mode
+Description           : MPLAB(R) PICkit 4 in PDI mode
 ICE HW version        : 0
-ICE FW version        : 1.33 (rel. 46)
-Serial number         : **********
+ICE FW version        : 1.34 (rel. 49)
+Serial number         : MX********
 Vtarget               : 3.30 V
 PDI/UPDI clk          : 2500 kHz
 
@@ -291,7 +297,7 @@ Avrdude done.  Thank you.
 - FRISK（キャンディ）ケースサイズのオールインワンモデル。UPDI4AVR-USB の標準設計。
 - "AVR64DU32 Curiosity Nano" をドーターボードとして装着する専用拡張ボードモデル。
 
-<img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_VIEW_MZU2410A.drawio.svg" width="400">
+<img src="https://askn37.github.io/product/UPDI4AVR/images/IMG_3871.jpeg" width="400"> <img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_VIEW_MZU2410A.drawio.svg" width="400">
 
 HV制御を有効にするには、2種の方法がある。
 
@@ -306,9 +312,39 @@ HV制御を有効にするには、2種の方法がある。
 
 Arduino IDEに、次のリンク先の SDK を導入すると、ベアメタルチップを含めた AVR-DUファミリー全てへのビルドとインストールが簡単にできる。
 
-- https://github.com/askn37/multix-zinnia-sdk-modernAVR @0.3.0+
+- https://github.com/askn37/multix-zinnia-sdk-modernAVR @0.4.5+
 
 ビルドオプションについては、[<UPDI4AVR-USB.ino>](UPDI4AVR-USB.ino)を参照されたい。
+
+### Select HAL profile
+
+**v1.35.49** 以降では、`src`ディレクトリに任意の`usrdef.h`ファイルを作成することで、`HAL`ディレクトリに配置された任意のHAL（*Hardware-Architecture-Layout*）構築ファイルをプリロードすることができるようになった。これによって Arduino IDEからでも（Arduino CLIで可能なように）任意の環境変数を記述したり、変更することができる。
+
+```c
+/* usrdef.h example */
+
+#undef F_CPU
+#undef NDEBUG
+#undef DEBUG
+#undef CONSOLE_BAUD
+#undef LED_BUILTIN
+#undef SW_BUILTIN
+
+#define F_CPU 20000000UL
+#define DEBUG 1
+#define CONSOLE_BAUD 500000UL
+#define LED_BUILTIN PIN_PC3
+#define SW_BUILTIN PIN_PF6
+
+#define HAL_PROFILE "HAL/XXXXXXXX.h"
+```
+
+`usrdef.h`ファイルがない場合（既定）は、従来通り *\_\_AVR_AVRXXXX\_\_* 等を参照することで、適切なプリセットが選択され、ロードされる。
+
+もちろん各個に任意の HALプロファイルを作成し、`HAL`ディレクトリに配置しても良い。その場合は使用する外囲器ピン数に応じた`AVRDU_xxP.cpp/h`ファイルを雛形にすると良い。
+
+> [!TIP]
+> `usrdef.h` は `.gitignore` で除外されているため、不用意に公開されることはない。元々は個人承認情報等をスケッチフォルダ内で扱うための仕組みである。
 
 ## Related link and documentation
 

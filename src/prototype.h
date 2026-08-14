@@ -13,35 +13,42 @@
  */
 
 #pragma once
-#include <avr/io.h>
-#include <stddef.h>
-#include <setjmp.h>
-#include <math.h>           /* sqrt() */
-#include <api/memspace.h>
-#include "configuration.h"
-
-// #undef DEBUG
-// #define DEBUG 3
-
 #ifndef F_CPU
   #define F_CPU 20000000L
 #endif
-#ifndef CONSOLE_BAUD
-  #define CONSOLE_BAUD 500000L
-#endif
+#undef CONSOLE_BAUD
+#define CONSOLE_BAUD 500000L
+#include <avr/io.h>
+#include <stddef.h>
+#include <setjmp.h>
+#include <api/memspace.h>
+#include "configuration.h"
+
+/*** MacroAPI completion ***/
 
 #define pinLogicPull(PIN) openDrainWriteMacro(PIN, LOW)
 #define pinLogicOpen(PIN) openDrainWriteMacro(PIN, HIGH)
 
+#ifndef portBitmask   /* Compliant with SDK@0.4.6+ */
+  #define portBitmask(PIN)  (1 << (PIN & 7))
+#endif
+
+#ifdef PORTA_EVGENCTRLA
+  #ifndef EVSYS_CHANNEL_PORTX_EVGEN0
+    #define EVSYS_CHANNEL_PORTX_EVGEN0(PIN) (((PIN & 0xE0) >> 4) | 0x40)
+  #endif
+  #ifndef EVSYS_CHANNEL_PORTX_EVGEN1
+    #define EVSYS_CHANNEL_PORTX_EVGEN1(PIN) (((PIN & 0xE0) >> 4) | 0x41)
+  #endif
+#endif
+
 /*** LED Timer configuration ***/
-#define HBEAT_HZ   (0.5)    /* Periodic 0.5Hz */
-#define TCA0_STEP  ((uint8_t)(sqrt((F_CPU / 1024.0) * (1.0 / HBEAT_HZ)) - 0.5))
-#define TCB1_HBEAT (((TCA0_STEP /  2) << 8) + (TCA0_STEP - 1))
-#define TCB1_STEP  (170)    /* Periodic 0.67Hz */
-#define TCB1_BLINK (((TCB1_STEP /  2) << 8) + (TCB1_STEP - 1))
-#define TCB1_FLASH (((TCB1_STEP / 34) << 8) + (TCB1_STEP - 1))
-#define TCB1_FAST  (((TCB1_STEP / 10) << 8) + (TCB1_STEP / 5))
-#define HVC_CLK    5000000
+#define TM_HBEAT (F_CPU / 1024 / 128 - 1)
+#define TM_FLASH ((F_CPU / 1024) / 2 - 1)
+#define TM_BLINK ((F_CPU / 1024) / 4 - 1)
+#define TM_FAST  ((F_CPU / 1024) / 8 - 1)
+#define TM_VCPBL ((F_CPU / 1024) / 32 - 1)
+#define HVC_CLK  5000000
 
 /*** Debug UART macro symbol ***/
 #undef Serial
@@ -84,6 +91,7 @@
 #endif
 
 #define PACKED __attribute__((packed))
+#define USED   __attribute__((used))
 #define WEAK   __attribute__((weak))
 #define RODATA __attribute__((__progmem__))
 #define NOINIT __attribute__((section(".noinit")))
@@ -494,6 +502,7 @@ namespace SYS {
   void LED_Flash (void);
   void LED_Blink (void);
   void LED_Fast (void);
+  void LED_Turn (void);
   void power_reset (bool _off = true, bool _on = true);
   void reset_enter (void);
   void reset_leave (void);

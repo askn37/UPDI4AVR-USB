@@ -151,14 +151,15 @@ namespace TPI {
     size_t  _wLength = bswap16(packet.out.tpi.read.wLength);
     uint8_t *_q = &packet.in.data[0];
     size_t _cnt = 0;
-    D2PRINTF(" READ=%08X:%04X\r\n", _dwAddr, _wLength);
+    D1PRINTF(" READ=%04X:%d ", _dwAddr, _wLength);
     set_sstpr(_dwAddr);
     while (_cnt < _wLength) {
       if (!get_sld()) return 0;
       *_q++ = RXDATA;
       ++_cnt;
     }
-    return _wLength + 1;
+    D1PRINTHEX(&packet.in.data, _wLength);
+    return _wLength;
   }
 
   size_t write_memory (void) {
@@ -173,19 +174,22 @@ namespace TPI {
     while (_dwAddr & (_tpi_chunks - 1)) {
       _dwAddr--;
       _wLength++;
-      *--_p = 0xFF;   /* NAND masked dummy bytes */
+      --_p;
+      *_p = 0xFF;     /* NAND masked dummy bytes */
     }
     while (_wLength & (_tpi_chunks - 1)) {
-      *((uint8_t*)(_dwAddr + _wLength++)) = 0xFF;
+      *((uint8_t*)(_dwAddr + _wLength)) = 0xFF;
+      _wLength++;
     }
-    D2PRINTF(" FIXED_WRITE=%08X:%04X\r\n", _dwAddr, _wLength);
+    D1PRINTF(" WRITE=%04X:%d ", _dwAddr, _wLength);
+    D1PRINTHEX(_p, _wLength);
 
     /* For the flash code area, the page erase can be */
     /* omitted if the chip has already been erased.   */
     /* 0x01: XPRG_MEM_TYPE_APPL */
     if (m_type != 0x01) {
       /* SECTION_ERASE */
-      D2PRINTF(" SECTION_ERASE=%04X>%04X\r\n", _dwAddr | 1, _CAPS16(_before_page)->word);
+      D1PRINTF(" SECTION_ERASE=%04X\r\n", _dwAddr | 1);
       _result &= nvm_wait()
         && set_sstpr(_dwAddr | 1)
         && nvm_ctrl(0x14)
@@ -197,7 +201,7 @@ namespace TPI {
 
     /* WRITE_PAGE */
     for (size_t _i = 0; _i < _wLength; _i += _tpi_chunks) {
-      D2PRINTF(" CODE_WRITE=%08X:%04X\r\n", _dwAddr, _tpi_chunks);
+      D1PRINTF(" CODE_WRITE=%04X:%02X\r\n", _dwAddr, _tpi_chunks);
       _result &= nvm_wait()
               && set_sstpr(_dwAddr)
               && nvm_ctrl(0x1D)
@@ -371,14 +375,16 @@ namespace TPI {
     }
     else if (bit_is_clear(PGCONF, PGCONF_UPDI_bp)) { /* empty */ }
     else if (_cmd == 0x05) {        /* XPRG_CMD_READ_MEM */
-      D1PRINTF(" TPI_READ=%02X:%08lX:%04X\r\n",
+      D1PRINTF(" TPI_READ=%02X:%08lX:%d\r\n",
         packet.out.tpi.read.bMType,
         bswap32(packet.out.tpi.read.dwAddr),
         bswap16(packet.out.tpi.read.wLength)
       );
       _rspsize = Timeout::command(&read_memory);
     }
-    else if (_vtarget < 4200)     { /* empty */ }
+    else if (_vtarget < 4200) {
+      D1PRINTF(" TPI_CMD=%d, VTGLOW=%d\r\n", _cmd, _vtarget);
+    }
     else if (_cmd == 0x03) {        /* XPRG_CMD_ERASE */
       D1PRINTF(" TPI_ERASE=%02X:%08lX\r\n",
         packet.out.tpi.read.bMType,
@@ -387,7 +393,7 @@ namespace TPI {
       _rspsize = Timeout::command(&erase_memory);
     }
     else if (_cmd == 0x04) {        /* XPRG_CMD_WRITE_MEM */
-      D1PRINTF(" TPI_WRITE=%02X:%08lX:%04X\r\n",
+      D1PRINTF(" TPI_WRITE=%02X:%08lX:%d\r\n",
         packet.out.tpi.write.bMType,
         bswap32(packet.out.tpi.write.dwAddr),
         bswap16(packet.out.tpi.write.wLength)
@@ -398,7 +404,7 @@ namespace TPI {
     D1PRINTF(" <RES:%02X>\r\n", _rspsize);
 
     /* Adds padding to XPRG responses to adjust the length of the payload. */
-    return ++_rspsize;
+    return _rspsize + 1;
   }
 
 };

@@ -1,5 +1,5 @@
 /**
- * @file MZU2410A2.cpp
+ * @file MZU2410A4.cpp
  * @author askn (K.Sato) multix.jp
  * @brief UPDI4AVR-USB is a program writer for the AVR series, which are UPDI/TPI
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
@@ -15,7 +15,7 @@
 #include <avr/io.h>
 #include <variant.h>
 #include "../configuration.h"
-#ifdef HAL_MZU2410A2
+#ifdef HAL_MZU2410A4
 #include "../prototype.h"
 
 namespace SYS {
@@ -54,13 +54,10 @@ namespace SYS {
     pinControlRegister(PIN_PGM_TRST)     = PORT_PULLUPEN_bm | PORT_ISC_INPUT_DISABLE_gc;
   #ifdef CONFIG_PGM_PDI_ENABLE
     pinControlRegister(PIN_PGM_PDAT)     = 0;
-    #if PIN_PGM_TRST != PIN_PGM_PCLK
     pinControlRegister(PIN_PGM_PCLK)     = PORT_ISC_INPUT_DISABLE_gc;
-    #endif
   #endif
     pinControlRegister(PIN_SYS_SW0)      = PORT_PULLUPEN_bm | PORT_ISC_RISING_gc;
     pinControlRegister(PIN_HVC_CHGPUMP1) = PORT_INVEN_bm    | PORT_ISC_INPUT_DISABLE_gc;
-    /* PDAT in/output is shared outside connection with TDAT */
     /* PCLK disable/output is shared internal connection with TRST */
 
     /* PORTx event generator */

@@ -14,6 +14,7 @@
 
 #include <avr/io.h>
 #include <avr/fuse.h>
+#include <variant.h>
 #include "configuration.h"
 
 /*
@@ -27,10 +28,10 @@
  * - PDICFG should not be changed from the default
  */
 
-#if PIN_SYS_SW0 != PIN_PF6
-  #define ENABLE_SYS_RESET FUSE_RSTPINCFG_bm
-#else
+#if (PIN_SYS_SW0 == PIN_PF6)
   #define ENABLE_SYS_RESET 0
+#else
+  #define ENABLE_SYS_RESET FUSE_RSTPINCFG_bm
 #endif
 
 FUSES = {

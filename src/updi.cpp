@@ -500,15 +500,16 @@ namespace UPDI {
   size_t jtag_scope_updi (void) {
     size_t _rspsize = 0;
     uint8_t _cmd = packet.out.cmd;
-    uint8_t _step = 50;
+    uint8_t _step = 25;
     if (_cmd == 0x10) {             /* CMD3_SIGN_ON */
       D1PRINTF(" UPDI_SIGN_ON=EXT:%02X\r\n", packet.out.bMType);
       if ((bit_is_set(GPCONF, GPCONF_HLD_bp) || _jtag_hvctrl) && _xclk_bak > 125) {
+        /* The maximum speed is limited during HV control. */
         _xclk_bak = 125;
         _step = 25;
       }
       _xclk = _xclk_bak;
-      while (_xclk >= 75 && !(_rspsize = Timeout::command(&connect, nullptr, 160))) {
+      while (_xclk >= 100 && !(_rspsize = Timeout::command(&connect, nullptr, 160))) {
         _xclk -= _step;
       }
       /* If it fails here, it is expected to try again, giving it a chance at HV control. */
@@ -524,7 +525,7 @@ namespace UPDI {
       D1PRINTF(" UPDI_ENTER_PROG\r\n");
       /* On failure, RSP3_OK is returned if a UPDI connection is available. */
       /* Locked devices are given the opportunity to write to USERROW and erase the chip. */
-      _rspsize = Timeout::command(&enter_progmode, &timeout_fallback, 400)
+      _rspsize = Timeout::command(&enter_progmode, &timeout_fallback, 250)
               || bit_is_set(PGCONF, PGCONF_UPDI_bp);
     }
     else if (_cmd == 0x16) {        /* CMD3_LEAVE_PROGMODE */

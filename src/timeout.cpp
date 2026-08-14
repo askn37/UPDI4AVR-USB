@@ -21,20 +21,12 @@
 
 namespace Timeout {
 
-  void setup (void) {
-    RTC_PITEVGENCTRLA = RTC_EVGEN0SEL_DIV32_gc | RTC_EVGEN1SEL_DIV128_gc;
-    EVSYS_CHANNEL0 = EVSYS_CHANNEL_RTC_EVGEN0_gc; /* 1024Hz periodic.  */
-    EVSYS_CHANNEL1 = EVSYS_CHANNEL_RTC_EVGEN1_gc; /* 32Hz periodic.    */
-    EVSYS_USERTCB0COUNT = EVSYS_USER_CHANNEL0_gc; /* TCB0_CLK = 1024Hz */
-    EVSYS_USERTCB1COUNT = EVSYS_USER_CHANNEL1_gc; /* TCB1_CLK = 32Hz   */
-    RTC_PITCTRLA = RTC_PITEN_bm;
-  }
-
   /*
    * Timeout after the specified time.
    * To be precise, in 1/1024 sec units.
    */
   void start (uint16_t _ms) {
+    D1PRINTF(" TCB0:ON\r\n");
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
       TCB0_CNT = 0;
       TCB0_CCMP = _ms;
@@ -52,7 +44,8 @@ namespace Timeout {
   void stop (void) {
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
       TCB0_CTRLA = 0;
-      TCB0_INTFLAGS = TCB_CAPT_bm;
+      TCB0_INTCTRL = 0;
+      TCB0_INTFLAGS = ~0;
     }
     reti();
   }
@@ -78,6 +71,7 @@ namespace Timeout {
         Timeout::start(_ms);
         _result = (*func_p)();
         Timeout::stop();
+        D1PRINTF(" TCB0:OF\r\n");
         break;
       }
       Timeout::stop();

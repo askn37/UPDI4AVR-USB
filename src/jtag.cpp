@@ -39,7 +39,7 @@
 namespace JTAG {
 
   /* PARM3_HW_VER, PARM3_FW_MAJOR, PARM3_FW_MINOR, PARM3_FW_REL[2] */
-  const uint8_t PROGMEM jtag_version[] = CONFIG_SYS_FWVER;
+  const uint8_t PROGMEM jtag_version[] = { HW_VER, FW_MAJOR, FW_MINOR, FW_RELL, FW_RELH };
   const uint8_t PROGMEM jtag_physical[] = {0x90, 0x28, 0x00, 0x18, 0x38, 0x00, 0x00, 0x00};
 
   // MARK: CMSIS-DAP
@@ -241,7 +241,7 @@ namespace JTAG {
           /* Called with `-xvtarget_switch=0,1` HAS_VTARG_SWITCH */
           D1PRINTF(" TARGET_POWER=%02X\r\n", _data);
           _jtag_vpow = _data;       /* 0,1 */
-  #if defined(PIN_PGM_VPOWER)
+  #ifdef CONFIG_PGM_VPOWER_ENABLE
           SYS::power_reset(true, false);              /* VPW off */
           if (_data) SYS::power_reset(false, true);   /* VPW on  */
   #endif

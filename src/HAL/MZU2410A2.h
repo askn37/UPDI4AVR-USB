@@ -15,13 +15,15 @@
 #pragma once
 
 /* This number is optional, provided it is not used elsewhere. */
-#define HAL_MZU2410A2 28
+#define HAL_MZU2410A2 24102
 #define HAL_PROFILE "HAL/MZU2410A2.h"
 
 /*
  * Pin layout by design: MZU2410A2 (AVR32DU28)
  *
  *    This profile does not support PDI/ISP (it's an outdated design).
+ *    The CN1/CN2 connector terminals are dedicated to
+ *    UPDI/TPI control and also feature High-Voltage circuitry.
  *
  *                  -- Target-PGM Type --
  *        MZU2410A2 UPDI    TPI     (PDI)
@@ -103,6 +105,14 @@
 #ifndef __AVR_AVR32DU28__
   #error There are no hardware profiles to select AVR32DU28.
   #include BUILD_STOP
+#endif
+
+#ifndef LED_BUILTIN
+#define LED_BUILTIN PIN_PC3
+#endif
+
+#ifndef SW_BUILTIN
+#define SW_BUILTIN  PIN_PA5
 #endif
 
 #undef CONFIG_PGM_PDI_ENABLE

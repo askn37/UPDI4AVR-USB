@@ -12,6 +12,10 @@ The conventional *USB4AVR* is designed to use a USB-serial conversion circuit, b
 
 ### Recent Features
 
+v1.35.49
+- Introduction of HAL profile structure
+- Revised bare-chip pin layout
+- Revamped CCL/TC* operations
 v1.34.48
 - Support for NVMCTRL Version 6; AVR-SD famiry
   - Robust protection mechanisms specific to the AVR-SD family (particularly FUSE settings) must be disabled as necessary.
@@ -102,7 +106,7 @@ The following signal arrangement is recommended for converting to the AVR-ICSP M
 If the target device is `AVR64DU28`, a minimum connection test can be performed with the following command line.
 
 ```sh
-avrdude -Pusb:04d8:0b15 -cjtag3updi -pavr64du28 -v -Usib:r:-:r
+avrdude -Pusb:04d8:0b15 -cpickit4_updi -pavr64du28 -v -Usib:r:-:r
 ```
 
 > [!TIP]
@@ -110,21 +114,21 @@ avrdude -Pusb:04d8:0b15 -cjtag3updi -pavr64du28 -v -Usib:r:-:r
 > To use with AVRDUDE<=7.3, you must store the VID:PID required by the `-c` option in EEPROM.
 
 ```console
-Avrdude version 8.0-20241010 (0b92721a)
+Avrdude version 8.2-20260803 (23f4caed)
 Copyright see https://github.com/avrdudes/avrdude/blob/main/AUTHORS
 
 System wide configuration file is /usr/local/etc/avrdude.conf
 User configuration file is /Users/user/.avrduderc
 
 Using port            : usb:04d8:0b15
-Using programmer      : jtag3updi
+Using programmer      : pickit4_updi
 AVR part              : AVR64DU28
 Programming modes     : SPM, UPDI
 Programmer type       : JTAGICE3_UPDI
-Description           : Atmel AVR JTAGICE3 in UPDI mode
+Description           : MPLAB(R) PICkit 4 in UPDI mode
 ICE HW version        : 0
-ICE FW version        : 1.33 (rel. 46)
-Serial number         : **********
+ICE FW version        : 1.34 (rel. 49)
+Serial number         : MX********
 Vtarget               : 5.02 V
 PDI/UPDI clk          : 225 kHz
 
@@ -150,26 +154,26 @@ Note that VCC must be supplied with 4.5V or more in order to rewrite the NVM. 3.
 If the target device is `ATiny10`, a minimum connection test can be performed with the following command line.
 
 ```sh
-avrdude -Pusb:04d8:0b15 -catmelice_tpi -v -pt10 -Uflash:r:-:I
+avrdude -Pusb:04d8:0b15 -cpickit4_tpi -v -pt10 -Uflash:r:-:I
 ```
 
 ```console
-Avrdude version 8.0-20241010 (0b92721a)
+Avrdude version 8.2-20260803 (23f4caed)
 Copyright see https://github.com/avrdudes/avrdude/blob/main/AUTHORS
 
 System wide configuration file is /usr/local/etc/avrdude.conf
 User configuration file is /Users/user/.avrduderc
 
 Using port            : usb:04d8:0b15
-Using programmer      : atmelice_tpi
+Using programmer      : pickit4_tpi
 AVR part              : ATtiny10
 Programming modes     : TPI
 Programmer type       : JTAGICE3_TPI
-Description           : Atmel-ICE in TPI mode
+Description           : MPLAB(R) PICkit 4 in TPI mode
 ICE HW version        : 0
-ICE FW version        : 1.33 (rel. 46)
-Serial number         : **********
-Vtarget               : 5.02 V
+ICE FW version        : 1.34 (rel. 49)
+Serial number         : MX********
+Vtarget               : 5.00 V
 
 
 AVR device initialized and ready to accept instructions
@@ -217,28 +221,29 @@ Changing target voltage from 3.30 to 3.30V
 
 Once the above setup is done correctly, you can *safely* connect the following wires to your PDI target device. You need at least four wires: "VCC", "GND", "PDAT", and "PCLK". You can optionally add two more wires: "VCP-TxD" and "VCP-RxD".
 
-<img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_PDI.drawio.svg" width="400">
+<img src="https://askn37.github.io/product/UPDI4AVR/images/IMG_3874.jpeg" width="400"> <img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_PDI.drawio.svg" width="400">
+
 
 ```sh
-avrdude -Pusb:04d8:0b15 -cjtag3pdi -px128a4u -v -Uprodsig:r:-:I
+avrdude -Pusb:04d8:0b15 -cpickit4_pdi -px128a4u -v -Uprodsig:r:-:I
 ```
 
 ```console
-Avrdude version 8.0-20241010 (0b92721a)
+Avrdude version 8.2-20260803 (23f4caed)
 Copyright see https://github.com/avrdudes/avrdude/blob/main/AUTHORS
 
 System wide configuration file is /usr/local/etc/avrdude.conf
 User configuration file is /Users/user/.avrduderc
 
 Using port            : usb:04d8:0b15
-Using programmer      : jtag3pdi
+Using programmer      : pickit4_pdi
 AVR part              : ATxmega128A4U
 Programming modes     : SPM, PDI
 Programmer type       : JTAGICE3_PDI
-Description           : Atmel AVR JTAGICE3 in PDI mode
+Description           : MPLAB(R) PICkit 4 in PDI mode
 ICE HW version        : 0
-ICE FW version        : 1.33 (rel. 46)
-Serial number         : **********
+ICE FW version        : 1.34 (rel. 49)
+Serial number         : MX********
 Vtarget               : 3.30 V
 PDI/UPDI clk          : 2500 kHz
 
@@ -289,7 +294,7 @@ Currently, two prototypes are in progress.
 - All-in-one model in FRISK (candy) case size. Standard design of UPDI4AVR-USB.
 - Dedicated expansion board model that mounts "AVR64DU32 Curiosity Nano" as a daughter board.
 
-<img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_VIEW_MZU2410A.drawio.svg" width="400">
+<img src="https://askn37.github.io/product/UPDI4AVR/images/IMG_3871.jpeg" width="400"> <img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_VIEW_MZU2410A.drawio.svg" width="400">
 
 There are two ways to enable HV control.
 
@@ -307,6 +312,36 @@ By installing the SDK at the following link into the Arduino IDE, you can easily
 - https://github.com/askn37/multix-zinnia-sdk-modernAVR @0.3.0+
 
 For build options, see [<UPDI4AVR-USB.ino>](UPDI4AVR-USB.ino).
+
+### Select HAL profile
+
+From version **v1.35.49** onwards, you can preload a custom HAL (*Hardware-Architecture-Layout*) configuration file—located in the `HAL` directory—by creating a `usrdef.h` file in the `src` directory. This allows you to define or modify arbitrary environment variables directly from the Arduino IDE (similar to the functionality available in Arduino CLI).
+
+```h
+/* usrdef.h example */
+
+#undef F_CPU
+#undef NDEBUG
+#undef DEBUG
+#undef CONSOLE_BAUD
+#undef LED_BUILTIN
+#undef SW_BUILTIN
+
+#define F_CPU 20000000UL
+#define DEBUG 1
+#define CONSOLE_BAUD 500000UL
+#define LED_BUILTIN PIN_PC3
+#define SW_BUILTIN PIN_PF6
+
+#define HAL_PROFILE "HAL/XXXXXXXX.h"
+```
+
+If the `usrdef.h` file is missing (the default state), the system proceeds as before: it references macros such as `__AVR_AVRXXXX__` to select and load the appropriate preset.
+
+Of course, you are also free to create your own custom HAL profile and place it in the `HAL` directory. In that case, it is recommended to use an existing `AVRDU_xxP.cpp/h` file—corresponding to the number of enclosure pins you are using—as a template.
+
+> [!TIP]
+> Since `usrdef.h` is excluded via `.gitignore`, it will not be accidentally published. This mechanism was originally intended for handling personal configuration data and similar information within the sketch folder.
 
 ## Related link and documentation
 

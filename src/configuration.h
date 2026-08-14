@@ -84,7 +84,11 @@
  * Columns: HW_VER, FW_MAJOR, FW_MINOR, FW_RELL, FW_RELH (all 1-byte decimal)
  */
 
-#define CONFIG_SYS_FWVER { 0, 1, 34, 49, 0 }
+#define HW_VER   0
+#define FW_MAJOR 1
+#define FW_MINOR 35
+#define FW_RELL  49
+#define FW_RELH  0
 
 
 /*** CONFIG_USB ***/
