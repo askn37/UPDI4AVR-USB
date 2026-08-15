@@ -16,6 +16,7 @@ v1.35.49
 - Introduction of HAL profile structure
 - Revised bare-chip pin layout
 - Revamped CCL/TC* operations
+
 v1.34.48
 - Support for NVMCTRL Version 6; AVR-SD famiry
   - Robust protection mechanisms specific to the AVR-SD family (particularly FUSE settings) must be disabled as necessary.
