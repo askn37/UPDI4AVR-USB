@@ -5,41 +5,34 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.33.46+
- * @date 2024-10-07
- * @copyright Copyright (c) 2024 askn37 at github.com
+ * @version 1.35.49+
+ * @date 2026-08-09
+ * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
  */
 
 #include <avr/io.h>
 #include <setjmp.h>
-#include "api/macro_api.h"  /* ATOMIC_BLOCK */
-#include "peripheral.h"     /* import Serial (Debug) */
+#include <api/macro_api.h>  /* ATOMIC_BLOCK */
+#include <peripheral.h>     /* import Serial (Debug) */
 #include "configuration.h"
 #include "prototype.h"
 
 namespace Timeout {
-
-  void setup (void) {
-    RTC_PITEVGENCTRLA = RTC_EVGEN0SEL_DIV32_gc | RTC_EVGEN1SEL_DIV128_gc;
-    EVSYS_CHANNEL0 = EVSYS_CHANNEL_RTC_EVGEN0_gc; /* 1024Hz periodic.  */
-    EVSYS_CHANNEL1 = EVSYS_CHANNEL_RTC_EVGEN1_gc; /* 32Hz periodic.    */
-    EVSYS_USERTCB0COUNT = EVSYS_USER_CHANNEL0_gc; /* TCB0_CLK = 1024Hz */
-    EVSYS_USERTCB1COUNT = EVSYS_USER_CHANNEL1_gc; /* TCB1_CLK = 32Hz   */
-    RTC_PITCTRLA = RTC_PITEN_bm;
-  }
 
   /*
    * Timeout after the specified time.
    * To be precise, in 1/1024 sec units.
    */
   void start (uint16_t _ms) {
+    D1PRINTF(" TCB0:ON\r\n");
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
       TCB0_CNT = 0;
       TCB0_CCMP = _ms;
       TCB0_INTCTRL = TCB_CAPT_bm;
-      TCB0_INTFLAGS = TCB_CAPT_bm;
+      bit_set(TCB0_INTFLAGS, TCB_CAPT_bp);
+      TCB0_CTRLB = 0;
       TCB0_CTRLA = TCB_ENABLE_bm | TCB_CLKSEL_EVENT_gc; /* for EVSYS_USERTCB0COUNT */
     }
   }
@@ -52,7 +45,8 @@ namespace Timeout {
   void stop (void) {
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
       TCB0_CTRLA = 0;
-      TCB0_INTFLAGS = TCB_CAPT_bm;
+      TCB0_INTCTRL = 0;
+      TCB0_INTFLAGS = ~0;
     }
     reti();
   }
@@ -78,6 +72,7 @@ namespace Timeout {
         Timeout::start(_ms);
         _result = (*func_p)();
         Timeout::stop();
+        D1PRINTF(" TCB0:OF\r\n");
         break;
       }
       Timeout::stop();
@@ -102,7 +97,7 @@ ISR(TCB0_INT_vect, ISR_NAKED) {
   ***/
   __asm__ __volatile__ ("EOR R1,R1");
   TCB0_CTRLA = 0;
-  TCB0_INTFLAGS = TCB_CAPT_bm;
+  bit_set(TCB0_INTFLAGS, TCB_CAPT_bp);
   longjmp(TIMEOUT_CONTEXT, 2);
 }
 

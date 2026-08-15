@@ -5,28 +5,32 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.32.40+
- * @date 2024-07-10
- * @copyright Copyright (c) 2024 askn37 at github.com
+ * @version 1.35.49+
+ * @date 2026-08-09
+ * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
  */
 
-#include <avr/io.h>
-#include <stddef.h>
 #ifndef F_CPU
   #define F_CPU 20000000L
 #endif
-#include "api/macro_api.h"  /* interrupts, initVariant */
-#include "peripheral.h"     /* import Serial (Debug) */
+#include <avr/io.h>
+#include <stddef.h>
+#include <api/macro_api.h>  /* interrupts, initVariant */
+#include <peripheral.h>     /* import Serial (Debug) */
 #include "configuration.h"
 #include "prototype.h"
 
 namespace /* NAMELESS */ {
 
+  USED RODATA const uint8_t _usage[] =
+    "UPDI4AVR-USB " __QUOTE(FW_MAJOR) "." __QUOTE(FW_MINOR) "." __QUOTE(FW_RELL) " " HAL_PROFILE;
+
   /* SYS */
   NOINIT jmp_buf TIMEOUT_CONTEXT;
-  uint8_t _led_mode = 0;
+  NOINIT uint8_t _beat;
+  NOINIT uint8_t _led_mode;
 
   /* USB */
   alignas(2) NOINIT EP_TABLE_t EP_TABLE;
@@ -82,38 +86,39 @@ void setup_mcu (void) { initVariant(); }
 int main (void) {
 
   SYS::setup();
-  Timeout::setup();
+  SYS::beat_tune();
+  SYS::LED_Blink();
 
 #if defined(DEBUG)
   Serial.begin(CONSOLE_BAUD);
-  delay_millis(600);
+  delay_millis(600);  /* VCP setup delay */
   D1PRINTF("\n<startup>\r\n");
-  D1PRINTF("F_CPU = %ld\r\n", F_CPU);
-  D1PRINTF("_AVR_IOXXX_H_ = " _AVR_IOXXX_H_ "\r\n");
-  D1PRINTF("__AVR_ARCH__ = %d\r\n", __AVR_ARCH__);
+  D1PRINTF("F_CPU=%ld\r\n", F_CPU);
+  D1PRINTF("_AVR_IOXXX_H_=" _AVR_IOXXX_H_ "\r\n");
+  D1PRINTF("__AVR_ARCH__=%d\r\n", __AVR_ARCH__);
+  D1PRINTF("HAL_PROFILE=" HAL_PROFILE "\r\n");
+  D1PRINTF("BEAT=%d:%d\r\n", _beat, TM_HBEAT);
   DFLUSH();
 #endif
 
   USART::setup();
 
-  loop_until_bit_is_clear(WDT_STATUS, WDT_SYNCBUSY_bp);
   _PROTECTED_WRITE(WDT_CTRLA, WDT_PERIOD_1KCLK_gc);
 
-  #if defined(PIN_SYS_SW0)
+#if defined(PIN_SYS_SW0)
   /* Clear the dirty flag before enabling interrupts. */
   vportRegister(PIN_SYS_SW0).INTFLAGS = ~0;
   CCL_INTFLAGS = ~0;
-  #endif
+#endif
+
   interrupts();
 
-  #if !defined(PIN_SYS_VDETECT)
+#if !defined(PIN_SYS_VDETECT)
   /* If you do not use VBD, insert the shortest possible delay instead. */
   SYS::delay_125ms();
   SYS::delay_125ms();
   USB::setup_device(true);
-  #else
-  SYS::LED_Flash();
-  #endif
+#endif
 
   /* From here on, it's an endless loop. */
   D1PRINTF("<WAITING>\r\n");
@@ -126,16 +131,16 @@ int main (void) {
     if (USB::is_ep_setup()) USB::handling_control_transactions();
 
     /* If the USB port is not open, go back to the loop beginning. */
-    if (bit_is_clear(GPCONF, GPCONF_USB_bp)) continue;
+    if (bit_is_clear(GPCONF, GPCONF_USB_bp)) {
+      SYS::LED_Turn();
+      continue;
+    }
 
     /* If SW0 was used, work here. */
     if (bit_is_clear(PGCONF, PGCONF_UPDI_bp)) {
       if      (bit_is_set(GPCONF, GPCONF_FAL_bp)) SYS::reset_enter();
       else if (bit_is_set(GPCONF, GPCONF_RIS_bp)) SYS::reset_leave();
     }
-
-    /* If the USB port is not open, go back to the loop beginning. */
-    if (bit_is_clear(GPCONF, GPCONF_USB_bp)) continue;
 
     /*** CMSIS-DAP VCP transceiver ***/
     /* The AVR series requires at least 100 clocks to service   */

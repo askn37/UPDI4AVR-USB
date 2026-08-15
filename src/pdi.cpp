@@ -5,17 +5,17 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.33.46+
- * @date 2024-10-08
- * @copyright Copyright (c) 2024 askn37 at github.com
+ * @version 1.35.49+
+ * @date 2026-08-09
+ * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
  */
 
 #include <avr/io.h>
-#include "api/macro_api.h"  /* ATOMIC_BLOCK */
-#include "api/capsule.h"    /* _CAPS macro */
-#include "peripheral.h"     /* import Serial (Debug) */
+#include <api/macro_api.h>  /* ATOMIC_BLOCK */
+#include <api/capsule.h>    /* _CAPS macro */
+#include <peripheral.h>     /* import Serial (Debug) */
 #include "configuration.h"
 #include "prototype.h"
 
@@ -47,9 +47,6 @@
 #define PCLK_IN portRegister(PIN_PGM_PCLK).IN
 #define PCLK_bp pinPosition(PIN_PGM_PCLK)
 #define PDI_GVAL 0x05
-
-#define pinLogicPush(PIN) openDrainWriteMacro(PIN, LOW)
-#define pinLogicOpen(PIN) openDrainWriteMacro(PIN, HIGH)
 
 namespace PDI {
 
@@ -87,7 +84,7 @@ namespace PDI {
     if (bit_is_clear(PGCONF, PGCONF_XDIR_bp)) {
       idle_clock(1);
       digitalWriteMacro(PIN_PGM_PDAT, HIGH);
-      pinLogicPush(PIN_PGM_PDAT);
+      pinLogicPull(PIN_PGM_PDAT);
       USART0_CTRLB = USART_RXEN_bm | USART_TXEN_bm;
       bit_set(PGCONF, PGCONF_XDIR_bp);
     }
@@ -107,7 +104,7 @@ namespace PDI {
   bool send_break (void) {
     stop_txd();
     digitalWriteMacro(PIN_PGM_PDAT, LOW);
-    pinLogicPush(PIN_PGM_PDAT);
+    pinLogicPull(PIN_PGM_PDAT);
     idle_clock(16);
     digitalWriteMacro(PIN_PGM_PDAT, HIGH);
     idle_clock(2);
@@ -317,6 +314,7 @@ namespace PDI {
   // MARK: PDI Session
 
   size_t timeout_fallback (void) {
+    D1PRINTF(" Fail\r\n");
     /* If a timeout occurs, the communication speed will be reduced. */
     if (_xclk == 50) return 0;
     _xclk -= 50;
@@ -335,8 +333,8 @@ namespace PDI {
     USART::setup();
 
     digitalWriteMacro(PIN_PGM_PDAT, LOW);
-    pinLogicPush(PIN_PGM_PDAT);
-    pinLogicPush(PIN_PGM_PCLK);
+    pinLogicPull(PIN_PGM_PDAT);
+    pinLogicPull(PIN_PGM_PCLK);
     SYS::power_reset();
     digitalWriteMacro(PIN_PGM_PDAT, HIGH);
     SYS::delay_55us();
@@ -350,7 +348,7 @@ namespace PDI {
       send_break();
     }
 
-    D1PRINTF(" PDION;GVAL=%02X\r\n", RXDATA);
+    D1PRINTF("  PDI_ON:GVAL=%02X\r\n", RXDATA);
     bit_set(PGCONF, PGCONF_UPDI_bp);
     return 1;
   }
@@ -370,11 +368,29 @@ namespace PDI {
     /* Enter NVMPROGKEY */
     if (send_bytes(nvmprog_key, sizeof(nvmprog_key)) && pdibus_wait()) {
       bit_set(PGCONF, PGCONF_PROG_bp);
-      D1PRINTF("<ST:%02X>\r\n", RXDATA);
+      D1PRINTF("  NVMP_ON:%02X\r\n", RXDATA);
       return 1;
     }
-
+    D1PRINTF("  Fail:%02X\r\n", RXDATA);
     return 0;
+  }
+
+  uint8_t sign_off (void) {
+    uint8_t _rsp = Timeout::command(&disconnect);
+    SYS::delay_100us();
+    USART::setup();
+    pinLogicOpen(PIN_PGM_PDAT);
+    pinControlRegister(PIN_PGM_PCLK) = 0;
+    digitalWriteMacro(PIN_PGM_PCLK, LOW);
+    pinLogicPull(PIN_PGM_PCLK);
+    if (bit_is_set(PGCONF, PGCONF_PROG_bp)) {
+      SYS::power_reset();
+      SYS::delay_2500us();
+    }
+    pinLogicOpen(PIN_PGM_PCLK);
+    PGCONF = 0;
+    USART::change_vcp();
+    return _rsp;
   }
 
   size_t jtag_scope_xmega (void) {
@@ -382,27 +398,14 @@ namespace PDI {
     uint8_t _cmd = packet.out.cmd;
     if (_cmd == 0x10) {             /* CMD3_SIGN_ON */
       D1PRINTF(" PDI_SIGN_ON=EXT:%02X\r\n", packet.out.bMType);
-      _rspsize = Timeout::command(&connect);
+      _rspsize = Timeout::command(&connect, &timeout_fallback);
       packet.in.res = _rspsize ? 0x84 : 0xA0; /* RSP3_DATA : RSP3_FAILED */
       return _rspsize;
     }
     else if (_cmd == 0x11) {        /* CMD3_SIGN_OFF */
       D1PRINTF(" PDI_SIGN_OFF\r\n");
       /* If UPDI control has failed, RSP3_OK is always returned. */
-      _rspsize = Timeout::command(&disconnect);
-      SYS::delay_100us();
-      USART::setup();
-      pinLogicOpen(PIN_PGM_PDAT);
-      pinControlRegister(PIN_PGM_PCLK) = 0;
-      digitalWriteMacro(PIN_PGM_PCLK, LOW);
-      pinLogicPush(PIN_PGM_PCLK);
-      if (bit_is_set(PGCONF, PGCONF_PROG_bp)) {
-        SYS::power_reset();
-        SYS::delay_2500us();
-      }
-      pinLogicOpen(PIN_PGM_PCLK);
-      PGCONF = 0;
-      USART::change_vcp();
+      _rspsize = sign_off();
     }
     else if (_cmd == 0x15) {        /* CMD3_ENTER_PROGMODE */
       D1PRINTF(" PDI_ENTER_PROG\r\n");

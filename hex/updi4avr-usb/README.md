@@ -25,13 +25,18 @@ Orient the AVR logo so it is readable, then connect a USB-C type cable between t
 avrdude -c pkobn_updi -p avr64du32 -e -U fuses:w:AVR64DU32_CNANO.fuse:i -U flash:w:AVR64DU32_CNANO.hex:i
 ```
 
-Then run an additional command line. This parameter tells AVRDUDE what kind of writer you want to emulate. Let's say it's PICKit4. This is required if you want to use AVRDUDE<=7.3.
+### Optional Parameter
+
+If desired, you can subsequently execute another command line. This parameter—the USB VID:PID—specifies to AVRDUDE which type of programmer to emulate. Here, we specify the PICKit4, which is the recommended choice. This step is required if you are using AVRDUDE version 7.3 or earlier.
 
 ```sh
 avrdude -c pkobn_updi -p avr64du32 -U eeprom:w:0xEB,0x03,0x77,0x21:m
 ```
 
-The Green LED will flash while programming is in progress. If successful the Orange LED will flash. Press and hold SW0 next to the Orange LED. Does the blinking pattern change? If so, this is OK.
+The green LED flashes while writing is in progress. Once writing is successful, the orange LED flashes. Try pressing SW0, located next to the orange LED. Does the flashing pattern change? If it does, the operation is normal.
+
+> [!TIP]
+> To undo this effect and revert the changes, overwrite with `-U eeprom:w:0xff,0xff,0xff,0xff:m`.
 
 ## Next Step
 
@@ -42,6 +47,12 @@ For Windows, it will take some time to adjust the driver at first. If it fails, 
 If everything works perfectly, the Orange LED will slowly light up and you will begin to take deep breaths.
 
 Now try entering the following command. It will stop with an error because the target device is not yet connected, but you should be able to read the UPDI4AVR's firmware version, unique serial number, and operating voltage from the host PC.
+
+```sh
+avrdude -P usb:04d8:0b15 -c pickit4_updi -p avr64du32 -v
+```
+
+If optional parameters are set, the `-P usb:vid:pid` specification can be omitted.
 
 ```sh
 avrdude -c pickit4_updi -p avr64du32 -v
@@ -84,7 +95,7 @@ Avrdude done.  Thank you.
 
 *Congratulations!* Your "Curiosity Nano" has new life!
 
-----
+### Note
 
 If you are using AVRDUDE>=8.0, you can use `-Pusb:vid:pid` syntax to identify the USB port without rewriting the VID:PID in an additional HEX file. In this case, the `-c` option allows you to choose between different options such as `jtag3updi`, `atmelice_updi`, `xplainedmini_updi`, `pickit4_updi`, `pkobn_updi`, etc.
 

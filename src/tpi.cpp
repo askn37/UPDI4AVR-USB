@@ -5,17 +5,17 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.33.46+
- * @date 2024-08-26
- * @copyright Copyright (c) 2024 askn37 at github.com
+ * @version 1.35.49+
+ * @date 2026-08-09
+ * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
  */
 
 #include <avr/io.h>
-#include "api/macro_api.h"  /* ATOMIC_BLOCK */
-#include "api/capsule.h"    /* _CAPS macro */
-#include "peripheral.h"     /* import Serial (Debug) */
+#include <api/macro_api.h>  /* ATOMIC_BLOCK */
+#include <api/capsule.h>    /* _CAPS macro */
+#include <peripheral.h>     /* import Serial (Debug) */
 #include "configuration.h"
 #include "prototype.h"
 
@@ -34,9 +34,6 @@
 #define TCLK_IN portRegister(PIN_PGM_TCLK).IN
 #define TCLK_bp pinPosition(PIN_PGM_TCLK)
 #define TPI_GVAL 0x05
-
-#define pinLogicPush(PIN) openDrainWriteMacro(PIN, LOW)
-#define pinLogicOpen(PIN) openDrainWriteMacro(PIN, HIGH)
 
 namespace TPI {
   const static uint8_t nvmprog_key[] = {
@@ -154,14 +151,15 @@ namespace TPI {
     size_t  _wLength = bswap16(packet.out.tpi.read.wLength);
     uint8_t *_q = &packet.in.data[0];
     size_t _cnt = 0;
-    D2PRINTF(" READ=%08X:%04X\r\n", _dwAddr, _wLength);
+    D1PRINTF(" READ=%04X:%d ", _dwAddr, _wLength);
     set_sstpr(_dwAddr);
     while (_cnt < _wLength) {
       if (!get_sld()) return 0;
       *_q++ = RXDATA;
       ++_cnt;
     }
-    return _wLength + 1;
+    D1PRINTHEX(&packet.in.data, _wLength);
+    return _wLength;
   }
 
   size_t write_memory (void) {
@@ -176,19 +174,22 @@ namespace TPI {
     while (_dwAddr & (_tpi_chunks - 1)) {
       _dwAddr--;
       _wLength++;
-      *--_p = 0xFF;   /* NAND masked dummy bytes */
+      --_p;
+      *_p = 0xFF;     /* NAND masked dummy bytes */
     }
     while (_wLength & (_tpi_chunks - 1)) {
-      *((uint8_t*)(_dwAddr + _wLength++)) = 0xFF;
+      *((uint8_t*)(_dwAddr + _wLength)) = 0xFF;
+      _wLength++;
     }
-    D2PRINTF(" FIXED_WRITE=%08X:%04X\r\n", _dwAddr, _wLength);
+    D1PRINTF(" WRITE=%04X:%d ", _dwAddr, _wLength);
+    D1PRINTHEX(_p, _wLength);
 
     /* For the flash code area, the page erase can be */
     /* omitted if the chip has already been erased.   */
     /* 0x01: XPRG_MEM_TYPE_APPL */
     if (m_type != 0x01) {
       /* SECTION_ERASE */
-      D2PRINTF(" SECTION_ERASE=%04X>%04X\r\n", _dwAddr | 1, _CAPS16(_before_page)->word);
+      D1PRINTF(" SECTION_ERASE=%04X\r\n", _dwAddr | 1);
       _result &= nvm_wait()
         && set_sstpr(_dwAddr | 1)
         && nvm_ctrl(0x14)
@@ -200,7 +201,7 @@ namespace TPI {
 
     /* WRITE_PAGE */
     for (size_t _i = 0; _i < _wLength; _i += _tpi_chunks) {
-      D2PRINTF(" CODE_WRITE=%08X:%04X\r\n", _dwAddr, _tpi_chunks);
+      D1PRINTF(" CODE_WRITE=%04X:%02X\r\n", _dwAddr, _tpi_chunks);
       _result &= nvm_wait()
               && set_sstpr(_dwAddr)
               && nvm_ctrl(0x1D)
@@ -230,7 +231,7 @@ namespace TPI {
     PGCONF = 0;
     USART::setup();
 
-    pinLogicPush(PIN_PGM_TRST);
+    pinLogicPull(PIN_PGM_TRST);
     SYS::power_reset();
     SYS::delay_2500us();
 
@@ -314,6 +315,18 @@ namespace TPI {
     return 1;
   }
 
+  uint8_t sign_off (void) {
+    uint8_t _rsp = bit_is_set(PGCONF, PGCONF_UPDI_bp) ? disconnect() : 1;
+    pinLogicOpen(PIN_PGM_TCLK);
+    pinLogicOpen(PIN_PGM_TRST);
+    SYS::power_reset();
+    SYS::delay_2500us();
+    PGCONF = 0;
+    USART::setup();
+    USART::change_vcp();
+    return _rsp;
+  }
+
   // MARK: JTAG SCOPE
 
   /*** The TPI scope provides access to the reduceAVR chip. ***/
@@ -337,14 +350,7 @@ namespace TPI {
     }
     else if (_cmd == 0x02) {        /* XPRG_CMD_LEAVE_PROGMODE */
       D1PRINTF(" TPI_LEAVE_PROGMODE\r\n");
-      _rspsize = bit_is_set(PGCONF, PGCONF_UPDI_bp) ? disconnect() : 1;
-      pinLogicOpen(PIN_PGM_TCLK);
-      pinLogicOpen(PIN_PGM_TRST);
-      SYS::power_reset();
-      SYS::delay_2500us();
-      PGCONF = 0;
-      USART::setup();
-      USART::change_vcp();
+      _rspsize = sign_off();
     }
     else if (_cmd == 0x07) {        /* XPRG_CMD_SET_PARAM */
   #ifdef _Use_hardcoded_code_instead_
@@ -369,14 +375,16 @@ namespace TPI {
     }
     else if (bit_is_clear(PGCONF, PGCONF_UPDI_bp)) { /* empty */ }
     else if (_cmd == 0x05) {        /* XPRG_CMD_READ_MEM */
-      D1PRINTF(" TPI_READ=%02X:%08lX:%04X\r\n",
+      D1PRINTF(" TPI_READ=%02X:%08lX:%d\r\n",
         packet.out.tpi.read.bMType,
         bswap32(packet.out.tpi.read.dwAddr),
         bswap16(packet.out.tpi.read.wLength)
       );
       _rspsize = Timeout::command(&read_memory);
     }
-    else if (_vtarget < 4200)     { /* empty */ }
+    else if (_vtarget < 4200) {
+      D1PRINTF(" TPI_CMD=%d, VTGLOW=%d\r\n", _cmd, _vtarget);
+    }
     else if (_cmd == 0x03) {        /* XPRG_CMD_ERASE */
       D1PRINTF(" TPI_ERASE=%02X:%08lX\r\n",
         packet.out.tpi.read.bMType,
@@ -385,7 +393,7 @@ namespace TPI {
       _rspsize = Timeout::command(&erase_memory);
     }
     else if (_cmd == 0x04) {        /* XPRG_CMD_WRITE_MEM */
-      D1PRINTF(" TPI_WRITE=%02X:%08lX:%04X\r\n",
+      D1PRINTF(" TPI_WRITE=%02X:%08lX:%d\r\n",
         packet.out.tpi.write.bMType,
         bswap32(packet.out.tpi.write.dwAddr),
         bswap16(packet.out.tpi.write.wLength)
@@ -396,7 +404,7 @@ namespace TPI {
     D1PRINTF(" <RES:%02X>\r\n", _rspsize);
 
     /* Adds padding to XPRG responses to adjust the length of the payload. */
-    return ++_rspsize;
+    return _rspsize + 1;
   }
 
 };

@@ -5,30 +5,52 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.33.46+
- * @date 2024-08-26
- * @copyright Copyright (c) 2024 askn37 at github.com
+ * @version 1.35.49+
+ * @date 2026-08-09
+ * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
  */
 
 #pragma once
+#ifndef F_CPU
+  #define F_CPU 20000000L
+#endif
+#undef CONSOLE_BAUD
+#define CONSOLE_BAUD 500000L
 #include <avr/io.h>
 #include <stddef.h>
 #include <setjmp.h>
 #include <api/memspace.h>
 #include "configuration.h"
 
-// #undef DEBUG
-// #define DEBUG 3
+/*** MacroAPI completion ***/
 
-#ifndef F_CPU
-  #define F_CPU 20000000L
-#endif
-#ifndef CONSOLE_BAUD
-  #define CONSOLE_BAUD 500000L
+#define pinLogicPull(PIN) openDrainWriteMacro(PIN, LOW)
+#define pinLogicOpen(PIN) openDrainWriteMacro(PIN, HIGH)
+
+#ifndef portBitmask   /* Compliant with SDK@0.4.6+ */
+  #define portBitmask(PIN)  (1 << (PIN & 7))
 #endif
 
+#ifdef PORTA_EVGENCTRLA
+  #ifndef EVSYS_CHANNEL_PORTX_EVGEN0
+    #define EVSYS_CHANNEL_PORTX_EVGEN0(PIN) (((PIN & 0xE0) >> 4) | 0x40)
+  #endif
+  #ifndef EVSYS_CHANNEL_PORTX_EVGEN1
+    #define EVSYS_CHANNEL_PORTX_EVGEN1(PIN) (((PIN & 0xE0) >> 4) | 0x41)
+  #endif
+#endif
+
+/*** LED Timer configuration ***/
+#define TM_HBEAT (F_CPU / 1024 / 128 - 1)
+#define TM_FLASH ((F_CPU / 1024) / 2 - 1)
+#define TM_BLINK ((F_CPU / 1024) / 4 - 1)
+#define TM_FAST  ((F_CPU / 1024) / 8 - 1)
+#define TM_VCPBL ((F_CPU / 1024) / 32 - 1)
+#define HVC_CLK  5000000
+
+/*** Debug UART macro symbol ***/
 #undef Serial
 #define DFLUSH()
 #define D0PRINTF(FMT, ...)
@@ -40,7 +62,7 @@
 #define D2PRINTHEX(P,L)
 #define D3PRINTHEX(P,L)
 #if defined(DEBUG)
-  #include "peripheral.h" /* from Micro_API : import Serial (Debug) */
+  #include <peripheral.h> /* from Micro_API : import Serial (Debug) */
   #define Serial Serial1C /* PIN_PD6:TxD, PIN_PD7:RxD */
   #undef  DFLUSH
   #define DFLUSH() Serial.flush()
@@ -69,6 +91,7 @@
 #endif
 
 #define PACKED __attribute__((packed))
+#define USED   __attribute__((used))
 #define WEAK   __attribute__((weak))
 #define RODATA __attribute__((__progmem__))
 #define NOINIT __attribute__((section(".noinit")))
@@ -398,6 +421,7 @@ extern "C" {
 
     /* SYSTEM */
     extern jmp_buf TIMEOUT_CONTEXT;
+    extern uint8_t _beat;
     extern uint8_t _led_mode;
 
     /* USB */
@@ -475,10 +499,12 @@ namespace PDI {
 
 namespace SYS {
   void setup (void);
+  void beat_tune (void);
   void LED_HeartBeat (void);
   void LED_Flash (void);
   void LED_Blink (void);
   void LED_Fast (void);
+  void LED_Turn (void);
   void power_reset (bool _off = true, bool _on = true);
   void reset_enter (void);
   void reset_leave (void);
@@ -515,7 +541,6 @@ namespace TPI {
 namespace UPDI {
   bool send_break (void);
   bool recv (void);
-  bool recv_byte (void);
   bool recv_byte (uint32_t _dwAddr);
   bool recv_bytes (uint8_t* _data, size_t _len);
   bool send (const uint8_t _data);
