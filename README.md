@@ -92,7 +92,7 @@ Below is a simple usage example for "AVR64DU32 Curiosity Nano".
 This product series can be mounted on a breadboard without soldering using the included pin headers.
 
 > [!TIP]
-> We recommend connecting an additional LED1 (active-high) between PF3 and GND. In addition to flashing during VCP communication, it visualizes changes on PA1 (lighting up when LOW), so it can also be used for "LED blinking" (GPIO toggling) on ​​the target device.
+> We recommend connecting an additional LED1 (active-high) between PF3 and GND. In addition to flashing during VCP communication, it visualizes changes on PA3 (lighting up when LOW), so it can also be used for "LED blinking" (GPIO toggling) on ​​the target device.
 
 ### UPDI Control
 
