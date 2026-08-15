@@ -90,6 +90,7 @@ namespace SYS {
 
     EVSYS_USERCCLLUT0A    = EVSYS_USER_CHANNEL5_gc;         /* <- SW0  */
     EVSYS_USERCCLLUT1A    = EVSYS_USER_CHANNEL4_gc;         /* <- VRxD */
+    EVSYS_USERCCLLUT3A    = EVSYS_USER_CHANNEL4_gc;         /* <- VRxD */
 
     EVSYS_USERTCB1CAPT    = EVSYS_USER_CHANNEL2_gc;         /* TCB1_CAPT <- Strobe */
     EVSYS_USERTCB0COUNT   = EVSYS_USER_CHANNEL0_gc;         /* TCB0_CLK = 1024Hz */
@@ -109,13 +110,14 @@ namespace SYS {
     CCL_LUT1CTRLA = CCL_ENABLE_bm;
 
     /*** CCL3 : LED1 (PF3) generator ***/
-    CCL_TRUTH3    = CCL_TRUTH_2_bm;
-    CCL_LUT3CTRLB = CCL_INSEL1_TCB1_gc;                     /* <- TCB1_WO */
+    CCL_TRUTH3    = CCL_TRUTH_2_bm | CCL_TRUTH_3_bm;
+    CCL_LUT3CTRLB = CCL_INSEL0_EVENTA_gc                    /* <- EVS_CH4 : VRxD */
+                  | CCL_INSEL1_TCB1_gc;                     /* <- TCB1_WO */
     CCL_LUT3CTRLA = CCL_ENABLE_bm | CCL_OUTEN_bm;           /* -> PIN_PF3 */
 
     /*** CCL2 : LED0 (PF2:ORANGE) Heart-Beat generator ***/
     CCL_TRUTH2    = CCL_TRUTH_1_bm | CCL_TRUTH_2_bm;
-    CCL_LUT2CTRLC = CCL_INSEL2_TCB1_gc;
+    CCL_LUT2CTRLC = CCL_INSEL2_TCB1_gc;                     /* <- TCB1_WO */
     CCL_LUT2CTRLB = CCL_INSEL0_TCA0_gc | CCL_INSEL1_EVENTA_gc;
     CCL_LUT2CTRLA = CCL_ENABLE_bm;                          /* -> EVS_CH3 */
 
