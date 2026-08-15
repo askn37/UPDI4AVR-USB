@@ -91,6 +91,9 @@ For details on pin arrangement/signal assignment for each package type of the AV
 Below is a simple usage example for "AVR64DU32 Curiosity Nano".
 This product series can be mounted on a breadboard without soldering using the included pin headers.
 
+> [!TIP]
+> We recommend connecting an additional LED1 (active-high) between PF3 and GND. In addition to flashing during VCP communication, it visualizes changes on PA1 (lighting up when LOW), so it can also be used for "LED blinking" (GPIO toggling) on ​​the target device.
+
 ### UPDI Control
 
 For UPDI control, the target device requires three wires: "VCC", "GND", and "UPDI (TDAT)". Optionally, three more wires can be added: "nRST (TRST)", "VCP-TxD", and "VCP-RxD". Unless the device sets the GPIO to push-pull output, all connections are open-drain with built-in pull-up resistors. If you are concerned about GPIO contention, you can insert a 330Ω series resistor.
