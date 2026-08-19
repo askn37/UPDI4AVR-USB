@@ -5,8 +5,8 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.35.49+
- * @date 2026-08-09
+ * @version 1.35.50+
+ * @date 2026-08-18
  * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -16,6 +16,10 @@
 #include <peripheral.h>     /* import Serial (Debug) */
 #include "configuration.h"
 #include "prototype.h"
+
+#include <math.h>
+#define BLINK_HZ (0.5)
+#define TM_HBEAT ((uint8_t)(sqrt((F_CPU / 1024.0) * (1.0 / BLINK_HZ)) - 0.5))
 
 namespace SYS {
 
@@ -27,6 +31,8 @@ namespace SYS {
     0x7F, 0x55, 0x7E, 0xC8, 0x7F, 0x00, 0xFE, /* SYSRST */
     0x7F, 0x55, 0x7E, 0xC3, 0x7E, 0x04, 0xFF  /* UPDIDIS */
   };
+
+  NOINIT uint8_t _ch_save;
 
   /*
    * MPU Setup - AVR-DU28/32 standard HAL
@@ -52,14 +58,14 @@ namespace SYS {
      */
 
     /* Enables automatic adjustment of the OSCHF synchronized to the USB SOF. */
-    _led_mode = CLKCTRL_OSCHFCTRLA | CLKCTRL_ALGSEL_bm | CLKCTRL_AUTOTUNE_SOF_gc;
-    _PROTECTED_WRITE(CLKCTRL_OSCHFCTRLA, _led_mode);
+    uint8_t _t = CLKCTRL_OSCHFCTRLA | CLKCTRL_ALGSEL_bm | CLKCTRL_AUTOTUNE_SOF_gc;
+    _PROTECTED_WRITE(CLKCTRL_OSCHFCTRLA, _t);
 
     /* Output GPIO */
     VPORTD_DIR = 0b00110111;    /* 5:HVCP2 4:HVCP1 2:HVSL3 1:HVSL2 0:HVSL1 */
 
   #ifdef CONFIG_PGM_VPOWER_ENABLE
-    vportRegister(PIN_PGM_VPOWER).DIR |= portBitmask(PIN_PGM_VPOWER);
+    vportRegister(PIN_PGM_VPOWER).DIR |= pinBitmask(PIN_PGM_VPOWER);
   #endif
 
     /* Pull-Up GPIO */
@@ -94,8 +100,7 @@ namespace SYS {
     PORTMUX_TCAROUTEA     = PORTMUX_TCA0_PORTD_gc;          /* TCA0_WOn_ALT3 -> PORTD */
 
     /*** Event System ***/
-    EVSYS_CHANNEL0        = EVSYS_CHANNEL_RTC_EVGEN0_gc;    /* 1024Hz periodic.  */
-    EVSYS_CHANNEL1        = EVSYS_CHANNEL_RTC_EVGEN1_gc;    /* 128Hz periodic.   */
+    EVSYS_CHANNEL1        = EVSYS_CHANNEL_RTC_EVGEN1_gc;    /* 128Hz periodic. */
     EVSYS_CHANNEL2        = EVSYS_CHANNEL_CCL_LUT3_gc;      /* <- Indicator */
     EVSYS_CHANNEL4        = EVSYS_CHANNEL_PORTX_EVGEN1(PIN_VCP_RXD);  /* <- VRxD */
     EVSYS_CHANNEL5        = EVSYS_CHANNEL_PORTX_EVGEN0(PIN_SYS_SW0);  /* <- SW0  */
@@ -105,7 +110,7 @@ namespace SYS {
     EVSYS_USERCCLLUT1A    = EVSYS_USER_CHANNEL4_gc;         /* <- VRxD */
 
     EVSYS_USERTCB1CAPT    = EVSYS_USER_CHANNEL2_gc;         /* TCB1_CAPT <- Strobe */
-    EVSYS_USERTCB0COUNT   = EVSYS_USER_CHANNEL0_gc;         /* TCB0_CLK = 1024Hz */
+    EVSYS_USERTCB0COUNT   = EVSYS_USER_CHANNEL1_gc;         /* <- 128Hz */
 
     /*** CCL0 : SW0 FALLING Interrupt generator ***/
     /* The rising edge of SW0 triggers a PORTx interrupt,
@@ -129,8 +134,9 @@ namespace SYS {
 
     /*** CCL2 : LED0 (PD3) Heart-Beat generator ***/
     CCL_TRUTH2    = CCL_TRUTH_1_bm | CCL_TRUTH_2_bm;
-    CCL_LUT2CTRLC = CCL_INSEL2_TCB1_gc;
-    CCL_LUT2CTRLB = CCL_INSEL0_TCA0_gc | CCL_INSEL1_EVENTA_gc;
+    CCL_LUT2CTRLC = CCL_INSEL2_TCB1_gc;                     /* <- TCB1_WO */
+    CCL_LUT2CTRLB = CCL_INSEL1_TCA0_gc                      /* <- TCA0_WO1 */
+                  | CCL_INSEL0_TCB0_gc;                     /* <- TCB0_WO */
     CCL_LUT2CTRLA = CCL_ENABLE_bm | CCL_OUTEN_bm;           /* -> PIN_PD3 */
 
     /*** CCL enable ***/
@@ -142,9 +148,14 @@ namespace SYS {
     /* The lower timer controls the blinking rate of the LED. */
     /* The top timer is used as a period timer */
     /* and as the output for the charge pump.  */
+    TCA0_SPLIT_CTRLD = TCA_SPLIT_SPLITM_bm;
+    TCA0_SPLIT_LCMP2 = F_CPU / 125000;      /* TCA0_WO2 */
+    TCA0_SPLIT_HCMP1 = F_CPU / HVC_CLK / 2; /* TCA0_WO4 */
+    TCA0_SPLIT_HCMP2 = F_CPU / HVC_CLK / 2; /* TCA0_WO5 */
+    TCA0_SPLIT_HPER = (F_CPU / HVC_CLK) - 1;
 
     /*** TCB0 ***/
-    /* The TCB0 timer is configured in the SYS and Timeout module. */
+    TCB0_CTRLB = TCB_CNTMODE_PWM8_gc;
 
     /*** TCB1 ***/
     /* TCB1 is used to control the LED1 blinking rate. */
@@ -158,13 +169,16 @@ namespace SYS {
     RTC_PITEVGENCTRLA = RTC_EVGEN0SEL_DIV32_gc | RTC_EVGEN1SEL_DIV256_gc;
     RTC_PITCTRLA = RTC_PITEN_bm;
 
+    /* Drive a 1024Hz counter for RTC_CNT */
+    RTC_CTRLA = RTC_RTCEN_bm | RTC_PRESCALER_DIV32_gc;
+
     /*** VUSB Bus-Powerd ***/
     /* If you are supplying 3V3 to the VUSB pad from an
        external power source, you can comment this out.*/
     SYSCFG_VUSBCTRL = SYSCFG_USBVREG_bm;
 
     /* Voltage measurements may initially return erroneous values. */
-    _vtarget = get_vdd();
+    setup_adc();
   }
 
   /*
@@ -174,44 +188,44 @@ namespace SYS {
   /* Heartbeat (waiting) */
   WEAK void LED_HeartBeat (void) {
     if (_led_mode != 1) {
-      TCA0_SPLIT_CTRLA = 0;
       D1PRINTF(" LED:HBEAT\r\n");
-      TCA0_SPLIT_CTRLD = TCA_SPLIT_SPLITM_bm;       /* SINGLESLOPE PWM */
-      TCA0_SPLIT_LPER  = _beat;                     /* TOP WO[210] */
-      TCA0_SPLIT_LCMP0 = _beat >> 1;                /* CMP WO0 */
+      TCA0_SPLIT_LPER  = TM_HBEAT - 1;
+      TCA0_SPLIT_LCMP1 = TM_HBEAT >> 1; /* compare TCA0_WO1 */
       TCA0_SPLIT_CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV1024_gc;
-      EVSYS_USERCCLLUT2A = EVSYS_USER_CHANNEL1_gc;  /* <- for RTC 128Hz */
+      TCB0_CNT   = 0;
+      TCB0_CCMPL = TM_HBEAT;
+      TCB0_CCMPH = TM_HBEAT >> 1;       /* compare TCB0_WO */
+      TCB0_CTRLA = TCB_ENABLE_bm | TCB_CLKSEL_TCA0_gc;
       _led_mode = 1;
     }
   }
 
   WEAK void LED_TM (uint8_t _mode, uint16_t _ccmp) {
     if (_led_mode != _mode) {
-      EVSYS_USERCCLLUT2A = 0;   /* <- sognal in stop for TCA0_WO0 */
-      TCA0_SINGLE_CTRLA = 0;
       D1PRINTF(" LED:MD=%d\r\n", _mode);
-      TCA0_SINGLE_CTRLD = 0;
-      TCA0_SINGLE_PER   = _ccmp;
-      TCA0_SINGLE_CMP0  = _ccmp >> 1;
-      TCA0_SINGLE_CTRLB = TCA_SINGLE_WGMODE_SINGLESLOPE_gc;
-      TCA0_SINGLE_CTRLA = TCA_SINGLE_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV1024_gc;
+      TCA0_SPLIT_LCMP1 = 0;             /* turn off TCA0_WO1 */
+      TCA0_SPLIT_CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV1024_gc;
+      TCB0_CNT   = (_ccmp >> 1) - 2;
+      TCB0_CCMPL = _ccmp;
+      TCB0_CCMPH = _ccmp >> 1;          /* compare TCB0_WO */
+      TCB0_CTRLA = TCB_ENABLE_bm | TCB_CLKSEL_EVENT_gc;
       _led_mode = _mode;
     }
   }
 
   /* USB uplink is disabled indicator. */
   WEAK void LED_Flash (void) {
-    LED_TM(2, TM_FLASH);
+    LED_TM(2, 32);
   }
 
   /* SW0 is pressed indicator. */
   WEAK void LED_Blink (void) {
-    LED_TM(3, TM_BLINK);
+    LED_TM(3, 64);
   }
 
   /* Programming in progress indicator. */
   WEAK void LED_Fast (void) {
-    LED_TM(4, TM_FAST);
+    LED_TM(4, 12);
   }
 
   /* Response to holding down SW0 before
@@ -223,31 +237,6 @@ namespace SYS {
       GPCONF &= ~(GPCONF_HLD_bm | GPCONF_RIS_bm | GPCONF_FAL_bm);
     }
     #endif
-  }
-
-  /*
-   * Beat Calibration
-   *
-   * Measures the clock error between OSC32K and OSCHF
-   * and compensates for device-to-device variation.
-   */
-  void beat_tune (void) {
-    uint16_t _beat_capt;
-    EVSYS_USERTCB0CAPT = EVSYS_USER_CHANNEL0_gc;
-    TCB0_EVCTRL = TCB_CAPTEI_bm;
-    TCB0_CTRLB  = TCB_CNTMODE_FRQ_gc;
-    TCB0_CTRLA  = TCB_ENABLE_bm | TCB_CLKSEL_DIV1_gc;
-    loop_until_bit_is_set(TCB0_INTFLAGS, TCB_CAPT_bp);
-    _beat_capt  = TCB0_CCMP;
-    loop_until_bit_is_set(TCB0_INTFLAGS, TCB_CAPT_bp);
-    _beat_capt  = TCB0_CCMP;
-    TCB0_CTRLA  = 0;
-    TCB0_CTRLB  = 0;
-    TCB0_EVCTRL = 0;
-    TCB0_INTFLAGS = ~0;
-    _beat = (_beat_capt + 1) >> 7;  /* Values ​​used for the heartbeat */
-    EVSYS_USERTCB0CAPT = EVSYS_USER_OFF_gc;
-    // _beat = TM_HBEAT;
   }
 
   /*
@@ -283,26 +272,20 @@ namespace SYS {
   /* UPDI commands are sent from TDAT using only TCAB
      and bit manipulation, without switching USART. */
   void send_bitmap (const uint8_t _bitmap[], const size_t _length) {
-    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-      TCB0_CNT      = 0;
-      TCB0_EVCTRL   = 0;
-      TCB0_INTCTRL  = 0;
-      TCB0_INTFLAGS = ~0;
-      TCB0_CCMP     = F_CPU / 125000L;
-      TCB0_CTRLB    = 0;
-      TCB0_CTRLA    = TCB_ENABLE_bm | TCB_CLKSEL_DIV1_gc;
-    }
+    TCA0_SPLIT_CTRLA = 0;
+    TCA0_SPLIT_LCNT  = 0;
+    TCA0_SPLIT_CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV1_gc;
     for (uint8_t i = 0; i < _length; i++) {
       uint8_t _d = (_bitmap[i >> 3]) >> (i & 7);
-      loop_until_bit_is_set(TCB0_INTFLAGS, TCB_CAPT_bp);
+      loop_until_bit_is_set(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_LCMP2_bp);
       if (bit_is_set(_d, 0))
         pinLogicOpen(PIN_PGM_TDAT);
       else
         pinLogicPull(PIN_PGM_TDAT);
-      bit_set(TCB0_INTFLAGS, TCB_CAPT_bp);
-      wdt_reset();
+      EVSYS_SWEVENTA = EVSYS_SWEVENTA_CH2_gc;
+      bit_set(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_LCMP2_bp);
     }
-    TCB0_CTRLA = 0;
+    TCA0_SPLIT_CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV1024_gc;
   }
 
   /*
@@ -311,6 +294,10 @@ namespace SYS {
    */
   void reset_enter (void) {
     if (bit_is_clear(GPCONF, GPCONF_HLD_bp)) {
+      D1PRINTF("<RST:IN>\r\n");
+      DFLUSH();
+      _ch_save = EVSYS_CHANNEL4;
+      EVSYS_CHANNEL4 = EVSYS_CHANNEL_CCL_LUT2_gc;
       LED_Blink();
       pinLogicPull(PIN_PGM_TRST);
       /*
@@ -319,11 +306,8 @@ namespace SYS {
       * Does not affect chips with an active reset pad or TPI/PDI type chips.
       */
       send_bitmap(_updi_bitmap_reset, sizeof(_updi_bitmap_reset) * 8);
-      D1PRINTF("<RST:IN>\r\n");
-      DFLUSH();
       bit_set(GPCONF, GPCONF_HLD_bp);
     }
-    bit_clear(GPCONF, GPCONF_FAL_bp);
   }
 
   /*
@@ -332,7 +316,7 @@ namespace SYS {
    * but if the USB is stopped, it will reboot at the end.
    */
   void reset_leave (void) {
-    if (bit_is_set(GPCONF, GPCONF_HLD_bp)) {
+    if (bit_is_set(GPCONF, GPCONF_RIS_bp)) {
       send_bitmap(_updi_bitmap_leave, sizeof(_updi_bitmap_leave) * 8);
       pinLogicOpen(PIN_PGM_TRST);
   #ifdef CONFIG_VCP_DTR_RESET
@@ -341,11 +325,14 @@ namespace SYS {
   #endif
       D1PRINTF("<RST:OUT>\r\n");
       DFLUSH();
+      EVSYS_CHANNEL4 = _ch_save;
       if (bit_is_set(GPCONF, GPCONF_USB_bp))
         LED_HeartBeat();  /* The USB is ready. */
-      else reboot();      /* USB disconnected, System reboot. */
+      // else reboot();      /* USB disconnected, System reboot. */
+      else
+        LED_Flash();
+      GPCONF &= ~(GPCONF_HLD_bm | GPCONF_RIS_bm | GPCONF_FAL_bm);
     }
-    GPCONF &= ~(GPCONF_HLD_bm | GPCONF_RIS_bm | GPCONF_FAL_bm);
   }
 
   /*
@@ -383,32 +370,30 @@ namespace SYS {
    * The result is 10-bit, so multiply by 10.0 to convert to 1V * 0.0001.
    * The ADC0 peripheral is operational only during voltage measurements.
    */
-  uint16_t get_vdd (void) {
+  void setup_adc (void) {
     CLKCTRL_MCLKTIMEBASE = F_CPU / 1000000.0;
-    ADC0_INTFLAGS = ~0;
-    ADC0_SAMPLE = 0;
     ADC0_CTRLA = ADC_ENABLE_bm;
     ADC0_CTRLB = ADC_PRESC_DIV8_gc;
     ADC0_CTRLC = ADC_REFSEL_1V024_gc;
     ADC0_CTRLE = 250; /* (SAMPDUR + 0.5) * fCLK_ADC sample duration */
+    ADC0_CTRLF = ADC_SAMPNUM_ACC8_gc;
     ADC0_MUXPOS = ADC_MUXPOS_VDDDIV10_gc; /* ADC channel VDD * 0.1 */
     loop_until_bit_is_clear(ADC0_STATUS, ADC_ADCBUSY_bp);
-    ADC0_COMMAND = ADC_MODE_SINGLE_10BIT_gc | ADC_START_IMMEDIATE_gc;
+    ADC0_COMMAND = ADC_MODE_BURST_gc;
+    get_vdd();
+  }
+
+  uint16_t get_vdd (void) {
+    ADC0_COMMAND |= ADC_START_IMMEDIATE_gc;
     loop_until_bit_is_set(ADC0_INTFLAGS, ADC_SAMPRDY_bp);
-    uint16_t _adc_reading = ADC0_SAMPLE;
-    _adc_reading += (_adc_reading << 3) + _adc_reading;
-    ADC0_CTRLA = 0;
+    uint16_t _adc_reading = ADC0_RESULT;
+    _adc_reading += (_adc_reading >> 2);
     return _adc_reading;
   }
 
   void hvc_enable (void) {
   #ifdef CONFIG_HVC_ENABLE
-    TCA0_SPLIT_CTRLA = 0;
-    TCA0_SPLIT_CTRLD = TCA_SPLIT_SPLITM_bm; /* SINGLESLOPE PWM */
     TCA0_SPLIT_CTRLB = TCA_SPLIT_HCMP2EN_bm | TCA_SPLIT_HCMP1EN_bm;
-    TCA0_SPLIT_HCMP1 = F_CPU / HVC_CLK / 2;
-    TCA0_SPLIT_HCMP2 = F_CPU / HVC_CLK / 2;
-    TCA0_SPLIT_HPER = (F_CPU / HVC_CLK) - 1;
     TCA0_SPLIT_HCNT = 0;
     TCA0_SPLIT_CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV1_gc;
     delay_100us();
@@ -418,7 +403,7 @@ namespace SYS {
   void hvc_leave (void) {
   #ifdef CONFIG_HVC_ENABLE
     TCA0_SPLIT_CTRLB = 0;
-    TCA0_SPLIT_CTRLA = 0;
+    TCA0_SPLIT_CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV1024_gc;
   #endif
   }
 
@@ -444,7 +429,6 @@ namespace SYS {
 
 };  /* SYS */
 
-#if defined(PIN_SYS_SW0)
 /* If the level is not maintained for a sufficient period of time it will not function properly. */
 ISR(portIntrruptVector(PIN_SYS_SW0)) {
   /* SW0 Raising Interrupt */
@@ -459,6 +443,5 @@ ISR(CCL_CCL_vect) {
   bit_set(GPCONF, GPCONF_FAL_bp);
   D2PRINTF("{F}");
 }
-#endif
 
 // end of code

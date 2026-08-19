@@ -5,8 +5,8 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.35.49+
- * @date 2026-08-09
+ * @version 1.35.50+
+ * @date 2026-08-18
  * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -29,7 +29,6 @@ namespace /* NAMELESS */ {
 
   /* SYS */
   NOINIT jmp_buf TIMEOUT_CONTEXT;
-  NOINIT uint8_t _beat;
   NOINIT uint8_t _led_mode;
 
   /* USB */
@@ -86,8 +85,7 @@ void setup_mcu (void) { initVariant(); }
 int main (void) {
 
   SYS::setup();
-  SYS::beat_tune();
-  SYS::LED_Blink();
+  SYS::LED_Flash();
 
 #if defined(DEBUG)
   Serial.begin(CONSOLE_BAUD);
@@ -97,7 +95,6 @@ int main (void) {
   D1PRINTF("_AVR_IOXXX_H_=" _AVR_IOXXX_H_ "\r\n");
   D1PRINTF("__AVR_ARCH__=%d\r\n", __AVR_ARCH__);
   D1PRINTF("HAL_PROFILE=" HAL_PROFILE "\r\n");
-  D1PRINTF("BEAT=%d:%d\r\n", _beat, TM_HBEAT);
   DFLUSH();
 #endif
 
@@ -130,16 +127,16 @@ int main (void) {
     USB::handling_bus_events();
     if (USB::is_ep_setup()) USB::handling_control_transactions();
 
-    /* If the USB port is not open, go back to the loop beginning. */
-    if (bit_is_clear(GPCONF, GPCONF_USB_bp)) {
-      SYS::LED_Turn();
-      continue;
-    }
-
     /* If SW0 was used, work here. */
     if (bit_is_clear(PGCONF, PGCONF_UPDI_bp)) {
-      if      (bit_is_set(GPCONF, GPCONF_FAL_bp)) SYS::reset_enter();
-      else if (bit_is_set(GPCONF, GPCONF_RIS_bp)) SYS::reset_leave();
+      if      (bit_is_set(GPCONF, GPCONF_HLD_bp)) SYS::reset_leave();
+      else if (bit_is_set(GPCONF, GPCONF_FAL_bp)) SYS::reset_enter();
+    }
+
+    /* If the USB port is not open, go back to the loop beginning. */
+    if (bit_is_clear(GPCONF, GPCONF_USB_bp)) {
+      // SYS::LED_Turn();
+      continue;
     }
 
     /*** CMSIS-DAP VCP transceiver ***/

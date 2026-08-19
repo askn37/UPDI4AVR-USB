@@ -5,8 +5,8 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.35.49+
- * @date 2026-08-09
+ * @version 1.35.50+
+ * @date 2026-08-18
  * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -40,14 +40,14 @@ namespace SYS {
      */
 
     /* Enables automatic adjustment of the OSCHF synchronized to the USB SOF. */
-    _led_mode = CLKCTRL_OSCHFCTRLA | CLKCTRL_ALGSEL_bm | CLKCTRL_AUTOTUNE_SOF_gc;
-    _PROTECTED_WRITE(CLKCTRL_OSCHFCTRLA, _led_mode);
+    uint8_t _t = CLKCTRL_OSCHFCTRLA | CLKCTRL_ALGSEL_bm | CLKCTRL_AUTOTUNE_SOF_gc;
+    _PROTECTED_WRITE(CLKCTRL_OSCHFCTRLA, _t);
 
     /* Output GPIO */
     VPORTD_DIR = 0b00110111;    /* 5:HVCP2 4:HVCP1 2:HVSL3 1:HVSL2 0:HVSL1 */
 
   #ifdef CONFIG_PGM_VPOWER_ENABLE
-    vportRegister(PIN_PGM_VPOWER).DIR |= portBitmask(PIN_PGM_VPOWER);
+    vportRegister(PIN_PGM_VPOWER).DIR |= pinBitmask(PIN_PGM_VPOWER);
   #endif
 
     /* Pull-Up GPIO */
@@ -56,10 +56,6 @@ namespace SYS {
     pinControlRegister(PIN_VCP_RXD)      = PORT_PULLUPEN_bm;
     pinControlRegister(PIN_PGM_TDAT)     = PORT_PULLUPEN_bm;
     pinControlRegister(PIN_PGM_TRST)     = PORT_PULLUPEN_bm | PORT_ISC_INPUT_DISABLE_gc;
-  #ifdef CONFIG_PGM_PDI_ENABLE
-    pinControlRegister(PIN_PGM_PDAT)     = 0;
-    pinControlRegister(PIN_PGM_PCLK)     = PORT_ISC_INPUT_DISABLE_gc;
-  #endif
     pinControlRegister(PIN_SYS_SW0)      = PORT_PULLUPEN_bm | PORT_ISC_RISING_gc;
     pinControlRegister(PIN_SYS_LED0)     = PORT_INVEN_bm    | PORT_ISC_INPUT_DISABLE_gc;
     pinControlRegister(PIN_HVC_CHGPUMP1) = PORT_INVEN_bm    | PORT_ISC_INPUT_DISABLE_gc;
@@ -79,8 +75,7 @@ namespace SYS {
     PORTMUX_TCAROUTEA     = PORTMUX_TCA0_PORTD_gc;          /* TCA0_WOn_ALT3 -> PORTD */
 
     /*** Event System ***/
-    EVSYS_CHANNEL0        = EVSYS_CHANNEL_RTC_EVGEN0_gc;    /* 1024Hz periodic.  */
-    EVSYS_CHANNEL1        = EVSYS_CHANNEL_RTC_EVGEN1_gc;    /* 128Hz periodic.   */
+    EVSYS_CHANNEL1        = EVSYS_CHANNEL_RTC_EVGEN1_gc;    /* 128Hz periodic. */
     EVSYS_CHANNEL2        = EVSYS_CHANNEL_CCL_LUT1_gc;      /* <- Indicator */
     EVSYS_CHANNEL3        = EVSYS_CHANNEL_CCL_LUT2_gc;      /* <- LED0 */
     EVSYS_CHANNEL4        = EVSYS_CHANNEL_PORTX_EVGEN1(PIN_VCP_RXD);  /* <- VRxD */
@@ -93,7 +88,7 @@ namespace SYS {
     EVSYS_USERCCLLUT3A    = EVSYS_USER_CHANNEL4_gc;         /* <- VRxD */
 
     EVSYS_USERTCB1CAPT    = EVSYS_USER_CHANNEL2_gc;         /* TCB1_CAPT <- Strobe */
-    EVSYS_USERTCB0COUNT   = EVSYS_USER_CHANNEL0_gc;         /* TCB0_CLK = 1024Hz */
+    EVSYS_USERTCB0COUNT   = EVSYS_USER_CHANNEL1_gc;         /* TCB0_CLK = 128Hz */
 
     /*** CCL0 : SW0 FALLING Interrupt generator ***/
     /* The rising edge of SW0 triggers a PORTx interrupt,
@@ -118,7 +113,8 @@ namespace SYS {
     /*** CCL2 : LED0 (PF2:ORANGE) Heart-Beat generator ***/
     CCL_TRUTH2    = CCL_TRUTH_1_bm | CCL_TRUTH_2_bm;
     CCL_LUT2CTRLC = CCL_INSEL2_TCB1_gc;                     /* <- TCB1_WO */
-    CCL_LUT2CTRLB = CCL_INSEL0_TCA0_gc | CCL_INSEL1_EVENTA_gc;
+    CCL_LUT2CTRLB = CCL_INSEL1_TCA0_gc                      /* <- TCA0_WO1 */
+                  | CCL_INSEL0_TCB0_gc;                     /* <- TCB0_WO */
     CCL_LUT2CTRLA = CCL_ENABLE_bm;                          /* -> EVS_CH3 */
 
     /*** CCL enable ***/
@@ -130,9 +126,10 @@ namespace SYS {
     /* The lower timer controls the blinking rate of the LED. */
     /* The top timer is used as a period timer */
     /* and as the output for the charge pump.  */
+    TCA0_SPLIT_CTRLD = TCA_SPLIT_SPLITM_bm;
 
     /*** TCB0 ***/
-    /* The TCB0 timer is configured in the SYS and Timeout module. */
+    TCB0_CTRLB = TCB_CNTMODE_PWM8_gc;
 
     /*** TCB1 ***/
     /* TCB1 is used to control the LED1 blinking rate. */
@@ -146,13 +143,16 @@ namespace SYS {
     RTC_PITEVGENCTRLA = RTC_EVGEN0SEL_DIV32_gc | RTC_EVGEN1SEL_DIV256_gc;
     RTC_PITCTRLA = RTC_PITEN_bm;
 
+    /* Drive a 1024Hz counter for RTC_CNT */
+    RTC_CTRLA = RTC_RTCEN_bm | RTC_PRESCALER_DIV32_gc;
+
     /*** VUSB Bus-Powerd ***/
     /* If you are supplying 3V3 to the VUSB pad from an
        external power source, you can comment this out.*/
     // SYSCFG_VUSBCTRL = SYSCFG_USBVREG_bm;
 
     /* Voltage measurements may initially return erroneous values. */
-    _vtarget = get_vdd();
+    setup_adc();
   }
 
 };  /* SYS */

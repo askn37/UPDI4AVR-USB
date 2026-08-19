@@ -5,8 +5,8 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.35.49+
- * @date 2026-08-09
+ * @version 1.35.50+
+ * @date 2026-08-18
  * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -53,6 +53,7 @@ namespace JTAG {
     bool _result = false;
     uint8_t _cmd = EP_MEM.dap_data[0];
     uint8_t _sub = EP_MEM.dap_data[1];
+    EVSYS_SWEVENTA = EVSYS_SWEVENTA_CH2_gc;
     D2PRINTF("DAP=%02X SUB=%02X\r\n", _cmd, _sub);
     USB::ep_dpi_pending();
 
@@ -215,6 +216,10 @@ namespace JTAG {
     }
     else if (_cmd == 0x11) {        /* CMD3_SIGN_OFF */
       D1PRINTF(" GEN_SIGN_OFF\r\n");
+      if (bit_is_clear(GPCONF, GPCONF_VCP_bp)) {
+        USART::setup();
+        USART::change_vcp();
+      }
       packet.in.res = 0x80;         /* RSP3_OK */
     }
     else {

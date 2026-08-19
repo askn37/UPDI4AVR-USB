@@ -5,8 +5,8 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.35.49+
- * @date 2026-08-09
+ * @version 1.35.50+
+ * @date 2026-08-18
  * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -316,9 +316,8 @@ namespace PDI {
   size_t timeout_fallback (void) {
     D1PRINTF(" Fail\r\n");
     /* If a timeout occurs, the communication speed will be reduced. */
-    if (_xclk == 50) return 0;
-    _xclk -= 50;
-    if (_xclk < 50) _xclk = 50;
+    _xclk -= 500;
+    if (_xclk < 500) return 0;
     USART::change_pdi();
     return send_break();
   }
@@ -331,6 +330,7 @@ namespace PDI {
     };
 
     USART::setup();
+    pinControlRegister(PIN_PGM_PDAT) = 0;
 
     digitalWriteMacro(PIN_PGM_PDAT, LOW);
     pinLogicPull(PIN_PGM_PDAT);
@@ -388,6 +388,7 @@ namespace PDI {
       SYS::delay_2500us();
     }
     pinLogicOpen(PIN_PGM_PCLK);
+    pinControlRegister(PIN_PGM_PDAT) = PORT_ISC_INPUT_DISABLE_gc;
     PGCONF = 0;
     USART::change_vcp();
     return _rsp;

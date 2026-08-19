@@ -5,8 +5,8 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.35.49+
- * @date 2026-08-09
+ * @version 1.35.50+
+ * @date 2026-08-18
  * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -29,8 +29,8 @@
 #define pinLogicPull(PIN) openDrainWriteMacro(PIN, LOW)
 #define pinLogicOpen(PIN) openDrainWriteMacro(PIN, HIGH)
 
-#ifndef portBitmask   /* Compliant with SDK@0.4.6+ */
-  #define portBitmask(PIN)  (1 << (PIN & 7))
+#ifndef pinBitmask    /* Compliant with SDK@0.4.6+ */
+  #define pinBitmask(PIN) (1 << (PIN & 7))
 #endif
 
 #ifdef PORTA_EVGENCTRLA
@@ -43,12 +43,8 @@
 #endif
 
 /*** LED Timer configuration ***/
-#define TM_HBEAT (F_CPU / 1024 / 128 - 1)
-#define TM_FLASH ((F_CPU / 1024) / 2 - 1)
-#define TM_BLINK ((F_CPU / 1024) / 4 - 1)
-#define TM_FAST  ((F_CPU / 1024) / 8 - 1)
 #define TM_VCPBL ((F_CPU / 1024) / 32 - 1)
-#define HVC_CLK  5000000
+#define HVC_CLK  5000000L
 
 /*** Debug UART macro symbol ***/
 #undef Serial
@@ -131,6 +127,8 @@
 #define RXDATA GPR_GPR1
 
 #define GPCONF GPR_GPR2
+  #define GPCONF_USB_gm   (0x1F)
+  #define GPCONF_SW0_gm   (0xE0)
   #define GPCONF_USB_bp   0         /* USB interface is active */
   #define GPCONF_USB_bm   (1 << 0)
   #define GPCONF_VCP_bp   1         /* VCP enabled */
@@ -157,10 +155,8 @@
   #define PGCONF_ERSE_bm  (1 << 2)
   #define PGCONF_XDIR_bp  3         /* PDI_DATA direction */
   #define PGCONF_XDIR_bm  (1 << 3)
-  #define PGCONF_HVEN_bp  6         /* HV control in TPI */
-  #define PGCONF_HVEN_bm  (1 << 6)
-  #define PGCONF_FAIL_bp  7         /* Initialization failed (timeout) */
-  #define PGCONF_FAIL_bm  (1 << 7)
+  #define PGCONF_HVEN_bp  4         /* HV control in TPI */
+  #define PGCONF_HVEN_bm  (1 << 4)
 
 /*
  * Global struct
@@ -421,7 +417,6 @@ extern "C" {
 
     /* SYSTEM */
     extern jmp_buf TIMEOUT_CONTEXT;
-    extern uint8_t _beat;
     extern uint8_t _led_mode;
 
     /* USB */
@@ -499,7 +494,6 @@ namespace PDI {
 
 namespace SYS {
   void setup (void);
-  void beat_tune (void);
   void LED_HeartBeat (void);
   void LED_Flash (void);
   void LED_Blink (void);
@@ -510,6 +504,7 @@ namespace SYS {
   void reset_leave (void);
   void reboot (void);
   bool is_boundary_flash_page (uint32_t _dwAddr);
+  void setup_adc (void);
   uint16_t get_vdd (void);
   void hvc_enable (void);
   void hvc_leave (void);
@@ -517,11 +512,11 @@ namespace SYS {
   void delay_100us (void);
   void delay_800us (void);
   void delay_2500us (void);
+  void delay_20ms (void);
   void delay_125ms (void);
 };
 
 namespace Timeout {
-  void setup (void);
   void start (uint16_t _ms);
   void stop (void) __attribute__((used, naked, noinline));
   void extend (uint16_t _ms);

@@ -5,8 +5,8 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.35.49+
- * @date 2026-08-09
+ * @version 1.35.50+
+ * @date 2026-08-18
  * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -241,7 +241,7 @@ namespace USB {
       USB0_FIFOWP = 0;
       USB0_EPPTR = (uint16_t)&EP_TABLE.EP;
       USB0_CTRLB = USB_ATTACH_bm;
-      GPCONF = 0;
+      GPCONF &= GPCONF_SW0_gm;
       PGCONF = 0;
       RXSTAT = 0;
       _send_break = 0;
@@ -642,6 +642,7 @@ namespace USB {
   void handling_control_transactions (void) {
     bool _listen = false;
     uint8_t bmRequestType = EP_MEM.req_data.bmRequestType;
+    EVSYS_SWEVENTA = EVSYS_SWEVENTA_CH2_gc;
     D1PRINTF("RQ=%02X:%04X:%02X:%02X:%04X:%04X:%04X\r\n",
       EP_REQ.STATUS, EP_REQ.CNT, EP_MEM.req_data.bmRequestType, EP_MEM.req_data.bRequest,
       EP_MEM.req_data.wValue, EP_MEM.req_data.wIndex, EP_MEM.req_data.wLength);
