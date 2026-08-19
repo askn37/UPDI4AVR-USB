@@ -135,7 +135,6 @@ int main (void) {
 
     /* If the USB port is not open, go back to the loop beginning. */
     if (bit_is_clear(GPCONF, GPCONF_USB_bp)) {
-      // SYS::LED_Turn();
       continue;
     }
 

@@ -55,12 +55,13 @@
 
 
 /*
- * UPDI/PDI Program interface operating clock.
+ * UPDI/PDI/ISP Program interface operating clock.
  * In avrdude this can be changed with `-B125khz` etc.
  */
 
 #define UPDI_CLK 225
 #define PDI_CLK  2500
+#define ISP_CLK  250
 
 
 /*

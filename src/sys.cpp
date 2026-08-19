@@ -144,12 +144,18 @@ namespace SYS {
     CCL_CTRLA = CCL_ENABLE_bm;
 
     /*** TCA0 ***/
-    /* TCA0 is split into two 8-bit timers. */
-    /* The lower timer controls the blinking rate of the LED. */
-    /* The top timer is used as a period timer */
-    /* and as the output for the charge pump.  */
+    /*
+     * TCA0 is divided into 8-bit timers totaling 6-channels.
+     *
+     * WO0 : ISP Bit-banging
+     * WO1 : LED0 Heart-beat (in combination with TCB0)
+     * WO2 : UPDI Bit-banging
+     * WO3 : reserved
+     * WO4 : Charge-pump output-1 (negative)
+     * WO5 : Charge-pump output-2 (positive)
+     */
     TCA0_SPLIT_CTRLD = TCA_SPLIT_SPLITM_bm;
-    TCA0_SPLIT_LCMP2 = F_CPU / 125000;      /* TCA0_WO2 */
+    TCA0_SPLIT_LCMP2 = F_CPU / 125000  / 2; /* TCA0_WO2 */
     TCA0_SPLIT_HCMP1 = F_CPU / HVC_CLK / 2; /* TCA0_WO4 */
     TCA0_SPLIT_HCMP2 = F_CPU / HVC_CLK / 2; /* TCA0_WO5 */
     TCA0_SPLIT_HPER = (F_CPU / HVC_CLK) - 1;
@@ -228,17 +234,6 @@ namespace SYS {
     LED_TM(4, 12);
   }
 
-  /* Response to holding down SW0 before
-     USB communication is established. */
-  WEAK void LED_Turn (void) {
-    #ifdef PIN_SYS_SW0
-    if (!digitalReadMacro(PIN_SYS_SW0)) {
-      EVSYS_SWEVENTA = EVSYS_SWEVENTA_CH2_gc;
-      GPCONF &= ~(GPCONF_HLD_bm | GPCONF_RIS_bm | GPCONF_FAL_bm);
-    }
-    #endif
-  }
-
   /*
    * Target Reset
    */
@@ -273,17 +268,18 @@ namespace SYS {
      and bit manipulation, without switching USART. */
   void send_bitmap (const uint8_t _bitmap[], const size_t _length) {
     TCA0_SPLIT_CTRLA = 0;
-    TCA0_SPLIT_LCNT  = 0;
+    TCA0_SPLIT_LCNT  = TCA0_SPLIT_LCMP2;
+    TCA0_SPLIT_LPER  = TCA0_SPLIT_LCMP2;
     TCA0_SPLIT_CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV1_gc;
     for (uint8_t i = 0; i < _length; i++) {
       uint8_t _d = (_bitmap[i >> 3]) >> (i & 7);
-      loop_until_bit_is_set(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_LCMP2_bp);
+      loop_until_bit_is_set(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_LUNF_bp);
       if (bit_is_set(_d, 0))
         pinLogicOpen(PIN_PGM_TDAT);
       else
         pinLogicPull(PIN_PGM_TDAT);
       EVSYS_SWEVENTA = EVSYS_SWEVENTA_CH2_gc;
-      bit_set(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_LCMP2_bp);
+      bit_set(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_LUNF_bp);
     }
     TCA0_SPLIT_CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV1024_gc;
   }
@@ -307,6 +303,7 @@ namespace SYS {
       */
       send_bitmap(_updi_bitmap_reset, sizeof(_updi_bitmap_reset) * 8);
       bit_set(GPCONF, GPCONF_HLD_bp);
+      pinLogicOpen(PIN_SYS_SW0);
     }
   }
 
@@ -394,7 +391,7 @@ namespace SYS {
   void hvc_enable (void) {
   #ifdef CONFIG_HVC_ENABLE
     TCA0_SPLIT_CTRLB = TCA_SPLIT_HCMP2EN_bm | TCA_SPLIT_HCMP1EN_bm;
-    TCA0_SPLIT_HCNT = 0;
+    TCA0_SPLIT_HCNT  = 0;
     TCA0_SPLIT_CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV1_gc;
     delay_100us();
   #endif
@@ -441,6 +438,12 @@ ISR(CCL_CCL_vect) {
   /* SW0 Falling Intrrupt from CCLn */
   CCL_INTFLAGS = ~0;
   bit_set(GPCONF, GPCONF_FAL_bp);
+  /*
+   * To eliminate chattering, change the SW0 output to LOW.
+   * Do not forget to revert it to a pull-up input
+   * once the necessary processing is complete.
+   */
+  pinLogicPull(PIN_SYS_SW0);
   D2PRINTF("{F}");
 }
 

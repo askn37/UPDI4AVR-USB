@@ -188,6 +188,7 @@ namespace USART {
       D1PRINTF(" VCP=FAIL\r\n");
     }
     GPCONF &= ~(GPCONF_HLD_bm | GPCONF_RIS_bm | GPCONF_FAL_bm);
+    pinLogicOpen(PIN_SYS_SW0);
     if (bit_is_set(GPCONF, GPCONF_USB_bp))
       SYS::LED_HeartBeat();
     else

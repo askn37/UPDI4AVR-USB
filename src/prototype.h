@@ -469,6 +469,10 @@ extern "C" {
   } /* NAMELESS */;
 };
 
+namespace ISP {
+  size_t jtag_scope_isp (void);
+};
+
 namespace JTAG {
   bool dap_command_check (void);
   void jtag_scope_branch (void);
@@ -498,7 +502,6 @@ namespace SYS {
   void LED_Flash (void);
   void LED_Blink (void);
   void LED_Fast (void);
-  void LED_Turn (void);
   void power_reset (bool _off = true, bool _on = true);
   void reset_enter (void);
   void reset_leave (void);

@@ -115,12 +115,18 @@ namespace SYS {
     CCL_CTRLA = CCL_ENABLE_bm;
 
     /*** TCA0 ***/
-    /* TCA0 is split into two 8-bit timers. */
-    /* The lower timer controls the blinking rate of the LED. */
-    /* The top timer is used as a period timer */
-    /* and as the output for the charge pump.  */
+    /*
+     * TCA0 is divided into 8-bit timers totaling 6-channels.
+     *
+     * WO0 : ISP Bit-banging
+     * WO1 : LED0 Heart-beat (in combination with TCB0)
+     * WO2 : UPDI Bit-banging
+     * WO3 : reserved
+     * WO4 : Charge-pump output-1 (negative)
+     * WO5 : Charge-pump output-2 (positive)
+     */
     TCA0_SPLIT_CTRLD = TCA_SPLIT_SPLITM_bm;
-    TCA0_SPLIT_LCMP2 = F_CPU / 125000;      /* TCA0_WO2 */
+    TCA0_SPLIT_LCMP2 = F_CPU / 125000  / 2; /* TCA0_WO2 */
     TCA0_SPLIT_HCMP1 = F_CPU / HVC_CLK / 2; /* TCA0_WO4 */
     TCA0_SPLIT_HCMP2 = F_CPU / HVC_CLK / 2; /* TCA0_WO5 */
     TCA0_SPLIT_HPER = (F_CPU / HVC_CLK) - 1;
