@@ -12,21 +12,25 @@ The conventional *USB4AVR* is designed to use a USB-serial conversion circuit, b
 
 ### Recent Features
 
+v1.35.50
+- Modified Timer/CCL/RTC/EVSYS configuration
+- Added hex/variants
+- Prepared for experimental ISP support
+
 v1.35.49
 - Introduction of HAL profile structure
 - Revised bare-chip pin layout
 - Revamped CCL/TC* operations
-
-v1.34.48
-- Support for NVMCTRL Version 6; AVR-SD famiry
-  - Robust protection mechanisms specific to the AVR-SD family (particularly FUSE settings) must be disabled as necessary.
-  - *The AVR-LA family is supported by the same NVMCTRL version 5 as the AVR-EB.*
 
 ## Quick Start
 
 The pre-built binaries can be uploaded to the ["AVR64DU32 Curiosity Nano : EV59F82A"](https://www.microchip.com/en-us/development-tool/ev59f82a) product for easy setup. [->Click Here](https://github.com/askn37/UPDI4AVR-USB/tree/main/hex/updi4avr-usb)
 
 ## Introduction
+
+<details>
+
+<summary>A story from a little while ago</summary>
 
 The existence of the AVR-DU family was announced in the spring of 2021, but was soon put on hold. While that was stalled, the AVR-Ex series was released first, and after some time, the first production AVR64DU32 (with unfortunate errata) was finally released in May 2024, and the release of the remaining 14P/20P products was confirmed in October.
 
@@ -43,6 +47,8 @@ Next, I investigated the AVRDUDE source code "jtag3.c". It was not difficult bec
 It took 10 days to create a scenario and get it to work, and another 20 days to check the operation of more than 20 types of UPDI devices I had on hand and get a result that I was fully satisfied with. But more than that, it's tedious time to prepare the outline!
 
 Finally, I'm releasing the first open source branch that can be used for ["AVR64DU32 Curiosity Nano : EV59F82A"](https://www.microchip.com/en-us/development-tool/ev59f82a). It should be fine for trying it out for general use.
+
+</details>
 
 ## What you can and can't do
 
@@ -77,7 +83,8 @@ This software cannot:
 - Does not work with devices other than the AVR-DU family, as they do not have the necessary and compatible USB peripherals.
   - Porting to the ATxmega AU family is probably possible, as the USB peripherals are similar. (No plans: Fork required)
 - Supports USB 2.0 "Full-Speed" only. The AVR-DU family does not support "High-Speed". (Not possible)
-- Does not support ISP/PP/HVPP type devices. Hardware requirements are different, and GPIO is not common, so it will be a different software. (Fork required)
+- Does not support ISP/PP/HVPP type devices. Hardware requirements are different, and GPIO is not common, so it will be a different software. ~~(Fork required)~~
+  - We are currently investigating the possibility of supporting certain ISP variants (specifically, low-voltage SPI types).
 - JTAG communication, SWD/SWO, dWire, and OCD functions are not supported. (No plans)
 - High voltage programming is not supported because the 14P package product (AVR16-32DU14) does not have any extra pins. 20P/28P/32P package products are required.
 - DEBUG build (PRINTF) cannot be used because there are insufficient pins in 14P/20P and no free space in 16KiB models.

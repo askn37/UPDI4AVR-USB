@@ -12,15 +12,15 @@
 
 ### Recent Features
 
+v1.35.50
+- Timer/CCL/RTC/EVSYSの構成変更
+- `hex/variants`の新設
+- ISP対応試みの準備
+
 v1.35.49
 - HAL profile 構造の導入
   - ベアチップのピンレイアウト見直し
   - CCL/TC* の運用を刷新
-
-v1.34.48
-- NVMCTRL version 6（AVR-SD 系統）への対応
-  - AVR-SD 系統特有の堅牢な保護メカニズム（特に FUSE 設定）については必要なだけ無効になっていなければならない。
-  - *AVR-LA 系統は AVR-EB と同様に NVMCTRL version 5 でサポートされている。*
 
 ## Quick Start
 
@@ -29,6 +29,10 @@ v1.34.48
 The pre-built binaries can be uploaded to the ["AVR64DU32 Curiosity Nano : EV59F82A"](https://www.microchip.com/en-us/development-tool/ev59f82a) product for easy setup. [->Click Here](https://github.com/askn37/UPDI4AVR-USB/tree/main/hex/updi4avr-usb)
 
 ## Introduction
+
+<details>
+
+<summary>少し前の話</summary>
 
 AVR-DUファミリーの存在は 2021年春に公表されたものの、すぐにペンディングした。それが停滞している間にAVR-Exシリーズの発売が先行し、さらに時間を経て 2024年5月にようやく AVR64DU32 第一次生産品（残念なErrata有）が発売され、残る14P/20P製品の発売は10月に確認された。
 
@@ -45,6 +49,8 @@ AVR-DUファミリーの存在は 2021年春に公表されたものの、すぐ
 シナリオを作り、概ね動くようになるまで10日、手元にある 20種類以上の UPDIデバイスを片っ端から動作確認し、十分満足できる結果が得られるようになるまでさらに20日。だがそれ以上に、概説を整えなければならない退屈な時間！
 
 そんな経緯を経てようやく["AVR64DU32 Curiosity Nano : EV59F82A"](https://www.microchip.com/en-us/development-tool/ev59f82a)で使用できる、最初のオープンソース ブランチを公開する。HV制御のような、予定機能のいくつかはまだ実装されていないが、一般用途で試してみるには困らないはずだ。
+
+</details>
 
 ## What you can and can't do
 
@@ -79,7 +85,8 @@ AVR-DUファミリーの存在は 2021年春に公表されたものの、すぐ
 - AVR-DUファミリー以外には、必要かつ互換性のある USB周辺機能が実装されていないため、動作しない。
   - ATxmega AU ファミリーへの移植は USB周辺機能が似ているため、おそらくは可能。（計画はない：Fork必須）
 - USB 2.0 "Full-Speed" のみ対応。AVR-DUファミリーは "High-Speed"に対応していない。（不可能）
-- ISP／PP／HVPPタイプのデバイスはサポート対象外。ハードウェア要件が異なり、GPIOに共通性がないので別のソフトウェアとなる。（Fork必須）
+- ISP／PP／HVPPタイプのデバイスはサポート対象外。ハードウェア要件が異なり、GPIOに共通性がないので別のソフトウェアとなる。~~（Fork必須）~~
+  - 一部の ISP品種（低電圧SPIタイプ）に限れば対応できそうな見込みがあるので研究中。
 - JTAG通信機能、SWD/SWO機能、dWire機能、OCD機能はサポートされない。（計画はない）
 - 14P外囲器製品（AVR16-32DU14）には余剰ピンがないため、高電圧書込サポートはできない。20P/28P/32P外囲器製品が必要。
 - 14P/20Pではピン数が不足、16KiB品種では空き容量がないため DEBUGビルド（PRINTF）は使用できない。
