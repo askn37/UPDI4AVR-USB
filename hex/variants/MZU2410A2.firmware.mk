@@ -7,6 +7,7 @@ VARIANT = MZU2410A2
 TARGET  = 33_AVR32DU28
 
 CODE_HEX = $(SKETCH).ino.hex
+FUSE_HEX = $(SKETCH).ino.fuse
 BOOT_HEX = $(SKETCH).ino.with_bootloader.hex
 
 # Additional environment variables can be specified here.
@@ -33,6 +34,7 @@ MF := $(MAKEFILE_LIST)
 build: FORCE
 	$(MAKE) -f $(MF) compile
 	@mv ./build/$(CODE_HEX) hex/$(VARIANT).firmware.hex
+	@mv ./build/$(FUSE_HEX) hex/$(VARIANT).bootloader.fuse
 	@mv ./build/$(BOOT_HEX) hex/$(VARIANT).firmware_withboot.hex
 	@ls -lh hex/$(VARIANT)*.hex
 	@$(MAKE) -f $(MF) clean

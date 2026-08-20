@@ -7,6 +7,7 @@ VARIANT = AVRDU_28P
 TARGET  = 33_AVR32DU28
 
 CODE_HEX = $(SKETCH).ino.hex
+FUSE_HEX = $(SKETCH).ino.fuse
 
 # Additional environment variables can be specified here.
 
@@ -36,6 +37,7 @@ build: FORCE
 #	@$(eval TOOLS := $(shell dirname $(shell cat ../build/compile_commands.json | grep toolchain | head -n1) | tr -d '"'))
 #	@$(TOOLS)/avr-size -A ../build/$(SKETCH).ino.elf
 	@mv ./build/$(CODE_HEX) hex/$(VARIANT).hex
+	@mv ./build/$(FUSE_HEX) hex/$(VARIANT).fuse
 	@ls -lh hex/$(VARIANT).hex
 	@$(MAKE) -f $(MF) clean
 
