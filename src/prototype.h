@@ -42,6 +42,10 @@
   #endif
 #endif
 
+#define ISC_RISING  (PORT_PULLUPEN_bm | PORT_ISC_RISING_gc)
+#define ISC_RISWAIT (                   PORT_ISC_RISING_gc)
+#define ISC_FALLING (PORT_PULLUPEN_bm | PORT_ISC_FALLING_gc)
+
 /*** LED Timer configuration ***/
 #define TM_VCPBL ((F_CPU / 1024) / 32 - 1)
 #define HVC_CLK  5000000L
@@ -523,6 +527,7 @@ namespace Timeout {
   void start (uint16_t _ms);
   void stop (void) __attribute__((used, naked, noinline));
   void extend (uint16_t _ms);
+  void delay_rtc_millis (uint16_t _ms);
   size_t command (size_t (*func_p)(void), size_t (*fail_p)(void) = nullptr, uint16_t _ms = 800);
 };
 

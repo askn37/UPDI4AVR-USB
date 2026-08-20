@@ -52,6 +52,18 @@ namespace Timeout {
   }
 
   /*
+   * Timeout delay.
+   */
+  void delay_rtc_millis (uint16_t _ms) {
+    while (RTC_STATUS);
+    RTC_CMP = RTC_CNT + _ms;
+    while (bit_is_clear(RTC_INTFLAGS, RTC_CMP_bp)) {
+      wdt_reset();
+    }
+    RTC_INTFLAGS = RTC_CMP_bm;
+  }
+
+  /*
    * Timeout block.
    * Does not work with interrupts disabled.
    * RETI must be called after the interrupt is suspended.

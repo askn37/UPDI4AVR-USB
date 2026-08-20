@@ -56,20 +56,14 @@ namespace SYS {
     pinControlRegister(PIN_VCP_RXD)      = PORT_PULLUPEN_bm;
     pinControlRegister(PIN_PGM_TDAT)     = PORT_PULLUPEN_bm;
     pinControlRegister(PIN_PGM_TRST)     = PORT_PULLUPEN_bm | PORT_ISC_INPUT_DISABLE_gc;
-    pinControlRegister(PIN_SYS_SW0)      = PORT_PULLUPEN_bm | PORT_ISC_RISING_gc;
+    pinControlRegister(PIN_SYS_SW0)      = ISC_FALLING;
     pinControlRegister(PIN_SYS_LED0)     = PORT_INVEN_bm    | PORT_ISC_INPUT_DISABLE_gc;
     pinControlRegister(PIN_HVC_CHGPUMP1) = PORT_INVEN_bm    | PORT_ISC_INPUT_DISABLE_gc;
     /* LED0=PF2 on the Curiosity Nano board uses negative logic. */
     /* Assume that LED1=PF3 is positive logic. */
 
     /* PORTx event generator */
-  #if ((PIN_SYS_SW0 & 0xE0) == (PIN_VCP_RXD & 0xE0))
-    portRegister(PIN_SYS_SW0).EVGENCTRLA = pinPosition(PIN_SYS_SW0)       /* EVG0 */
-                                         | pinPosition(PIN_VCP_RXD) << 4; /* EVG1 */
-  #else
-    portRegister(PIN_SYS_SW0).EVGENCTRLA = pinPosition(PIN_SYS_SW0);      /* EVG0 */
-    portRegister(PIN_VCP_RXD).EVGENCTRLA = pinPosition(PIN_VCP_RXD) << 4; /* EVG1 */
-  #endif
+    portRegister(PIN_VCP_RXD).EVGENCTRLA = pinPosition(PIN_VCP_RXD);  /* EVG0 */
 
     /*** Port Multiplexer ***/
     PORTMUX_TCAROUTEA     = PORTMUX_TCA0_PORTD_gc;          /* TCA0_WOn_ALT3 -> PORTD */
@@ -78,25 +72,15 @@ namespace SYS {
     EVSYS_CHANNEL1        = EVSYS_CHANNEL_RTC_EVGEN1_gc;    /* 128Hz periodic. */
     EVSYS_CHANNEL2        = EVSYS_CHANNEL_CCL_LUT1_gc;      /* <- Indicator */
     EVSYS_CHANNEL3        = EVSYS_CHANNEL_CCL_LUT2_gc;      /* <- LED0 */
-    EVSYS_CHANNEL4        = EVSYS_CHANNEL_PORTX_EVGEN1(PIN_VCP_RXD);  /* <- VRxD */
-    EVSYS_CHANNEL5        = EVSYS_CHANNEL_PORTX_EVGEN0(PIN_SYS_SW0);  /* <- SW0  */
+    EVSYS_CHANNEL4        = EVSYS_CHANNEL_PORTX_EVGEN0(PIN_VCP_RXD);  /* <- VRxD */
 
     EVSYS_USEREVSYSEVOUTF = EVSYS_USER_CHANNEL3_gc;         /* LED0 -> EVOUTF:PIN_PF2 */
 
-    EVSYS_USERCCLLUT0A    = EVSYS_USER_CHANNEL5_gc;         /* <- SW0  */
     EVSYS_USERCCLLUT1A    = EVSYS_USER_CHANNEL4_gc;         /* <- VRxD */
     EVSYS_USERCCLLUT3A    = EVSYS_USER_CHANNEL4_gc;         /* <- VRxD */
 
     EVSYS_USERTCB1CAPT    = EVSYS_USER_CHANNEL2_gc;         /* TCB1_CAPT <- Strobe */
-    EVSYS_USERTCB0COUNT   = EVSYS_USER_CHANNEL1_gc;         /* TCB0_CLK = 128Hz */
-
-    /*** CCL0 : SW0 FALLING Interrupt generator ***/
-    /* The rising edge of SW0 triggers a PORTx interrupt,
-       while the falling edge triggers a CCL interrupt. */
-    CCL_TRUTH0    = CCL_TRUTH_1_bm;
-    CCL_LUT0CTRLB = CCL_INSEL0_EVENTA_gc;                   /* <- EVS_CH5 */
-    CCL_LUT0CTRLA = CCL_ENABLE_bm | CCL_FILTSEL_FILTER_gc | CCL_CLKSRC_OSC32K_gc;
-    CCL_INTCTRL0  = CCL_INTMODE0_FALLING_gc;
+    EVSYS_USERTCB0COUNT   = EVSYS_USER_CHANNEL1_gc;         /* <- 128Hz */
 
     /*** CCL1 : VCP Indicator ***/
     CCL_TRUTH1    = CCL_TRUTH_0_bm | CCL_TRUTH_1_bm;

@@ -112,8 +112,7 @@ int main (void) {
 
 #if !defined(PIN_SYS_VDETECT)
   /* If you do not use VBD, insert the shortest possible delay instead. */
-  SYS::delay_125ms();
-  SYS::delay_125ms();
+  Timeout::delay_rtc_millis(250);
   USB::setup_device(true);
 #endif
 
@@ -128,7 +127,7 @@ int main (void) {
     if (USB::is_ep_setup()) USB::handling_control_transactions();
 
     /* If SW0 was used, work here. */
-    if (bit_is_clear(PGCONF, PGCONF_UPDI_bp)) {
+    if (bit_is_clear(PGCONF, PGCONF_UPDI_bp) && bit_is_clear(PGCONF, PGCONF_PROG_bp)) {
       if      (bit_is_set(GPCONF, GPCONF_HLD_bp)) SYS::reset_leave();
       else if (bit_is_set(GPCONF, GPCONF_FAL_bp)) SYS::reset_enter();
     }

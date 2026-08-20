@@ -81,20 +81,14 @@ namespace SYS {
     pinControlRegister(PIN_PGM_PDAT)     = 0;
     pinControlRegister(PIN_PGM_PCLK)     = PORT_ISC_INPUT_DISABLE_gc;
   #endif
-    pinControlRegister(PIN_SYS_SW0)      = PORT_PULLUPEN_bm | PORT_ISC_RISING_gc;
+    pinControlRegister(PIN_SYS_SW0)      = ISC_FALLING;
   #ifdef CONFIG_HVC_ENABLE
     pinControlRegister(PIN_HVC_CHGPUMP1) = PORT_INVEN_bm    | PORT_ISC_INPUT_DISABLE_gc;
   #endif
     /* PCLK disable/output is shared internal connection with TRST */
 
     /* PORTx event generator */
-  #if ((PIN_SYS_SW0 & 0xE0) == (PIN_VCP_RXD & 0xE0))
-    portRegister(PIN_SYS_SW0).EVGENCTRLA = pinPosition(PIN_SYS_SW0)       /* EVG0 */
-                                         | pinPosition(PIN_VCP_RXD) << 4; /* EVG1 */
-  #else
-    portRegister(PIN_SYS_SW0).EVGENCTRLA = pinPosition(PIN_SYS_SW0);      /* EVG0 */
-    portRegister(PIN_VCP_RXD).EVGENCTRLA = pinPosition(PIN_VCP_RXD) << 4; /* EVG1 */
-  #endif
+    portRegister(PIN_VCP_RXD).EVGENCTRLA = pinPosition(PIN_VCP_RXD);  /* EVG0 */
 
     /*** Port Multiplexer ***/
     PORTMUX_TCAROUTEA     = PORTMUX_TCA0_PORTD_gc;          /* TCA0_WOn_ALT3 -> PORTD */
@@ -102,23 +96,13 @@ namespace SYS {
     /*** Event System ***/
     EVSYS_CHANNEL1        = EVSYS_CHANNEL_RTC_EVGEN1_gc;    /* 128Hz periodic. */
     EVSYS_CHANNEL2        = EVSYS_CHANNEL_CCL_LUT3_gc;      /* <- Indicator */
-    EVSYS_CHANNEL4        = EVSYS_CHANNEL_PORTX_EVGEN1(PIN_VCP_RXD);  /* <- VRxD */
-    EVSYS_CHANNEL5        = EVSYS_CHANNEL_PORTX_EVGEN0(PIN_SYS_SW0);  /* <- SW0  */
+    EVSYS_CHANNEL4        = EVSYS_CHANNEL_PORTX_EVGEN0(PIN_VCP_RXD);  /* <- VRxD */
 
-    EVSYS_USERCCLLUT0A    = EVSYS_USER_CHANNEL5_gc;         /* <- SW0  */
     EVSYS_USERCCLLUT3A    = EVSYS_USER_CHANNEL4_gc;         /* <- VRxD */
     EVSYS_USERCCLLUT1A    = EVSYS_USER_CHANNEL4_gc;         /* <- VRxD */
 
     EVSYS_USERTCB1CAPT    = EVSYS_USER_CHANNEL2_gc;         /* TCB1_CAPT <- Strobe */
     EVSYS_USERTCB0COUNT   = EVSYS_USER_CHANNEL1_gc;         /* <- 128Hz */
-
-    /*** CCL0 : SW0 FALLING Interrupt generator ***/
-    /* The rising edge of SW0 triggers a PORTx interrupt,
-       while the falling edge triggers a CCL interrupt. */
-    CCL_TRUTH0    = CCL_TRUTH_1_bm;
-    CCL_LUT0CTRLB = CCL_INSEL0_EVENTA_gc;                   /* <- EVS_CH5 */
-    CCL_LUT0CTRLA = CCL_ENABLE_bm | CCL_FILTSEL_FILTER_gc | CCL_CLKSRC_OSC32K_gc;
-    CCL_INTCTRL0  = CCL_INTMODE0_FALLING_gc;
 
     /*** CCL3 : VCP Indicator ***/
     CCL_TRUTH3    = CCL_TRUTH_0_bm | CCL_TRUTH_1_bm;
@@ -194,7 +178,7 @@ namespace SYS {
   /* Heartbeat (waiting) */
   WEAK void LED_HeartBeat (void) {
     if (_led_mode != 1) {
-      D1PRINTF(" LED:HBEAT\r\n");
+      D1PRINTF(" LED=HB\r\n");
       TCA0_SPLIT_LPER  = TM_HBEAT - 1;
       TCA0_SPLIT_LCMP1 = TM_HBEAT >> 1; /* compare TCA0_WO1 */
       TCA0_SPLIT_CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV1024_gc;
@@ -208,7 +192,7 @@ namespace SYS {
 
   WEAK void LED_TM (uint8_t _mode, uint16_t _ccmp) {
     if (_led_mode != _mode) {
-      D1PRINTF(" LED:MD=%d\r\n", _mode);
+      D1PRINTF(" LED=%d\r\n", _mode);
       TCA0_SPLIT_LCMP1 = 0;             /* turn off TCA0_WO1 */
       TCA0_SPLIT_CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV1024_gc;
       TCB0_CNT   = (_ccmp >> 1) - 2;
@@ -274,10 +258,8 @@ namespace SYS {
     for (uint8_t i = 0; i < _length; i++) {
       uint8_t _d = (_bitmap[i >> 3]) >> (i & 7);
       loop_until_bit_is_set(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_LUNF_bp);
-      if (bit_is_set(_d, 0))
-        pinLogicOpen(PIN_PGM_TDAT);
-      else
-        pinLogicPull(PIN_PGM_TDAT);
+      if (bit_is_set(_d, 0)) pinLogicOpen(PIN_PGM_TDAT);
+      else                   pinLogicPull(PIN_PGM_TDAT);
       EVSYS_SWEVENTA = EVSYS_SWEVENTA_CH2_gc;
       bit_set(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_LUNF_bp);
     }
@@ -291,19 +273,22 @@ namespace SYS {
   void reset_enter (void) {
     if (bit_is_clear(GPCONF, GPCONF_HLD_bp)) {
       D1PRINTF("<RST:IN>\r\n");
-      DFLUSH();
+
       _ch_save = EVSYS_CHANNEL4;
       EVSYS_CHANNEL4 = EVSYS_CHANNEL_CCL_LUT2_gc;
       LED_Blink();
-      pinLogicPull(PIN_PGM_TRST);
+
       /*
-      * Puts a tinyAVR-0 which does not have a reset pad into reset state.
-      * This applies to all chips which have an enabled UPDI pad.
-      * Does not affect chips with an active reset pad or TPI/PDI type chips.
-      */
+       * Puts a tinyAVR-0/1/2 which does not have a reset pad into reset state.
+       * This applies to all chips which have an enabled UPDI pad.
+       * Does not affect chips with an active reset pad or TPI/PDI/ISP type chips.
+       */
+      pinLogicPull(PIN_PGM_TRST);
       send_bitmap(_updi_bitmap_reset, sizeof(_updi_bitmap_reset) * 8);
+
       bit_set(GPCONF, GPCONF_HLD_bp);
-      pinLogicOpen(PIN_SYS_SW0);
+      pinControlRegister(PIN_SYS_SW0) = ISC_RISING;
+      vportRegister(PIN_SYS_SW0).INTFLAGS = pinBitmask(PIN_SYS_SW0);
     }
   }
 
@@ -313,22 +298,26 @@ namespace SYS {
    * but if the USB is stopped, it will reboot at the end.
    */
   void reset_leave (void) {
-    if (bit_is_set(GPCONF, GPCONF_RIS_bp)) {
-      send_bitmap(_updi_bitmap_leave, sizeof(_updi_bitmap_leave) * 8);
+    if ((GPCONF & GPCONF_SW0_gm) == GPCONF_SW0_gm) {
       pinLogicOpen(PIN_PGM_TRST);
+      send_bitmap(_updi_bitmap_leave, sizeof(_updi_bitmap_leave) * 8);
+
   #ifdef CONFIG_VCP_DTR_RESET
       /* A delay of 64ms or more between when the bootloader starts and when RxD opens. */
-      delay_125ms();
+      Timeout::delay_rtc_millis(125);
   #endif
-      D1PRINTF("<RST:OUT>\r\n");
-      DFLUSH();
+
       EVSYS_CHANNEL4 = _ch_save;
-      if (bit_is_set(GPCONF, GPCONF_USB_bp))
+      if (bit_is_set(GPCONF, GPCONF_USB_bp)) {
         LED_HeartBeat();  /* The USB is ready. */
-      // else reboot();      /* USB disconnected, System reboot. */
-      else
+      }
+      else {
         LED_Flash();
-      GPCONF &= ~(GPCONF_HLD_bm | GPCONF_RIS_bm | GPCONF_FAL_bm);
+      }
+      D1PRINTF("<RST:OUT>\r\n");
+
+      GPCONF &= ~GPCONF_SW0_gm;
+      vportRegister(PIN_SYS_SW0).INTFLAGS = pinBitmask(PIN_SYS_SW0);
     }
   }
 
@@ -426,24 +415,19 @@ namespace SYS {
 
 };  /* SYS */
 
-/* If the level is not maintained for a sufficient period of time it will not function properly. */
+/*
+ * SW0 Interrupt Vestor
+ */
 ISR(portIntrruptVector(PIN_SYS_SW0)) {
-  /* SW0 Raising Interrupt */
-  vportRegister(PIN_SYS_SW0).INTFLAGS = ~0;
-  bit_set(GPCONF, GPCONF_RIS_bp);
-  D2PRINTF("{R}");
-}
-
-ISR(CCL_CCL_vect) {
-  /* SW0 Falling Intrrupt from CCLn */
-  CCL_INTFLAGS = ~0;
-  bit_set(GPCONF, GPCONF_FAL_bp);
-  /*
-   * To eliminate chattering, change the SW0 output to LOW.
-   * Do not forget to revert it to a pull-up input
-   * once the necessary processing is complete.
-   */
-  pinLogicPull(PIN_SYS_SW0);
+  if (bit_is_set(pinControlRegister(PIN_SYS_SW0), PORT_ISC_0_bp)) {
+    pinControlRegister(PIN_SYS_SW0) = ISC_RISWAIT;
+    // pinControlRegister(PIN_SYS_SW0) = ISC_RISING;
+    bit_set(GPCONF, GPCONF_FAL_bp);
+  }
+  else {
+    pinControlRegister(PIN_SYS_SW0) = ISC_FALLING;
+    bit_set(GPCONF, GPCONF_RIS_bp);
+  }
   D2PRINTF("{F}");
 }
 
