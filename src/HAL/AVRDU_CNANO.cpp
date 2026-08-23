@@ -92,10 +92,11 @@ namespace SYS {
     CCL_LUT1CTRLA = CCL_ENABLE_bm;
 
     /*** CCL3 : LED1 (PF3) generator ***/
-    CCL_TRUTH3    = CCL_TRUTH_0_bm | CCL_TRUTH_3_bm | CCL_TRUTH_5_bm;
-    CCL_LUT3CTRLC = CCL_INSEL2_EVENTB_gc;                   /* <- EVS_CH5 : VTxD */
-    CCL_LUT3CTRLB = CCL_INSEL0_EVENTA_gc                    /* <- EVS_CH4 : VRxD */
-                  | CCL_INSEL1_TCB1_gc;                     /* <- TCB1_WO */
+    /* Do not turn on; 3 */
+    CCL_TRUTH3    = CCL_TRUTH_1_bm | CCL_TRUTH_2_bm | CCL_TRUTH_4_bm;
+    CCL_LUT3CTRLC = CCL_INSEL2_TCB1_gc;                     /* <- TCB1_WO */
+    CCL_LUT3CTRLB = CCL_INSEL1_EVENTB_gc                    /* <- EVS_CH5 : VTxD */
+                  | CCL_INSEL0_EVENTA_gc;                   /* <- EVS_CH4 : VRxD */
     CCL_LUT3CTRLA = CCL_ENABLE_bm | CCL_OUTEN_bm;           /* -> PIN_PF3 */
 
     /*** CCL2 : LED0 (PF2:ORANGE) Heart-Beat generator ***/

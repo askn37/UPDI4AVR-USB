@@ -158,7 +158,7 @@ namespace TPI {
       *_q++ = RXDATA;
       ++_cnt;
     }
-    D1PRINTHEX(&packet.in.data, _wLength);
+    D1PRINTHEX(&packet.in.data, _wLength, ':');
     return _wLength;
   }
 
@@ -182,7 +182,7 @@ namespace TPI {
       _wLength++;
     }
     D1PRINTF(" WRITE=%04X:%d ", _dwAddr, _wLength);
-    D1PRINTHEX(_p, _wLength);
+    D1PRINTHEX(_p, _wLength, ':');
 
     /* For the flash code area, the page erase can be */
     /* omitted if the chip has already been erased.   */

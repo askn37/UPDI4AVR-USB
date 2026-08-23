@@ -57,36 +57,36 @@
 #define D1PRINTF(FMT, ...)
 #define D2PRINTF(FMT, ...)
 #define D3PRINTF(FMT, ...)
-#define D0PRINTHEX(P,L)
-#define D1PRINTHEX(P,L)
-#define D2PRINTHEX(P,L)
-#define D3PRINTHEX(P,L)
+#define D0PRINTHEX(P, ...)
+#define D1PRINTHEX(P, ...)
+#define D2PRINTHEX(P, ...)
+#define D3PRINTHEX(P, ...)
 #if defined(DEBUG)
   #include <peripheral.h> /* from Micro_API : import Serial (Debug) */
   #define Serial Serial1C /* PIN_PD6:TxD, PIN_PD7:RxD */
   #undef  DFLUSH
   #define DFLUSH() Serial.flush()
-  #undef  D0PRINTF
-  #define D0PRINTF(FMT, ...) Serial.printf(F(FMT), ##__VA_ARGS__)
-  #undef  D0PRINTHEX
-  #define D0PRINTHEX(P,L) Serial.printHex((P),(L),':').ln()
+  #undef  DPRINTF
+  #define DPRINTF(FMT, ...) Serial.printf(F(FMT), ##__VA_ARGS__)
+  #undef  DPRINTHEX
+  #define DPRINTHEX(P, ...) Serial.printHex((P), ##__VA_ARGS__).ln()
   #if (DEBUG >= 1)
     #undef D1PRINTF
-    #define D1PRINTF(FMT, ...) Serial.printf(F(FMT), ##__VA_ARGS__)
+    #define D1PRINTF DPRINTF
     #undef  D1PRINTHEX
-    #define D1PRINTHEX(P,L) Serial.printHex((P),(L),':').ln()
+    #define D1PRINTHEX DPRINTHEX
   #endif
   #if (DEBUG >= 2)
     #undef  D2PRINTF
-    #define D2PRINTF(FMT, ...) Serial.printf(F(FMT), ##__VA_ARGS__)
+    #define D2PRINTF DPRINTF
     #undef  D2PRINTHEX
-    #define D2PRINTHEX(P,L) Serial.printHex((P),(L),':').ln()
+    #define D2PRINTHEX DPRINTHEX
   #endif
   #if (DEBUG >= 3)
     #undef  D3PRINTF
-    #define D3PRINTF(FMT, ...) Serial.printf(F(FMT), ##__VA_ARGS__)
+    #define D3PRINTF DPRINTF
     #undef  D3PRINTHEX
-    #define D3PRINTHEX(P,L) Serial.printHex((P),(L),':').ln()
+    #define D3PRINTHEX DPRINTHEX
   #endif
 #endif
 
@@ -274,7 +274,7 @@ typedef struct {
             } tpi;
           };
           union {
-            uint8_t  data[513];       /* READ_MEMORY */
+            uint8_t  data[513];   /* READ_MEMORY */
             uint8_t  bStatus;
             uint16_t wValue;
             uint32_t dwValue;
@@ -287,7 +287,10 @@ typedef struct {
         } isp;
         struct {
           uint8_t cmd;
-          uint8_t data[534];
+          union {
+            uint8_t data[534];
+            uint16_t wValue;
+          };
         } stk500v2;
       };
     } in;

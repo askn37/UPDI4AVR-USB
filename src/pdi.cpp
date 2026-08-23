@@ -257,7 +257,7 @@ namespace PDI {
        && send_bytes(_set_repeat, sizeof(_set_repeat))
        && recv_bytes(&packet.in.data[0], _wLength)) {
         _rspsize = 1 + _wLength;
-        D2PRINTHEX(&packet.in.data[0], _wLength);
+        D2PRINTHEX(&packet.in.data[0], _wLength, ':');
       }
     }
     return _rspsize;

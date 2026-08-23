@@ -79,7 +79,6 @@ namespace Timeout {
       Timeout::stop();
       D1PRINTF("[TO]");
       if (!fail_p) break;
-      wdt_reset();
       if (!(*fail_p)()) break;
     }
     return _result;
