@@ -82,14 +82,13 @@
  * This will almost always avoid notifications of incompatible version upgrades,
  * but it's not perfect.
  *
- * Columns: HW_VER, FW_MAJOR, FW_MINOR, FW_RELL, FW_RELH (all 1-byte decimal)
+ * Columns: HW_VER, FW_MAJOR, FW_MINOR, FW_REL(word,LE) 
  */
 
 #define HW_VER   0
 #define FW_MAJOR 1
 #define FW_MINOR 35
-#define FW_RELL  50
-#define FW_RELH  0
+#define FW_REL   50
 
 
 /*** CONFIG_USB ***/

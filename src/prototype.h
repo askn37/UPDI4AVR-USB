@@ -132,7 +132,7 @@
 
 #define GPCONF GPR_GPR2
   #define GPCONF_USB_gm   (0x1F)
-  #define GPCONF_SW0_gm   (0xE0)
+  #define GPCONF_SW0_gm   (0xC0)
   #define GPCONF_USB_bp   0         /* USB interface is active */
   #define GPCONF_USB_bm   (1 << 0)
   #define GPCONF_VCP_bp   1         /* VCP enabled */
@@ -143,16 +143,14 @@
   #define GPCONF_BRK_bm   (1 << 3)
   #define GPCONF_OPN_bp   4         /* VCP-RxD open */
   #define GPCONF_OPN_bm   (1 << 4)
-  #define GPCONF_HLD_bp   5         /* SW0 holding */
-  #define GPCONF_HLD_bm   (1 << 5)
-  #define GPCONF_RIS_bp   6         /* SW0 release event */
-  #define GPCONF_RIS_bm   (1 << 6)
+  #define GPCONF_HLD_bp   6         /* SW0 holding */
+  #define GPCONF_HLD_bm   (1 << 6)
   #define GPCONF_FAL_bp   7         /* SW0 push event */
   #define GPCONF_FAL_bm   (1 << 7)
 
 #define PGCONF GPR_GPR3
-  #define PGCONF_UPDI_bp  0         /* UPDI active (SIB read successful) or TPI active */
-  #define PGCONF_UPDI_bm  (1 << 0)
+  #define PGCONF_PGIA_bp  0         /* PGM Interface Active */
+  #define PGCONF_PGIA_bm  (1 << 0)
   #define PGCONF_PROG_bp  1         /* Programmable (memory access unlocked) */
   #define PGCONF_PROG_bm  (1 << 1)
   #define PGCONF_ERSE_bp  2         /* Chip erase completed */
@@ -161,6 +159,8 @@
   #define PGCONF_XDIR_bm  (1 << 3)
   #define PGCONF_HVEN_bp  4         /* HV control in TPI */
   #define PGCONF_HVEN_bm  (1 << 4)
+  #define PGCONF_PGIF_bp  7         /* PGM Interface Failed */
+  #define PGCONF_PGIF_bm  (1 << 7)
 
 /*
  * Global struct
@@ -211,7 +211,7 @@ typedef struct {
       uint8_t  cmd;
       union {
         uint8_t data[534];
-        struct {  /* CMD=21,23:CMD3_READ,WRITE_MEMORY */
+        struct {  /* SCOPE=UPDI,CMD=21,23:CMD3_READ,WRITE_MEMORY */
           uint8_t  reserve2;
           uint8_t  bMType;
           uint32_t dwAddr;
@@ -219,7 +219,7 @@ typedef struct {
           uint8_t  reserve3;
           uint8_t  memData[513];  /* WRITE_MEMORY */
         };
-        struct {  /* CMD=1,2:CMD3_GET,SET_PARAMETER */
+        struct {  /* SCOPE=GEN,CMD=1,2:CMD3_GET,SET_PARAMETER */
           uint8_t  reserve4;
           uint8_t  section;
           uint8_t  index;
@@ -234,7 +234,7 @@ typedef struct {
           uint8_t  bEType;
           uint32_t dwPageAddr;
         };
-        union {
+        union {   /* SCOPE=TPI */
           struct {  /* XPRG_SET_PARAM */
             uint8_t  bType;
             uint8_t  bValue;
@@ -252,6 +252,11 @@ typedef struct {
             uint8_t  memData[64 + 8]; /* ATTiny40=64, Other=16 */
           } write;
         } tpi;
+        union {   /* SCOPE=ISP */
+          uint8_t data[534];
+          uint32_t dwValue;
+          uint16_t wValue;
+        } isp;
       };
     } out;
     struct {
@@ -260,17 +265,30 @@ typedef struct {
       uint16_t sequence;
       uint8_t  scope;
       union {
-        uint16_t res;
         struct {
-          uint8_t tpi_cmd;
-          uint8_t tpi_res;
-        };
-      };
-      union {
-        uint8_t  data[513];       /* READ_MEMORY */
-        uint8_t  bStatus;
-        uint16_t wValue;
-        uint32_t dwValue;
+          union {
+            uint16_t res;
+            struct {
+              uint8_t cmd;
+              uint8_t res;
+            } tpi;
+          };
+          union {
+            uint8_t  data[513];       /* READ_MEMORY */
+            uint8_t  bStatus;
+            uint16_t wValue;
+            uint32_t dwValue;
+          };
+        };  /* other ISP */
+        struct {
+          uint8_t cmd;
+          uint8_t res;
+          uint8_t data[533];
+        } isp;
+        struct {
+          uint8_t cmd;
+          uint8_t data[534];
+        } stk500v2;
       };
     } in;
   };
@@ -520,6 +538,7 @@ namespace SYS {
   void delay_800us (void);
   void delay_2500us (void);
   void delay_20ms (void);
+  void delay_40ms (void);
   void delay_125ms (void);
 };
 

@@ -81,14 +81,15 @@ namespace SYS {
     pinControlRegister(PIN_PGM_PDAT)     = 0;
     pinControlRegister(PIN_PGM_PCLK)     = PORT_ISC_INPUT_DISABLE_gc;
   #endif
-    pinControlRegister(PIN_SYS_SW0)      = ISC_FALLING;
+    pinControlRegister(PIN_SYS_SW0)      = PORT_PULLUPEN_bm | PORT_ISC_FALLING_gc;
   #ifdef CONFIG_HVC_ENABLE
     pinControlRegister(PIN_HVC_CHGPUMP1) = PORT_INVEN_bm    | PORT_ISC_INPUT_DISABLE_gc;
   #endif
     /* PCLK disable/output is shared internal connection with TRST */
 
     /* PORTx event generator */
-    portRegister(PIN_VCP_RXD).EVGENCTRLA = pinPosition(PIN_VCP_RXD);  /* EVG0 */
+    portRegister(PIN_VCP_RXD).EVGENCTRLA = pinPosition(PIN_VCP_RXD)         /* EVG0 */
+                                         | pinPosition(PIN_VCP_TXD) << 4;   /* EVG1 */
 
     /*** Port Multiplexer ***/
     PORTMUX_TCAROUTEA     = PORTMUX_TCA0_PORTD_gc;          /* TCA0_WOn_ALT3 -> PORTD */
@@ -97,9 +98,11 @@ namespace SYS {
     EVSYS_CHANNEL1        = EVSYS_CHANNEL_RTC_EVGEN1_gc;    /* 128Hz periodic. */
     EVSYS_CHANNEL2        = EVSYS_CHANNEL_CCL_LUT3_gc;      /* <- Indicator */
     EVSYS_CHANNEL4        = EVSYS_CHANNEL_PORTX_EVGEN0(PIN_VCP_RXD);  /* <- VRxD */
+    EVSYS_CHANNEL5        = EVSYS_CHANNEL_PORTX_EVGEN1(PIN_VCP_TXD);  /* <- VTxD */
 
     EVSYS_USERCCLLUT3A    = EVSYS_USER_CHANNEL4_gc;         /* <- VRxD */
     EVSYS_USERCCLLUT1A    = EVSYS_USER_CHANNEL4_gc;         /* <- VRxD */
+    EVSYS_USERCCLLUT1B    = EVSYS_USER_CHANNEL5_gc;         /* <- VTxD */
 
     EVSYS_USERTCB1CAPT    = EVSYS_USER_CHANNEL2_gc;         /* TCB1_CAPT <- Strobe */
     EVSYS_USERTCB0COUNT   = EVSYS_USER_CHANNEL1_gc;         /* <- 128Hz */
@@ -111,7 +114,8 @@ namespace SYS {
     CCL_LUT3CTRLA = CCL_ENABLE_bm;
 
     /*** CCL1 : LED1 (PC3) generator ***/
-    CCL_TRUTH1    = CCL_TRUTH_2_bm | CCL_TRUTH_3_bm;
+    CCL_TRUTH1    = CCL_TRUTH_0_bm | CCL_TRUTH_3_bm | CCL_TRUTH_5_bm;
+    CCL_LUT1CTRLC = CCL_INSEL2_EVENTB_gc;                   /* <- EVS_CH5 : VTxD */
     CCL_LUT1CTRLB = CCL_INSEL0_EVENTA_gc                    /* <- EVS_CH4 : VRxD */
                   | CCL_INSEL1_TCB1_gc;                     /* <- TCB1_WO */
     CCL_LUT1CTRLA = CCL_ENABLE_bm | CCL_OUTEN_bm;           /* -> PIN_PC3 */
@@ -237,7 +241,7 @@ namespace SYS {
     }
     if (_on) {
   #ifdef CONFIG_PGM_VPOWER_ENABLE
-      if (_off) delay_125ms();  /* discharge duration */
+      if (_off) delay_20ms();   /* discharge duration */
       digitalWriteMacro(PIN_PGM_VPOWER, LOW);   /* VTG on */
       pinControlRegister(PIN_VCP_TXD)  |= PORT_PULLUPEN_bm;   /* internal shared TCLK */
       pinControlRegister(PIN_VCP_RXD)  |= PORT_PULLUPEN_bm;
@@ -287,8 +291,7 @@ namespace SYS {
       send_bitmap(_updi_bitmap_reset, sizeof(_updi_bitmap_reset) * 8);
 
       bit_set(GPCONF, GPCONF_HLD_bp);
-      pinControlRegister(PIN_SYS_SW0) = ISC_RISING;
-      vportRegister(PIN_SYS_SW0).INTFLAGS = pinBitmask(PIN_SYS_SW0);
+      bit_clear(vportRegister(PIN_SYS_SW0).INTFLAGS, pinPosition(PIN_SYS_SW0));
     }
   }
 
@@ -298,7 +301,8 @@ namespace SYS {
    * but if the USB is stopped, it will reboot at the end.
    */
   void reset_leave (void) {
-    if ((GPCONF & GPCONF_SW0_gm) == GPCONF_SW0_gm) {
+    /* bit_is_set(GPCONF, GPCONF_HLD_bp) */
+    if (digitalReadMacro(PIN_SYS_SW0)) {
       pinLogicOpen(PIN_PGM_TRST);
       send_bitmap(_updi_bitmap_leave, sizeof(_updi_bitmap_leave) * 8);
 
@@ -317,7 +321,6 @@ namespace SYS {
       D1PRINTF("<RST:OUT>\r\n");
 
       GPCONF &= ~GPCONF_SW0_gm;
-      vportRegister(PIN_SYS_SW0).INTFLAGS = pinBitmask(PIN_SYS_SW0);
     }
   }
 
@@ -409,6 +412,14 @@ namespace SYS {
     delay_micros(2500);
   }
 
+  void delay_20ms (void) {
+    delay_millis(20);
+  }
+
+  void delay_40ms (void) {
+    delay_millis(40);
+  }
+
   void delay_125ms (void) {
     delay_millis(125);
   }
@@ -419,16 +430,7 @@ namespace SYS {
  * SW0 Interrupt Vestor
  */
 ISR(portIntrruptVector(PIN_SYS_SW0)) {
-  if (bit_is_set(pinControlRegister(PIN_SYS_SW0), PORT_ISC_0_bp)) {
-    pinControlRegister(PIN_SYS_SW0) = ISC_RISWAIT;
-    // pinControlRegister(PIN_SYS_SW0) = ISC_RISING;
-    bit_set(GPCONF, GPCONF_FAL_bp);
-  }
-  else {
-    pinControlRegister(PIN_SYS_SW0) = ISC_FALLING;
-    bit_set(GPCONF, GPCONF_RIS_bp);
-  }
-  D2PRINTF("{F}");
+  bit_set(GPCONF, GPCONF_FAL_bp);
 }
 
 // end of code

@@ -39,7 +39,7 @@
 namespace JTAG {
 
   /* PARM3_HW_VER, PARM3_FW_MAJOR, PARM3_FW_MINOR, PARM3_FW_REL[2] */
-  const uint8_t PROGMEM jtag_version[] = { HW_VER, FW_MAJOR, FW_MINOR, FW_RELL, FW_RELH };
+  const uint8_t PROGMEM jtag_version[] = { HW_VER, FW_MAJOR, FW_MINOR, (uint8_t)FW_REL, FW_REL>>8 };
   const uint8_t PROGMEM jtag_physical[] = {0x90, 0x28, 0x00, 0x18, 0x38, 0x00, 0x00, 0x00};
 
   // MARK: CMSIS-DAP
@@ -168,7 +168,7 @@ namespace JTAG {
     _packet_endfrag = (_length + 65) / 60;  /* 1 to 15 */
     packet.in.token = 0x0E;                 /* TOKEN */
     packet.rawData[_packet_length] = 0;     /* EOT */
-    D2PRINTF(" SQ=%03X:%03X>", packet.out.sequence, _packet_length);
+    D2PRINTF(" SQ=%03X:%03X>", packet.in.sequence, _packet_length);
     D2PRINTHEX(&packet.in.token, _packet_length);
   }
 
@@ -182,7 +182,8 @@ namespace JTAG {
     uint8_t _index   = packet.out.index;
     uint8_t _length  = packet.out.length;
     if (_cmd == 0x02) {             /* CMD3_GET_PARAMETER */
-      D1PRINTF(" GEN_GET_PARAM=%02X:%02X:%02X\r\n", _section, _index, _length);
+      D1PRINTF(",S=%02X,I=%02X,L=%02X\r\n", _section, _index, _length);
+      D1PRINTF(" GEN_GET_PARAM\r\n");
       if (_section == 0) {          /* SET_GET_CTXT_CONFIG */
         /* _index == 0-5 */
         memcpy_P(&packet.in.data[0], &jtag_version[_index], _length);
@@ -198,7 +199,7 @@ namespace JTAG {
         }
         else {                      /* PARM3_ANALOG_XXXX */
           /* Called with PowerDebugger HAS_VTARG_ADJ */
-          D1PRINTF(" PHYSICAL=%02X:%02X\r\n", _index, _length);
+          D1PRINTF(" PHYSICAL\r\n");
           memcpy_P(&packet.in.data[0], &jtag_physical[_index & 7], _length);
         }
       }
@@ -212,6 +213,7 @@ namespace JTAG {
       _jtag_unlock = 0;   /* This is not used. */
       _jtag_arch = 0;
       _jtag_vpow = 1;
+      _xclk = ISP_CLK;
       packet.in.res = 0x80;         /* RSP3_OK */
     }
     else if (_cmd == 0x11) {        /* CMD3_SIGN_OFF */
@@ -223,7 +225,7 @@ namespace JTAG {
       packet.in.res = 0x80;         /* RSP3_OK */
     }
     else {
-      D1PRINTF(" GEN=%02X:%02X:%02X\r\n", _section, _index, _length);
+      D1PRINTF(" ?GEN=%02X:%02X:%02X\r\n", _section, _index, _length);
     }
     return _rspsize;
   }
@@ -238,9 +240,10 @@ namespace JTAG {
     uint8_t _section = packet.out.section;
     uint8_t _index   = packet.out.index;
     uint8_t _length  = packet.out.length;
+    D1PRINTF(",S=%02,I=%02X,L=%02X\r\n", _section, _index, _length);
     if (_cmd == 0x01) {             /* CMD3_SET_PARAMETER */
       uint16_t _data = packet.out.wValue;
-      D1PRINTF(" AVR_SET_PARAM=%02X:%02X:%02X:%02X\r\n", _section, _index, _length, _data);
+      D1PRINTF(" AVR_SET_PARAM=%04X\r\n", _data);
       if (_section == 0) {          /* SET_GET_CTXT_CONFIG */
         if (_index == 0x10) {       /* EDBG_CONTROL_TARGET_POWER */
           /* Called with `-xvtarget_switch=0,1` HAS_VTARG_SWITCH */
@@ -255,7 +258,7 @@ namespace JTAG {
       packet.in.res = 0x80;         /* RSP3_OK */
     }
     else if (_cmd == 0x02) {        /* CMD3_GET_PARAMETER */
-      D1PRINTF(" AVR_GET_PARAM=%02X:%02X:%02X\r\n", _section, _index, _length);
+      D1PRINTF(" AVR_GET_PARAM\r\n");
       if (_section == 0) {          /* SET_GET_CTXT_CONFIG */
         if (_index == 0x10) {       /* EDBG_CONTROL_TARGET_POWER */
           /* Called with `-xvtarget_switch` HAS_VTARG_SWITCH */
@@ -279,32 +282,35 @@ namespace JTAG {
     uint8_t _index   = packet.out.index;
     uint8_t _length  = packet.out.length;
     if (_cmd == 0x01) {             /* CMD3_SET_PARAMETER */
+      D1PRINTF(",S=%02X,I=%02X,L=%02X\r\n", _section, _index, _length);
       packet.out.setData[_length] = 0;
       uint16_t _data = packet.out.wValue;
   #if defined(DEBUG) && (DEBUG >= 1)
       if (_length == 9) {
-        D1PRINTF(" AVR_SET_PARAM=%02X:%02X:%02X\r\n", _section, _index, _length);
+        D1PRINTF(" AVR_SET_PARAM\r\n");
       }
-      if (_length == 10) {
+      else if (_length == 10) {
         _data &= 0xFF;
-        D1PRINTF(" AVR_SET_PARAM=%02X:%02X:%02X:%02X\r\n", _section, _index, _length, _data);
+        D1PRINTF(" AVR_SET_PARAM=%02X\r\n", _data);
       }
       else {
-        D1PRINTF(" AVR_SET_PARAM=%02X:%02X:%02X:%04X\r\n", _section, _index, _length, _data);
+        D1PRINTF(" AVR_SET_PARAM=%04X\r\n", _data);
       }
   #endif
       if (_section == 0) {          /* SET_GET_CTXT_CONFIG */
         if (_index == 0) {          /* PARM3_ARCH */
           uint8_t _d = _data;
-          D1PRINTF(" ARCH=%02X\r\n", _d);
-          _jtag_arch = _d;       /* 5:UPDI 3:PDI 1:ISP */
+          D1PRINTF(" SET_ARCH=%02X\r\n", _d);
+          _jtag_arch = _d;          /* 5:UPDI 3:PDI 2,1:ISP */
   #ifdef CONFIG_PGM_PDI_ENABLE
           if (_d == 3) {
             pinLogicPull(PIN_PGM_PDAT);
           }
   #endif
-          _xclk = _d == 5 ? UPDI_CLK : _d == 3 ? PDI_CLK : ISP_CLK;
-          _xclk_bak = _xclk;
+          if (_d > 2) {
+            _xclk = _d == 5 ? UPDI_CLK : PDI_CLK;
+            _xclk_bak = _xclk;
+          }
           D1PRINTF(" XCLK=%d\r\n", _xclk);
         }
         else if (_index == 1) {     /* PARM3_SESS_PURPOSE */
@@ -320,9 +326,10 @@ namespace JTAG {
         else if (_index == 0x31) {  /* PARM3_CLK_XMEGA_PDI */
           /* Called with `-B xclk[unit]`. */
           /* XCLK Range Limitation : LSB=kHz */
-          if (_data < 100) _data = 100;
+          if (_data == 0) _data = 1;
+          _data = 1000 / _data;
   #if defined(DEBUG) && (DEBUG >= 1)
-          if (_xclk != _data) D1PRINTF(" FIX_XCLK=%d\r\n", _xclk);
+          if (_xclk != _data) D1PRINTF(" FIX_XCLK=%d\r\n", _data);
   #endif
           _xclk = _xclk_bak = _data;
         }
@@ -387,10 +394,11 @@ namespace JTAG {
       packet.in.res = 0x80;         /* RSP3_OK */
     }
     else if (_cmd == 0x02) {        /* CMD3_GET_PARAMETER */
-      D1PRINTF(" AVR_GET_PARAMETER=%02X:%02X:%02X\r\n", _section, _index, _length);
+      D1PRINTF(",S=%02X,I=%02X,L=%02X\r\n", _section, _index, _length);
+      D1PRINTF(" AVR_GET_PARAMETER\r\n");
       if (_section == 0) {          /* SET_GET_CTXT_CONFIG */
         if (_index == 0) {          /* PARM3_ARCH */
-          D1PRINTF(" ARCH=%02X\r\n", _jtag_arch);
+          D1PRINTF(" GET_ARCH=%02X\r\n", _jtag_arch);
           packet.in.data[0] = _jtag_arch;
         }
       }
@@ -410,15 +418,29 @@ namespace JTAG {
       _rspsize = _length + 1;
     }
   #ifdef _Not_yet_implemented_stub_
-    else if (_jtag_arch == 0x01) _rspsize = DWI::jtag_scope_tiny();     /* dWire? */
-    else if (_jtag_arch == 0x02) _rspsize = ISP::jtag_scope_mega();     /* MEGA */
+    else if (_jtag_arch == 0x01) _rspsize = DWI::jtag_scope_dwire();     /* dWire? */
+  #endif
+  #ifdef CONFIG_PGM_ISP_ENABLE
+    else if (_jtag_arch == 0x02) _rspsize = ISP::jtag_scope_isp();      /* ISP/MEGA */
   #endif
   #ifdef CONFIG_PGM_PDI_ENABLE
     else if (_jtag_arch == 0x03) _rspsize = PDI::jtag_scope_xmega();    /* XMEGA support */
   #endif
     else if (_jtag_arch == 0x05) _rspsize = UPDI::jtag_scope_updi();    /* UPDI support */
+    else if (_cmd == 0x10) {        /* CMD3_SIGN_ON */
+      D1PRINTF(" AVR_SIGN_ON:ARCH=%d\r\n", _jtag_arch);
+      packet.in.res = 0x80;         /* RSP3_OK */
+    }
+    else if (_cmd == 0x11) {        /* CMD3_SIGN_OFF */
+      D1PRINTF(" AVR_SIGN_OFF:ARCH=%d\r\n", _jtag_arch);
+      packet.in.res = 0x80;         /* RSP3_OK */
+    }
+    else if (_cmd == 0x13) {        /* CMD3_START_DW_DEBUG */
+      D1PRINTF(" AVR_START_DW_DEBUG:ARCH=%d:FAILED\r\n", _jtag_arch);
+      /* Not yet supported. */
+    }
     else {
-      D1PRINTF(" ?:ARCH=%d\r\n", _jtag_arch);
+      D1PRINTF(" AVR_CMD?[%02X] ARCH=%d\r\n", _cmd, _jtag_arch);
       packet.in.res = 0xA0;         /* RSP3_FAILED */
     }
     return _rspsize;
@@ -431,42 +453,11 @@ namespace JTAG {
   void jtag_scope_branch (void) {
     size_t _rspsize = 0;
     uint8_t _scope  = packet.out.scope;
-  #if defined(DEBUG) && (DEBUG >= 1)
-    if (_packet_length == 6) {
-      D1PRINTF("SQ=%d:%d>SCOPE=%02X,C=%02X\r\n",
-        packet.out.sequence,  /* dw */
-        _packet_length,       /* dw */
-        _scope,               /* b */
-        packet.out.cmd);      /* b */
-    }
-    else if (_packet_length == 7) {
-      D1PRINTF("SQ=%d:%d>SCOPE=%02X,C=%02X,S=%02X\r\n",
-        packet.out.sequence,  /* dw */
-        _packet_length,       /* dw */
-        _scope,               /* b */
-        packet.out.cmd,       /* b */
-        packet.out.section);  /* b */
-    }
-    else if (_packet_length == 8) {
-      D1PRINTF("SQ=%d:%d>SCOPE=%02X,C=%02X,S=%02X,I=%02X\r\n",
-        packet.out.sequence,  /* dw */
-        _packet_length,       /* dw */
-        _scope,               /* b */
-        packet.out.cmd,       /* b */
-        packet.out.section,   /* b */
-        packet.out.index);    /* b */
-    }
-    else {
-      D1PRINTF("SQ=%d:%d>SCOPE=%02X,C=%02X,S=%02X,I=%02X,L=%d\r\n",
-        packet.out.sequence,  /* dw */
-        _packet_length,       /* dw */
-        _scope,               /* b */
-        packet.out.cmd,       /* b */
-        packet.out.section,   /* b */
-        packet.out.index,     /* b */
-        packet.out.length);   /* b */
-    }
-  #endif
+    D1PRINTF("SQ=%d:%d>SCOPE=%02X,C=%02X",
+      packet.out.sequence,  /* dw */
+      _packet_length,       /* dw */
+      _scope,               /* b */
+      packet.out.cmd);      /* b */
     if      (_scope == 0x01) _rspsize = jtag_scope_general();       /* SCOPE_GENERAL */
   #ifdef _Not_yet_implemented_stub_
     else if (_scope == 0x00) _rspsize = jtag_scope_info();          /* SCOPE_INFO */ /* Not used with EDBG/CMSIS-DAP type */

@@ -6,7 +6,7 @@
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
  * @version 1.35.50+
- * @date 2026-08-18
+ * @date 2026-08-22
  * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -127,7 +127,7 @@ int main (void) {
     if (USB::is_ep_setup()) USB::handling_control_transactions();
 
     /* If SW0 was used, work here. */
-    if (bit_is_clear(PGCONF, PGCONF_UPDI_bp) && bit_is_clear(PGCONF, PGCONF_PROG_bp)) {
+    if ((PGCONF & (PGCONF_PGIA_bm | PGCONF_PROG_bm)) == 0) {
       if      (bit_is_set(GPCONF, GPCONF_HLD_bp)) SYS::reset_leave();
       else if (bit_is_set(GPCONF, GPCONF_FAL_bp)) SYS::reset_enter();
     }
@@ -156,8 +156,8 @@ int main (void) {
     if (USB::is_not_dap()) {
       /* To force exit from a non-responsive terminal mode, press SW0. */
       if (bit_is_set(PGCONF, PGCONF_PROG_bp)) {
-        if (bit_is_set(GPCONF, GPCONF_RIS_bp)) _wdt = false;
-        bit_clear(GPCONF, GPCONF_RIS_bp);
+        if (bit_is_set(GPCONF, GPCONF_FAL_bp)) _wdt = false;
+        GPCONF &= ~GPCONF_SW0_gm;
         /* If no response is received for more than 1 second, a WDT reset will fire. */
       }
       continue;

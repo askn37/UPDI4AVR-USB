@@ -61,7 +61,8 @@ namespace SYS {
     /* PCLK disable/output is shared internal connection with TRST */
 
     /* PORTx event generator */
-    portRegister(PIN_VCP_RXD).EVGENCTRLA = pinPosition(PIN_VCP_RXD);  /* EVG0 */
+    portRegister(PIN_VCP_RXD).EVGENCTRLA = pinPosition(PIN_VCP_RXD)         /* EVG0 */
+                                         | pinPosition(PIN_VCP_TXD) << 4;   /* EVG1 */
 
     /*** Port Multiplexer ***/
     PORTMUX_TCAROUTEA     = PORTMUX_TCA0_PORTD_gc;          /* TCA0_WOn_ALT3 -> PORTD */
@@ -70,10 +71,11 @@ namespace SYS {
     EVSYS_CHANNEL1        = EVSYS_CHANNEL_RTC_EVGEN1_gc;    /* 128Hz periodic. */
     EVSYS_CHANNEL2        = EVSYS_CHANNEL_CCL_LUT3_gc;      /* <- Indicator */
     EVSYS_CHANNEL4        = EVSYS_CHANNEL_PORTX_EVGEN0(PIN_VCP_RXD);  /* <- VRxD */
+    EVSYS_CHANNEL5        = EVSYS_CHANNEL_PORTX_EVGEN1(PIN_VCP_TXD);  /* <- VTxD */
 
-    EVSYS_USERCCLLUT0A    = EVSYS_USER_CHANNEL5_gc;         /* <- SW0  */
     EVSYS_USERCCLLUT3A    = EVSYS_USER_CHANNEL4_gc;         /* <- VRxD */
     EVSYS_USERCCLLUT1A    = EVSYS_USER_CHANNEL4_gc;         /* <- VRxD */
+    EVSYS_USERCCLLUT1B    = EVSYS_USER_CHANNEL5_gc;         /* <- VTxD */
 
     EVSYS_USERTCB1CAPT    = EVSYS_USER_CHANNEL2_gc;         /* TCB1_CAPT <- Strobe */
     EVSYS_USERTCB0COUNT   = EVSYS_USER_CHANNEL1_gc;         /* <- 128Hz */
@@ -93,7 +95,8 @@ namespace SYS {
     CCL_LUT3CTRLA = CCL_ENABLE_bm;
 
     /*** CCL1 : LED1 (PC3:ORANGE) generator ***/
-    CCL_TRUTH1    = CCL_TRUTH_2_bm | CCL_TRUTH_3_bm;
+    CCL_TRUTH1    = CCL_TRUTH_0_bm | CCL_TRUTH_3_bm | CCL_TRUTH_5_bm;
+    CCL_LUT1CTRLC = CCL_INSEL2_EVENTB_gc;                   /* <- EVS_CH5 : VTxD */
     CCL_LUT1CTRLB = CCL_INSEL0_EVENTA_gc                    /* <- EVS_CH4 : VRxD */
                   | CCL_INSEL1_TCB1_gc;                     /* <- TCB1_WO */
     CCL_LUT1CTRLA = CCL_ENABLE_bm | CCL_OUTEN_bm;           /* -> PIN_PC3 */
