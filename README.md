@@ -348,7 +348,7 @@ There are two ways to enable HV control.
 > [!TIP]
 > There are no PDI devices that require HV control.
 
-> [!INFORMATION]
+> [!NOTE]
 > The `hex/variants` folder contains a Makefile for use with Arduino CLI. You can use this to generate Hex and Fuse files corresponding to the preset HAL profiles.<br/>
 > <br/>
 > The `hex/updi4avr-usb` folder contains precompiled Hex files for the Curiosity Nano.
@@ -407,7 +407,7 @@ The VID:PID is changed using another programmer or debugger (not the USB4AVR-USB
 avrdude -c pkobn_updi -p avr64du32 -U eeprom:w:0xEB,0x03,0x77,0x21:m
 ```
 
-> [!WARNING]
+> [!CAUTION]
 > Since VID:PID pairs are proprietary to specific vendors, please be mindful of potential rights infringement. On Windows, in particular, these values ​​influence implicit driver selection.<br/>
 > The USB4AVR-USB does not currently provide a built-in function to change the VID:PID; applying a patch to AVRDUDE is required.
 
@@ -443,7 +443,7 @@ The following table shows the relationship between VID:PID pairs and their corre
 > [!TIP]
 > Selecting `pickit4_updi` allows for high-voltage UPDI programming using `-x hvupdi`. Additionally, selecting `xplainedmini_*` allows you to toggle the target device power on or off using `-x vtarg_switch=[1,0]` (provided the corresponding external circuitry is in place).
 
-> [!INFORMATION]
+> [!NOTE]
 > The `hex/vidpid-eeprom` folder contains several EEPROM Hex files with predefined VID:PID values.
 
 ## Related link and documentation

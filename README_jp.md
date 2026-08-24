@@ -358,7 +358,7 @@ Arduino IDEに、次のリンク先の SDK を導入すると、ベアメタル�
 
 ビルドオプションについては、[<UPDI4AVR-USB.ino>](UPDI4AVR-USB.ino)を参照されたい。
 
-> [!INFORMATION]
+> [!NOTE]
 > `hex/test-blink`フォルダにはターゲットデバイス用の Lチカ実験用 Hexファイルとソースコードが用意されている。
 
 ### Select HAL profile
@@ -391,7 +391,7 @@ Arduino IDEに、次のリンク先の SDK を導入すると、ベアメタル�
 > [!TIP]
 > `usrdef.h` は `.gitignore` で除外されているため、不用意に公開されることはない。元々は個人承認情報等をスケッチフォルダ内で扱うための仕組みである。
 
-> [!INFORMATION]
+> [!NOTE]
 > `hex/variants`フォルダには、Arduino CLI を用いた Makefile が格納されている。プリセットされた HALプロファイルに対応した HexファイルとFuseファイルを得るにはこれを用いることができる。<br/>
 > <br/>
 > `hex/updi4avr-usb`フォルダには、Curiosity Nano 用のプリコンパイル済 Hexファイルが用意されている。
@@ -409,7 +409,7 @@ VID:PID の変更は（USB4AVR-USB自身ではなく）他の書込器／デバ�
 avrdude -c pkobn_updi -p avr64du32 -U eeprom:w:0xEB,0x03,0x77,0x21:m
 ```
 
-> [!WARNING]
+> [!CAUTION]
 > 各VID:PIDは、各ベンダーが固有の所有権を持っているため、権利侵害に注意されたい。特に Windowsでは暗黙のドライバー選択と関わりがある。<br/>
 > USB4AVR-USB自身で VID:PIDを変更する機能は、現在は用意されていない。AVRDUDEにパッチを適用する必要がある。
 
@@ -445,7 +445,7 @@ avrdude -c pkobn_updi -p avr64du32 -U eeprom:w:0xEB,0x03,0x77,0x21:m
 > [!TIP]
 > `pickit4_updi`を選ぶと、`-x hvupdi`で高電圧UPDI書き換えができる。また`xplainedmini_*`を選ぶと、`-x vtarg_switch=[1,0]`で（対応する外部回路を用意していれば）ターゲットデバイス電源のオン／オフができる。
 
-> [!INFORMATION]
+> [!NOTE]
 > `hex/vidpid-eeprom`フォルダには、いくつかの VID:PID定義済 EEPROM Hexファイルが用意されている。
 
 ## Related link and documentation
