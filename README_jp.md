@@ -1,12 +1,14 @@
-# UPDI4AVR-USB : OSS/OSHW Programmer for UPDI/TPI/PDI
+# UPDI4AVR-USB : OSS/OSHW Programmer for UPDI/TPI/PDI/ISP
 
 *Switching document languages* : __日本語__, [English](README.md)
 
 - AVR-DUファミリーを、USB接続プログラム書込器に変身させるオープンソース ソフトウェア／ファームウェア。
-- UPDI、TPI、PDIタイプの AVRシリーズの NVM（不揮発メモリ）を読み出し／消去／書き込みができる。
+- UPDI、TPI、PDI、ISP<sup>*</sup>タイプの AVRシリーズの NVM（不揮発メモリ）を読み出し／消去／書き込みができる。
 - ホストPC側のプログラム書き込みアプリケーションは AVRDUDEを想定。"PICKit4" や "Curiosity Nano" のように見える。
 - VCP-UART トランスファー機能を装備。
 - 全ての成果物は、MITライセンスで頒布。
+
+> * ISP（低電圧SPI制御）対応は暫定的
 
 従来の *USB4AVR* は USBシリアル変換回路を使用する設計だが、この *UPDI4AVR-USB* は MCU内蔵USB周辺回路を使用する 1チップ完結設計である。
 
@@ -15,7 +17,7 @@
 v1.35.50
 - Timer/CCL/RTC/EVSYSの構成変更
 - `hex/variants`の新設
-- ISP対応試みの準備
+- ISP制御への限定的対応
 
 v1.35.49
 - HAL profile 構造の導入
@@ -26,7 +28,9 @@ v1.35.49
 
 ビルド済バイナリを ["AVR64DU32 Curiosity Nano : EV59F82A"](https://www.microchip.com/en-us/development-tool/ev59f82a) 製品にアップロードして、手早くセットアップできる。
 
-The pre-built binaries can be uploaded to the ["AVR64DU32 Curiosity Nano : EV59F82A"](https://www.microchip.com/en-us/development-tool/ev59f82a) product for easy setup. [->Click Here](https://github.com/askn37/UPDI4AVR-USB/tree/main/hex/updi4avr-usb)
+The pre-built binaries can be uploaded to the ["AVR64DU32 Curiosity Nano : EV59F82A"](https://www.microchip.com/en-us/development-tool/ev59f82a) product for easy setup.
+
+[-> Click Here](https://github.com/askn37/UPDI4AVR-USB/tree/main/hex/updi4avr-usb)
 
 ## Introduction
 
@@ -66,6 +70,8 @@ AVR-DUファミリーの存在は 2021年春に公表されたものの、すぐ
 - 発売済の（おそらく）全ての PDIタイプ ATxmegaシリーズを操作できる：
   - 動作確認は ATxmega128A4U のみ検証されている。
   - PDIサポートは、既定では "Curiosity Nano" 用にビルドされた場合のみ有効。（UPDI/TPI用とは別の配線を使用する）
+- 一部のクラシックAVRに対する、ISP制御に対応。
+  - 現在動作が確認されているのは、ATmega328P、ATtiny13/85 等。
 - Windows/macos/Linuxの OS標準ドライバーを使用するため、ドライバーの追加導入は不要。VID:PIDは EEPROMでカスタマイズできる。
   - 追加ドライバー／Infファイルが既に入っている場合、VID:PIDに一致するデバイスベンダーが表示がされる。（ライセンス侵害に注意）
 - CDC-ACM仕様に基づく、VCP（Virtual Communication Port）を混載。
@@ -85,16 +91,11 @@ AVR-DUファミリーの存在は 2021年春に公表されたものの、すぐ
 - AVR-DUファミリー以外には、必要かつ互換性のある USB周辺機能が実装されていないため、動作しない。
   - ATxmega AU ファミリーへの移植は USB周辺機能が似ているため、おそらくは可能。（計画はない：Fork必須）
 - USB 2.0 "Full-Speed" のみ対応。AVR-DUファミリーは "High-Speed"に対応していない。（不可能）
-- ISP／PP／HVPPタイプのデバイスはサポート対象外。ハードウェア要件が異なり、GPIOに共通性がないので別のソフトウェアとなる。~~（Fork必須）~~
-  - 一部の ISP品種（低電圧SPIタイプ）に限れば対応できそうな見込みがあるので研究中。
+- ISPタイプのクラシックAVRデバイスは、比較的人気の高い品種に限って限定的に対応。
+- PP／HVPPタイプのデバイスはサポート対象外。ハードウェア要件が異なり、GPIOに共通性がないので別のソフトウェアとなる。（Fork必須）
 - JTAG通信機能、SWD/SWO機能、dWire機能、OCD機能はサポートされない。（計画はない）
 - 14P外囲器製品（AVR16-32DU14）には余剰ピンがないため、高電圧書込サポートはできない。20P/28P/32P外囲器製品が必要。
 - 14P/20Pではピン数が不足、16KiB品種では空き容量がないため DEBUGビルド（PRINTF）は使用できない。
-
-AVR-DUファミリーの外囲器種別毎のピン配列／信号割当の詳細については、[<configuration.h>](src/configuration.h)を参照。
-
-> [!NOTE]
-> ATmega328P ファミリーのような前世代のデバイスは、通常は ISP直列プログラミング（SPI技術）で扱うが、ひとたび FUSEを破壊すると HVPP高電圧並列プログラミング（パラレル技術）を使用しなければ、工場出荷時状態に戻せない品種がある。この場合、*UPDI4AVR* のような「デバイスの工場出荷時状態の復元」を至上命題とするハイレベル書込器は、ISP／PP／HVPP を全て処理できる必要がある。
 
 ## Practical Usage
 
@@ -320,14 +321,14 @@ avrdude -Pusb:04d8:0b15 -cpickit4_isp -pm328p -v -Uprodsig:r:-:I
 
 ### LED blinking
 
-オレンジLEDは、状況によって幾つかの表情を見せる。
+LED0は、状況によって幾つかの表情を見せる。
 
 - ハートビート - あるいは深呼吸。USB接続が ホストOSと確立されている。使用準備完了。
 - 短い閃光 - USB接続待機中。ホストOSから認識されていない。
 - 長い明滅 - SW0が押し下げられている。プログラミング中ではない。対象デバイスは（可能なら）リセット中。
 - 短い明滅 - プログラミング実行中。VCP通信は無効。
 
-> 追加の LEDを備えることで、VCP通信アクティビティを表示することも可能。
+> 追加の LED1を備えることで、VCP通信アクティビティを表示することも可能。
 
 ## High-Voltage control
 
@@ -343,7 +344,7 @@ avrdude -Pusb:04d8:0b15 -cpickit4_isp -pm328p -v -Uprodsig:r:-:I
 HV制御を有効にするには、2種の方法がある。
 
 - `-cpickit4_updi`を選択し、`-xhvupdi`オプションを追加する。この`-c`プログラマー選択でのみ可能な方法。
-- `SW1`（あるいはSW0）を押しながら、AVRDUDEコマンドを実行する。`-c`選択は任意。TPIデバイスはこの方法でのみ、HV制御モードを有効にできる。
+- `SW0`（あるいはSW1）を押しながら、AVRDUDEコマンドを実行する。`-c`選択は任意。TPIデバイスはこの方法でのみ、HV制御モードを有効にできる。
   - 本ソフトウェア専用に `-xhvtpi` を有効にするパッチを AVRDUDEに適用する方法もあるが、一般的手段とは言えない。（工業生産現場向け）
 
 > [!TIP]
@@ -356,6 +357,9 @@ Arduino IDEに、次のリンク先の SDK を導入すると、ベアメタル�
 - https://github.com/askn37/multix-zinnia-sdk-modernAVR @0.4.5+
 
 ビルドオプションについては、[<UPDI4AVR-USB.ino>](UPDI4AVR-USB.ino)を参照されたい。
+
+> [!INFORMATION]
+> `hex/test-blink`フォルダにはターゲットデバイス用の Lチカ実験用 Hexファイルとソースコードが用意されている。
 
 ### Select HAL profile
 
@@ -386,6 +390,11 @@ Arduino IDEに、次のリンク先の SDK を導入すると、ベアメタル�
 
 > [!TIP]
 > `usrdef.h` は `.gitignore` で除外されているため、不用意に公開されることはない。元々は個人承認情報等をスケッチフォルダ内で扱うための仕組みである。
+
+> [!INFORMATION]
+> `hex/variants`フォルダには、Arduino CLI を用いた Makefile が格納されている。プリセットされた HALプロファイルに対応した HexファイルとFuseファイルを得るにはこれを用いることができる。<br/>
+> <br/>
+> `hex/updi4avr-usb`フォルダには、Curiosity Nano 用のプリコンパイル済 Hexファイルが用意されている。
 
 ## USB VID:PID configuration and Programmer ID
 
@@ -435,6 +444,9 @@ avrdude -c pkobn_updi -p avr64du32 -U eeprom:w:0xEB,0x03,0x77,0x21:m
 
 > [!TIP]
 > `pickit4_updi`を選ぶと、`-x hvupdi`で高電圧UPDI書き換えができる。また`xplainedmini_*`を選ぶと、`-x vtarg_switch=[1,0]`で（対応する外部回路を用意していれば）ターゲットデバイス電源のオン／オフができる。
+
+> [!INFORMATION]
+> `hex/vidpid-eeprom`フォルダには、いくつかの VID:PID定義済 EEPROM Hexファイルが用意されている。
 
 ## Related link and documentation
 
