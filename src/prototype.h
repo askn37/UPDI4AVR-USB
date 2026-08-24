@@ -47,7 +47,7 @@
 #define ISC_FALLING (PORT_PULLUPEN_bm | PORT_ISC_FALLING_gc)
 
 /*** LED Timer configuration ***/
-#define TM_VCPBL ((F_CPU / 1024) / 32 - 1)
+#define TM_VCPBL ((F_CPU / 1024) / 16 - 1)
 #define HVC_CLK  5000000L
 
 /*** Debug UART macro symbol ***/

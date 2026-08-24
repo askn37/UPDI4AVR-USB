@@ -94,9 +94,11 @@ namespace ISP {
       _res[2] = spi_exchange(_cmd[2]);
       _res[3] = spi_exchange(_cmd[3]);
     }
-  #if !defined(NDEBUG) && defined(DEBUG) && (DEBUG >= 2)
-    DPRINTF(" S/"); DPRINTHEX(_cmd, 4, ':');
-    DPRINTF(" R/"); DPRINTHEX(_res, 4, ':');
+  #if !defined(NDEBUG) && defined(DEBUG)
+    if (bit_is_clear(PGCONF, PGCONF_PGIA_bp)) {
+      DPRINTF(" S/"); DPRINTHEX(_cmd, 4, ':');
+      DPRINTF(" R/"); DPRINTHEX(_res, 4, ':');
+    }
   #endif
   }
 
@@ -279,14 +281,16 @@ namespace ISP {
     TCA0_SPLIT_CTRLA = _period;
     D1PRINTF(" XCK=%d>%d,%02X\r\n", _xclk, _ret, _period);
 
-    for (uint8_t _i = 0; _i < 2; _i++) {
+    for (uint8_t _i = 0; _i < 3; _i++) {
       digitalWriteMacro(PIN_PGM_TRST, HIGH);
+      while (!digitalReadMacro(PIN_PGM_TRST));
 
       /* Pulse must be minimum 2 target CPU clock cycles
         so 100 usec is ok for CPU speeds above 20 KHz */
       SYS::delay_100us();
       digitalWriteMacro(PIN_PGM_TRST, LOW);
-      SYS::delay_20ms();
+      while (digitalReadMacro(PIN_PGM_TRST));
+      SYS::delay_40ms();
 
       /* Programming start command. */
       spi_transaction(&packet.out.data[7]);
@@ -359,7 +363,7 @@ namespace ISP {
       D1PRINTF(" ISP_CMD_ENTER_PROGMODE\r\n");
       if (_length >= 11) {
         _pgm_retry = 4;
-        _rspsize = Timeout::command(&connect, &timeout_fallback, 250);
+        _rspsize = Timeout::command(&connect, &timeout_fallback, 300);
         /* If STATUS_CMD_FAILED is returned here,
            CMD3_START_DW_DEBUG will be sent next. */
       }

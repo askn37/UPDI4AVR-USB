@@ -102,7 +102,16 @@ AVR-DUファミリーの外囲器種別毎のピン配列／信号割当の詳�
 この製品シリーズは、付属のピンヘッダを使うとソルダーレスでブレッドボードに装着できる。
 
 > [!TIP]
-> PF3とGND間に追加のLED1（正論理）を取り付けることをお薦めする。これは VCP通信中に点滅する他、PA3の変化（LOWで点灯）を可視化するので、ターゲットデバイスのLチカにも使用できる。
+> PF3とGND間に追加のLED1（正論理）を取り付けることをお薦めする。LED0はオンボード実装の PF2である。Curiosity Nano以外は基本的に、LED0が PC3、LED1 が PD3で、いずれも正論理で制御する。
+
+デバイス接続時の代表的な配線はこの図の通り。ピン数が限られる14P外囲器以外は共通である。
+
+<img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_PINOUT.drawio.svg">
+
+`PA0,1,2,3`は待機中、内臓プルアップ抵抗付きのオープンドレイン入出力になっている。特に `PA2,PA3` ペアは VCP-TxD/RxD であるが、両者の信号(XOR)が異なるときに LED1を点灯させる。これはターゲットデバイスのLチカ実験を、他に何も追加しなくとも可能にする。
+
+> [!TIP]
+> PA2の VCP-TxDは、オープンドレイン出力方式なので、ターゲットデバイス側の入出力設定がなんであっても衝突しない。配線図で示した通り、これはISP制御方式では SCKに相当し、いわゆる`D13`のオン／オフに対応する。そしてVCPとしての最高通信速度は 500kbpsだが、これは Curiosity Nano のオンボードデバッガ（PKOBN --PicKit On Borad Nano--）の制約に基づく。ベアチップ実装でならこの数倍までは到達可能。
 
 ### UPDI Control
 
@@ -114,7 +123,7 @@ UPDI制御の場合、対象デバイスに必須の配線は "VCC" "GND" "UPDI(
 
 AVR-ICSP MIL/6Pコネクタに変換するには、以下の信号配列を推奨。これは TPI制御や、2種類のHV制御方式と互換性がある。（ただし専用回路がなければ HV制御はできない）
 
-<img src="https://askn37.github.io/svg/AVR-ICSP-M6P-UPDI4AVR.drawio.svg" width="320">
+<img src="https://askn37.github.io/svg/AVR-ICSP-M6P-UPDI4AVR.drawio.svg" width="280">
 
 仮に、`AVR64DU28`を対象デバイスとした場合、最低限の接続テストは以下のコマンドラインで可能だ。
 
@@ -283,6 +292,32 @@ Avrdude done.  Thank you.
 > このため確実にメモリ容量に余裕がある、"AVR64DU32 Curiosity Nano" 向けのビルドでのみ、PDIサポートが有効になっている。
 > 実際問題として PDI制御が必要なユーザーは限定されるため、他に流用の効かない専用ハードウェアを用意するよりは "CNANO" を随時活用した方が有意義だろう。
 
+### ISP control (provisional)
+
+**v1.35.50**以降、クラシックAVRで普遍的な、6線式 ISP制御書換も限定的ながら対応している。だが非常に多数の（しかもその多くはもはや容易に入手できない／かつ非公式の粗悪なコピーチップすらも流通している）品種で使われている書込方式のため、そのすべてを網羅することは到底不可能だ。現在の ISP制御対応は、ある程度、使用条件を絞っている。
+
+- 低電圧 SPI通信方式専用。動作電圧は 2.7V〜5.5V の範囲である。
+- 比較的人気のある品種での実機試験のみ実施。ATtiny13/85、ATmega328P 等。
+- FUSE設定により、起動時の既定周波数が低いと制御できない。8MHz以上推奨。誤った FUSEを書くなどして外部発振器必須等にすると、直ちに brick しうる。
+- AT89等、相当古い品種での動作は期待されない。
+- 制御に失敗すると、対応品種によっては 高電圧(12V) debugWire 制御に切り替わろうとする場合もあるが、現在これには対応していない。
+  - 当然ながら、誤った FUSE を書き込んで制御不能になると、高電圧制御ができないので、復旧する手段は失われる。
+
+ISP方式の配線は以下に示す通り、"VCC" "GND" "MOSI" "MISO" "SCK" "RESET" の 6本が必要だ。使用するピン符号と、ICSP-6Pコネクタとの配線は、UPDI/TPI と全く同じである。つまり MISO と SCKは、それぞれ TxDと RxD になるよう、主に SoftwareSerial ライブラリで設定するならば（あるいは配線をブリッジしてしまえば）VCP-UART通信が可能だ。
+
+<img src="https://askn37.github.io/product/UPDI4AVR/images/IMG_5879.jpg" width="400"> <img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_ISP.drawio.svg" width="400">
+
+書込器選択IDには、`pickit4_isp`、`xplainedmini`、`atmelice_isp`、`snap_isp` 等が利用できる。
+
+```sh
+avrdude -Pusb:04d8:0b15 -cpickit4_isp -pm328p -v -Uprodsig:r:-:I
+```
+
+> [!TIP]
+> `-B`オプションによる制御速度調整（kbps単位）は、250(規定値)から 1まで一応指定できる。もっとも、遅すぎる周波数設定はタイムアウトと両立せず実用的ではない。<br/>
+> <br/>
+> AT89Sx シリーズは外部 RESET が正論理の品種だが、その制御のためのデバイス情報が AVRDUDE から通知されない**既知の問題**によって制御できない。外部 RESETに反転ゲートIC（インバーター）を取り付ければ対処可能。
+
 ### LED blinking
 
 オレンジLEDは、状況によって幾つかの表情を見せる。
@@ -293,10 +328,6 @@ Avrdude done.  Thank you.
 - 短い明滅 - プログラミング実行中。VCP通信は無効。
 
 > 追加の LEDを備えることで、VCP通信アクティビティを表示することも可能。
-
-### Other pinouts
-
-ピン配列／信号割当の詳細については、[<configuration.h>](src/configuration.h)を参照されたい。
 
 ## High-Voltage control
 
@@ -355,6 +386,55 @@ Arduino IDEに、次のリンク先の SDK を導入すると、ベアメタル�
 
 > [!TIP]
 > `usrdef.h` は `.gitignore` で除外されているため、不用意に公開されることはない。元々は個人承認情報等をスケッチフォルダ内で扱うための仕組みである。
+
+## USB VID:PID configuration and Programmer ID
+
+USB4AVR-USBは、そのEEPROM領域先頭に任意の USB接続用 VID:PID を記憶するすることで、`-Pusb:...`オプション省略時の、規定の書込器IDを変更することができる。この機能が役立つのは、以下のようなケースだ。
+
+- 既存の Arduino IDEや 各種SDKの、暗黙の書込器選択に合致させたい場合。
+- 同時に複数の書込器／デバッガーを 1台のホストPCに接続して、同時に運用・併用したい場合。
+
+VID:PID の変更は（USB4AVR-USB自身ではなく）他の書込器／デバッガーから、次に示すような構文で行う。
+
+```sh
+avrdude -c pkobn_updi -p avr64du32 -U eeprom:w:0xEB,0x03,0x77,0x21:m
+```
+
+> [!WARNING]
+> 各VID:PIDは、各ベンダーが固有の所有権を持っているため、権利侵害に注意されたい。特に Windowsでは暗黙のドライバー選択と関わりがある。<br/>
+> USB4AVR-USB自身で VID:PIDを変更する機能は、現在は用意されていない。AVRDUDEにパッチを適用する必要がある。
+
+以下は VID:PID と、対応する代表的な 書込器ID の対応である。この他にも多数の使用可能な組み合わせがある。
+
+|VID:PID|Programer|Vender|w:hex|Comment|
+|---|---|:---|:---|:---|
+|04D8:0B15|以下の任意         |MCPH|0xd8,0x4,0x15,0xb|既定値
+|         |                 |    |0xff,0xff,0xff,0ff|上記の規定値に戻す
+|03EB:2177|pickit4_updi     |ATML|0xeb,0x03,0x77,0x21|`-x hvupdi`使用可能
+|         |pickit4_tpi
+|         |pickit4_pdi
+|         |pickit4_isp
+|03EB:2178|↑                |↑   |0xeb,0x03,0x78,0x21
+|03EB:2179|↑                |↑   |0xeb,0x03,0x79,0x21
+|03EB:2141|atmelice_isp     |ATML|0xeb,0x3,0x41,0x21|Atmel JTAG3ICE (Arduino IDE/AVR対応)
+|         |atmelice_updi
+|         |atmelice_tpi
+|         |atmelice_pdi
+|03EB:2145|xplainedmini_updi|ATML|0xeb,0x3,0x45,0x21|Atmel XPlained mini (Arduino IDE/MKR対応)
+|         |xplainedmini_tpi |    |                  |これらは`-x vtarg_switch`使用可能
+|         |xplainedmini_isp
+|         |xplainedmini     |    |                  |以上の自動選択
+|03EB:2175|pkobn_updi       |ATML|0xeb,0x3,0x75,0x21|Microchip Curiosity nano
+|         |pkobn            |    |                  |pkobn_updiの別名
+|03EB:217F|snap_updi        |ATML|0xeb,0x3,0x7f,0x21|MPLAB(R) SNAP
+|         |snap_tpi
+|         |snap_pdi
+|         |snap_isp
+|03EB:2180|↑                |↑　 |0xeb,0x3,0x80,0x21|↑
+|03EB:2181|↑                |↑　 |0xeb,0x3,0x81,0x21|↑
+
+> [!TIP]
+> `pickit4_updi`を選ぶと、`-x hvupdi`で高電圧UPDI書き換えができる。また`xplainedmini_*`を選ぶと、`-x vtarg_switch=[1,0]`で（対応する外部回路を用意していれば）ターゲットデバイス電源のオン／オフができる。
 
 ## Related link and documentation
 

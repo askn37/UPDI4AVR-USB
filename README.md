@@ -100,7 +100,16 @@ Below is a simple usage example for "AVR64DU32 Curiosity Nano".
 This product series can be mounted on a breadboard without soldering using the included pin headers.
 
 > [!TIP]
-> We recommend connecting an additional LED1 (active-high) between PF3 and GND. In addition to flashing during VCP communication, it visualizes changes on PA3 (lighting up when LOW), so it can also be used for "LED blinking" (GPIO toggling) on ​​the target device.
+> We recommend installing an additional LED1 (active-high) between PF3 and GND. LED0 corresponds to the onboard LED connected to PF2. Except for the Curiosity Nano, LED0 is typically connected to PC3 and LED1 to PD3; both are controlled using active-high logic.
+
+The standard wiring configuration when connecting the device is shown in the diagram below. This layout is common to all models, with the exception of the 14-pin package, which has a limited number of pins.
+
+<img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_PINOUT.drawio.svg">
+
+While idle, pins `PA0`, `PA1`, `PA2`, and `PA3` function as open-drain I/Os with internal pull-up resistors. Notably, the `PA2`/`PA3` pair serves as the VCP-TxD/RxD interface; LED1 illuminates when the signals on these two pins differ (XOR logic). This allows you to perform "LED blink" experiments on the target device without adding any external components.
+
+> [!TIP]
+> Since the PA2 (VCP-TxD) pin uses an open-drain output configuration, it will not conflict with the target device's I/O settings, regardless of how they are configured. As shown in the wiring diagram, this pin corresponds to the SCK pin in ISP mode, effectively controlling the standard "D13" LED. The maximum VCP communication speed is 500 kbps, a limit imposed by the Curiosity Nano's onboard debugger (PKOBN—PicKit On-Board Nano); however, speeds several times higher than this are achievable if using a bare-chip implementation.
 
 ### UPDI Control
 
@@ -112,7 +121,7 @@ For UPDI control, the target device requires three wires: "VCC", "GND", and "UPD
 
 The following signal arrangement is recommended for converting to the AVR-ICSP MIL/6P connector. This is compatible with TPI control and two types of HV control methods. (However, HV control is not possible without a dedicated circuit.)
 
-<img src="https://askn37.github.io/svg/AVR-ICSP-M6P-UPDI4AVR.drawio.svg" width="320">
+<img src="https://askn37.github.io/svg/AVR-ICSP-M6P-UPDI4AVR.drawio.svg" width="280">
 
 If the target device is `AVR64DU28`, a minimum connection test can be performed with the following command line.
 
@@ -281,6 +290,32 @@ Avrdude done.  Thank you.
 > For this reason, PDI support is only enabled in builds for "AVR64DU32 Curiosity Nano", which definitely has ample memory capacity.
 > In reality, only a limited number of users need PDI control, so it would be more meaningful to use "CNANO" on an as-needed basis rather than preparing dedicated hardware that cannot be used for other purposes.
 
+### ISP Control (Provisional)
+
+As of version **v1.35.50**, limited support is provided for the 6-wire ISP control method common to classic AVR microcontrollers. However, given the vast number of chip variants using this programming method—many of which are no longer easily available or exist only as unofficial, low-quality clones—it is impossible to cover them all. Current ISP control support is subject to specific operational conditions:
+
+- Limited to low-voltage SPI communication; operating voltage range is 2.7V to 5.5V.
+- Testing has been conducted only on relatively popular models, such as the ATtiny13/85 and ATmega328P.
+- Control is not possible if fuse settings result in a low default startup frequency; 8MHz or higher is recommended. Incorrectly setting fuses—such as requiring an external oscillator—can immediately "brick" the device.
+- Operation with significantly older models, such as the AT89 series, is not supported.
+- If control fails, some supported models may attempt to switch to high-voltage (12V) debugWire control; however, this mode is not currently supported. 
+- Naturally, if incorrect fuse settings render the device uncontrollable, the inability to use high-voltage control means there is no way to recover the device.
+
+The ISP wiring requires six lines: VCC, GND, MOSI, MISO, SCK, and RESET. The pin assignments and wiring for the ICSP-6P connector are identical to those used for UPDI/TPI. This means that if MISO and SCK are configured (e.g., via the SoftwareSerial library) to function as TxD and RxD—or if the lines are bridged—VCP-UART communication becomes possible.
+
+<img src="https://askn37.github.io/product/UPDI4AVR/images/IMG_5879.jpg" width="400"> <img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_ISP.drawio.svg" width="400">
+
+Programmer selection IDs such as `pickit4_isp`, `xplainedmini`, `atmelice_isp`, and `snap_isp` can be used.
+
+```sh
+avrdude -Pusb:04d8:0b15 -cpickit4_isp -pm328p -v -Uprodsig:r:-:I
+```
+
+> [!TIP]
+> The communication speed can be adjusted using the `-B` option (in kbps), with values ​​ranging from 250 (default) down to 1. However, setting the frequency too low is impractical as it conflicts with timeout settings.<br/>
+> <br/>
+> While AT89Sx series devices use active-high logic for external RESET, a **known issue** prevents AVRDUDE from providing the necessary device information to control this pin. This can be resolved by installing an inverting gate IC (inverter) on the external RESET line.
+
 ### LED blinking
 
 The orange LED can have several different states depending on the situation.
@@ -291,10 +326,6 @@ The orange LED can have several different states depending on the situation.
 - Short blink - Programming in progress. VCP communication is disabled.
 
 > Additional LEDs can be provided to indicate VCP communication activity.
-
-### Other pinouts
-
-For detailed pinout/signal assignments, see [<configuration.h>](src/configuration.h).
 
 ## High-Voltage control
 
@@ -353,6 +384,55 @@ Of course, you are also free to create your own custom HAL profile and place it 
 
 > [!TIP]
 > Since `usrdef.h` is excluded via `.gitignore`, it will not be accidentally published. This mechanism was originally intended for handling personal configuration data and similar information within the sketch folder.
+
+## USB VID:PID Configuration and Programmer ID
+
+By storing a custom USB VID:PID pair at the beginning of its EEPROM area, the USB4AVR-USB allows you to change the default programmer ID used when the `-Pusb:...` option is omitted. This feature is useful in the following scenarios:
+
+- When you want to match the implicit programmer selection used by the Arduino IDE or various SDKs.
+- When you want to connect and use multiple programmers/debuggers simultaneously on a single host PC.
+
+The VID:PID is changed using another programmer or debugger (not the USB4AVR-USB itself) with a command syntax like the following:
+
+```sh
+avrdude -c pkobn_updi -p avr64du32 -U eeprom:w:0xEB,0x03,0x77,0x21:m
+```
+
+> [!WARNING]
+> Since VID:PID pairs are proprietary to specific vendors, please be mindful of potential rights infringement. On Windows, in particular, these values ​​influence implicit driver selection.<br/>
+> The USB4AVR-USB does not currently provide a built-in function to change the VID:PID; applying a patch to AVRDUDE is required.
+
+The following table shows the relationship between VID:PID pairs and their corresponding typical programmer IDs. Many other valid combinations exist. 
+
+|VID:PID|Programmer|Vendor|w:hex|Comment|
+|---|---|:---|:---|:---|
+|04D8:0B15|Any of the following|MCPH|0xd8,0x4,0x15,0xb|Default value
+|         |                 |    |0xff,0xff,0xff,0ff|Revert to the default value above
+|03EB:2177|pickit4_updi     |ATML|0xeb,0x03,0x77,0x21|`-x hvupdi` available
+|         |pickit4_tpi
+|         |pickit4_pdi
+|         |pickit4_isp
+|03EB:2178|↑                |↑   |0xeb,0x03,0x78,0x21
+|03EB:2179|↑                |↑   |0xeb,0x03,0x79,0x21
+|03EB:2141|atmelice_isp     |ATML|0xeb,0x3,0x41,0x21|Atmel JTAG3ICE (Arduino IDE/AVR compatible)
+|         |atmelice_updi
+|         |atmelice_tpi
+|         |atmelice_pdi
+|03EB:2145|xplainedmini_updi|ATML|0xeb,0x3,0x45,0x21|Atmel XPlained mini (Arduino IDE/MKR compatible)
+|         |xplainedmini_tpi |    |                  |`-x vtarg_switch` available for these
+|         |xplainedmini_isp
+|         |xplainedmini     |    |                  |Automatic selection of the above
+|03EB:2175|pkobn_updi       |ATML|0xeb,0x3,0x75,0x21|Microchip Curiosity nano
+|         |pkobn            |    | |Aliases for pkobn_updi
+|03EB:217F|snap_updi        |ATML|0xeb,0x3,0x7f,0x21|MPLAB(R) SNAP
+|         |snap_tpi
+|         |snap_pdi
+|         |snap_isp
+|03EB:2180|↑                |↑　 |0xeb,0x3,0x80,0x21
+|03EB:2181|↑                |↑　 |0xeb,0x3,0x81,0x21
+
+> [!TIP]
+> Selecting `pickit4_updi` allows for high-voltage UPDI programming using `-x hvupdi`. Additionally, selecting `xplainedmini_*` allows you to toggle the target device power on or off using `-x vtarg_switch=[1,0]` (provided the corresponding external circuitry is in place).
 
 ## Related link and documentation
 
