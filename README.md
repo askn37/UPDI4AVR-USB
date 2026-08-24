@@ -361,7 +361,7 @@ By installing the SDK at the following link into the Arduino IDE, you can easily
 
 For build options, see [<UPDI4AVR-USB.ino>](UPDI4AVR-USB.ino).
 
-> [!INFORMATION]
+> [!NOTE]
 > The `hex/test-blink` folder contains the Hex file and source code for a "blink" test on the target device.
 
 ### Select HAL profile
