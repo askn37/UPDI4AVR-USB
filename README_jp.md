@@ -226,7 +226,7 @@ Avrdude done.  Thank you.
 "AVR64DU32 Curiosity Nano"を使用する場合、まず __デバッガーファームウェアを MPLAB-X を使用して最新版に更新__ しなければならない。少なくとも`1.31 (rel. 39)`以降であれば、`-xvtarg=<dbl>`オプションを使用して、PF4端子の隣にある `VTG/VCC` 端子出力の電圧を `5.0`、`3.3`、`1.8` から選択して恒久的に変更することができる。
 
 ```sh
-avrdude -cpkobn_updi -pavr64du32 -xvtarg=3.3
+avrdude -cpkobn -pavr64du32 -xvtarg=3.3
 ```
 
 ```console
@@ -453,12 +453,13 @@ USB4AVR-USBは、そのEEPROM領域先頭に任意の USB接続用 VID:PID を�
 VID:PID の変更は（USB4AVR-USB自身ではなく）他の書込器／デバッガーから、次に示すような構文で行う。
 
 ```sh
-avrdude -c pkobn_updi -p avr64du32 -U eeprom:w:0xEB,0x03,0x77,0x21:m
+avrdude -c pkobn -p avr64du32 -U eeprom:w:0xEB,0x03,0x77,0x21:m
 ```
 
 > [!CAUTION]
 > 各VID:PIDは、各ベンダーが固有の所有権を持っているため、権利侵害に注意されたい。特に Windowsでは暗黙のドライバー選択と関わりがある。<br/>
-> USB4AVR-USB自身で VID:PIDを変更する機能は、現在は用意されていない。AVRDUDEにパッチを適用する必要がある。
+> USB4AVR-USB自身で VID:PIDを変更する機能は、現在は用意されていない。AVRDUDEにパッチを適用する必要がある。<br/>
+> ボード選択で `AVR DU with USB bootloader` を選んでビルド＆インストールした場合は、SW0を押しながら電源投入することで、ファームウェア更新モードに入ることができる。この場合は EEPROM の任意更新が可能。詳細は [euboot](https://github.com/askn37/euboot)を参照のこと。(`-P usb:04d8:0b12 -c pkobn`でアクセスし、`-U eeprom:w:...`を指定する)
 
 以下は VID:PID と、対応する代表的な 書込器ID の対応である。この他にも多数の使用可能な組み合わせがある。
 

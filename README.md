@@ -224,7 +224,7 @@ PDI control, which is mainly used in the ATxmega series, requires special consid
 When using "AVR64DU32 Curiosity Nano", __you must first update the debugger firmware to the latest version using MPLAB-X.__ As of at least `1.31 (rel. 39)`, you can use the `-xvtarg=<dbl>` option to permanently change the voltage of the `VTG/VCC` terminal output next to the PF4 terminal to one of `5.0`, `3.3`, or `1.8`.
 
 ```sh
-avrdude -cpkobn_updi -pavr64du32 -xvtarg=3.3
+avrdude -cpkobn -pavr64du32 -xvtarg=3.3
 ```
 
 ```console
@@ -451,12 +451,13 @@ By storing a custom USB VID:PID pair at the beginning of its EEPROM area, the US
 The VID:PID is changed using another programmer or debugger (not the USB4AVR-USB itself) with a command syntax like the following:
 
 ```sh
-avrdude -c pkobn_updi -p avr64du32 -U eeprom:w:0xEB,0x03,0x77,0x21:m
+avrdude -c pkobn -p avr64du32 -U eeprom:w:0xEB,0x03,0x77,0x21:m
 ```
 
 > [!CAUTION]
 > Since VID:PID pairs are proprietary to specific vendors, please be mindful of potential rights infringement. On Windows, in particular, these values ​​influence implicit driver selection.<br/>
-> The USB4AVR-USB does not currently provide a built-in function to change the VID:PID; applying a patch to AVRDUDE is required.
+> The USB4AVR-USB does not currently provide a built-in function to change the VID:PID; applying a patch to AVRDUDE is required.<br/>
+> If you select `AVR DU with USB bootloader` in the board selection and proceed to build and install, you can enter firmware update mode by powering on the device while holding down SW0. In this mode, the EEPROM can be updated as desired. For details, please refer to [euboot](https://github.com/askn37/euboot). (Access using `-P usb:04d8:0b12  -c pkobn` and specify `-U eeprom:w:...`)
 
 The following table shows the relationship between VID:PID pairs and their corresponding typical programmer IDs. Many other valid combinations exist. 
 
