@@ -127,7 +127,7 @@ The following signal arrangement is recommended for converting to the AVR-ICSP M
 If the target device is `AVR64DU28`, a minimum connection test can be performed with the following command line.
 
 ```sh
-avrdude -Pusb:04d8:0b15 -cpickit4_updi -pavr64du28 -v -Usib:r:-:r
+avrdude -P usb:04d8:0b15 -c pickit4_updi -p avr64du28 -v -U sib:r:-:r
 ```
 
 > [!TIP]
@@ -175,7 +175,7 @@ Note that VCC must be supplied with 4.5V or more in order to rewrite the NVM. 3.
 If the target device is `ATiny10`, a minimum connection test can be performed with the following command line.
 
 ```sh
-avrdude -Pusb:04d8:0b15 -cpickit4_tpi -v -pt10 -Uflash:r:-:I
+avrdude -P usb:04d8:0b15 -c pickit4_tpi -v -p t10 -U flash:r:-:I
 ```
 
 ```console
@@ -224,7 +224,7 @@ PDI control, which is mainly used in the ATxmega series, requires special consid
 When using "AVR64DU32 Curiosity Nano", __you must first update the debugger firmware to the latest version using MPLAB-X.__ As of at least `1.31 (rel. 39)`, you can use the `-xvtarg=<dbl>` option to permanently change the voltage of the `VTG/VCC` terminal output next to the PF4 terminal to one of `5.0`, `3.3`, or `1.8`.
 
 ```sh
-avrdude -cpkobn -pavr64du32 -xvtarg=3.3
+avrdude -c pkobn -p avr64du32 -x vtarg=3.3
 ```
 
 ```console
@@ -246,7 +246,7 @@ Once the above setup is done correctly, you can *safely* connect the following w
 
 
 ```sh
-avrdude -Pusb:04d8:0b15 -cpickit4_pdi -px128a4u -v -Uprodsig:r:-:I
+avrdude -P usb:04d8:0b15 -c pickit4_pdi -p x128a4u -v -U prodsig:r:-:I
 ```
 
 ```console
@@ -309,7 +309,7 @@ The ISP wiring requires six lines: VCC, GND, MOSI, MISO, SCK, and RESET. The pin
 Programmer selection IDs such as `pickit4_isp`, `xplainedmini`, `atmelice_isp`, and `snap_isp` can be used.
 
 ```sh
-avrdude -Pusb:04d8:0b15 -cpickit4_isp -pm328p -v -Uprodsig:r:-:I
+avrdude -P usb:04d8:0b15 -c pickit4_isp -p m328p -v -U prodsig:r:-:I
 ```
 
 > [!TIP]
@@ -351,7 +351,8 @@ There are two ways to enable HV control.
 > [!NOTE]
 > The `hex/variants` folder contains a Makefile for use with Arduino CLI. You can use this to generate Hex and Fuse files corresponding to the preset HAL profiles.<br/>
 > <br/>
-> The `hex/updi4avr-usb` folder contains precompiled Hex files for the Curiosity Nano.
+> The `hex/updi4avr-usb` folder contains precompiled Hex files for the Curiosity Nano.<br/>
+> The `hex/test-blink` folder contains the Hex file and source code for a "blink" test on the target device.
 
 ## Build and installation
 
@@ -406,9 +407,6 @@ Compilation test for `UPDI4AVR-USB`:
 arduino-cli compile UPDI4AVR-USB.ino -b MultiX-Zinnia:modernAVR:AVRDU_noloader
 ```
 
-> [!NOTE]
-> The `hex/test-blink` folder contains the Hex file and source code for a "blink" test on the target device.
-
 ### Select HAL profile
 
 From version **v1.35.49** onwards, you can preload a custom HAL (*Hardware-Architecture-Layout*) configuration file—located in the `HAL` directory—by creating a `usrdef.h` file in the `src` directory. This allows you to define or modify arbitrary environment variables directly from the Arduino IDE (similar to the functionality available in Arduino CLI).
@@ -456,7 +454,11 @@ avrdude -c pkobn -p avr64du32 -U eeprom:w:0xEB,0x03,0x77,0x21:m
 
 > [!CAUTION]
 > Since VID:PID pairs are proprietary to specific vendors, please be mindful of potential rights infringement. On Windows, in particular, these values ​​influence implicit driver selection.<br/>
+> <br/>
 > The USB4AVR-USB does not currently provide a built-in function to change the VID:PID; applying a patch to AVRDUDE is required.<br/>
+> <br/>
+> `04D8:0B12` is used by euboot (i.e., firmware update mode). As this confuses the host PC, it must never be written to the EEPROM.<br/>
+> <br/>
 > If you select `AVR DU with USB bootloader` in the board selection and proceed to build and install, you can enter firmware update mode by powering on the device while holding down SW0. In this mode, the EEPROM can be updated as desired. For details, please refer to [euboot](https://github.com/askn37/euboot). (Access using `-P usb:04d8:0b12  -c pkobn` and specify `-U eeprom:w:...`)
 
 The following table shows the relationship between VID:PID pairs and their corresponding typical programmer IDs. Many other valid combinations exist. 

@@ -129,11 +129,11 @@ AVR-ICSP MIL/6Pコネクタに変換するには、以下の信号配列を推�
 仮に、`AVR64DU28`を対象デバイスとした場合、最低限の接続テストは以下のコマンドラインで可能だ。
 
 ```sh
-avrdude -Pusb:04d8:0b15 -cpickit4_updi -pavr64du28 -v -Usib:r:-:r
+avrdude -P usb:04d8:0b15 -c pickit4_updi -p avr64du28 -v -Usib:r:-:r
 ```
 
 > [!TIP]
-> AVRDUDE>=8.0では`-Pusb:vid:pid`構文が使用できるが、それ以前はそうではない。
+> AVRDUDE>=8.0では`-P usb:vid:pid`構文が使用できるが、それ以前はそうではない。
 > AVRDUDE<=7.3で使用するには、EEPROMに`-c`指定が要求する VID:PID を記憶させておく必要がある。
 
 ```console
@@ -177,7 +177,7 @@ TPI制御の場合、対象デバイスに必須の配線は "VCC" "GND" "TDAT" 
 仮に、`ATiny10`を対象デバイスとした場合、最低限の接続テストは以下のコマンドラインで可能だ。
 
 ```sh
-avrdude -Pusb:04d8:0b15 -cpickit4_tpi -v -pt10 -Uflash:r:-:I
+avrdude -P usb:04d8:0b15 -c pickit4_tpi -v -p t10 -U flash:r:-:I
 ```
 
 ```console
@@ -226,7 +226,7 @@ Avrdude done.  Thank you.
 "AVR64DU32 Curiosity Nano"を使用する場合、まず __デバッガーファームウェアを MPLAB-X を使用して最新版に更新__ しなければならない。少なくとも`1.31 (rel. 39)`以降であれば、`-xvtarg=<dbl>`オプションを使用して、PF4端子の隣にある `VTG/VCC` 端子出力の電圧を `5.0`、`3.3`、`1.8` から選択して恒久的に変更することができる。
 
 ```sh
-avrdude -cpkobn -pavr64du32 -xvtarg=3.3
+avrdude -c pkobn -p avr64du32 -x vtarg=3.3
 ```
 
 ```console
@@ -248,7 +248,7 @@ Changing target voltage from 3.30 to 3.30V
 
 
 ```sh
-avrdude -Pusb:04d8:0b15 -cpickit4_pdi -px128a4u -v -Uprodsig:r:-:I
+avrdude -P usb:04d8:0b15 -c pickit4_pdi -p x128a4u -v -U prodsig:r:-:I
 ```
 
 ```console
@@ -311,7 +311,7 @@ ISP方式の配線は以下に示す通り、"VCC" "GND" "MOSI" "MISO" "SCK" "RE
 書込器選択IDには、`pickit4_isp`、`xplainedmini`、`atmelice_isp`、`snap_isp` 等が利用できる。
 
 ```sh
-avrdude -Pusb:04d8:0b15 -cpickit4_isp -pm328p -v -Uprodsig:r:-:I
+avrdude -P usb:04d8:0b15 -c pickit4_isp -p m328p -v -U prodsig:r:-:I
 ```
 
 > [!TIP]
@@ -403,9 +403,6 @@ arduino-cli board details -b MultiX-Zinnia:modernAVR:AVRDU_noloader
 arduino-cli compile UPDI4AVR-USB.ino -b MultiX-Zinnia:modernAVR:AVRDU_noloader
 ```
 
-> [!NOTE]
-> `hex/test-blink`フォルダにはターゲットデバイス用の Lチカ実験用 Hexファイルとソースコードが用意されている。
-
 ### Select HAL profile
 
 **v1.35.49** 以降では、`src`ディレクトリに任意の`usrdef.h`ファイルを作成することで、`HAL`ディレクトリに配置された任意のHAL（*Hardware-Architecture-Layout*）構築ファイルをプリロードすることができるようになった。これによって Arduino IDEからでも（Arduino CLIで可能なように）任意の環境変数を記述したり、変更することができる。
@@ -441,7 +438,8 @@ arduino-cli compile UPDI4AVR-USB.ino -b MultiX-Zinnia:modernAVR:AVRDU_noloader
 > [!NOTE]
 > `hex/variants`フォルダには、Arduino CLI を用いた Makefile が格納されている。プリセットされた HALプロファイルに対応した HexファイルとFuseファイルを得るにはこれを用いることができる。<br/>
 > <br/>
-> `hex/updi4avr-usb`フォルダには、Curiosity Nano 用のプリコンパイル済 Hexファイルが用意されている。
+> `hex/updi4avr-usb`フォルダには、Curiosity Nano 用のプリコンパイル済 Hexファイルが用意されている。<br/>
+> `hex/test-blink`フォルダにはターゲットデバイス用の Lチカ実験用 Hexファイルとソースコードが用意されている。
 
 ## USB VID:PID configuration and Programmer ID
 
@@ -458,7 +456,11 @@ avrdude -c pkobn -p avr64du32 -U eeprom:w:0xEB,0x03,0x77,0x21:m
 
 > [!CAUTION]
 > 各VID:PIDは、各ベンダーが固有の所有権を持っているため、権利侵害に注意されたい。特に Windowsでは暗黙のドライバー選択と関わりがある。<br/>
+> <br/>
 > USB4AVR-USB自身で VID:PIDを変更する機能は、現在は用意されていない。AVRDUDEにパッチを適用する必要がある。<br/>
+> <br/>
+> `04D8:0B12` は euboot（すなわち、ファームウェア更新モード）が使用する。これは ホストPCを混乱させるため、決して EEPROM に書き込んではならない。<br/>
+> <br/>
 > ボード選択で `AVR DU with USB bootloader` を選んでビルド＆インストールした場合は、SW0を押しながら電源投入することで、ファームウェア更新モードに入ることができる。この場合は EEPROM の任意更新が可能。詳細は [euboot](https://github.com/askn37/euboot)を参照のこと。(`-P usb:04d8:0b12 -c pkobn`でアクセスし、`-U eeprom:w:...`を指定する)
 
 以下は VID:PID と、対応する代表的な 書込器ID の対応である。この他にも多数の使用可能な組み合わせがある。
