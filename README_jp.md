@@ -358,6 +358,51 @@ Arduino IDEに、次のリンク先の SDK を導入すると、ベアメタル�
 
 ビルドオプションについては、[<UPDI4AVR-USB.ino>](UPDI4AVR-USB.ino)を参照されたい。
 
+### for Arduino CLI
+
+中上級者向け：Arduino CLI を使用した環境構築の流れを掻い摘んで記述する。
+
+詳細は [[Arduino CLI]](https://arduino.github.io/arduino-cli/1.5/commands/arduino-cli/) を参照のこと；
+
+Windows の場合；
+
+```
+@rem "Arduino-CLI install for Windows"
+winget install ArduinoSA.CLI
+```
+
+Linux/macOS の場合；
+
+```
+# Arduino-CLI install for Linux/macOS
+brew update
+brew install arduino-cli
+```
+
+あるいは；
+
+```
+curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
+```
+
+[MultiX Zinnia Product SDK [modernAVR]](https://github.com/askn37/multix-zinnia-sdk-modernAVR) のインストール；
+
+```
+arduino-cli core install MultiX-Zinnia:modernAVR --additional-urls https://askn37.github.io/package_multix_zinnia_index.json
+```
+
+ビルドオプション一覧の確認；
+
+```
+arduino-cli board details -b MultiX-Zinnia:modernAVR:AVRDU_noloader
+```
+
+`UPDI4AVR-USB`のコンパイルテスト；
+
+```
+arduino-cli compile UPDI4AVR-USB.ino -b MultiX-Zinnia:modernAVR:AVRDU_noloader
+```
+
 > [!NOTE]
 > `hex/test-blink`フォルダにはターゲットデバイス用の Lチカ実験用 Hexファイルとソースコードが用意されている。
 
@@ -389,7 +434,9 @@ Arduino IDEに、次のリンク先の SDK を導入すると、ベアメタル�
 もちろん各個に任意の HALプロファイルを作成し、`HAL`ディレクトリに配置しても良い。その場合は使用する外囲器ピン数に応じた`AVRDU_xxP.cpp/h`ファイルを雛形にすると良い。
 
 > [!TIP]
-> `usrdef.h` は `.gitignore` で除外されているため、不用意に公開されることはない。元々は個人承認情報等をスケッチフォルダ内で扱うための仕組みである。
+> `usrdef.h` は `.gitignore` で除外されているため、不用意に公開されることはない。元々は個人承認情報等をスケッチフォルダ内で扱うための仕組みである。<br/>
+> <br/>
+> Arduino-CLI を使用する場合は、プロジェクトファイル`sketch.yaml`を作成／編集することでより詳細な設定ができる。
 
 > [!NOTE]
 > `hex/variants`フォルダには、Arduino CLI を用いた Makefile が格納されている。プリセットされた HALプロファイルに対応した HexファイルとFuseファイルを得るにはこれを用いることができる。<br/>

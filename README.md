@@ -1,4 +1,4 @@
-# UPDI4AVR-USB : OSS/OSHW Programmer for UPDI/TPI/PDI
+# UPDI4AVR-USB : OSS/OSHW Programmer for UPDI/TPI/PDI/ISP
 
 *Switching document languages* : [日本語](README_jp.md), __English__
 
@@ -361,6 +361,51 @@ By installing the SDK at the following link into the Arduino IDE, you can easily
 
 For build options, see [<UPDI4AVR-USB.ino>](UPDI4AVR-USB.ino).
 
+### For Arduino CLI
+
+For intermediate to advanced users: Here is a brief overview of the setup process using Arduino CLI.
+
+For details, please refer to [[Arduino CLI]](https://arduino.github.io/arduino-cli/1.5/commands/arduino-cli/).
+
+For Windows:
+
+```
+@rem "Arduino-CLI install for Windows"
+winget install ArduinoSA.CLI
+```
+
+For Linux/macOS:
+
+```
+# Arduino-CLI install for Linux/macOS
+brew update
+brew install arduino-cli
+```
+
+Alternatively:
+
+```
+curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
+```
+
+Installing the [MultiX Zinnia Product SDK [modernAVR]](https://github.com/askn37/multix-zinnia-sdk-modernAVR):
+
+```
+arduino-cli core install MultiX-Zinnia:modernAVR --additional-urls https://askn37.github.io/package_multix_zinnia_index.json
+```
+
+Checking the list of build options:
+
+```
+arduino-cli board details -b MultiX-Zinnia:modernAVR:AVRDU_noloader
+```
+
+Compilation test for `UPDI4AVR-USB`:
+
+```
+arduino-cli compile UPDI4AVR-USB.ino -b MultiX-Zinnia:modernAVR:AVRDU_noloader
+```
+
 > [!NOTE]
 > The `hex/test-blink` folder contains the Hex file and source code for a "blink" test on the target device.
 
@@ -392,7 +437,9 @@ If the `usrdef.h` file is missing (the default state), the system proceeds as be
 Of course, you are also free to create your own custom HAL profile and place it in the `HAL` directory. In that case, it is recommended to use an existing `AVRDU_xxP.cpp/h` file—corresponding to the number of enclosure pins you are using—as a template.
 
 > [!TIP]
-> Since `usrdef.h` is excluded via `.gitignore`, it will not be accidentally published. This mechanism was originally intended for handling personal configuration data and similar information within the sketch folder.
+> Since `usrdef.h` is excluded via `.gitignore`, it will not be accidentally published. This mechanism was originally intended for handling personal configuration data and similar information within the sketch folder.<br/>
+> <br/>
+> When using Arduino-CLI, you can configure more detailed settings by creating or editing the project file `sketch.yaml`.
 
 ## USB VID:PID Configuration and Programmer ID
 
