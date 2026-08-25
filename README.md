@@ -459,7 +459,7 @@ avrdude -c pkobn -p avr64du32 -U eeprom:w:0xEB,0x03,0x77,0x21:m
 > <br/>
 > `04D8:0B12` is used by euboot (i.e., firmware update mode). As this confuses the host PC, it must never be written to the EEPROM.<br/>
 > <br/>
-> If you select `AVR DU with USB bootloader` in the board selection and proceed to build and install, you can enter firmware update mode by powering on the device while holding down SW0. In this mode, the EEPROM can be updated as desired. For details, please refer to [euboot](https://github.com/askn37/euboot). (Access using `-P usb:04d8:0b12  -c pkobn` and specify `-U eeprom:w:...`)
+> If you select `AVR DU with USB bootloader` in the board selection and proceed to build and install, you can enter firmware update mode by powering on the device while holding down SW0. In this mode, the EEPROM can be updated as desired. For details, please refer to [euboot](https://github.com/askn37/euboot). (Access using `-P usb:04d8:0b12 -c pkobn` and specify `-U eeprom:w:...`)
 
 The following table shows the relationship between VID:PID pairs and their corresponding typical programmer IDs. Many other valid combinations exist. 
 
