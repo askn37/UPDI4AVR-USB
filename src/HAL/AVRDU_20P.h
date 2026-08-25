@@ -22,14 +22,14 @@
  * Pin layout by design: AVR16/32DU20
  *
  *                  -- Target-PGM Type --
- *         20P      UPDI    TPI     PDI
- *    PA0  TDAT     1:UPDI  1:DATA
- *    PA1  TRST     5:RESET 5:RESET
- *    PA2  VTxD     3:HTCR  3:CLK
- *    PA3  VRxD     4:HRCT
- *    PA4  PDAT                     1:DATA
+ *         20P      UPDI    TPI     ISP     PDI
+ *    PA0  TDAT     1:UPDI  1:DATA  1:MOSI
+ *    PA1  TRST     5:RESET 5:RESET 5:RESET
+ *    PA2  VTxD     3:HTCR  3:CLK   3:CLK
+ *    PA3  VRxD     4:HRCT          4:MISO
+ *    PA4  PDAT                             1:DATA
  *    PA5  HVSL1
- *    PA6  PCLK                     5:CLK
+ *    PA6  PCLK                             5:CLK
  *    PA7  HVSL2
  *    PC3  LED1
  *    PD0  -

@@ -22,7 +22,7 @@
  * Pin layout by design: AVR16/32DU20
  *
  *                  -- Target-PGM Type --
- *         14P      UPDI   TPI
+ *         14P      UPDI    TPI
  *    PA0  VTxD     3:HTCR
  *    PA1  VRxD     4:HRCT
  *    PA2  -
@@ -36,7 +36,7 @@
  *    PD1  -
  *    PD2  -
  *    PD3  -
- *    PD4  TDAT     1:UPDI  1:TPI
+ *    PD4  TDAT     1:UPDI  1:DATA
  *    PD5  TRST     5:RESET 5:RESET
  *    PD6  TCLK             3:CLK
  *    PD7  LED0
@@ -49,8 +49,8 @@
  *    PF6  SW0
  *    PF7  DUPDI
  *
+ *    - This configuration does not support ISP/PDI.
  *    - In this plan, PF6 is used as a GPIO.
- *
  *    - In this implementation, PD6 (TCLK) and PA0 (VTxD)
  *      must be shorted externally to the package.
  *

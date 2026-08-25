@@ -27,14 +27,14 @@
  *    PDI control is performed via the TP3 test terminal.
  *
  *                  -- Target-PGM Type --
- *        MZU2410A4 UPDI    TPI      PDI
- *    PA0  TDAT     1:UPDI  1:DATA
- *    PA1  TRST     5:RESET 5:RESET
- *    PA2  VTxD     3:HTCR  3:CLK
- *    PA3  VRxD     4:HRCT
- *    PA4  PDAT                      1:DATA
+ *        MZU2410A4 UPDI    TPI     ISP     PDI
+ *    PA0  TDAT     1:UPDI  1:DATA  1:MOSI
+ *    PA1  TRST     5:RESET 5:RESET 5:RESET
+ *    PA2  VTxD     3:HTCR  3:CLK   3:CLK
+ *    PA3  VRxD     4:HRCT          4:MISO
+ *    PA4  PDAT                             1:DATA
  *    PA5  VPW
- *    PA6  PCLK                      3:CLK
+ *    PA6  PCLK                             3:CLK
  *    PA7  N.C.
  *    PC3  LED1
  *    PD0  HVSL1

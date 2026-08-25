@@ -80,7 +80,14 @@ namespace /* NAMELESS */ {
 } /* NAMELESS */;
 
 __attribute__((used, naked, section(".init3")))
-void setup_mcu (void) { initVariant(); }
+void setup_mcu (void) {
+  SYS::check_firmwaremode();
+  initVariant();
+
+  /* Enables automatic adjustment of the OSCHF synchronized to the USB SOF. */
+  uint8_t _t = CLKCTRL_OSCHFCTRLA | CLKCTRL_ALGSEL_bm | CLKCTRL_AUTOTUNE_SOF_gc;
+  _PROTECTED_WRITE(CLKCTRL_OSCHFCTRLA, _t);
+}
 
 int main (void) {
 

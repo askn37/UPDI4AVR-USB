@@ -39,10 +39,6 @@ namespace SYS {
 
     /* HV-control is not available in this package. */
 
-    /* Enables automatic adjustment of the OSCHF synchronized to the USB SOF. */
-    uint8_t _t = CLKCTRL_OSCHFCTRLA | CLKCTRL_ALGSEL_bm | CLKCTRL_AUTOTUNE_SOF_gc;
-    _PROTECTED_WRITE(CLKCTRL_OSCHFCTRLA, _t);
-
     /* Output GPIO */
     VPORTA_DIR = 0b10100000;    /* 7:HVSL2 5;HVSL1 */
     VPORTD_DIR = 0b10110000;    /* 7:HVSL3 5:HVCP2 4:HVCP1 */

@@ -527,6 +527,7 @@ namespace SYS {
   void LED_Flash (void);
   void LED_Blink (void);
   void LED_Fast (void);
+  void check_firmwaremode (void);
   void power_reset (bool _off = true, bool _on = true);
   void reset_enter (void);
   void reset_leave (void);

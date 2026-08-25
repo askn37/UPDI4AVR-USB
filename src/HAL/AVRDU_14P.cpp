@@ -39,10 +39,6 @@ namespace SYS {
 
     /* HV-control and PDI support is not available in this package. */
 
-    /* Enables automatic adjustment of the OSCHF synchronized to the USB SOF. */
-    uint8_t _t = CLKCTRL_OSCHFCTRLA | CLKCTRL_ALGSEL_bm | CLKCTRL_AUTOTUNE_SOF_gc;
-    _PROTECTED_WRITE(CLKCTRL_OSCHFCTRLA, _t);
-
     /* Output GPIO */
 
     /* Pull-Up GPIO */
@@ -64,10 +60,11 @@ namespace SYS {
     /*** Event System ***/
     EVSYS_CHANNEL1        = EVSYS_CHANNEL_RTC_EVGEN1_gc;    /* 128Hz periodic. */
     EVSYS_CHANNEL2        = EVSYS_CHANNEL_CCL_LUT3_gc;      /* <- Indicator */
+    EVSYS_CHANNEL3        = EVSYS_CHANNEL_CCL_LUT2_gc;      /* <- CCL2_OUT */
     EVSYS_CHANNEL4        = EVSYS_CHANNEL_PORTX_EVGEN0(PIN_VCP_RXD);  /* <- VRxD */
     EVSYS_CHANNEL5        = EVSYS_CHANNEL_PORTX_EVGEN1(PIN_VCP_TXD);  /* <- VTxD */
 
-    EVSYS_USEREVSYSEVOUTD = EVSYS_USER_CHANNEL3_gc;         /* -> EVOUTD:LED1 */
+    EVSYS_USEREVSYSEVOUTD = EVSYS_USER_CHANNEL3_gc;         /* -> EVOUTD_ALT1 */
 
     EVSYS_USERCCLLUT3A    = EVSYS_USER_CHANNEL4_gc;         /* <- VRxD */
     EVSYS_USERCCLLUT1A    = EVSYS_USER_CHANNEL4_gc;         /* <- VRxD */
@@ -95,7 +92,7 @@ namespace SYS {
     CCL_LUT2CTRLC = CCL_INSEL2_TCB1_gc;                     /* <- TCB1_WO */
     CCL_LUT2CTRLB = CCL_INSEL1_TCA0_gc                      /* <- TCA0_WO1 */
                   | CCL_INSEL0_TCB0_gc;                     /* <- TCB0_WO */
-    CCL_LUT2CTRLA = CCL_ENABLE_bm | CCL_OUTEN_bm;           /* -> PIN_PD3 */
+    CCL_LUT2CTRLA = CCL_ENABLE_bm;                          /* -> CCL2_OUT */
 
     /*** CCL enable ***/
     /* One of the CCL's is the LED output control. */

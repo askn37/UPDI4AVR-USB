@@ -57,10 +57,6 @@ namespace SYS {
      * V-Target power control: output negative logic.
      */
 
-    /* Enables automatic adjustment of the OSCHF synchronized to the USB SOF. */
-    uint8_t _t = CLKCTRL_OSCHFCTRLA | CLKCTRL_ALGSEL_bm | CLKCTRL_AUTOTUNE_SOF_gc;
-    _PROTECTED_WRITE(CLKCTRL_OSCHFCTRLA, _t);
-
     /* Output GPIO */
     VPORTD_DIR = 0b00110111;    /* 5:HVCP2 4:HVCP1 2:HVSL3 1:HVSL2 0:HVSL1 */
 
@@ -221,6 +217,24 @@ namespace SYS {
   /* Programming in progress indicator. */
   WEAK void LED_Fast (void) {
     LED_TM(4, 12);
+  }
+
+  /*
+   * Checking Firmware Upload Mode
+   *
+   * for euboot @3.72.49+
+   */
+
+  WEAK void check_firmwaremode (void) {
+    if (bit_is_set(GPR_GPR0, RSTCTRL_PORF_bp) && FUSE_BOOTSIZE > 0) {
+      pinControlRegister(PIN_SYS_SW0) = PORT_PULLUPEN_bm;
+      /* It takes time for the effects of PULLUP to appear. */
+      for (uint16_t _i = 0; ++_i;) {
+        if (digitalReadMacro(PIN_SYS_SW0)) return;
+      }
+      *(uint16_t*)(RAMEND - 1) = 0;       /* Zero-initialize the last 2 bytes of the SRAM. */
+      _PROTECTED_WRITE(RSTCTRL_SWRR, 1);  /* Perform a software reset. */
+    }
   }
 
   /*

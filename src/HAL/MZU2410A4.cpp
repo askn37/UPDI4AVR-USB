@@ -39,10 +39,6 @@ namespace SYS {
      * V-Target power control: output negative logic.
      */
 
-    /* Enables automatic adjustment of the OSCHF synchronized to the USB SOF. */
-    uint8_t _t = CLKCTRL_OSCHFCTRLA | CLKCTRL_ALGSEL_bm | CLKCTRL_AUTOTUNE_SOF_gc;
-    _PROTECTED_WRITE(CLKCTRL_OSCHFCTRLA, _t);
-
     /* Output GPIO */
     VPORTD_DIR = 0b00110111;    /* 5:HVCP2 4:HVCP1 2:HVSL3 1:HVSL2 0:HVSL1 */
 
