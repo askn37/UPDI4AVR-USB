@@ -5,8 +5,8 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.35.49+
- * @date 2026-08-09
+ * @version 1.35.50+
+ * @date 2026-08-18
  * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -55,12 +55,13 @@
 
 
 /*
- * UPDI/PDI Program interface operating clock.
+ * UPDI/PDI/ISP Program interface operating clock.
  * In avrdude this can be changed with `-B125khz` etc.
  */
 
 #define UPDI_CLK 225
 #define PDI_CLK  2500
+#define ISP_CLK  250
 
 
 /*
@@ -81,14 +82,13 @@
  * This will almost always avoid notifications of incompatible version upgrades,
  * but it's not perfect.
  *
- * Columns: HW_VER, FW_MAJOR, FW_MINOR, FW_RELL, FW_RELH (all 1-byte decimal)
+ * Columns: HW_VER, FW_MAJOR, FW_MINOR, FW_REL(word,LE) 
  */
 
 #define HW_VER   0
 #define FW_MAJOR 1
 #define FW_MINOR 35
-#define FW_RELL  49
-#define FW_RELH  0
+#define FW_REL   50
 
 
 /*** CONFIG_USB ***/
@@ -204,7 +204,7 @@
  * In any case, AVR-PP/HVPP is not supported.
  */
 
-// #define CONFIG_PGM_ISP_ENABLE
+#define CONFIG_PGM_ISP_ENABLE
 
 
 /*

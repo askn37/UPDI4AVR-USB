@@ -5,8 +5,8 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.35.49+
- * @date 2026-08-09
+ * @version 1.35.50+
+ * @date 2026-08-25
  * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -26,14 +26,14 @@
  *    UPDI/TPI control and also feature High-Voltage circuitry.
  *
  *                  -- Target-PGM Type --
- *        MZU2410A2 UPDI    TPI     (PDI)
- *    PA0  TDAT     1:UPDI  1:DATA
+ *        MZU2410A2 UPDI    TPI     ISP
+ *    PA0  TDAT     1:UPDI  1:DATA  1:MOSI
  *    PA1  VPW
- *    PA2  VTxD     3:HTCR  3:CLK
- *    PA3  VRxD     4:HRCT
- *    PA4 (PDAT)                    (1:DATA)
+ *    PA2  VTxD     3:HTCR  3:CLK   3:SCK
+ *    PA3  VRxD     4:HRCT          4:MISO
+ *    PA4  N.A.
  *    PA5  SW0
- *    PA6  TRST     5:RESET 5:RESET (3:CLK)
+ *    PA6  TRST     5:RESET 5:RESET 5:RESET
  *    PA7  N.C.
  *    PC3  LED1
  *    PD0  HVSL1
@@ -54,10 +54,10 @@
  *    PF7  DUPDI
  *
  *    - This implementation is a prototype designed to incorporate
- *      PDI control into the HV control circuit. The PA4 (PDAT) and
- *      PA0 (TDAT) pins are shorted externally to the package.
+ *      PDI control into the HV control circuit. The PA4 (PDI_DAT)
+ *      and PA0 (TDAT) pins are shorted externally to the package.
  *      However, because the HV control circuit employs an open-drain
- *      configuration, the PCLK signal was unable to overcome
+ *      configuration, the PDI_CLK signal was unable to overcome
  *      the TRST pull-up resistor.
  *
  *

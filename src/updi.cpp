@@ -5,8 +5,8 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.35.49+
- * @date 2026-08-09
+ * @version 1.35.50+
+ * @date 2026-08-21
  * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -65,7 +65,7 @@ namespace UPDI {
   }
 
   void long_break (void) {
-    USART0_BAUD = USART::calk_baud_khz(_xclk >> 2);
+    USART0_BAUD = USART0_BAUD << 2;
     send(0x00);
     USART0_BAUD = USART::calk_baud_khz(_xclk);
   }
@@ -312,7 +312,7 @@ namespace UPDI {
     uint8_t   m_type = packet.out.bMType;
     uint32_t _dwAddr = packet.out.dwAddr;
     size_t  _wLength = packet.out.dwLength;
-    if (bit_is_clear(PGCONF, PGCONF_UPDI_bp)
+    if (bit_is_clear(PGCONF, PGCONF_PGIA_bp)
      || m_type != 0xC5
      || _wLength != Device_Descriptor.UPDI.user_sig_bytes
      || (uint16_t)_dwAddr != Device_Descriptor.UPDI.user_sig_base) return false;
@@ -386,14 +386,15 @@ namespace UPDI {
     _before_page = -1L;
     NVM::V1::setup();   /* default is dummy callback */
     USART::setup();
+    bit_set(PGCONF, PGCONF_PGIF_bp);
 
     /* If possible, perform a hardware reset of the device. */
     digitalWriteMacro(PIN_PGM_TDAT, LOW);
     digitalWriteMacro(PIN_PGM_TRST, LOW);
-    pinLogicPull(PIN_PGM_TRST);
-    SYS::power_reset();
-    SYS::delay_2500us();
-    pinLogicOpen(PIN_PGM_TRST);
+    if (_jtag_vpow == 0) {
+      _jtag_vpow = 1;
+      SYS::power_reset(false, true);
+    }
 
     /* High-Voltage control */
   #ifdef CONFIG_HVC_ENABLE
@@ -450,7 +451,8 @@ namespace UPDI {
         /* If the SIB is obtained, the first 4-characters are returned. */
         /* If the 1st character is blank, the next 4-characters are returned. */
         memcpy(&packet.in.data[0], _sib[0] == ' ' ? &_sib[4] : &_sib[0], 4);
-        bit_set(PGCONF, PGCONF_UPDI_bp);
+        bit_set(PGCONF, PGCONF_PGIA_bp);
+        bit_clear(PGCONF, PGCONF_PGIF_bp);
         return 5;
       }
     }
@@ -481,16 +483,19 @@ namespace UPDI {
   }
 
   uint8_t sign_off (void) {
-    uint8_t _rsp = bit_is_set(PGCONF, PGCONF_UPDI_bp) ? Timeout::command(&disconnect) : 1;
-    send_break();
-    SYS::delay_100us();
-    USART::setup();
-    pinLogicPull(PIN_PGM_TRST);
-    SYS::power_reset();
-    SYS::delay_2500us();
-    pinLogicOpen(PIN_PGM_TRST);
-    PGCONF = 0;
-    USART::change_vcp();
+    uint8_t _rsp = 1;
+    if (PGCONF) {
+      _rsp = bit_is_set(PGCONF, PGCONF_PGIA_bp) ? Timeout::command(&disconnect) : 1;
+      send_break();
+      SYS::delay_100us();
+      USART::setup();
+      pinLogicPull(PIN_PGM_TRST);
+      SYS::power_reset();
+      SYS::delay_2500us();
+      pinLogicOpen(PIN_PGM_TRST);
+      PGCONF = 0;
+      USART::change_vcp();
+    }
     return _rsp;
   } 
 
@@ -506,10 +511,9 @@ namespace UPDI {
       if ((bit_is_set(GPCONF, GPCONF_HLD_bp) || _jtag_hvctrl) && _xclk_bak > 125) {
         /* The maximum speed is limited during HV control. */
         _xclk_bak = 125;
-        _step = 25;
       }
-      _xclk = _xclk_bak;
-      while (_xclk >= 100 && !(_rspsize = Timeout::command(&connect, nullptr, 160))) {
+      _xclk = _xclk_bak; // + _step;
+      while (_xclk >= 100 && !(_rspsize = Timeout::command(&connect, nullptr, 70))) {
         _xclk -= _step;
       }
       /* If it fails here, it is expected to try again, giving it a chance at HV control. */
@@ -526,7 +530,7 @@ namespace UPDI {
       /* On failure, RSP3_OK is returned if a UPDI connection is available. */
       /* Locked devices are given the opportunity to write to USERROW and erase the chip. */
       _rspsize = Timeout::command(&enter_progmode, &timeout_fallback, 250)
-              || bit_is_set(PGCONF, PGCONF_UPDI_bp);
+              || bit_is_set(PGCONF, PGCONF_PGIA_bp);
     }
     else if (_cmd == 0x16) {        /* CMD3_LEAVE_PROGMODE */
       D1PRINTF(" UPDI_LEAVE_PROG\r\n");
@@ -540,7 +544,7 @@ namespace UPDI {
         packet.out.bEType, packet.out.dwPageAddr);
       _rspsize = Timeout::command(Command_Table.erase_memory, &timeout_fallback);
     }
-    else if (bit_is_clear(PGCONF, PGCONF_UPDI_bp)) { /* empty */ }
+    else if (bit_is_clear(PGCONF, PGCONF_PGIA_bp)) { /* empty */ }
     else if (_cmd == 0x21) {        /* CMD3_READ_MEMORY */
       D1PRINTF(" UPDI_READ=%02X:%06lX:%04X\r\n", packet.out.bMType,
         packet.out.dwAddr, (size_t)packet.out.dwLength);

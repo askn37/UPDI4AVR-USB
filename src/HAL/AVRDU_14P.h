@@ -5,8 +5,8 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.35.49+
- * @date 2026-08-09
+ * @version 1.35.50+
+ * @date 2026-08-25
  * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -22,7 +22,7 @@
  * Pin layout by design: AVR16/32DU20
  *
  *                  -- Target-PGM Type --
- *         14P      UPDI   TPI
+ *         14P      UPDI    TPI
  *    PA0  VTxD     3:HTCR
  *    PA1  VRxD     4:HRCT
  *    PA2  -
@@ -36,7 +36,7 @@
  *    PD1  -
  *    PD2  -
  *    PD3  -
- *    PD4  TDAT     1:UPDI  1:TPI
+ *    PD4  TDAT     1:UPDI  1:DATA
  *    PD5  TRST     5:RESET 5:RESET
  *    PD6  TCLK             3:CLK
  *    PD7  LED0
@@ -49,8 +49,8 @@
  *    PF6  SW0
  *    PF7  DUPDI
  *
+ *    - This configuration does not support ISP/PDI.
  *    - In this plan, PF6 is used as a GPIO.
- *
  *    - In this implementation, PD6 (TCLK) and PA0 (VTxD)
  *      must be shorted externally to the package.
  *

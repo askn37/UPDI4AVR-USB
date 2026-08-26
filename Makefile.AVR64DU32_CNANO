@@ -41,6 +41,12 @@ JOINING = -j .text -j .data -j --set-section-flags
 
 ### Make rule ###
 
+all:
+	$(MAKE) -f $(MF) clean
+	$(MAKE) -f $(MF) hex/updi4avr-usb/$(TARGET1).hex
+	$(MAKE) -f $(MF) hex/updi4avr-usb/$(TARGET2).hex
+	$(MAKE) -f $(MF) clean
+
 hex/updi4avr-usb/$(TARGET)%.hex: build/$(TARGET)%.ino.elf
 	@$(OBJCOPY) $(JOINING) -O ihex $< $@
 	@$(LISTING) $< > hex/updi4avr-usb/$(TARGET)$*.lst
@@ -55,13 +61,8 @@ build/$(TARGET2).ino.elf: src/$(SRCS:.cpp=.o) src/$(SRCS:.c=.o)
 	$(ACLIPATH)arduino-cli compile $(FQBN) $(BUILD_OPT2) $(SDKURL) --build-path build --no-color
 	@mv -f build/$(SOURCE).ino.elf build/$(TARGET2).ino.elf
 
-all:
-	$(MAKE) -f $(MF) hex/updi4avr-usb/$(TARGET1).hex
-	$(MAKE) -f $(MF) hex/updi4avr-usb/$(TARGET2).hex
-	$(MAKE) -f $(MF) clean
-
 clean:
 	@touch ./build/__temp
-	rm -rf ./build/*
+	@rm -rf ./build/*
 
 # end of script

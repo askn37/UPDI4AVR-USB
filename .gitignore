@@ -2,4 +2,6 @@
 *~
 .vs*
 build/
+hex/variants/build/
+hex/variants/hex/
 usrdef.h

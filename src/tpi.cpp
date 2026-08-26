@@ -5,8 +5,8 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.35.49+
- * @date 2026-08-09
+ * @version 1.35.50+
+ * @date 2026-08-22
  * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -158,7 +158,7 @@ namespace TPI {
       *_q++ = RXDATA;
       ++_cnt;
     }
-    D1PRINTHEX(&packet.in.data, _wLength);
+    D1PRINTHEX(&packet.in.data, _wLength, ':');
     return _wLength;
   }
 
@@ -182,7 +182,7 @@ namespace TPI {
       _wLength++;
     }
     D1PRINTF(" WRITE=%04X:%d ", _dwAddr, _wLength);
-    D1PRINTHEX(_p, _wLength);
+    D1PRINTHEX(_p, _wLength, ':');
 
     /* For the flash code area, the page erase can be */
     /* omitted if the chip has already been erased.   */
@@ -230,9 +230,13 @@ namespace TPI {
   size_t connect (void) {
     PGCONF = 0;
     USART::setup();
+    bit_set(PGCONF, PGCONF_PGIF_bp);
 
     pinLogicPull(PIN_PGM_TRST);
-    SYS::power_reset();
+    if (_jtag_vpow == 0) {
+      _jtag_vpow = 1;
+      SYS::power_reset(false, true);
+    }
     SYS::delay_2500us();
 
     /* Called with `-xhvtpi` hvtpi_support */
@@ -260,7 +264,8 @@ namespace TPI {
 
     /*** Check TPIIR code : Fixed 0x80 ***/
     while (!(get_sldcs(0x0F) && (RXDATA == 0x80)));
-    bit_set(PGCONF, PGCONF_UPDI_bp);
+    bit_set(PGCONF, PGCONF_PGIA_bp);
+    bit_clear(PGCONF, PGCONF_PGIF_bp);
 
     /*** Activate NVMPROG mode ***/
     do {
@@ -316,14 +321,17 @@ namespace TPI {
   }
 
   uint8_t sign_off (void) {
-    uint8_t _rsp = bit_is_set(PGCONF, PGCONF_UPDI_bp) ? disconnect() : 1;
-    pinLogicOpen(PIN_PGM_TCLK);
-    pinLogicOpen(PIN_PGM_TRST);
-    SYS::power_reset();
-    SYS::delay_2500us();
-    PGCONF = 0;
-    USART::setup();
-    USART::change_vcp();
+    uint8_t _rsp = 1;
+    if (PGCONF) {
+      _rsp = bit_is_set(PGCONF, PGCONF_PGIA_bp) ? disconnect() : 1;
+      pinLogicOpen(PIN_PGM_TCLK);
+      pinLogicOpen(PIN_PGM_TRST);
+      SYS::power_reset();
+      SYS::delay_2500us();
+      PGCONF = 0;
+      USART::setup();
+      USART::change_vcp();
+    }
     return _rsp;
   }
 
@@ -373,7 +381,7 @@ namespace TPI {
     else if (_cmd == 0x06) {        /* XPRG_CMD_CRC */
       D1PRINTF(" TPI_CRC\r\n");     /* not used (Fail) */
     }
-    else if (bit_is_clear(PGCONF, PGCONF_UPDI_bp)) { /* empty */ }
+    else if (bit_is_clear(PGCONF, PGCONF_PGIA_bp)) { /* empty */ }
     else if (_cmd == 0x05) {        /* XPRG_CMD_READ_MEM */
       D1PRINTF(" TPI_READ=%02X:%08lX:%d\r\n",
         packet.out.tpi.read.bMType,
@@ -400,7 +408,7 @@ namespace TPI {
       );
       _rspsize = Timeout::command(&write_memory);
     }
-    packet.in.tpi_res = _rspsize ? 0x00 : 0x01; /* XPRG_ERR_OK : XPRG_ERR_FAILED */
+    packet.in.tpi.res = _rspsize ? 0x00 : 0x01; /* XPRG_ERR_OK : XPRG_ERR_FAILED */
     D1PRINTF(" <RES:%02X>\r\n", _rspsize);
 
     /* Adds padding to XPRG responses to adjust the length of the payload. */

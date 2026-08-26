@@ -5,8 +5,8 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.35.49+
- * @date 2026-08-09
+ * @version 1.35.50+
+ * @date 2026-08-18
  * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -241,7 +241,7 @@ namespace USB {
       USB0_FIFOWP = 0;
       USB0_EPPTR = (uint16_t)&EP_TABLE.EP;
       USB0_CTRLB = USB_ATTACH_bm;
-      GPCONF = 0;
+      GPCONF &= GPCONF_SW0_gm;
       PGCONF = 0;
       RXSTAT = 0;
       _send_break = 0;
@@ -325,7 +325,7 @@ namespace USB {
     D2PRINTF(" VI=%02X:", _send_count);
     D2PRINTHEX(bit_is_set(GPCONF, GPCONF_DBL_bp)
       ? &EP_MEM.cdi_data[64]
-      : &EP_MEM.cdi_data[0], _send_count);
+      : &EP_MEM.cdi_data[0], _send_count, ':');
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
       EP_CDI.DATAPTR = bit_is_set(GPCONF, GPCONF_DBL_bp)
         ? (register16_t)&EP_MEM.cdi_data[64]
@@ -405,7 +405,7 @@ namespace USB {
     if (bit_is_set(GPCONF, GPCONF_OPN_bp) && _set_serial_state != _value.bValue) {
       set_cci_data(_value.bValue);
       D1PRINTF(" CCI=");
-      D1PRINTHEX(&EP_MEM.cci_data, 10);
+      D1PRINTHEX(&EP_MEM.cci_data, 10, ':');
       if (bit_is_set(EP_CCI.STATUS, USB_BUSNAK_bp)) ep_cci_listen();
     }
   #endif
@@ -429,7 +429,7 @@ namespace USB {
   #if defined(DEBUG) && (DEBUG >= 2)
       if (_recv_count == 0) {
         D2PRINTF(" VO=%02X:", EP_CDO.CNT);
-        D2PRINTHEX(&EP_MEM.cdo_data, EP_CDO.CNT);
+        D2PRINTHEX(&EP_MEM.cdo_data, EP_CDO.CNT, ':');
       }
   #endif
       _c = EP_MEM.cdo_data[_recv_count++];
@@ -596,7 +596,7 @@ namespace USB {
       ep_req_pending();
       USART::set_line_encoding(&EP_MEM.res_encoding);
       D1PRINTF(" SLE=");
-      D1PRINTHEX(&_set_line_encoding, sizeof(LineEncoding_t));
+      D1PRINTHEX(&_set_line_encoding, sizeof(LineEncoding_t), ':');
       bit_set(GPCONF, GPCONF_OPN_bp);
       _send_count = 0;
       _recv_count = 0;
@@ -612,7 +612,7 @@ namespace USB {
         EP_MEM.res_encoding.bDataBits = 8;
       }
       D1PRINTF(" GLE=");
-      D1PRINTHEX(&EP_MEM.res_encoding, sizeof(LineEncoding_t));
+      D1PRINTHEX(&EP_MEM.res_encoding, sizeof(LineEncoding_t), ':');
       EP_RES.CNT = sizeof(LineEncoding_t);
     }
     else if (bRequest == 0x22) {  /* SET_LINE_STATE */
@@ -642,6 +642,7 @@ namespace USB {
   void handling_control_transactions (void) {
     bool _listen = false;
     uint8_t bmRequestType = EP_MEM.req_data.bmRequestType;
+    EVSYS_SWEVENTA = EVSYS_SWEVENTA_CH2_gc;
     D1PRINTF("RQ=%02X:%04X:%02X:%02X:%04X:%04X:%04X\r\n",
       EP_REQ.STATUS, EP_REQ.CNT, EP_MEM.req_data.bmRequestType, EP_MEM.req_data.bRequest,
       EP_MEM.req_data.wValue, EP_MEM.req_data.wIndex, EP_MEM.req_data.wLength);

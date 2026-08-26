@@ -1,32 +1,40 @@
-# UPDI4AVR-USB : OSS/OSHW Programmer for UPDI/TPI/PDI
+# UPDI4AVR-USB : OSS/OSHW Programmer for UPDI/TPI/PDI/ISP
 
 *Switching document languages* : [日本語](README_jp.md), __English__
 
 - Open source software/firmware that turns the AVR-DU family into a USB-connected programmer.
-- Can read/erase/write NVM (non-volatile memory) of UPDI, TPI, and PDI type AVR series.
-- AVRDUDE is assumed as the programming application on the host PC. It looks like "PICKit4" or "Curiosity Nano".
+- Capable of reading, erasing, and writing NVM (non-volatile memory) for UPDI, TPI, PDI, and ISP<sup>*</sup> type AVR series devices.
+- AVRDUDE is assumed as the programming application on the Host PC. It looks like "PICKit4" or "Curiosity Nano".
 - Equipped with VCP-UART transfer function.
 - All results are distributed under the MIT license.
+
+> * ISP (i.e. Low-Voltage SPI control) support is provisional.
 
 The conventional *USB4AVR* is designed to use a USB-serial conversion circuit, but this *UPDI4AVR-USB* is a complete single-chip design that uses the USB peripheral circuit built into the MCU.
 
 ### Recent Features
+
+v1.35.50
+- Modified Timer/CCL/RTC/EVSYS configuration
+- Added `hex/variants`
+- Limited support for ISP-based control
 
 v1.35.49
 - Introduction of HAL profile structure
 - Revised bare-chip pin layout
 - Revamped CCL/TC* operations
 
-v1.34.48
-- Support for NVMCTRL Version 6; AVR-SD famiry
-  - Robust protection mechanisms specific to the AVR-SD family (particularly FUSE settings) must be disabled as necessary.
-  - *The AVR-LA family is supported by the same NVMCTRL version 5 as the AVR-EB.*
-
 ## Quick Start
 
-The pre-built binaries can be uploaded to the ["AVR64DU32 Curiosity Nano : EV59F82A"](https://www.microchip.com/en-us/development-tool/ev59f82a) product for easy setup. [->Click Here](https://github.com/askn37/UPDI4AVR-USB/tree/main/hex/updi4avr-usb)
+The pre-built binaries can be uploaded to the ["AVR64DU32 Curiosity Nano : EV59F82A"](https://www.microchip.com/en-us/development-tool/ev59f82a) product for easy setup.
+
+[->Click Here](https://github.com/askn37/UPDI4AVR-USB/tree/main/hex/updi4avr-usb)
 
 ## Introduction
+
+<details>
+
+<summary>A story from a little while ago</summary>
 
 The existence of the AVR-DU family was announced in the spring of 2021, but was soon put on hold. While that was stalled, the AVR-Ex series was released first, and after some time, the first production AVR64DU32 (with unfortunate errata) was finally released in May 2024, and the release of the remaining 14P/20P products was confirmed in October.
 
@@ -44,6 +52,8 @@ It took 10 days to create a scenario and get it to work, and another 20 days to 
 
 Finally, I'm releasing the first open source branch that can be used for ["AVR64DU32 Curiosity Nano : EV59F82A"](https://www.microchip.com/en-us/development-tool/ev59f82a). It should be fine for trying it out for general use.
 
+</details>
+
 ## What you can and can't do
 
 It is mostly a replacement for the traditional *JTAG2UPDI* and *microUPDI*. If you are already using them, you can start using it right away.
@@ -58,6 +68,8 @@ This software can:
 - Operates (probably) all released PDI type ATxmega series:
   - Operation has been confirmed only for ATxmega128A4U.
   - PDI support is enabled by default only when built for "Curiosity Nano". (Uses a different wiring from UPDI/TPI)
+- Supports ISP control for select classic AVR models. 
+  - Models currently confirmed to work include the ATmega328P, ATtiny13/85, etc.
 - No additional driver installation is required because it uses the standard OS driver for Windows/macos/Linux. VID:PID can be customized with EEPROM.
   - If additional drivers/Inf files are already installed, the device vendor that matches the VID:PID will be displayed. (Be careful of license infringement)
 - Includes VCP (Virtual Communication Port) based on the CDC-ACM specification.
@@ -77,15 +89,11 @@ This software cannot:
 - Does not work with devices other than the AVR-DU family, as they do not have the necessary and compatible USB peripherals.
   - Porting to the ATxmega AU family is probably possible, as the USB peripherals are similar. (No plans: Fork required)
 - Supports USB 2.0 "Full-Speed" only. The AVR-DU family does not support "High-Speed". (Not possible)
-- Does not support ISP/PP/HVPP type devices. Hardware requirements are different, and GPIO is not common, so it will be a different software. (Fork required)
+- Support for ISP-type classic AVR devices is limited to a select range of relatively popular models.
+- PP/HVPP-type devices are not supported; due to differing hardware requirements and a lack of GPIO compatibility, they would require separate software (necessitating a fork).
 - JTAG communication, SWD/SWO, dWire, and OCD functions are not supported. (No plans)
 - High voltage programming is not supported because the 14P package product (AVR16-32DU14) does not have any extra pins. 20P/28P/32P package products are required.
 - DEBUG build (PRINTF) cannot be used because there are insufficient pins in 14P/20P and no free space in 16KiB models.
-
-For details on pin arrangement/signal assignment for each package type of the AVR-DU family, see [<configuration.h>](src/configuration.h).
-
-> [!NOTE]
-> Previous generation devices such as the ATmega328P family are usually handled by ISP serial programming (SPI technology), but some models cannot be restored to factory settings once the fuses are destroyed unless HVPP high-voltage parallel programming (parallel technology) is used. In this case, a high-level programmer such as *UPDI4AVR*, whose primary objective is to "restore the device to its factory settings", needs to be able to process all of ISP/PP/HVPP.
 
 ## Practical Usage
 
@@ -93,7 +101,16 @@ Below is a simple usage example for "AVR64DU32 Curiosity Nano".
 This product series can be mounted on a breadboard without soldering using the included pin headers.
 
 > [!TIP]
-> We recommend connecting an additional LED1 (active-high) between PF3 and GND. In addition to flashing during VCP communication, it visualizes changes on PA3 (lighting up when LOW), so it can also be used for "LED blinking" (GPIO toggling) on ​​the target device.
+> We recommend installing an additional LED1 (active-high) between PF3 and GND. LED0 corresponds to the onboard LED connected to PF2. Except for the Curiosity Nano, LED0 is typically connected to PC3 and LED1 to PD3; both are controlled using active-high logic.
+
+The standard wiring configuration when connecting the device is shown in the diagram below. This layout is common to all models, with the exception of the 14-pin package, which has a limited number of pins.
+
+<img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_PINOUT.drawio.svg">
+
+While idle, pins `PA0`, `PA1`, `PA2`, and `PA3` function as open-drain I/Os with internal pull-up resistors. Notably, the `PA2`/`PA3` pair serves as the VCP-TxD/RxD interface; LED1 illuminates when the signals on these two pins differ (XOR logic). This allows you to perform "LED blink" experiments on the target device without adding any external components.
+
+> [!TIP]
+> Since the PA2 (VCP-TxD) pin uses an open-drain output configuration, it will not conflict with the target device's I/O settings, regardless of how they are configured. As shown in the wiring diagram, this pin corresponds to the SCK pin in ISP mode, effectively controlling the standard "D13" LED. The maximum VCP communication speed is 500 kbps, a limit imposed by the Curiosity Nano's onboard debugger (PKOBN—PicKit On-Board Nano); however, speeds several times higher than this are achievable if using a bare-chip implementation.
 
 ### UPDI Control
 
@@ -105,12 +122,12 @@ For UPDI control, the target device requires three wires: "VCC", "GND", and "UPD
 
 The following signal arrangement is recommended for converting to the AVR-ICSP MIL/6P connector. This is compatible with TPI control and two types of HV control methods. (However, HV control is not possible without a dedicated circuit.)
 
-<img src="https://askn37.github.io/svg/AVR-ICSP-M6P-UPDI4AVR.drawio.svg" width="320">
+<img src="https://askn37.github.io/svg/AVR-ICSP-M6P-UPDI4AVR.drawio.svg" width="280">
 
 If the target device is `AVR64DU28`, a minimum connection test can be performed with the following command line.
 
 ```sh
-avrdude -Pusb:04d8:0b15 -cpickit4_updi -pavr64du28 -v -Usib:r:-:r
+avrdude -P usb:04d8:0b15 -c pickit4_updi -p avr64du28 -v -U sib:r:-:r
 ```
 
 > [!TIP]
@@ -158,7 +175,7 @@ Note that VCC must be supplied with 4.5V or more in order to rewrite the NVM. 3.
 If the target device is `ATiny10`, a minimum connection test can be performed with the following command line.
 
 ```sh
-avrdude -Pusb:04d8:0b15 -cpickit4_tpi -v -pt10 -Uflash:r:-:I
+avrdude -P usb:04d8:0b15 -c pickit4_tpi -v -p t10 -U flash:r:-:I
 ```
 
 ```console
@@ -207,7 +224,7 @@ PDI control, which is mainly used in the ATxmega series, requires special consid
 When using "AVR64DU32 Curiosity Nano", __you must first update the debugger firmware to the latest version using MPLAB-X.__ As of at least `1.31 (rel. 39)`, you can use the `-xvtarg=<dbl>` option to permanently change the voltage of the `VTG/VCC` terminal output next to the PF4 terminal to one of `5.0`, `3.3`, or `1.8`.
 
 ```sh
-avrdude -cpkobn_updi -pavr64du32 -xvtarg=3.3
+avrdude -c pkobn -p avr64du32 -x vtarg=3.3
 ```
 
 ```console
@@ -229,7 +246,7 @@ Once the above setup is done correctly, you can *safely* connect the following w
 
 
 ```sh
-avrdude -Pusb:04d8:0b15 -cpickit4_pdi -px128a4u -v -Uprodsig:r:-:I
+avrdude -P usb:04d8:0b15 -c pickit4_pdi -p x128a4u -v -U prodsig:r:-:I
 ```
 
 ```console
@@ -274,20 +291,42 @@ Avrdude done.  Thank you.
 > For this reason, PDI support is only enabled in builds for "AVR64DU32 Curiosity Nano", which definitely has ample memory capacity.
 > In reality, only a limited number of users need PDI control, so it would be more meaningful to use "CNANO" on an as-needed basis rather than preparing dedicated hardware that cannot be used for other purposes.
 
+### ISP Control (Provisional)
+
+As of version **v1.35.50**, limited support is provided for the 6-wire ISP control method common to classic AVR microcontrollers. However, given the vast number of chip variants using this programming method—many of which are no longer easily available or exist only as unofficial, low-quality clones—it is impossible to cover them all. Current ISP control support is subject to specific operational conditions:
+
+- Limited to Low-Voltage SPI communication; operating voltage range is 2.7V to 5.5V.
+- Testing has been conducted only on relatively popular models, such as the ATtiny13/85 and ATmega328P.
+- Control is not possible if fuse settings result in a low default startup frequency; 8MHz or higher is recommended. Incorrectly setting fuses—such as requiring an external oscillator—can immediately "brick" the device.
+- Operation with significantly older models, such as the AT89 series, is not supported.
+- If control fails, some supported models may attempt to switch to high-voltage (12V) debugWire control; however, this mode is not currently supported. 
+- Naturally, if incorrect fuse settings render the device uncontrollable, the inability to use high-voltage control means there is no way to recover the device.
+
+The ISP wiring requires six lines: VCC, GND, MOSI, MISO, SCK, and RESET. The pin assignments and wiring for the ICSP-6P connector are identical to those used for UPDI/TPI. This means that if MISO and SCK are configured (e.g., via the SoftwareSerial library) to function as TxD and RxD—or if the lines are bridged—VCP-UART communication becomes possible.
+
+<img src="https://askn37.github.io/product/UPDI4AVR/images/IMG_5879.jpg" width="400"> <img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_ISP.drawio.svg" width="400">
+
+Programmer selection IDs such as `pickit4_isp`, `xplainedmini`, `atmelice_isp`, and `snap_isp` can be used.
+
+```sh
+avrdude -P usb:04d8:0b15 -c pickit4_isp -p m328p -v -U prodsig:r:-:I
+```
+
+> [!TIP]
+> The communication speed can be adjusted using the `-B` option (in kbps), with values ​​ranging from 250 (default) down to 1. However, setting the frequency too low is impractical as it conflicts with timeout settings.<br/>
+> <br/>
+> While AT89Sx series devices use active-high logic for external RESET, a **known issue** prevents AVRDUDE from providing the necessary device information to control this pin. This can be resolved by installing an inverting gate IC (inverter) on the external RESET line.
+
 ### LED blinking
 
-The orange LED can have several different states depending on the situation.
+LED0 shows several expressions depending on the situation.
 
-- Heartbeat - or deep breath. USB connection established with host OS. Ready for use.
-- Short flash - Waiting for USB connection. Not seen by host OS.
+- Heartbeat - or deep breath. USB connection established with Host OS. Ready for use.
+- Short flash - Waiting for USB connection. Not seen by Host OS.
 - Long blink - SW0 is pressed down. Not programming. Target device is resetting (if possible).
 - Short blink - Programming in progress. VCP communication is disabled.
 
-> Additional LEDs can be provided to indicate VCP communication activity.
-
-### Other pinouts
-
-For detailed pinout/signal assignments, see [<configuration.h>](src/configuration.h).
+By including an additional LED1, it is also possible to indicate VCP communication activity.
 
 ## High-Voltage control
 
@@ -303,11 +342,17 @@ Currently, two prototypes are in progress.
 There are two ways to enable HV control.
 
 - Select `-cpickit4_updi` and add `-xhvupdi` option. This method is only possible with this `-c` programmer selection.
-- Execute the AVRDUDE command while pressing `SW1` (or SW0). Selecting `-c` is optional. This is the only way to enable HV control mode for TPI devices.
+- Execute the AVRDUDE command while holding down `SW0` (or SW1). The `-c` option is optional. This is the only method by which HV control mode can be enabled for TPI devices.
 - There is also a method to apply a patch to AVRDUDE that enables `-xhvtpi` specifically for this software, but this is not a common method. (For industrial production sites)
 
 > [!TIP]
 > There are no PDI devices that require HV control.
+
+> [!NOTE]
+> The `hex/variants` folder contains a Makefile for use with Arduino CLI. You can use this to generate Hex and Fuse files corresponding to the preset HAL profiles.<br/>
+> <br/>
+> The `hex/updi4avr-usb` folder contains precompiled Hex files for the Curiosity Nano.<br/>
+> The `hex/test-blink` folder contains the Hex file and source code for a "blink" test on the target device.
 
 ## Build and installation
 
@@ -316,6 +361,51 @@ By installing the SDK at the following link into the Arduino IDE, you can easily
 - https://github.com/askn37/multix-zinnia-sdk-modernAVR @0.3.0+
 
 For build options, see [<UPDI4AVR-USB.ino>](UPDI4AVR-USB.ino).
+
+### For Arduino CLI
+
+For intermediate to advanced users: Here is a brief overview of the setup process using Arduino CLI.
+
+For details, please refer to [[Arduino CLI]](https://arduino.github.io/arduino-cli/1.5/commands/arduino-cli/).
+
+For Windows:
+
+```
+@rem "Arduino-CLI install for Windows"
+winget install ArduinoSA.CLI
+```
+
+For Linux/macOS:
+
+```
+# Arduino-CLI install for Linux/macOS
+brew update
+brew install arduino-cli
+```
+
+Alternatively:
+
+```
+curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
+```
+
+Installing the [MultiX Zinnia Product SDK [modernAVR]](https://github.com/askn37/multix-zinnia-sdk-modernAVR):
+
+```
+arduino-cli core install MultiX-Zinnia:modernAVR --additional-urls https://askn37.github.io/package_multix_zinnia_index.json
+```
+
+Checking the list of build options:
+
+```
+arduino-cli board details -b MultiX-Zinnia:modernAVR:AVRDU_noloader
+```
+
+Compilation test for `UPDI4AVR-USB`:
+
+```
+arduino-cli compile UPDI4AVR-USB.ino -b MultiX-Zinnia:modernAVR:AVRDU_noloader
+```
 
 ### Select HAL profile
 
@@ -345,7 +435,66 @@ If the `usrdef.h` file is missing (the default state), the system proceeds as be
 Of course, you are also free to create your own custom HAL profile and place it in the `HAL` directory. In that case, it is recommended to use an existing `AVRDU_xxP.cpp/h` file—corresponding to the number of enclosure pins you are using—as a template.
 
 > [!TIP]
-> Since `usrdef.h` is excluded via `.gitignore`, it will not be accidentally published. This mechanism was originally intended for handling personal configuration data and similar information within the sketch folder.
+> Since `usrdef.h` is excluded via `.gitignore`, it will not be accidentally published. This mechanism was originally intended for handling personal configuration data and similar information within the sketch folder.<br/>
+> <br/>
+> When using Arduino-CLI, you can configure more detailed settings by creating or editing the project file `sketch.yaml`.
+
+## USB VID:PID Configuration and Programmer ID
+
+By storing a custom USB VID:PID pair at the beginning of its EEPROM area, the USB4AVR-USB allows you to change the default programmer ID used when the `-Pusb:...` option is omitted. This feature is useful in the following scenarios:
+
+- When you want to match the implicit programmer selection used by the Arduino IDE or various SDKs.
+- When you want to connect and use multiple programmers/debuggers simultaneously on a single Host PC.
+
+The VID:PID is changed using another programmer or debugger (not the USB4AVR-USB itself) with a command syntax like the following:
+
+```sh
+avrdude -c pkobn -p avr64du32 -U eeprom:w:0xEB,0x03,0x77,0x21:m
+```
+
+> [!CAUTION]
+> Since VID:PID pairs are proprietary to specific vendors, please be mindful of potential rights infringement. On Windows, in particular, these values ​​influence implicit driver selection.<br/>
+> <br/>
+> The USB4AVR-USB does not currently provide a built-in function to change the VID:PID; applying a patch to AVRDUDE is required.<br/>
+> <br/>
+> `04D8:0B12` is used by euboot (i.e., firmware update mode). As this confuses the host PC, it must never be written to the EEPROM.<br/>
+> <br/>
+> If you select `AVR DU with USB bootloader` in the board selection and proceed to build and install, you can enter firmware update mode by powering on the device while holding down SW0. In this mode, the EEPROM can be updated as desired. For details, please refer to [euboot](https://github.com/askn37/euboot). (Access using `-P usb:04d8:0b12 -c pkobn` and specify `-U eeprom:w:...`)
+
+The following table shows the relationship between VID:PID pairs and their corresponding typical programmer IDs. Many other valid combinations exist. 
+
+|VID:PID|Programmer|Vendor|w:hex|Comment|
+|---|---|:---|:---|:---|
+|04D8:0B15|Any of the following|MCPH|0xd8,0x4,0x15,0xb|Default value
+|         |                 |    |0xff,0xff,0xff,0ff|Revert to the default value above
+|03EB:2177|pickit4_updi     |ATML|0xeb,0x03,0x77,0x21|`-x hvupdi` available
+|         |pickit4_tpi
+|         |pickit4_pdi
+|         |pickit4_isp
+|03EB:2178|↑                |↑   |0xeb,0x03,0x78,0x21
+|03EB:2179|↑                |↑   |0xeb,0x03,0x79,0x21
+|03EB:2141|atmelice_isp     |ATML|0xeb,0x3,0x41,0x21|Atmel JTAG3ICE (Arduino IDE/AVR compatible)
+|         |atmelice_updi
+|         |atmelice_tpi
+|         |atmelice_pdi
+|03EB:2145|xplainedmini_updi|ATML|0xeb,0x3,0x45,0x21|Atmel XPlained mini (Arduino IDE/MKR compatible)
+|         |xplainedmini_tpi |    |                  |`-x vtarg_switch` available for these
+|         |xplainedmini_isp
+|         |xplainedmini     |    |                  |Automatic selection of the above
+|03EB:2175|pkobn_updi       |ATML|0xeb,0x3,0x75,0x21|Microchip Curiosity nano
+|         |pkobn            |    | |Aliases for pkobn_updi
+|03EB:217F|snap_updi        |ATML|0xeb,0x3,0x7f,0x21|MPLAB(R) SNAP
+|         |snap_tpi
+|         |snap_pdi
+|         |snap_isp
+|03EB:2180|↑                |↑　 |0xeb,0x3,0x80,0x21
+|03EB:2181|↑                |↑　 |0xeb,0x3,0x81,0x21
+
+> [!TIP]
+> Selecting `pickit4_updi` allows for high-voltage UPDI programming using `-x hvupdi`. Additionally, selecting `xplainedmini_*` allows you to toggle the target device power on or off using `-x vtarg_switch=[1,0]` (provided the corresponding external circuitry is in place).
+
+> [!NOTE]
+> The `hex/vidpid-eeprom` folder contains several EEPROM Hex files with predefined VID:PID values.
 
 ## Related link and documentation
 

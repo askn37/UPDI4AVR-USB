@@ -5,8 +5,8 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.35.49+
- * @date 2026-08-09
+ * @version 1.35.50+
+ * @date 2026-08-21
  * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -82,7 +82,7 @@ namespace USART {
         bit_clear(GPCONF, GPCONF_VCP_bp);
       }
       pinControlRegister(PIN_VCP_TXD) = PORT_PULLUPEN_bm;
-      pinLogicOpen(PIN_VCP_TXD);  /* CONFIG_PGM_TYPE!=1 is internal shared TCLK */
+      pinLogicOpen(PIN_VCP_TXD);
       pinLogicOpen(PIN_VCP_RXD);
     }
   }
@@ -141,6 +141,7 @@ namespace USART {
   void change_vcp (void) {
     uint8_t _ctrlb = USART_RXEN_bm | USART_TXEN_bm | USART_ODME_bm;
     uint32_t _baud = _set_line_encoding.dwDTERate;
+    D1PRINTF(" BAUD=%ld", _baud);
     /* If the BAUD value is small, select double speed mode. */
     if (!_baud) _baud = 9600UL;
     if (_baud) _baud = (((F_CPU * 8L) / _baud) + 1) >> 1;
@@ -148,7 +149,7 @@ namespace USART {
       _baud <<= 1;
       _ctrlb |= USART_RXMODE_CLK2X_gc;
     }
-    D1PRINTF(" BAUD=%08lX:%02X\r\n", _baud, _ctrlb);
+    D1PRINTF("->%04X\r\n", _baud);
     if (_baud < 0x10000UL && _baud >= 64) {
       uint8_t _bits = _set_line_encoding.bDataBits - 5;
       uint8_t _ctrlc = (uint8_t[]){
@@ -187,7 +188,8 @@ namespace USART {
       /* If outside the supported range, the USART will remain in the BREAK state. */
       D1PRINTF(" VCP=FAIL\r\n");
     }
-    GPCONF &= ~(GPCONF_HLD_bm | GPCONF_RIS_bm | GPCONF_FAL_bm);
+    GPCONF &= ~GPCONF_SW0_gm;
+    pinLogicOpen(PIN_SYS_SW0);
     if (bit_is_set(GPCONF, GPCONF_USB_bp))
       SYS::LED_HeartBeat();
     else
@@ -229,7 +231,6 @@ namespace USART {
     /* If DTR is set, the device will reboot assuming the host has opened the port. */
     if (!_set_line_state.bStateDTR && bit_is_set(_line_state, 0)) {
       bit_set(GPCONF, GPCONF_FAL_bp);
-      bit_set(GPCONF, GPCONF_RIS_bp);
     }
   #endif
 

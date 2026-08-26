@@ -5,8 +5,8 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.35.49+
- * @date 2026-08-09
+ * @version 1.35.50+
+ * @date 2026-08-18
  * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -26,15 +26,10 @@ namespace Timeout {
    * To be precise, in 1/1024 sec units.
    */
   void start (uint16_t _ms) {
-    D1PRINTF(" TCB0:ON\r\n");
-    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-      TCB0_CNT = 0;
-      TCB0_CCMP = _ms;
-      TCB0_INTCTRL = TCB_CAPT_bm;
-      bit_set(TCB0_INTFLAGS, TCB_CAPT_bp);
-      TCB0_CTRLB = 0;
-      TCB0_CTRLA = TCB_ENABLE_bm | TCB_CLKSEL_EVENT_gc; /* for EVSYS_USERTCB0COUNT */
-    }
+    while (RTC_STATUS);
+    RTC_CMP = RTC_CNT + _ms;
+    RTC_INTFLAGS = RTC_CMP_bm;
+    RTC_INTCTRL  = RTC_CMP_bm;
   }
 
   /*
@@ -43,11 +38,8 @@ namespace Timeout {
    */
   __attribute__((used, naked, noinline))
   void stop (void) {
-    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-      TCB0_CTRLA = 0;
-      TCB0_INTCTRL = 0;
-      TCB0_INTFLAGS = ~0;
-    }
+    RTC_INTCTRL  = 0;
+    RTC_INTFLAGS = RTC_CMP_bm;
     reti();
   }
 
@@ -55,8 +47,18 @@ namespace Timeout {
    * Timeout extension.
    */
   void extend (uint16_t _ms) {
-    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-      TCB0_CCMP = _ms;
+    while (RTC_STATUS);
+    RTC_CMP = RTC_CNT + _ms;
+  }
+
+  /*
+   * Timeout delay.
+   */
+  void delay_rtc_millis (uint16_t _ms) {
+    while (RTC_STATUS);
+    _ms += RTC_CNT;
+    while (RTC_CNT != _ms) {
+      wdt_reset();
     }
   }
 
@@ -72,13 +74,11 @@ namespace Timeout {
         Timeout::start(_ms);
         _result = (*func_p)();
         Timeout::stop();
-        D1PRINTF(" TCB0:OF\r\n");
         break;
       }
       Timeout::stop();
       D1PRINTF("[TO]");
       if (!fail_p) break;
-      wdt_reset();
       if (!(*fail_p)()) break;
     }
     return _result;
@@ -90,14 +90,12 @@ namespace Timeout {
  * Timeout interrupt.
  * Note that it does not end with RETI.
  */
-ISR(TCB0_INT_vect, ISR_NAKED) {
+ISR(RTC_CNT_vect, ISR_NAKED) {
   /***
     This interrupt is a global escape due to timeout.
     There is no return to the source of the interrupt.
   ***/
   __asm__ __volatile__ ("EOR R1,R1");
-  TCB0_CTRLA = 0;
-  bit_set(TCB0_INTFLAGS, TCB_CAPT_bp);
   longjmp(TIMEOUT_CONTEXT, 2);
 }
 

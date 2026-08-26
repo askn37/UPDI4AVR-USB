@@ -5,8 +5,8 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.35.49+
- * @date 2026-08-09
+ * @version 1.35.50+
+ * @date 2026-08-25
  * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -27,14 +27,14 @@
  *    PDI control is performed via the TP3 test terminal.
  *
  *                  -- Target-PGM Type --
- *        MZU2410A4 UPDI    TPI      PDI
- *    PA0  TDAT     1:UPDI  1:DATA
- *    PA1  TRST     5:RESET 5:RESET
- *    PA2  VTxD     3:HTCR  3:CLK
- *    PA3  VRxD     4:HRCT
- *    PA4  PDAT                      1:DATA
+ *        MZU2410A4 UPDI    TPI     ISP     PDI
+ *    PA0  TDAT     1:UPDI  1:DATA  1:MOSI
+ *    PA1  TRST     5:RESET 5:RESET 5:RESET
+ *    PA2  VTxD     3:HTCR  3:CLK   3:CLK
+ *    PA3  VRxD     4:HRCT          4:MISO
+ *    PA4  PDAT                             1:DATA
  *    PA5  VPW
- *    PA6  PCLK                      3:CLK
+ *    PA6  PCLK                             3:CLK
  *    PA7  N.C.
  *    PC3  LED1
  *    PD0  HVSL1

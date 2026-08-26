@@ -5,8 +5,8 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.35.49+
- * @date 2026-08-09
+ * @version 1.35.50+
+ * @date 2026-08-22
  * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -257,7 +257,7 @@ namespace PDI {
        && send_bytes(_set_repeat, sizeof(_set_repeat))
        && recv_bytes(&packet.in.data[0], _wLength)) {
         _rspsize = 1 + _wLength;
-        D2PRINTHEX(&packet.in.data[0], _wLength);
+        D2PRINTHEX(&packet.in.data[0], _wLength, ':');
       }
     }
     return _rspsize;
@@ -316,9 +316,8 @@ namespace PDI {
   size_t timeout_fallback (void) {
     D1PRINTF(" Fail\r\n");
     /* If a timeout occurs, the communication speed will be reduced. */
-    if (_xclk == 50) return 0;
-    _xclk -= 50;
-    if (_xclk < 50) _xclk = 50;
+    _xclk -= 500;
+    if (_xclk < 500) return 0;
     USART::change_pdi();
     return send_break();
   }
@@ -331,11 +330,16 @@ namespace PDI {
     };
 
     USART::setup();
+    bit_set(PGCONF, PGCONF_PGIF_bp);
+    pinControlRegister(PIN_PGM_PDAT) = 0;
 
     digitalWriteMacro(PIN_PGM_PDAT, LOW);
     pinLogicPull(PIN_PGM_PDAT);
     pinLogicPull(PIN_PGM_PCLK);
-    SYS::power_reset();
+    if (_jtag_vpow == 0) {
+      _jtag_vpow = 1;
+      SYS::power_reset(false, true);
+    }
     digitalWriteMacro(PIN_PGM_PDAT, HIGH);
     SYS::delay_55us();
 
@@ -349,7 +353,8 @@ namespace PDI {
     }
 
     D1PRINTF("  PDI_ON:GVAL=%02X\r\n", RXDATA);
-    bit_set(PGCONF, PGCONF_UPDI_bp);
+    bit_set(PGCONF, PGCONF_PGIA_bp);
+    bit_clear(PGCONF, PGCONF_PGIF_bp);
     return 1;
   }
 
@@ -358,7 +363,7 @@ namespace PDI {
       0xC0, 0x02,       /* NVM disable */
       0xC1, 0x00        /* leave SYSRST */
     };
-    if (bit_is_set(PGCONF, PGCONF_UPDI_bp)) return 1;
+    if (bit_is_set(PGCONF, PGCONF_PGIA_bp)) return 1;
     return send_bytes(_leave, sizeof(_leave));
   }
 
@@ -376,20 +381,24 @@ namespace PDI {
   }
 
   uint8_t sign_off (void) {
-    uint8_t _rsp = Timeout::command(&disconnect);
-    SYS::delay_100us();
-    USART::setup();
-    pinLogicOpen(PIN_PGM_PDAT);
-    pinControlRegister(PIN_PGM_PCLK) = 0;
-    digitalWriteMacro(PIN_PGM_PCLK, LOW);
-    pinLogicPull(PIN_PGM_PCLK);
-    if (bit_is_set(PGCONF, PGCONF_PROG_bp)) {
-      SYS::power_reset();
-      SYS::delay_2500us();
+    uint8_t _rsp = 1;
+    if (PGCONF) {
+      _rsp = Timeout::command(&disconnect);
+      SYS::delay_100us();
+      USART::setup();
+      pinLogicOpen(PIN_PGM_PDAT);
+      pinControlRegister(PIN_PGM_PCLK) = 0;
+      digitalWriteMacro(PIN_PGM_PCLK, LOW);
+      pinLogicPull(PIN_PGM_PCLK);
+      if (bit_is_set(PGCONF, PGCONF_PROG_bp)) {
+        SYS::power_reset();
+        SYS::delay_2500us();
+      }
+      pinLogicOpen(PIN_PGM_PCLK);
+      pinControlRegister(PIN_PGM_PDAT) = PORT_ISC_INPUT_DISABLE_gc;
+      PGCONF = 0;
+      USART::change_vcp();
     }
-    pinLogicOpen(PIN_PGM_PCLK);
-    PGCONF = 0;
-    USART::change_vcp();
     return _rsp;
   }
 
@@ -410,7 +419,7 @@ namespace PDI {
     else if (_cmd == 0x15) {        /* CMD3_ENTER_PROGMODE */
       D1PRINTF(" PDI_ENTER_PROG\r\n");
       /* On failure, RSP3_OK is returned if a PDI connection is available. */
-      _rspsize = Timeout::command(&enter_progmode, &timeout_fallback) || bit_is_set(PGCONF, PGCONF_UPDI_bp);
+      _rspsize = Timeout::command(&enter_progmode, &timeout_fallback) || bit_is_set(PGCONF, PGCONF_PGIA_bp);
     }
     else if (_cmd == 0x16) {        /* CMD3_LEAVE_PROGMODE */
       D1PRINTF(" PDI_LEAVE_PROG\r\n");

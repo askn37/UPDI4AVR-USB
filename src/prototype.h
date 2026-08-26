@@ -5,8 +5,8 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.35.49+
- * @date 2026-08-09
+ * @version 1.35.50+
+ * @date 2026-08-18
  * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -29,8 +29,8 @@
 #define pinLogicPull(PIN) openDrainWriteMacro(PIN, LOW)
 #define pinLogicOpen(PIN) openDrainWriteMacro(PIN, HIGH)
 
-#ifndef portBitmask   /* Compliant with SDK@0.4.6+ */
-  #define portBitmask(PIN)  (1 << (PIN & 7))
+#ifndef pinBitmask    /* Compliant with SDK@0.4.6+ */
+  #define pinBitmask(PIN) (1 << (PIN & 7))
 #endif
 
 #ifdef PORTA_EVGENCTRLA
@@ -42,13 +42,13 @@
   #endif
 #endif
 
+#define ISC_RISING  (PORT_PULLUPEN_bm | PORT_ISC_RISING_gc)
+#define ISC_RISWAIT (                   PORT_ISC_RISING_gc)
+#define ISC_FALLING (PORT_PULLUPEN_bm | PORT_ISC_FALLING_gc)
+
 /*** LED Timer configuration ***/
-#define TM_HBEAT (F_CPU / 1024 / 128 - 1)
-#define TM_FLASH ((F_CPU / 1024) / 2 - 1)
-#define TM_BLINK ((F_CPU / 1024) / 4 - 1)
-#define TM_FAST  ((F_CPU / 1024) / 8 - 1)
-#define TM_VCPBL ((F_CPU / 1024) / 32 - 1)
-#define HVC_CLK  5000000
+#define TM_VCPBL ((F_CPU / 1024) / 16 - 1)
+#define HVC_CLK  5000000L
 
 /*** Debug UART macro symbol ***/
 #undef Serial
@@ -57,36 +57,36 @@
 #define D1PRINTF(FMT, ...)
 #define D2PRINTF(FMT, ...)
 #define D3PRINTF(FMT, ...)
-#define D0PRINTHEX(P,L)
-#define D1PRINTHEX(P,L)
-#define D2PRINTHEX(P,L)
-#define D3PRINTHEX(P,L)
+#define D0PRINTHEX(P, ...)
+#define D1PRINTHEX(P, ...)
+#define D2PRINTHEX(P, ...)
+#define D3PRINTHEX(P, ...)
 #if defined(DEBUG)
   #include <peripheral.h> /* from Micro_API : import Serial (Debug) */
   #define Serial Serial1C /* PIN_PD6:TxD, PIN_PD7:RxD */
   #undef  DFLUSH
   #define DFLUSH() Serial.flush()
-  #undef  D0PRINTF
-  #define D0PRINTF(FMT, ...) Serial.printf(F(FMT), ##__VA_ARGS__)
-  #undef  D0PRINTHEX
-  #define D0PRINTHEX(P,L) Serial.printHex((P),(L),':').ln()
+  #undef  DPRINTF
+  #define DPRINTF(FMT, ...) Serial.printf(F(FMT), ##__VA_ARGS__)
+  #undef  DPRINTHEX
+  #define DPRINTHEX(P, ...) Serial.printHex((P), ##__VA_ARGS__).ln()
   #if (DEBUG >= 1)
     #undef D1PRINTF
-    #define D1PRINTF(FMT, ...) Serial.printf(F(FMT), ##__VA_ARGS__)
+    #define D1PRINTF DPRINTF
     #undef  D1PRINTHEX
-    #define D1PRINTHEX(P,L) Serial.printHex((P),(L),':').ln()
+    #define D1PRINTHEX DPRINTHEX
   #endif
   #if (DEBUG >= 2)
     #undef  D2PRINTF
-    #define D2PRINTF(FMT, ...) Serial.printf(F(FMT), ##__VA_ARGS__)
+    #define D2PRINTF DPRINTF
     #undef  D2PRINTHEX
-    #define D2PRINTHEX(P,L) Serial.printHex((P),(L),':').ln()
+    #define D2PRINTHEX DPRINTHEX
   #endif
   #if (DEBUG >= 3)
     #undef  D3PRINTF
-    #define D3PRINTF(FMT, ...) Serial.printf(F(FMT), ##__VA_ARGS__)
+    #define D3PRINTF DPRINTF
     #undef  D3PRINTHEX
-    #define D3PRINTHEX(P,L) Serial.printHex((P),(L),':').ln()
+    #define D3PRINTHEX DPRINTHEX
   #endif
 #endif
 
@@ -131,6 +131,8 @@
 #define RXDATA GPR_GPR1
 
 #define GPCONF GPR_GPR2
+  #define GPCONF_USB_gm   (0x1F)
+  #define GPCONF_SW0_gm   (0xC0)
   #define GPCONF_USB_bp   0         /* USB interface is active */
   #define GPCONF_USB_bm   (1 << 0)
   #define GPCONF_VCP_bp   1         /* VCP enabled */
@@ -141,26 +143,24 @@
   #define GPCONF_BRK_bm   (1 << 3)
   #define GPCONF_OPN_bp   4         /* VCP-RxD open */
   #define GPCONF_OPN_bm   (1 << 4)
-  #define GPCONF_HLD_bp   5         /* SW0 holding */
-  #define GPCONF_HLD_bm   (1 << 5)
-  #define GPCONF_RIS_bp   6         /* SW0 release event */
-  #define GPCONF_RIS_bm   (1 << 6)
+  #define GPCONF_HLD_bp   6         /* SW0 holding */
+  #define GPCONF_HLD_bm   (1 << 6)
   #define GPCONF_FAL_bp   7         /* SW0 push event */
   #define GPCONF_FAL_bm   (1 << 7)
 
 #define PGCONF GPR_GPR3
-  #define PGCONF_UPDI_bp  0         /* UPDI active (SIB read successful) or TPI active */
-  #define PGCONF_UPDI_bm  (1 << 0)
+  #define PGCONF_PGIA_bp  0         /* PGM Interface Active */
+  #define PGCONF_PGIA_bm  (1 << 0)
   #define PGCONF_PROG_bp  1         /* Programmable (memory access unlocked) */
   #define PGCONF_PROG_bm  (1 << 1)
   #define PGCONF_ERSE_bp  2         /* Chip erase completed */
   #define PGCONF_ERSE_bm  (1 << 2)
   #define PGCONF_XDIR_bp  3         /* PDI_DATA direction */
   #define PGCONF_XDIR_bm  (1 << 3)
-  #define PGCONF_HVEN_bp  6         /* HV control in TPI */
-  #define PGCONF_HVEN_bm  (1 << 6)
-  #define PGCONF_FAIL_bp  7         /* Initialization failed (timeout) */
-  #define PGCONF_FAIL_bm  (1 << 7)
+  #define PGCONF_HVEN_bp  4         /* HV control in TPI */
+  #define PGCONF_HVEN_bm  (1 << 4)
+  #define PGCONF_PGIF_bp  7         /* PGM Interface Failed */
+  #define PGCONF_PGIF_bm  (1 << 7)
 
 /*
  * Global struct
@@ -211,7 +211,7 @@ typedef struct {
       uint8_t  cmd;
       union {
         uint8_t data[534];
-        struct {  /* CMD=21,23:CMD3_READ,WRITE_MEMORY */
+        struct {  /* SCOPE=UPDI,CMD=21,23:CMD3_READ,WRITE_MEMORY */
           uint8_t  reserve2;
           uint8_t  bMType;
           uint32_t dwAddr;
@@ -219,7 +219,7 @@ typedef struct {
           uint8_t  reserve3;
           uint8_t  memData[513];  /* WRITE_MEMORY */
         };
-        struct {  /* CMD=1,2:CMD3_GET,SET_PARAMETER */
+        struct {  /* SCOPE=GEN,CMD=1,2:CMD3_GET,SET_PARAMETER */
           uint8_t  reserve4;
           uint8_t  section;
           uint8_t  index;
@@ -234,7 +234,7 @@ typedef struct {
           uint8_t  bEType;
           uint32_t dwPageAddr;
         };
-        union {
+        union {   /* SCOPE=TPI */
           struct {  /* XPRG_SET_PARAM */
             uint8_t  bType;
             uint8_t  bValue;
@@ -252,6 +252,11 @@ typedef struct {
             uint8_t  memData[64 + 8]; /* ATTiny40=64, Other=16 */
           } write;
         } tpi;
+        union {   /* SCOPE=ISP */
+          uint8_t data[534];
+          uint32_t dwValue;
+          uint16_t wValue;
+        } isp;
       };
     } out;
     struct {
@@ -260,17 +265,33 @@ typedef struct {
       uint16_t sequence;
       uint8_t  scope;
       union {
-        uint16_t res;
         struct {
-          uint8_t tpi_cmd;
-          uint8_t tpi_res;
-        };
-      };
-      union {
-        uint8_t  data[513];       /* READ_MEMORY */
-        uint8_t  bStatus;
-        uint16_t wValue;
-        uint32_t dwValue;
+          union {
+            uint16_t res;
+            struct {
+              uint8_t cmd;
+              uint8_t res;
+            } tpi;
+          };
+          union {
+            uint8_t  data[513];   /* READ_MEMORY */
+            uint8_t  bStatus;
+            uint16_t wValue;
+            uint32_t dwValue;
+          };
+        };  /* other ISP */
+        struct {
+          uint8_t cmd;
+          uint8_t res;
+          uint8_t data[533];
+        } isp;
+        struct {
+          uint8_t cmd;
+          union {
+            uint8_t data[534];
+            uint16_t wValue;
+          };
+        } stk500v2;
       };
     } in;
   };
@@ -421,7 +442,6 @@ extern "C" {
 
     /* SYSTEM */
     extern jmp_buf TIMEOUT_CONTEXT;
-    extern uint8_t _beat;
     extern uint8_t _led_mode;
 
     /* USB */
@@ -474,6 +494,10 @@ extern "C" {
   } /* NAMELESS */;
 };
 
+namespace ISP {
+  size_t jtag_scope_isp (void);
+};
+
 namespace JTAG {
   bool dap_command_check (void);
   void jtag_scope_branch (void);
@@ -499,17 +523,17 @@ namespace PDI {
 
 namespace SYS {
   void setup (void);
-  void beat_tune (void);
   void LED_HeartBeat (void);
   void LED_Flash (void);
   void LED_Blink (void);
   void LED_Fast (void);
-  void LED_Turn (void);
+  void check_firmwaremode (void);
   void power_reset (bool _off = true, bool _on = true);
   void reset_enter (void);
   void reset_leave (void);
   void reboot (void);
   bool is_boundary_flash_page (uint32_t _dwAddr);
+  void setup_adc (void);
   uint16_t get_vdd (void);
   void hvc_enable (void);
   void hvc_leave (void);
@@ -517,14 +541,16 @@ namespace SYS {
   void delay_100us (void);
   void delay_800us (void);
   void delay_2500us (void);
+  void delay_20ms (void);
+  void delay_40ms (void);
   void delay_125ms (void);
 };
 
 namespace Timeout {
-  void setup (void);
   void start (uint16_t _ms);
   void stop (void) __attribute__((used, naked, noinline));
   void extend (uint16_t _ms);
+  void delay_rtc_millis (uint16_t _ms);
   size_t command (size_t (*func_p)(void), size_t (*fail_p)(void) = nullptr, uint16_t _ms = 800);
 };
 

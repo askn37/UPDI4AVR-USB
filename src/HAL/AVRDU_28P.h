@@ -5,8 +5,8 @@
  *        type devices that connect via USB 2.0 Full-Speed. It also has VCP-UART
  *        transfer function. It only works when installed on the AVR-DU series.
  *        Recognized by standard drivers for Windows/macos/Linux and AVRDUDE>=7.2.
- * @version 1.35.49+
- * @date 2026-08-09
+ * @version 1.35.50+
+ * @date 2026-08-25
  * @copyright Copyright (c) 2026 askn37 at github.com
  * @link Product Potal : https://askn37.github.io/
  *         MIT License : https://askn37.github.io/LICENSE.html
@@ -22,14 +22,14 @@
  * Pin layout by design: AVR16/32/64DU28
  *
  *                  -- Target-PGM Type --
- *         28P      UPDI    TPI     PDI     ISP (Future plans)
- *    PA0  TDAT     1:UPDI  1:DATA
- *    PA1  TRST     5:RESET 5:RESET         5:RESET
- *    PA2  VTxD     3:HTCR  3:CLK
- *    PA3  VRxD     4:HRCT
- *    PA4  PDAT                     1:DATA  4:MOSI
- *    PA5  N.C.                             1:MISO
- *    PA6  PCLK                     5:CLK   3:SCK
+ *         28P      UPDI    TPI     ISP     PDI
+ *    PA0  TDAT     1:UPDI  1:DATA  1:MISO
+ *    PA1  TRST     5:RESET 5:RESET 5:RESET
+ *    PA2  VTxD     3:HTCR  3:CLK   3:SCK
+ *    PA3  VRxD     4:HRCT          4:MOSI
+ *    PA4  PDAT                             1:DATA
+ *    PA5  N.C.
+ *    PA6  PCLK                             5:CLK
  *    PA7  N.C.
  *    PC3  LED1
  *    PD0  HVSL1
@@ -49,7 +49,7 @@
  *    PF6  DnRST
  *    PF7  DUPDI
  *
- * 
+ *
  * Peripheral Function Input/Output:
  *
  *         28P
@@ -69,7 +69,7 @@
  *        PDAT - PIN_PGM_PDAT     PDI-Data (push-pull, no pull-up)
  *        PCLK - PIN_PGM_PCLK     PDI-Clock (push-pull)
  *         VPW - PIN_PGM_VPOWER   V-Target Power Control (negative logic, push-pull)
- * 
+ *
  *    PGM-ISP : It is still in the planning stage.
  *        MOSI - PIN_PGM_MOSI
  *        MISO - PIN_PGM_MISO
@@ -113,10 +113,6 @@
 #define PIN_PGM_TRST        PIN_PA1
 #define PIN_PGM_PDAT        PIN_USART0_TXD_ALT1
 #define PIN_PGM_PCLK        PIN_USART0_XCK_ALT1
-#define PIN_PGM_MOSI        PIN_SPI0_MOSI
-#define PIN_PGM_MISO        PIN_SPI0_MISO
-#define PIN_PGM_MSCK        PIN_SPI0_SCK
-#define PIN_PGM_MRST        PIN_SPI0_SS
 #define PIN_PGM_VPOWER      PIN_PF1
 #define PIN_HVC_SELECT1     PIN_PD0
 #define PIN_HVC_SELECT2     PIN_PD1
