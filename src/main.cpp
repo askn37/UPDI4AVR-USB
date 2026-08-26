@@ -25,7 +25,7 @@
 namespace /* NAMELESS */ {
 
   USED RODATA const uint8_t _usage[] =
-    "UPDI4AVR-USB " __QUOTE(FW_MAJOR) "." __QUOTE(FW_MINOR) "." __QUOTE(FW_RELL) " " HAL_PROFILE;
+    "UPDI4AVR-USB " __QUOTE(FW_MAJOR) "." __QUOTE(FW_MINOR) "." __QUOTE(FW_REL) " " HAL_PROFILE;
 
   /* SYS */
   NOINIT jmp_buf TIMEOUT_CONTEXT;
