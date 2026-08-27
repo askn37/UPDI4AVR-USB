@@ -270,19 +270,25 @@ namespace SYS {
   /* UPDI commands are sent from TDAT using only TCAB
      and bit manipulation, without switching USART. */
   void send_bitmap (const uint8_t _bitmap[], const size_t _length) {
-    TCA0_SPLIT_CTRLA = 0;
-    TCA0_SPLIT_LCNT  = TCA0_SPLIT_LCMP2;
-    TCA0_SPLIT_LPER  = TCA0_SPLIT_LCMP2;
-    TCA0_SPLIT_CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV1_gc;
-    for (uint8_t i = 0; i < _length; i++) {
-      uint8_t _d = (_bitmap[i >> 3]) >> (i & 7);
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+      TCA0_SPLIT_CTRLA = 0;
+      TCA0_SPLIT_LCNT  = TCA0_SPLIT_LCMP2;
+      TCA0_SPLIT_LPER  = TCA0_SPLIT_LCMP2;
+      TCA0_SPLIT_CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV1_gc;
       loop_until_bit_is_set(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_LUNF_bp);
-      if (bit_is_set(_d, 0)) pinLogicOpen(PIN_PGM_TDAT);
-      else                   pinLogicPull(PIN_PGM_TDAT);
-      EVSYS_SWEVENTA = EVSYS_SWEVENTA_CH2_gc;
       bit_set(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_LUNF_bp);
+      for (uint8_t i = 0; i < _length; i++) {
+        uint8_t _d = (_bitmap[i >> 3]) >> (i & 7);
+        loop_until_bit_is_set(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_LUNF_bp);
+        if (bit_is_set(_d, 0)) pinLogicOpen(PIN_PGM_TDAT);
+        else                   pinLogicPull(PIN_PGM_TDAT);
+        openDrainWriteMacro(PIN_PGM_TCLK, TOGGLE);
+        EVSYS_SWEVENTA = EVSYS_SWEVENTA_CH2_gc;
+        bit_set(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_LUNF_bp);
+      }
+      TCA0_SPLIT_CTRLA = 0;
+      TCA0_SPLIT_CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV1024_gc;
     }
-    TCA0_SPLIT_CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV1024_gc;
   }
 
   /*
@@ -303,6 +309,7 @@ namespace SYS {
        * Does not affect chips with an active reset pad or TPI/PDI/ISP type chips.
        */
       pinLogicPull(PIN_PGM_TRST);
+      // pinLogicPull(PIN_PGM_TCLK);  /* for logic analyzer */
       send_bitmap(_updi_bitmap_reset, sizeof(_updi_bitmap_reset) * 8);
 
       bit_set(GPCONF, GPCONF_HLD_bp);
@@ -320,6 +327,7 @@ namespace SYS {
     if (digitalReadMacro(PIN_SYS_SW0)) {
       pinLogicOpen(PIN_PGM_TRST);
       send_bitmap(_updi_bitmap_leave, sizeof(_updi_bitmap_leave) * 8);
+      // pinLogicOpen(PIN_PGM_TCLK);  /* for logic analyzer */
 
   #ifdef CONFIG_VCP_DTR_RESET
       /* A delay of 64ms or more between when the bootloader starts and when RxD opens. */
@@ -442,7 +450,7 @@ namespace SYS {
 };  /* SYS */
 
 /*
- * SW0 Interrupt Vestor
+ * SW0 Interrupt Vector
  */
 ISR(portIntrruptVector(PIN_SYS_SW0)) {
   bit_set(GPCONF, GPCONF_FAL_bp);
