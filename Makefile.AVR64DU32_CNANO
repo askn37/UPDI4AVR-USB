@@ -48,18 +48,20 @@ all:
 	$(MAKE) -f $(MF) clean
 
 hex/updi4avr-usb/$(TARGET)%.hex: build/$(TARGET)%.ino.elf
-	@$(OBJCOPY) $(JOINING) -O ihex $< $@
-	@$(LISTING) $< > hex/updi4avr-usb/$(TARGET)$*.lst
-	@cp -f build/$(SOURCE).ino.fuse hex/updi4avr-usb/$(TARGET)$*.fuse
+	@$(eval TOOLS := $(shell dirname $(shell cat build/compile_commands.json | grep tools | head -n1) | tr -d '"'))
+	$(TOOLS)/../../../avrdude/8.2-avrdude/bin/avrdude -cdryrun -p$(TARGET) -qqqU{flash,fuses}:w:$< -Uall:r:-:I | grep -vE "F{32}|0{32}|S{32}|/sigrow| lock" > $@
+	@cp -f build/$(TARGET)$*.ino.lst $@.lst
 	ls -la hex/updi4avr-usb/$(TARGET)$*.*
 
 build/$(TARGET1).ino.elf: src/$(SRCS:.cpp=.o) src/$(SRCS:.c=.o)
-	$(ACLIPATH)arduino-cli compile $(FQBN) $(BUILD_OPT1) $(SDKURL) --build-path build --no-color
+	$(ACLIPATH)arduino-cli compile $(FQBN) $(BUILD_OPT1) $(SDKURL) --build-path build
 	@mv -f build/$(SOURCE).ino.elf build/$(TARGET1).ino.elf
+	@mv -f build/$(SOURCE).ino.*.lst build/$(TARGET1).ino.lst
 
 build/$(TARGET2).ino.elf: src/$(SRCS:.cpp=.o) src/$(SRCS:.c=.o)
-	$(ACLIPATH)arduino-cli compile $(FQBN) $(BUILD_OPT2) $(SDKURL) --build-path build --no-color
+	$(ACLIPATH)arduino-cli compile $(FQBN) $(BUILD_OPT2) $(SDKURL) --build-path build
 	@mv -f build/$(SOURCE).ino.elf build/$(TARGET2).ino.elf
+	@mv -f build/$(SOURCE).ino.*.lst build/$(TARGET2).ino.lst
 
 clean:
 	@touch ./build/__temp

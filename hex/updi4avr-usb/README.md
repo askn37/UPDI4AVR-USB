@@ -22,8 +22,11 @@ Are you ready?
 Orient the AVR logo so it is readable, then connect a USB-C type cable between the programming port on the left and the host PC. Upload the file using the following command line:
 
 ```sh
-avrdude -c pkobn_updi -p avr64du32 -e -U fuses:w:AVR64DU32_CNANO.fuse:i -U flash:w:AVR64DU32_CNANO.hex:i
+avrdude -c pkobn_updi -p avr64du32 -e -U all:w:AVR64DU32_CNANO.hex
 ```
+
+> [!TIP]
+> Starting with **v1.35.51**, the flash and fuses areas are merged into a single hex file. You can write both to the target using `all:w:~`, or write only one of them using `flash:w:~` or `fuses:w:~`.
 
 ### Optional Parameter
 
