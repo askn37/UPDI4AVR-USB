@@ -88,7 +88,7 @@
 #define HW_VER   0
 #define FW_MAJOR 1
 #define FW_MINOR 35
-#define FW_REL   50
+#define FW_REL   51
 
 
 /*** CONFIG_USB ***/
