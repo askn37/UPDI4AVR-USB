@@ -423,22 +423,24 @@ namespace JTAG {
       packet.in.res = 0x184;        /* RSP3_DATA */
       _rspsize = _length + 1;
     }
+    else if (_jtag_arch == 0x05) _rspsize = UPDI::jtag_scope_updi();    /* UPDI support */
+  #ifdef CONFIG_PGM_PDI_ENABLE
+    else if (_jtag_arch == 0x03) _rspsize = PDI::jtag_scope_xmega();    /* XMEGA support */
+  #endif
+    else if (_cmd == 0x11) {        /* CMD3_SIGN_OFF */
+      D1PRINTF(" AVR_SIGN_OFF:ARCH=%d\r\n", _jtag_arch);
+      packet.in.res = 0x80;         /* RSP3_OK */
+    }
+    /* Up to this point, it returns the response defined by the JTAG3 protocol. */
+    /* The following details the JTAG2 specifications. */
   #ifdef _Not_yet_implemented_stub_
     else if (_jtag_arch == 0x01) _rspsize = DWI::jtag_scope_dwire();     /* dWire? */
   #endif
   #ifdef CONFIG_PGM_ISP_ENABLE
     else if (_jtag_arch == 0x02) _rspsize = ISP::jtag_scope_isp();      /* ISP/MEGA */
   #endif
-  #ifdef CONFIG_PGM_PDI_ENABLE
-    else if (_jtag_arch == 0x03) _rspsize = PDI::jtag_scope_xmega();    /* XMEGA support */
-  #endif
-    else if (_jtag_arch == 0x05) _rspsize = UPDI::jtag_scope_updi();    /* UPDI support */
     else if (_cmd == 0x10) {        /* CMD3_SIGN_ON */
       D1PRINTF(" AVR_SIGN_ON:ARCH=%d\r\n", _jtag_arch);
-      packet.in.res = 0x80;         /* RSP3_OK */
-    }
-    else if (_cmd == 0x11) {        /* CMD3_SIGN_OFF */
-      D1PRINTF(" AVR_SIGN_OFF:ARCH=%d\r\n", _jtag_arch);
       packet.in.res = 0x80;         /* RSP3_OK */
     }
     else if (_cmd == 0x13) {        /* CMD3_START_DW_DEBUG */
@@ -470,6 +472,7 @@ namespace JTAG {
     else if (_scope == 0x13) _rspsize = AVR32::jtag_scope_avr32();  /* SCOPE_AVR32 */
   #endif
   #ifdef CONFIG_PGM_ISP_ENABLE
+    /* This scope complies with the JTAG2 standard. */
     else if (_scope == 0x11) _rspsize = ISP::jtag_scope_isp();      /* SCOPE_AVR_ISP */
   #endif
     else if (_scope == 0x12) _rspsize = jtag_scope_avr_core();      /* SCOPE_AVR */

@@ -77,12 +77,12 @@ namespace ISP {
       loop_until_bit_is_set(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_LUNF_bp);
       digitalWriteMacro(PIN_PGM_MSCK, HIGH);
       RXDATA <<= 1;
-      bit_is_clear(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_LUNF_bp);
+      bit_set(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_LUNF_bp);
       if (digitalReadMacro(PIN_PGM_MISO)) RXDATA |= 1;
 
       loop_until_bit_is_set(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_LUNF_bp);
       digitalWriteMacro(PIN_PGM_MSCK, LOW);
-      bit_is_clear(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_LUNF_bp);
+      bit_set(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_LUNF_bp);
     };
     return RXDATA;
   }
@@ -135,7 +135,7 @@ namespace ISP {
     size_t _length = bswap16(packet.out.isp.wValue);
     uint8_t _type = packet.out.isp.data[2];
     D1PRINTF(" M=$%04X, L=%d, T=$%02X\r\n", _addr << 1, _length, _type);
-    for (uint8_t _index = 0; _index < _length;) {
+    for (size_t _index = 0; _index < _length;) {
       _ser[0] = _type;
       _ser[1] = _CAPS16(_addr)->bytes[1];
       _ser[2] = _CAPS16(_addr)->bytes[0];
@@ -170,7 +170,7 @@ namespace ISP {
     uint16_t _delay = packet.out.data[3];
     uint8_t _mask = (_length >> 1) - 1;
     D1PRINTF(" M=$%04X, L=%d\r\n", _addr, _length);
-    for (uint8_t _index = 0; _index < _length; _index += 2) {
+    for (size_t _index = 0; _index < _length; _index += 2) {
       _ser[0] = packet.out.isp.data[4];
       _ser[1] = 0;
       _ser[2] = _CAPS16(_addr)->bytes[0] & _mask;
@@ -274,11 +274,13 @@ namespace ISP {
     }
 
     /* TCA0_WO0 setup */
+    TCA0_SPLIT_CTRLA = 0;
     TCA0_SPLIT_CTRLB = 0;
     TCA0_SPLIT_LCNT  = _ret - 1;
     TCA0_SPLIT_LPER  = _ret - 1;
-    TCA0_SPLIT_LCMP0 = _ret >> 1;
     TCA0_SPLIT_CTRLA = _period;
+    loop_until_bit_is_set(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_LUNF_bp);
+    bit_set(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_LUNF_bp);
     D1PRINTF(" XCK=%d>%d,%02X\r\n", _xclk, _ret, _period);
 
     for (uint8_t _i = 0; _i < 3; _i++) {
@@ -312,8 +314,7 @@ namespace ISP {
     D1PRINTF(" Fail\r\n");
     if (--_pgm_retry == 0) return 0;
     /* If a timeout occurs, the communication speed will be reduced. */
-    if (_xclk > 100) _xclk -= 50;
-    else if (_xclk > 1) _xclk = (_xclk >> 1) + (_xclk >> 2);
+    _xclk -= _xclk >> 2;
     return 1;
   }
 
@@ -409,6 +410,7 @@ namespace ISP {
     else if (_cmd == 0x14) {    /* CMD_READ_FLASH_ISP */
       D1PRINTF(" ISP_CMD_READ_FLASH\r\n");
       _rspsize = Timeout::command(&read_flash);
+      if (_rspsize == 0) _rspsize = -2;
     }
     else if (_cmd == 0x15) {    /* CMD_PROGRAM_EEPROM_ISP */
       D1PRINTF(" ISP_CMD_PROGRAM_EEPROM\r\n");
@@ -417,6 +419,7 @@ namespace ISP {
     else if (_cmd == 0x16) {    /* CMD_READ_EEPROM_ISP */
       D1PRINTF(" ISP_CMD_READ_EEPROM\r\n");
       _rspsize = Timeout::command(&read_memories);
+      if (_rspsize == 0) _rspsize = -2;
     }
     else if (_cmd == 0x17       /* CMD_PROGRAM_FUSE_ISP */
           || _cmd == 0x19) {    /* CMD_PROGRAM_LOCK_ISP */
@@ -436,6 +439,7 @@ namespace ISP {
         _cmd == 0x1B ? "SIGNATURE" : "OSCCAL"
       );
       _rspsize = Timeout::command(&read_fuse_byte);
+      if (_rspsize == 0) _rspsize = -2;
     }
     else {
       D1PRINTF(" ISP_CMD_?[%02X]\r\n", _cmd);

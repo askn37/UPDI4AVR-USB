@@ -42,10 +42,6 @@
   #endif
 #endif
 
-#define ISC_RISING  (PORT_PULLUPEN_bm | PORT_ISC_RISING_gc)
-#define ISC_RISWAIT (                   PORT_ISC_RISING_gc)
-#define ISC_FALLING (PORT_PULLUPEN_bm | PORT_ISC_FALLING_gc)
-
 /*** LED Timer configuration ***/
 #define TM_VCPBL ((F_CPU / 1024) / 16 - 1)
 #define HVC_CLK  5000000L

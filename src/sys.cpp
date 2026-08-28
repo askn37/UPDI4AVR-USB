@@ -226,7 +226,7 @@ namespace SYS {
    */
 
   WEAK void check_firmwaremode (void) {
-    if (bit_is_set(GPR_GPR0, RSTCTRL_PORF_bp) && FUSE_BOOTSIZE > 0) {
+    if (GPR_GPR0 == RSTCTRL_PORF_bm && FUSE_BOOTSIZE > 0) {
       pinControlRegister(PIN_SYS_SW0) = PORT_PULLUPEN_bm;
       /* It takes time for the effects of PULLUP to appear. */
       for (uint16_t _i = 0; ++_i;) {
