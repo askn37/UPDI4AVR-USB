@@ -226,6 +226,7 @@ namespace SYS {
    */
 
   WEAK void check_firmwaremode (void) {
+  #if (PIN_SYS_SW0 != PIN_PF6)
     if (GPR_GPR0 == RSTCTRL_PORF_bm && FUSE_BOOTSIZE > 0) {
       pinControlRegister(PIN_SYS_SW0) = PORT_PULLUPEN_bm;
       /* It takes time for the effects of PULLUP to appear. */
@@ -235,6 +236,7 @@ namespace SYS {
       *(uint16_t*)(RAMEND - 1) = 0;       /* Zero-initialize the last 2 bytes of the SRAM. */
       _PROTECTED_WRITE(RSTCTRL_SWRR, 1);  /* Perform a software reset. */
     }
+  #endif
   }
 
   /*
