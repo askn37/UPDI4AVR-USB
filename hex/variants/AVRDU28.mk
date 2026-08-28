@@ -38,7 +38,7 @@ build: FORCE
 #	@$(TOOLS)/avr-size -A ../build/$(SKETCH).ino.elf
 	@mv ./build/$(CODE_HEX) hex/$(VARIANT).hex
 	@mv ./build/$(FUSE_HEX) hex/$(VARIANT).fuse
-	@ls -lh hex/$(VARIANT).hex
+	@ls -lh hex/$(VARIANT).*
 	@$(MAKE) -f $(MF) clean
 
 compile:

@@ -14,15 +14,10 @@
 
 ### Recent Features
 
-v1.35.50
-- Timer/CCL/RTC/EVSYSの構成変更
-- `hex/variants`の新設
-- ISP制御への限定的対応
+1.35.52 (26/08/28)
 
-v1.35.49
-- HAL profile 構造の導入
-  - ベアチップのピンレイアウト見直し
-  - CCL/TC* の運用を刷新
+- `euboot` 3.72.50 と対応
+- ISP制御の修正
 
 ## Quick Start
 

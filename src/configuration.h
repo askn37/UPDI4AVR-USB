@@ -61,7 +61,7 @@
 
 #define UPDI_CLK 225
 #define PDI_CLK  2500
-#define ISP_CLK  250
+#define ISP_CLK  200
 
 
 /*
@@ -88,7 +88,7 @@
 #define HW_VER   0
 #define FW_MAJOR 1
 #define FW_MINOR 35
-#define FW_REL   51
+#define FW_REL   52
 
 
 /*** CONFIG_USB ***/
@@ -165,7 +165,7 @@
  * There is little harm in disabling it.
  */
 
-// #define CONFIG_VCP_INTERRUPT_SUPPRT
+#define CONFIG_VCP_INTERRUPT_SUPPRT
 
 
 /*** CONFIG_HVC ***/

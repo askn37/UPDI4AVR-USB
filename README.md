@@ -14,15 +14,10 @@ The conventional *USB4AVR* is designed to use a USB-serial conversion circuit, b
 
 ### Recent Features
 
-v1.35.50
-- Modified Timer/CCL/RTC/EVSYS configuration
-- Added `hex/variants`
-- Limited support for ISP-based control
+1.35.52 (26/08/28)
 
-v1.35.49
-- Introduction of HAL profile structure
-- Revised bare-chip pin layout
-- Revamped CCL/TC* operations
+- Compatible with `euboot` 3.72.50
+- Fixed ISP control
 
 ## Quick Start
 
