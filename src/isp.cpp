@@ -67,7 +67,7 @@ namespace ISP {
 
   // MARK: ISP Low level
 
-  NOINIT uint16_t _base_addr;
+  NOINIT size_t _base_addr;
   NOINIT uint8_t _ser[4], _res[4], _pgm_retry;
 
   uint8_t spi_exchange (const uint8_t _data) {
@@ -114,13 +114,14 @@ namespace ISP {
 
     /* Read and return the value at the specified position. */
     packet.in.isp.data[0] = _res[packet.out.isp.data[0] - 1];
+    packet.in.isp.data[1] = 0;
     return 2;
   }
 
   size_t read_memories (void) {
-    uint16_t _addr = _base_addr;
-    size_t _length = bswap16(packet.out.isp.wValue);
-    uint8_t _type = packet.out.isp.data[2];
+    size_t  _addr   = _base_addr;
+    size_t  _length = bswap16(packet.out.isp.wValue);
+    uint8_t _type   = packet.out.isp.data[2];
     D1PRINTF(" M=$%04X, L=%d, T=$%02X\r\n", _addr, _length, _type);
     for (size_t _index = 0; _index < _length; _index++) {
       _ser[0] = _type;
@@ -131,13 +132,14 @@ namespace ISP {
       packet.in.isp.data[_index] = _res[3];
       _addr += 1;
     }
-    return _length + 1;
+    packet.in.isp.data[_length++] = 0;
+    return _length;
   }
 
   size_t read_flash (void) {
-    uint16_t _addr   = _base_addr;
-    size_t   _length = bswap16(packet.out.isp.wValue);
-    uint8_t  _type   = packet.out.isp.data[2];
+    size_t  _addr   = _base_addr;
+    size_t  _length = bswap16(packet.out.isp.wValue);
+    uint8_t _type   = packet.out.isp.data[2];
     D1PRINTF(" M=$%04X, L=%d, T=$%02X\r\n", _addr << 1, _length, _type);
     for (size_t _index = 0; _index < _length;) {
       _ser[0] = _type;
@@ -151,7 +153,8 @@ namespace ISP {
       packet.in.isp.data[_index++] = _res[3];
       _addr += 1;
     }
-    return _length + 1;
+    packet.in.isp.data[_length++] = 0;
+    return _length;
   }
 
   size_t chip_erase (void) {
@@ -163,29 +166,58 @@ namespace ISP {
     return 1;
   }
 
+  void write_busy (uint8_t _type, uint8_t _delay, uint8_t _verify) {
+    uint8_t _read   = packet.out.isp.data[6];  /* RR */
+    if (bit_is_set(_type, 6)) {
+      /* BSY/RDY poling */
+      _ser[0] = 0xF0;
+      _ser[1] = 0;
+      _ser[2] = 0;
+      do {
+        spi_transaction(_ser);
+      } while (_ser[3] & 1);
+    }
+    else if (bit_is_set(_type, 5) && _ser[3] != 0xFF) {
+      /* value poling */
+      D1PRINTF(" S/"); D1PRINTHEX(_ser, 4, ':');
+      do {
+        _ser[0] = _read;
+        spi_transaction(_ser);
+      } while (_verify == _res[3]);
+      D1PRINTF(" R/"); D1PRINTHEX(_res, 4, ':');
+    }
+    else {
+      /* delay wait */
+      Timeout::delay_rtc_millis(_delay);
+    }
+  }
+
   size_t write_flash (void) {
     /* _length must be a power of 2 (not verified). */
     /* The lower bits of _addr must be zero-filled accordingly. */
     /* Ex) addr=$0000(word)                   */
     /* 00:20:C1:0A:40:4C:20:00:00:01:02:03:04 */
-    /* lenBE|  |ms|WW|FF|RR|     |words...    */
-    uint16_t _addr     = _base_addr;
-    size_t   _length   = bswap16(packet.out.isp.wValue);
-    uint16_t _delay    = packet.out.isp.data[3];
-    uint8_t  _page_set = packet.out.isp.data[4];
-    uint8_t  _commit   = packet.out.isp.data[5];
-    uint8_t  _mask     = (_length >> 1) - 1;
+    /* lenBE|tp|ms|WW|FF|RR|     |words...    */
+    size_t  _addr     = _base_addr;
+    size_t  _length   = bswap16(packet.out.isp.wValue);
+    uint8_t _type     = packet.out.isp.data[2]; /* tp */
+    uint8_t _delay    = packet.out.isp.data[3]; /* ms */
+    uint8_t _page_set = packet.out.isp.data[4]; /* WW */
+    uint8_t _commit   = packet.out.isp.data[5]; /* FF */
+    uint8_t _verify   = packet.out.isp.data[8]; /* P2 */
+    uint8_t _mask     = (_length >> 1) - 1;
+    if (_delay < 5) _delay = 5;
     D1PRINTF(" M=$%04X, L=%d\r\n", _addr, _length);
-    for (size_t _index = 0; _index < _length; _index += 2) {
+    for (size_t _index = 9; _index < _length + 9;) {
       _ser[0] = _page_set;
-      _ser[1] = _CAPS16(_addr)->bytes[1];
+      _ser[1] = 0;
       _ser[2] = _CAPS16(_addr)->bytes[0] & _mask;
-      _ser[3] = packet.out.isp.data[_index + 9];
+      _ser[3] = packet.out.isp.data[_index++];
       spi_transaction(_ser);
       _ser[0] = _page_set | 0x08;
       _ser[1] = _CAPS16(_addr)->bytes[1];
       _ser[2] = _CAPS16(_addr)->bytes[0] & _mask;
-      _ser[3] = packet.out.isp.data[_index + 10];
+      _ser[3] = packet.out.isp.data[_index++];
       spi_transaction(_ser);
       _addr += 1;
     }
@@ -194,8 +226,7 @@ namespace ISP {
     _ser[2] = _CAPS16(_base_addr)->bytes[0] & ~_mask;
     _ser[3] = 0;
     spi_transaction(_ser);
-    if (_delay < 5) _delay = 5;
-    Timeout::delay_rtc_millis(_delay);
+    write_busy(_type, _delay, _verify);
     return 1;
   }
 
@@ -203,22 +234,21 @@ namespace ISP {
     /* _length must be a power of 2 (not verified). */
     /* The lower bits of _addr must be zero-filled accordingly. */
     /* Ex) addr=$0000(byte)                   */
-    /* 00:04:C1:05:C1:C2:A0:00:00:01:02:03:04 (page type; m328p) */
+    /* 00:04:C1:14:C1:C2:A0:00:00:01:02:03:04 (page type; m328p) */
     /* 00:04:84:14:C0:00:A0:FF:FF:FF:FF:50:41 (byte type; m8) */
     /* lenBE|tp|ms|WW|FF|RR|P1|P2|bytes...    */
-    uint16_t _addr     = _base_addr;
-    size_t   _length   = bswap16(packet.out.isp.wValue);
-    uint16_t _type     = packet.out.data[2];      /* tp */
-    uint16_t _delay    = packet.out.data[3];      /* ms */
-    uint8_t  _page_set = packet.out.isp.data[4];  /* WW */
-    uint8_t  _commit   = packet.out.isp.data[5];  /* FF */
-    uint8_t  _read     = packet.out.isp.data[6];  /* RR */
-    uint8_t  _verify   = packet.out.isp.data[7];  /* P1 */
-    uint8_t  _mask     = _length - 1;
-    if (_delay < 4) _delay = 4;
+    size_t  _addr     = _base_addr;
+    size_t  _length   = bswap16(packet.out.isp.wValue);
+    uint8_t _type     = packet.out.isp.data[2]; /* tp */
+    uint8_t _delay    = packet.out.isp.data[3]; /* ms */
+    uint8_t _page_set = packet.out.isp.data[4]; /* WW */
+    uint8_t _commit   = packet.out.isp.data[5]; /* FF */
+    uint8_t _verify   = packet.out.isp.data[8]; /* P2 */
+    uint8_t _mask     = _length - 1;
     D1PRINTF(" M=$%04X, L=%d\r\n", _addr, _length);
     if (bit_is_set(_type, 0)) {
       /* page type */
+      if (_delay < 4) _delay = 4;
       for (size_t _index = 9; _index < _length + 9;) {
         _ser[0] = _page_set;
         _ser[1] = 0;
@@ -232,10 +262,12 @@ namespace ISP {
       _ser[2] = _CAPS16(_base_addr)->bytes[0] & ~_mask;
       _ser[3] = 0;
       spi_transaction(_ser);
-      Timeout::delay_rtc_millis(_delay);
+      write_busy(_type, _delay, _verify);
     }
     else {
       /* byte type */
+      _type <<= 3;
+      if (_delay < 4) _delay = 9;
       for (size_t _index = 9; _index < _length + 9;) {
         _ser[0] = _page_set;
         _ser[1] = _CAPS16(_addr)->bytes[1];
@@ -243,22 +275,7 @@ namespace ISP {
         _ser[3] = packet.out.isp.data[_index++];
         spi_transaction(_ser);
         _addr += 1;
-        if (bit_is_set(_type, 1)) {
-          Timeout::delay_rtc_millis(_delay);
-        }
-        else if (bit_is_set(_type, 2)) {
-          if (_ser[3] == 0xFF) {
-            Timeout::delay_rtc_millis(9);
-          }
-          else {
-            D1PRINTF(" S/"); D1PRINTHEX(_ser, 4, ':');
-            do {
-              _ser[0] = _read;
-              spi_transaction(_ser);
-            } while (_verify == _res[3]);
-            D1PRINTF(" R/"); D1PRINTHEX(_res, 4, ':');
-          }
-        }
+        write_busy(_type, _delay, _verify);
       }
     }
     return 1;
@@ -280,20 +297,11 @@ namespace ISP {
    */
   size_t connect (void) {
     int _ret;
-    PGCONF = PGCONF_PGIF_bm;
-    USART::setup();
-    TCA0_SPLIT_CTRLA = 0;
-    _base_addr = 0;
-
-    /* Change the necessary port settings. */
-    portRegister(PIN_PGM_MRST).DIRCLR = SPI_INPUT;
-    portRegister(PIN_PGM_MRST).OUTCLR = SPI_OUTPUT | SPI_INPUT;
-    portRegister(PIN_PGM_MRST).DIRSET = SPI_OUTPUT;
 
     /* Bit-banging accuracy */
     uint8_t _period = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV1_gc;
     _ret = (F_CPU / 2000) / _xclk;
-    if (_ret < 0) _ret = 8;           /* Speed limit: 1250 kbps */
+    if (_ret < 0) _ret = 6;
     else if (_ret >> 8) {
       _ret >>= 4;
       _period = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV16_gc;
@@ -345,6 +353,21 @@ namespace ISP {
     return 1;
   }
 
+  void sign_on (void) {
+    if (bit_is_clear(PGCONF, PGCONF_PGIF_bp)) {
+      _base_addr = 0;
+      USART::setup();
+      SYS::extclk_enable();
+
+      /* Change the necessary port settings. */
+      portRegister(PIN_PGM_MRST).DIRCLR = SPI_INPUT;
+      portRegister(PIN_PGM_MRST).OUTCLR = SPI_OUTPUT | SPI_INPUT;
+      portRegister(PIN_PGM_MRST).DIRSET = SPI_OUTPUT;
+
+      PGCONF = PGCONF_PGIF_bm;
+    }
+  }
+
   size_t sign_off (void) {
     if (PGCONF) {
       /* TCA0_WO0 reset */
@@ -354,6 +377,7 @@ namespace ISP {
       portRegister(PIN_PGM_TRST).OUTCLR = SPI_OUTPUT | SPI_INPUT;
       portRegister(PIN_PGM_TRST).DIRCLR = SPI_OUTPUT | SPI_INPUT;
 
+      SYS::extclk_disable();
       SYS::power_reset();
       PGCONF = 0;
       USART::setup();
@@ -382,6 +406,7 @@ namespace ISP {
   #endif
     if (_cmd == 0x10) {         /* CMD_ENTER_PROGMODE_ISP */
       D1PRINTF(" ISP_CMD_ENTER_PROGMODE\r\n");
+      sign_on();
       if (_length >= 11) {
         _pgm_retry = 4;
         _rspsize = Timeout::command(&connect, &timeout_fallback, packet.out.isp.data[0]);

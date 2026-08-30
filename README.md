@@ -15,7 +15,7 @@ The conventional *USB4AVR* is designed to use a USB-serial conversion circuit, b
 ### Recent Features
 
 1.35.53 (26/08/30)
-- Fixed ISP control
+- During ISP control, an external clock for XTAL1 can be output on PA6.
 
 1.35.52 (26/08/28)
 
@@ -301,6 +301,9 @@ As of version **v1.35.50**, limited support is provided for the 6-wire ISP contr
 - Naturally, if incorrect fuse settings render the device uncontrollable, the inability to use high-voltage control means there is no way to recover the device.
 
 The ISP wiring requires six lines: VCC, GND, MOSI, MISO, SCK, and RESET. The pin assignments and wiring for the ICSP-6P connector are identical to those used for UPDI/TPI. This means that if MISO and SCK are configured (e.g., via the SoftwareSerial library) to function as TxD and RxD—or if the lines are bridged—VCP-UART communication becomes possible.
+
+- [!TIP]
+- Starting with version **1.35.53**, functionality has been expanded to allow PA6 to output an external clock signal for XTAL1/CLKI (default: 2 MHz). This makes it possible to recover a "bricked" device caused by an incorrect operating clock setting in the LFUSE.
 
 <img src="https://askn37.github.io/product/UPDI4AVR/images/IMG_5879.jpg" width="400"> <img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_ISP.drawio.svg" width="400">
 

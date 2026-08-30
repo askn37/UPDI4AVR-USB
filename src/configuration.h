@@ -195,8 +195,6 @@
 /*
  * Enable ISP type programming support.
  *
- * +++ This has not yet been implemented +++
- *
  * It supports ISP programming via the AVR-SPI
  * (4-line Serial Programming Interface) method.
  * For some device models, HV=12V programming may be
@@ -205,6 +203,19 @@
  */
 
 #define CONFIG_PGM_ISP_ENABLE
+
+
+/*
+ * External Clock Supply for ISP Control
+ *
+ * When enabled, a 2 MHz clock is output on PA6 during ISP operations.
+ * This can be connected to the XTAL1 pin of the ISP target device.
+ * An additional delay of at least 250 ms is required for the clock
+ * to stabilize and be accepted.
+ * Access the target device using a setting of `-B125` or slower.
+ */
+
+#define CONFIG_PGM_EXCLK_ENABLE 2000000L
 
 
 /*

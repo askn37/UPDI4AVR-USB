@@ -15,7 +15,7 @@
 ### Recent Features
 
 1.35.53 (26/08/30)
-- ISP制御の修正
+- ISP制御中、PA6に XTAL1用の外部クロックを出力可能。
 
 1.35.52 (26/08/28)
 
@@ -303,6 +303,9 @@ Avrdude done.  Thank you.
   - 当然ながら、誤った FUSE を書き込んで制御不能になると、高電圧制御ができないので、復旧する手段は失われる。
 
 ISP方式の配線は以下に示す通り、"VCC" "GND" "MOSI" "MISO" "SCK" "RESET" の 6本が必要だ。使用するピン符号と、ICSP-6Pコネクタとの配線は、UPDI/TPI と全く同じである。つまり MISO と SCKは、それぞれ TxDと RxD になるよう、主に SoftwareSerial ライブラリで設定するならば（あるいは配線をブリッジしてしまえば）VCP-UART通信が可能だ。
+
+- [!TIP]
+- **1.35.53**以降、PA6に XTAL1/CLKI用の外部クロック（既定値は 2Mhz）が出力可能に機能拡張された。これによって LFUSEの動作クロック設定間違いによる brick は救済できる。
 
 <img src="https://askn37.github.io/product/UPDI4AVR/images/IMG_5879.jpg" width="400"> <img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_ISP.drawio.svg" width="400">
 
