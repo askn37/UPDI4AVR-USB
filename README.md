@@ -14,6 +14,9 @@ The conventional *USB4AVR* is designed to use a USB-serial conversion circuit, b
 
 ### Recent Features
 
+1.35.53 (26/08/30)
+- Fixed ISP control
+
 1.35.52 (26/08/28)
 
 - Compatible with `euboot` 3.72.50
