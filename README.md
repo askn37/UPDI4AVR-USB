@@ -302,8 +302,8 @@ As of version **v1.35.50**, limited support is provided for the 6-wire ISP contr
 
 The ISP wiring requires six lines: VCC, GND, MOSI, MISO, SCK, and RESET. The pin assignments and wiring for the ICSP-6P connector are identical to those used for UPDI/TPI. This means that if MISO and SCK are configured (e.g., via the SoftwareSerial library) to function as TxD and RxD—or if the lines are bridged—VCP-UART communication becomes possible.
 
-- [!TIP]
-- Starting with version **1.35.53**, functionality has been expanded to allow PA6 to output an external clock signal for XTAL1/CLKI (default: 2 MHz). This makes it possible to recover a "bricked" device caused by an incorrect operating clock setting in the LFUSE.
+> [!TIP]
+> Starting with version **1.35.53**, functionality has been expanded to allow PA6 to output an external clock signal for XTAL1/CLKI (default: 2 MHz). This makes it possible to recover a "bricked" device caused by an incorrect operating clock setting in the LFUSE.
 
 <img src="https://askn37.github.io/product/UPDI4AVR/images/IMG_5879.jpg" width="400"> <img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_ISP.drawio.svg" width="400">
 
@@ -314,7 +314,7 @@ avrdude -P usb:04d8:0b15 -c pickit4_isp -p m328p -v -U prodsig:r:-:I
 ```
 
 > [!TIP]
-> The communication speed can be adjusted using the `-B` option (in kbps), with values ​​ranging from 250 (default) down to 1. However, setting the frequency too low is impractical as it conflicts with timeout settings.<br/>
+> The control speed (in kbps) can be specified using the `-B` option within a range of 1000 to 1 (default: 200). However, setting the frequency too low is impractical, as it conflicts with timeout requirements.<br/>
 > <br/>
 > While AT89Sx series devices use active-high logic for external RESET, a **known issue** prevents AVRDUDE from providing the necessary device information to control this pin. This can be resolved by installing an inverting gate IC (inverter) on the external RESET line.
 

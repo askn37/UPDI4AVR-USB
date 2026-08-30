@@ -304,8 +304,8 @@ Avrdude done.  Thank you.
 
 ISP方式の配線は以下に示す通り、"VCC" "GND" "MOSI" "MISO" "SCK" "RESET" の 6本が必要だ。使用するピン符号と、ICSP-6Pコネクタとの配線は、UPDI/TPI と全く同じである。つまり MISO と SCKは、それぞれ TxDと RxD になるよう、主に SoftwareSerial ライブラリで設定するならば（あるいは配線をブリッジしてしまえば）VCP-UART通信が可能だ。
 
-- [!TIP]
-- **1.35.53**以降、PA6に XTAL1/CLKI用の外部クロック（既定値は 2Mhz）が出力可能に機能拡張された。これによって LFUSEの動作クロック設定間違いによる brick は救済できる。
+> [!TIP]
+> **1.35.53**以降、PA6に XTAL1/CLKI用の外部クロック（既定値は 2Mhz）が出力可能に機能拡張された。これによって LFUSEの動作クロック設定間違いによる brick は救済できる。
 
 <img src="https://askn37.github.io/product/UPDI4AVR/images/IMG_5879.jpg" width="400"> <img src="https://askn37.github.io/product/UPDI4AVR/images/U4AU_ISP.drawio.svg" width="400">
 
@@ -316,7 +316,7 @@ avrdude -P usb:04d8:0b15 -c pickit4_isp -p m328p -v -U prodsig:r:-:I
 ```
 
 > [!TIP]
-> `-B`オプションによる制御速度調整（kbps単位）は、250(規定値)から 1まで一応指定できる。もっとも、遅すぎる周波数設定はタイムアウトと両立せず実用的ではない。<br/>
+> `-B`オプションによる制御速度調整（kbps単位）は、1000から 1まで(既定値は200)一応指定できる。もっとも、遅すぎる周波数設定はタイムアウトと両立せず実用的ではない。<br/>
 > <br/>
 > AT89Sx シリーズは外部 RESET が正論理の品種だが、その制御のためのデバイス情報が AVRDUDE から通知されない**既知の問題**によって制御できない。外部 RESETに反転ゲートIC（インバーター）を取り付ければ対処可能。
 
