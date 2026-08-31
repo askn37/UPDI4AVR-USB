@@ -233,11 +233,11 @@ namespace SYS {
     CCL_CTRLA     = CCL_ENABLE_bm;
     TCB0_CTRLA = 0;
     TCB0_CNT   = 0;
-    TCB0_CCMPL = (F_CPU / CONFIG_PGM_EXCLK_ENABLE) - 1;
-    TCB0_CCMPH = (F_CPU / CONFIG_PGM_EXCLK_ENABLE) / 2;
+    TCB0_CCMPL = (CONFIG_PGM_EXCLK_ENABLE) - 1;
+    TCB0_CCMPH = (CONFIG_PGM_EXCLK_ENABLE) / 2 - 1;
     TCB0_CTRLB = TCB_CNTMODE_PWM8_gc;
     TCB0_CTRLA = TCB_ENABLE_bm | TCB_CLKSEL_DIV1_gc;
-    Timeout::delay_rtc_millis(250);
+    SYS::delay_20ms();
   #endif
   }
 

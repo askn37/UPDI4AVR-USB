@@ -213,9 +213,14 @@
  * An additional delay of at least 250 ms is required for the clock
  * to stabilize and be accepted.
  * Access the target device using a setting of `-B125` or slower.
+ *
+ * The minimum specifiable value is `4`. This value must be an even number;
+ * consequently, CLK_PER/4 represents the maximum frequency. Since the AVR-DU
+ * family is limited to operating its USB peripherals at 12,16,20, or 24 MHz,
+ * the default value is set to their greatest common divisor.
  */
 
-#define CONFIG_PGM_EXCLK_ENABLE 2000000L
+#define CONFIG_PGM_EXCLK_ENABLE (F_CPU / 2000000L)
 
 
 /*
