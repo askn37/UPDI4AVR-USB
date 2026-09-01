@@ -88,7 +88,7 @@
 #define HW_VER   0
 #define FW_MAJOR 1
 #define FW_MINOR 35
-#define FW_REL   52
+#define FW_REL   53
 
 
 /*** CONFIG_USB ***/
@@ -195,8 +195,6 @@
 /*
  * Enable ISP type programming support.
  *
- * +++ This has not yet been implemented +++
- *
  * It supports ISP programming via the AVR-SPI
  * (4-line Serial Programming Interface) method.
  * For some device models, HV=12V programming may be
@@ -205,6 +203,24 @@
  */
 
 #define CONFIG_PGM_ISP_ENABLE
+
+
+/*
+ * External Clock Supply for ISP Control
+ *
+ * When enabled, a 2 MHz clock is output on PA6 during ISP operations.
+ * This can be connected to the XTAL1 pin of the ISP target device.
+ * An additional delay of at least 250 ms is required for the clock
+ * to stabilize and be accepted.
+ * Access the target device using a setting of `-B125` or slower.
+ *
+ * The minimum specifiable value is `4`. This value must be an even number;
+ * consequently, CLK_PER/4 represents the maximum frequency. Since the AVR-DU
+ * family is limited to operating its USB peripherals at 12,16,20, or 24 MHz,
+ * the default value is set to their greatest common divisor.
+ */
+
+#define CONFIG_PGM_EXCLK_ENABLE (F_CPU / 2000000L)
 
 
 /*

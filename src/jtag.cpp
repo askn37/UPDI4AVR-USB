@@ -41,7 +41,7 @@ namespace JTAG {
   /* PARM3_HW_VER, PARM3_FW_MAJOR, PARM3_FW_MINOR, PARM3_FW_REL[2] */
   const uint8_t PROGMEM jtag_version[]  = { HW_VER, FW_MAJOR, FW_MINOR, (uint8_t)FW_REL, FW_REL>>8 };
   const uint8_t PROGMEM jtag_physical[] = {0x90, 0x28, 0x00, 0x18, 0x38, 0x00, 0x00, 0x00};
-  const uint8_t PROGMEM jtag_sign_on[]  = {0x08, 0x55, 0x50, 0x44, 0x49, 0x34, 0x41, 0x56, 0x52 };
+  const uint8_t PROGMEM jtag_sign_on[]  = {0x08, 0x55, 0x50, 0x44, 0x49, 0x34, 0x41, 0x56, 0x52, 0x00 };
                                                 /* U     P     D     I     4     A     V     R */
 
   // MARK: CMSIS-DAP
