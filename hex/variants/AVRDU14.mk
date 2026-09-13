@@ -4,7 +4,7 @@
 
 SKETCH  = UPDI4AVR-USB
 VARIANT = AVRDU_14P
-TARGET  = 54_AVR16DU14
+TARGET  = AVR16DU14
 
 CODE_HEX = $(SKETCH).ino.hex
 FUSE_HEX = $(SKETCH).ino.fuse
@@ -22,11 +22,11 @@ SDKURL = --additional-urls https://askn37.github.io/package_multix_zinnia_index.
 
 FQBN = "MultiX-Zinnia:modernAVR:AVRDU_noloader:\
 01_variant=$(TARGET),\
-02_clock=11_20MHz,\
-21_resetpin=02_gpio,\
-27_fusefile=03_upload,\
-54_console_select=12_UART1_D6_LC3,\
-90_console_baud=14_500000bps"
+02_clock=20MHz,\
+21_resetpin=Gpio,\
+27_fusefile=Upload,\
+54_console_select=UART1_D6_LC3,\
+90_console_baud=500000bps"
 
 ### Make rule ###
 
