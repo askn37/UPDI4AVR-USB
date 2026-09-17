@@ -197,7 +197,7 @@ __trampolines_start():
       94:	20 31       	cpi	r18, 0x10	; 16
       96:	2e 33       	cpi	r18, 0x3E	; 62
       98:	35 2e       	mov	r3, r21
-      9a:	35 33       	cpi	r19, 0x35	; 53
+      9a:	35 34       	cpi	r19, 0x45	; 69
       9c:	20 48       	sbci	r18, 0x80	; 128
       9e:	41 4c       	sbci	r20, 0xC1	; 193
       a0:	2f 41       	sbci	r18, 0x1F	; 31
@@ -254,7 +254,7 @@ __trampolines_start():
      1f5:	90 28 00 18 38 00 00 00                             .(..8...
 
 000001fd <JTAG::jtag_version>:
-     1fd:	00 01 23 35 00                                      ..#5.
+     1fd:	00 01 23 36 00                                      ..#6.
 
 00000202 <USB::ep_init>:
 	...
