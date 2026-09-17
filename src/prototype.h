@@ -86,9 +86,9 @@
   #endif
 #endif
 
-#define PACKED __attribute__((packed))
-#define USED   __attribute__((used))
-#define WEAK   __attribute__((weak))
+#define PACKED __attribute__((__packed__))
+#define USED   __attribute__((__used__))
+#define WEAK   __attribute__((__weak__))
 #define RODATA __attribute__((__progmem__))
 #define NOINIT __attribute__((section(".noinit")))
 
