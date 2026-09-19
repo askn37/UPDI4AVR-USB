@@ -34,10 +34,8 @@
   #define ENABLE_SYS_RESET FUSE_RSTPINCFG_bm
 #endif
 
-#ifdef UPLD_MAX_SIZE
-  #define BOOT_AREASIZE ((PROGMEM_SIZE - UPLD_MAX_SIZE) / 512)
-#else
-  #define BOOT_AREASIZE (0)
+#ifndef BOOTSECT
+  #define BOOTSECT 0
 #endif
 
 FUSES = {
@@ -47,7 +45,7 @@ FUSES = {
   .SYSCFG0  = FUSE5_DEFAULT | FUSE_EESAVE_bm | ENABLE_SYS_RESET,
   .SYSCFG1  = FUSE6_DEFAULT,
   .CODESIZE = FUSE7_DEFAULT,    /* 0=All application code */
-  .BOOTSIZE = BOOT_AREASIZE,    /* 0=No bootloader */
+  .BOOTSIZE = BOOTSECT,         /* 0=No bootloader */
   .PDICFG   = FUSE10_DEFAULT    /* Never change it */
 };
 
