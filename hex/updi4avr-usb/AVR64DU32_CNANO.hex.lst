@@ -2777,11 +2777,11 @@ _ZN3SYS13LED_HeartBeatEv():
 
 00000bc0 <USART::change_vcp()>:
 _ZN5USART10change_vcpEv():
-     bc0:	0f 93       	push	r16
+     bc0:	cf 92       	push	r12
 /Users/askn/Develop/UPDI4AVR-USB/src/sys.cpp:192
     }
   }
-     bc2:	1f 93       	push	r17
+     bc2:	df 92       	push	r13
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:141
     #endif
   }
@@ -2789,119 +2789,129 @@ _ZN5USART10change_vcpEv():
   /*** Activates VCP operation. ***/
   /* Detailed parameters are specified in SET_LINE_ENCODING. */
   void change_vcp (void) {
-     bc4:	cf 93       	push	r28
-     bc6:	df 93       	push	r29
-     bc8:	00 d0       	rcall	.+0      	; 0xbca <USART::change_vcp()+0xa>
-     bca:	00 d0       	rcall	.+0      	; 0xbcc <USART::change_vcp()+0xc>
-     bcc:	cd b7       	in	r28, 0x3d	; 61
-     bce:	de b7       	in	r29, 0x3e	; 62
-     bd0:	20 91 a1 60 	lds	r18, 0x60A1	; 0x8060a1 <_set_line_encoding>
+     bc4:	ef 92       	push	r14
+     bc6:	ff 92       	push	r15
+     bc8:	cf 93       	push	r28
+     bca:	df 93       	push	r29
+     bcc:	00 d0       	rcall	.+0      	; 0xbce <USART::change_vcp()+0xe>
+     bce:	00 d0       	rcall	.+0      	; 0xbd0 <USART::change_vcp()+0x10>
+     bd0:	cd b7       	in	r28, 0x3d	; 61
+     bd2:	de b7       	in	r29, 0x3e	; 62
+     bd4:	20 91 a1 60 	lds	r18, 0x60A1	; 0x8060a1 <_set_line_encoding>
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:143
     uint8_t _ctrlb = USART_RXEN_bm | USART_TXEN_bm | USART_ODME_bm;
     uint32_t _baud = _set_line_encoding.dwDTERate;
-     bd4:	30 91 a2 60 	lds	r19, 0x60A2	; 0x8060a2 <_set_line_encoding+0x1>
-     bd8:	40 91 a3 60 	lds	r20, 0x60A3	; 0x8060a3 <_set_line_encoding+0x2>
-     bdc:	50 91 a4 60 	lds	r21, 0x60A4	; 0x8060a4 <_set_line_encoding+0x3>
-     be0:	21 15       	cp	r18, r1
-     be2:	31 05       	cpc	r19, r1
+     bd8:	30 91 a2 60 	lds	r19, 0x60A2	; 0x8060a2 <_set_line_encoding+0x1>
+     bdc:	40 91 a3 60 	lds	r20, 0x60A3	; 0x8060a3 <_set_line_encoding+0x2>
+     be0:	50 91 a4 60 	lds	r21, 0x60A4	; 0x8060a4 <_set_line_encoding+0x3>
+     be4:	21 15       	cp	r18, r1
+     be6:	31 05       	cpc	r19, r1
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:146
     D1PRINTF(" BAUD=%ld", _baud);
     /* If the BAUD value is small, select double speed mode. */
     if (!_baud) _baud = 9600UL;
-     be4:	41 05       	cpc	r20, r1
-     be6:	51 05       	cpc	r21, r1
-     be8:	21 f4       	brne	.+8      	; 0xbf2 <USART::change_vcp()+0x32>
-     bea:	20 e8       	ldi	r18, 0x80	; 128
-     bec:	35 e2       	ldi	r19, 0x25	; 37
-     bee:	40 e0       	ldi	r20, 0x00	; 0
-     bf0:	50 e0       	ldi	r21, 0x00	; 0
-     bf2:	60 e0       	ldi	r22, 0x00	; 0
-     bf4:	78 e6       	ldi	r23, 0x68	; 104
+     be8:	41 05       	cpc	r20, r1
+     bea:	51 05       	cpc	r21, r1
+     bec:	21 f4       	brne	.+8      	; 0xbf6 <USART::change_vcp()+0x36>
+     bee:	20 e8       	ldi	r18, 0x80	; 128
+     bf0:	35 e2       	ldi	r19, 0x25	; 37
+     bf2:	40 e0       	ldi	r20, 0x00	; 0
+     bf4:	50 e0       	ldi	r21, 0x00	; 0
+     bf6:	60 e0       	ldi	r22, 0x00	; 0
+     bf8:	78 e6       	ldi	r23, 0x68	; 104
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:147
     if (_baud) _baud = (((F_CPU * 8L) / _baud) + 1) >> 1;
-     bf6:	89 e8       	ldi	r24, 0x89	; 137
-     bf8:	99 e0       	ldi	r25, 0x09	; 9
-     bfa:	0e 94 ff 20 	call	0x41fe	; 0x41fe <__udivmodsi4>
-     bfe:	da 01       	movw	r26, r20
-     c00:	c9 01       	movw	r24, r18
-     c02:	01 96       	adiw	r24, 0x01	; 1
-     c04:	a1 1d       	adc	r26, r1
-     c06:	b1 1d       	adc	r27, r1
-     c08:	ac 01       	movw	r20, r24
-     c0a:	bd 01       	movw	r22, r26
-     c0c:	76 95       	lsr	r23
-     c0e:	67 95       	ror	r22
-     c10:	57 95       	ror	r21
-     c12:	47 95       	ror	r20
-     c14:	40 36       	cpi	r20, 0x60	; 96
-     c16:	51 05       	cpc	r21, r1
+     bfa:	89 e8       	ldi	r24, 0x89	; 137
+     bfc:	99 e0       	ldi	r25, 0x09	; 9
+     bfe:	0e 94 ff 20 	call	0x41fe	; 0x41fe <__udivmodsi4>
+     c02:	da 01       	movw	r26, r20
+     c04:	c9 01       	movw	r24, r18
+     c06:	01 96       	adiw	r24, 0x01	; 1
+     c08:	a1 1d       	adc	r26, r1
+     c0a:	b1 1d       	adc	r27, r1
+     c0c:	ac 01       	movw	r20, r24
+     c0e:	bd 01       	movw	r22, r26
+     c10:	76 95       	lsr	r23
+     c12:	67 95       	ror	r22
+     c14:	57 95       	ror	r21
+     c16:	47 95       	ror	r20
+     c18:	28 ec       	ldi	r18, 0xC8	; 200
+     c1a:	40 36       	cpi	r20, 0x60	; 96
+/Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:142
+  }
+
+  /*** Activates VCP operation. ***/
+  /* Detailed parameters are specified in SET_LINE_ENCODING. */
+  void change_vcp (void) {
+    uint8_t _ctrlb = USART_RXEN_bm | USART_TXEN_bm | USART_ODME_bm;
+     c1c:	51 05       	cpc	r21, r1
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:148
+    uint32_t _baud = _set_line_encoding.dwDTERate;
+    D1PRINTF(" BAUD=%ld", _baud);
+    /* If the BAUD value is small, select double speed mode. */
+    if (!_baud) _baud = 9600UL;
+    if (_baud) _baud = (((F_CPU * 8L) / _baud) + 1) >> 1;
     if (_baud < 96) {
-     c18:	61 05       	cpc	r22, r1
-     c1a:	71 05       	cpc	r23, r1
-     c1c:	08 f0       	brcs	.+2      	; 0xc20 <USART::change_vcp()+0x60>
-     c1e:	55 c0       	rjmp	.+170    	; 0xcca <USART::change_vcp()+0x10a>
-     c20:	ac 01       	movw	r20, r24
-     c22:	bd 01       	movw	r22, r26
+     c1e:	61 05       	cpc	r22, r1
+     c20:	71 05       	cpc	r23, r1
+     c22:	20 f4       	brcc	.+8      	; 0xc2c <USART::change_vcp()+0x6c>
+     c24:	ac 01       	movw	r20, r24
+     c26:	bd 01       	movw	r22, r26
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:149
       _baud <<= 1;
-     c24:	4e 7f       	andi	r20, 0xFE	; 254
-     c26:	aa ec       	ldi	r26, 0xCA	; 202
-     c28:	8a 01       	movw	r16, r20
+     c28:	4e 7f       	andi	r20, 0xFE	; 254
+     c2a:	2a ec       	ldi	r18, 0xCA	; 202
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:150
       _ctrlb |= USART_RXMODE_CLK2X_gc;
-     c2a:	9b 01       	movw	r18, r22
+     c2c:	db 01       	movw	r26, r22
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:153
     }
     D1PRINTF("->%04X\r\n", _baud);
     if (_baud < 0x10000UL && _baud >= 64) {
-     c2c:	00 54       	subi	r16, 0x40	; 64
-     c2e:	11 09       	sbc	r17, r1
-     c30:	21 09       	sbc	r18, r1
-     c32:	31 09       	sbc	r19, r1
-     c34:	00 3c       	cpi	r16, 0xC0	; 192
-     c36:	1f 4f       	sbci	r17, 0xFF	; 255
-     c38:	21 05       	cpc	r18, r1
-     c3a:	31 05       	cpc	r19, r1
-     c3c:	c0 f5       	brcc	.+112    	; 0xcae <USART::change_vcp()+0xee>
-     c3e:	90 91 a7 60 	lds	r25, 0x60A7	; 0x8060a7 <_set_line_encoding+0x6>
+     c2e:	ca 01       	movw	r24, r20
+     c30:	80 54       	subi	r24, 0x40	; 64
+     c32:	91 09       	sbc	r25, r1
+     c34:	a1 09       	sbc	r26, r1
+     c36:	b1 09       	sbc	r27, r1
+     c38:	80 3c       	cpi	r24, 0xC0	; 192
+     c3a:	9f 4f       	sbci	r25, 0xFF	; 255
+     c3c:	a1 05       	cpc	r26, r1
+     c3e:	b1 05       	cpc	r27, r1
+     c40:	a0 f5       	brcc	.+104    	; 0xcaa <USART::change_vcp()+0xea>
+     c42:	90 91 a7 60 	lds	r25, 0x60A7	; 0x8060a7 <_set_line_encoding+0x6>
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:154
       uint8_t _bits = _set_line_encoding.bDataBits - 5;
-     c42:	95 50       	subi	r25, 0x05	; 5
-     c44:	00 91 2a 60 	lds	r16, 0x602A	; 0x80602a <UPDI::_set_ptr24+0x6>
+     c46:	95 50       	subi	r25, 0x05	; 5
+     c48:	c0 90 2a 60 	lds	r12, 0x602A	; 0x80602a <UPDI::_set_ptr24+0x6>
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:155
       uint8_t _ctrlc = (uint8_t[]){
-     c48:	10 91 2b 60 	lds	r17, 0x602B	; 0x80602b <UPDI::_set_ptr24+0x7>
-     c4c:	20 91 2c 60 	lds	r18, 0x602C	; 0x80602c <UPDI::_set_ptr24+0x8>
-     c50:	30 91 2d 60 	lds	r19, 0x602D	; 0x80602d <UPDI::_set_ptr24+0x9>
-     c54:	09 83       	std	Y+1, r16	; 0x01
-     c56:	1a 83       	std	Y+2, r17	; 0x02
-     c58:	2b 83       	std	Y+3, r18	; 0x03
-     c5a:	3c 83       	std	Y+4, r19	; 0x04
+     c4c:	d0 90 2b 60 	lds	r13, 0x602B	; 0x80602b <UPDI::_set_ptr24+0x7>
+     c50:	e0 90 2c 60 	lds	r14, 0x602C	; 0x80602c <UPDI::_set_ptr24+0x8>
+     c54:	f0 90 2d 60 	lds	r15, 0x602D	; 0x80602d <UPDI::_set_ptr24+0x9>
+     c58:	c9 82       	std	Y+1, r12	; 0x01
+     c5a:	da 82       	std	Y+2, r13	; 0x02
+     c5c:	eb 82       	std	Y+3, r14	; 0x03
+     c5e:	fc 82       	std	Y+4, r15	; 0x04
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:157
         USART_PMODE_DISABLED_gc, USART_PMODE_ODD_gc, USART_PMODE_EVEN_gc, USART_PMODE_DISABLED_gc
       }[_set_line_encoding.bParityType & 3]
-     c5c:	e0 91 a6 60 	lds	r30, 0x60A6	; 0x8060a6 <_set_line_encoding+0x5>
-     c60:	e3 70       	andi	r30, 0x03	; 3
-     c62:	ec 0f       	add	r30, r28
-     c64:	fd 2f       	mov	r31, r29
-     c66:	f1 1d       	adc	r31, r1
+     c60:	e0 91 a6 60 	lds	r30, 0x60A6	; 0x8060a6 <_set_line_encoding+0x5>
+     c64:	e3 70       	andi	r30, 0x03	; 3
+     c66:	ec 0f       	add	r30, r28
+     c68:	fd 2f       	mov	r31, r29
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:158
-      + _set_line_encoding.bCharFormat ? USART_SBMODE_2BIT_gc : USART_SBMODE_1BIT_gc;
-     c68:	21 81       	ldd	r18, Z+1	; 0x01
-     c6a:	80 91 a5 60 	lds	r24, 0x60A5	; 0x8060a5 <_set_line_encoding+0x4>
-     c6e:	28 0f       	add	r18, r24
-     c70:	33 27       	eor	r19, r19
-     c72:	33 1f       	adc	r19, r19
-     c74:	80 e0       	ldi	r24, 0x00	; 0
-     c76:	23 2b       	or	r18, r19
+      | (_set_line_encoding.bCharFormat ? USART_SBMODE_2BIT_gc : USART_SBMODE_1BIT_gc);
+     c6a:	f1 1d       	adc	r31, r1
+     c6c:	81 81       	ldd	r24, Z+1	; 0x01
+     c6e:	30 91 a5 60 	lds	r19, 0x60A5	; 0x8060a5 <_set_line_encoding+0x4>
+     c72:	31 11       	cpse	r19, r1
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:159
       if (_bits < 4) {
-     c78:	09 f0       	breq	.+2      	; 0xc7c <USART::change_vcp()+0xbc>
-     c7a:	88 e0       	ldi	r24, 0x08	; 8
+     c74:	38 e0       	ldi	r19, 0x08	; 8
+     c76:	83 2b       	or	r24, r19
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:160
         _ctrlc += _bits; /* USART_CHSIZE_[5,6,7,8]BIT_gc */
-     c7c:	94 30       	cpi	r25, 0x04	; 4
+     c78:	94 30       	cpi	r25, 0x04	; 4
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:175
       }
       else {
@@ -2909,7 +2919,7 @@ _ZN5USART10change_vcpEv():
         #endif
       }
       ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-     c7e:	38 f5       	brcc	.+78     	; 0xcce <USART::change_vcp()+0x10e>
+     c7a:	38 f5       	brcc	.+78     	; 0xcca <USART::change_vcp()+0x10a>
 /Users/askn/Library/Arduino15/packages/MultiX-Zinnia/tools/avr8-gcc/7.3.0-avr8-gnu-toolchain/avr/include/util/atomic.h:50
     return 1;
 }
@@ -2917,42 +2927,42 @@ _ZN5USART10change_vcpEv():
 static __inline__ uint8_t __iCliRetVal(void)
 {
     cli();
-     c80:	89 0f       	add	r24, r25
+     c7c:	89 0f       	add	r24, r25
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:176
         PORTMUX_USARTROUTEA = PORTMUX_USART_VCP;
-     c82:	9f b7       	in	r25, 0x3f	; 63
+     c7e:	9f b7       	in	r25, 0x3f	; 63
 __iCliRetVal():
-     c84:	f8 94       	cli
+     c80:	f8 94       	cli
 _ZN5USART10change_vcpEv():
-     c86:	22 e1       	ldi	r18, 0x12	; 18
+     c82:	32 e1       	ldi	r19, 0x12	; 18
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:177
         USART0_STATUS = USART_DREIF_bm;
-     c88:	20 93 e2 05 	sts	0x05E2, r18	; 0x8005e2 <__TEXT_REGION_LENGTH__+0x7f05e2>
-     c8c:	20 e2       	ldi	r18, 0x20	; 32
+     c84:	30 93 e2 05 	sts	0x05E2, r19	; 0x8005e2 <__TEXT_REGION_LENGTH__+0x7f05e2>
+     c88:	30 e2       	ldi	r19, 0x20	; 32
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:178
         USART0_BAUD = (uint16_t)_baud;
-     c8e:	20 93 04 08 	sts	0x0804, r18	; 0x800804 <__TEXT_REGION_LENGTH__+0x7f0804>
-     c92:	40 93 08 08 	sts	0x0808, r20	; 0x800808 <__TEXT_REGION_LENGTH__+0x7f0808>
+     c8a:	30 93 04 08 	sts	0x0804, r19	; 0x800804 <__TEXT_REGION_LENGTH__+0x7f0804>
+     c8e:	40 93 08 08 	sts	0x0808, r20	; 0x800808 <__TEXT_REGION_LENGTH__+0x7f0808>
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:179
         USART0_CTRLC = _ctrlc;
-     c96:	50 93 09 08 	sts	0x0809, r21	; 0x800809 <__TEXT_REGION_LENGTH__+0x7f0809>
+     c92:	50 93 09 08 	sts	0x0809, r21	; 0x800809 <__TEXT_REGION_LENGTH__+0x7f0809>
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:180
         USART0_CTRLA = USART_RXCIF_bm;
-     c9a:	80 93 07 08 	sts	0x0807, r24	; 0x800807 <__TEXT_REGION_LENGTH__+0x7f0807>
-     c9e:	80 e8       	ldi	r24, 0x80	; 128
+     c96:	80 93 07 08 	sts	0x0807, r24	; 0x800807 <__TEXT_REGION_LENGTH__+0x7f0807>
+     c9a:	80 e8       	ldi	r24, 0x80	; 128
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:181
         USART0_CTRLB = _ctrlb;
-     ca0:	80 93 05 08 	sts	0x0805, r24	; 0x800805 <__TEXT_REGION_LENGTH__+0x7f0805>
+     c9c:	80 93 05 08 	sts	0x0805, r24	; 0x800805 <__TEXT_REGION_LENGTH__+0x7f0805>
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:182
         bit_set(GPCONF, GPCONF_VCP_bp);
-     ca4:	a0 93 06 08 	sts	0x0806, r26	; 0x800806 <__TEXT_REGION_LENGTH__+0x7f0806>
+     ca0:	20 93 06 08 	sts	0x0806, r18	; 0x800806 <__TEXT_REGION_LENGTH__+0x7f0806>
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:185
       }
       D1PRINTF(" USART=VCP\r\n");
       drain();
-     ca8:	f1 9a       	sbi	0x1e, 1	; 30
+     ca4:	f1 9a       	sbi	0x1e, 1	; 30
 __iRestore():
-     caa:	9f bf       	out	0x3f, r25	; 63
+     ca6:	9f bf       	out	0x3f, r25	; 63
 _ZN5USART10change_vcpEv():
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:191
     }
@@ -2961,28 +2971,30 @@ _ZN5USART10change_vcpEv():
       D1PRINTF(" VCP=FAIL\r\n");
     }
     GPCONF &= ~GPCONF_SW0_gm;
-     cac:	ff da       	rcall	.-2562   	; 0x2ac <USART::drain(unsigned int) [clone .constprop.10]>
-     cae:	8e b3       	in	r24, 0x1e	; 30
-     cb0:	8f 73       	andi	r24, 0x3F	; 63
+     ca8:	01 db       	rcall	.-2558   	; 0x2ac <USART::drain(unsigned int) [clone .constprop.10]>
+     caa:	8e b3       	in	r24, 0x1e	; 30
+     cac:	8f 73       	andi	r24, 0x3F	; 63
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:192
     pinLogicOpen(PIN_SYS_SW0);
-     cb2:	8e bb       	out	0x1e, r24	; 30
+     cae:	8e bb       	out	0x1e, r24	; 30
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:193
     if (bit_is_set(GPCONF, GPCONF_USB_bp))
-     cb4:	a6 98       	cbi	0x14, 6	; 20
-     cb6:	f0 9b       	sbis	0x1e, 0	; 30
+     cb0:	a6 98       	cbi	0x14, 6	; 20
+     cb2:	f0 9b       	sbis	0x1e, 0	; 30
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:197
       SYS::LED_HeartBeat();
     else
       SYS::LED_Flash();
   }
-     cb8:	0c c0       	rjmp	.+24     	; 0xcd2 <USART::change_vcp()+0x112>
-     cba:	24 96       	adiw	r28, 0x04	; 4
-     cbc:	cd bf       	out	0x3d, r28	; 61
-     cbe:	de bf       	out	0x3e, r29	; 62
-     cc0:	df 91       	pop	r29
-     cc2:	cf 91       	pop	r28
-     cc4:	1f 91       	pop	r17
+     cb4:	0c c0       	rjmp	.+24     	; 0xcce <USART::change_vcp()+0x10e>
+     cb6:	24 96       	adiw	r28, 0x04	; 4
+     cb8:	cd bf       	out	0x3d, r28	; 61
+     cba:	de bf       	out	0x3e, r29	; 62
+     cbc:	df 91       	pop	r29
+     cbe:	cf 91       	pop	r28
+     cc0:	ff 90       	pop	r15
+     cc2:	ef 90       	pop	r14
+     cc4:	df 90       	pop	r13
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:194
       D1PRINTF(" VCP=FAIL\r\n");
     }
@@ -2990,17 +3002,8 @@ _ZN5USART10change_vcpEv():
     pinLogicOpen(PIN_SYS_SW0);
     if (bit_is_set(GPCONF, GPCONF_USB_bp))
       SYS::LED_HeartBeat();
-     cc6:	0f 91       	pop	r16
+     cc6:	cf 90       	pop	r12
      cc8:	5e cf       	rjmp	.-324    	; 0xb86 <SYS::LED_HeartBeat()>
-/Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:142
-  }
-
-  /*** Activates VCP operation. ***/
-  /* Detailed parameters are specified in SET_LINE_ENCODING. */
-  void change_vcp (void) {
-    uint8_t _ctrlb = USART_RXEN_bm | USART_TXEN_bm | USART_ODME_bm;
-     cca:	a8 ec       	ldi	r26, 0xC8	; 200
-     ccc:	ad cf       	rjmp	.-166    	; 0xc28 <USART::change_vcp()+0x68>
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:172
         usart_receiver    = &USB::vcp_receiver_9bit;
         usart_transmitter = &USB::vcp_transceiver_9bit;
@@ -3008,8 +3011,8 @@ _ZN5USART10change_vcpEv():
       }
       else {
         _ctrlc += USART_CHSIZE_8BIT_gc;
-     cce:	8d 5f       	subi	r24, 0xFD	; 253
-     cd0:	d8 cf       	rjmp	.-80     	; 0xc82 <USART::change_vcp()+0xc2>
+     cca:	8d 5f       	subi	r24, 0xFD	; 253
+     ccc:	d8 cf       	rjmp	.-80     	; 0xc7e <USART::change_vcp()+0xbe>
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:197
     pinLogicOpen(PIN_SYS_SW0);
     if (bit_is_set(GPCONF, GPCONF_USB_bp))
@@ -3017,13 +3020,15 @@ _ZN5USART10change_vcpEv():
     else
       SYS::LED_Flash();
   }
-     cd2:	24 96       	adiw	r28, 0x04	; 4
-     cd4:	cd bf       	out	0x3d, r28	; 61
-     cd6:	de bf       	out	0x3e, r29	; 62
-     cd8:	df 91       	pop	r29
-     cda:	cf 91       	pop	r28
-     cdc:	1f 91       	pop	r17
-     cde:	0f 91       	pop	r16
+     cce:	24 96       	adiw	r28, 0x04	; 4
+     cd0:	cd bf       	out	0x3d, r28	; 61
+     cd2:	de bf       	out	0x3e, r29	; 62
+     cd4:	df 91       	pop	r29
+     cd6:	cf 91       	pop	r28
+     cd8:	ff 90       	pop	r15
+     cda:	ef 90       	pop	r14
+     cdc:	df 90       	pop	r13
+     cde:	cf 90       	pop	r12
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:196
     GPCONF &= ~GPCONF_SW0_gm;
     pinLogicOpen(PIN_SYS_SW0);
@@ -13369,7 +13374,7 @@ get_descriptor():
     368e:	78 07       	cpc	r23, r24
     3690:	59 f5       	brne	.+86     	; 0x36e8 <main+0x506>
 main():
-/Users/askn/Library/Arduino15/packages/MultiX-Zinnia/hardware/modernAVR/0.4.10/cores/modernAVR/api/cpp/btools.cpp:210
+/Users/askn/Library/Arduino15/packages/MultiX-Zinnia/hardware/modernAVR/0.4.10/cores/modernAVR/api/cpp/btools.cpp:214
   return _crc;
 }
 
@@ -13379,12 +13384,12 @@ uint32_t crc32 (void* _data, size_t _len) {
     3692:	e0 e8       	ldi	r30, 0x80	; 128
     3694:	f0 e1       	ldi	r31, 0x10	; 16
 crc32():
-/Users/askn/Library/Arduino15/packages/MultiX-Zinnia/hardware/modernAVR/0.4.10/cores/modernAVR/api/cpp/btools.cpp:211
+/Users/askn/Library/Arduino15/packages/MultiX-Zinnia/hardware/modernAVR/0.4.10/cores/modernAVR/api/cpp/btools.cpp:215
   while (_len--) _crc = _crc32_update(_crc, *_p++);
     3696:	cf 01       	movw	r24, r30
     3698:	01 96       	adiw	r24, 0x01	; 1
 _crc32_update():
-/Users/askn/Library/Arduino15/packages/MultiX-Zinnia/hardware/modernAVR/0.4.10/cores/modernAVR/api/cpp/btools.cpp:201
+/Users/askn/Library/Arduino15/packages/MultiX-Zinnia/hardware/modernAVR/0.4.10/cores/modernAVR/api/cpp/btools.cpp:205
 }
 
 /* x32 + x26 + x23 + x22 + x16 + x12 + x11 + x10 + x8 + x7 + x5 + x4 + x2 + x + 1 */
@@ -13394,7 +13399,7 @@ uint32_t _crc32_update (uint32_t _crc, uint8_t _data) {
     369a:	20 81       	ld	r18, Z
     369c:	42 27       	eor	r20, r18
     369e:	e8 e0       	ldi	r30, 0x08	; 8
-/Users/askn/Library/Arduino15/packages/MultiX-Zinnia/hardware/modernAVR/0.4.10/cores/modernAVR/api/cpp/btools.cpp:203
+/Users/askn/Library/Arduino15/packages/MultiX-Zinnia/hardware/modernAVR/0.4.10/cores/modernAVR/api/cpp/btools.cpp:207
   for (uint8_t j = 0; j < 8; j++) {
     _crc = (_crc >> 1) ^ (0xEDB88320UL & -(_crc & 1));
     36a0:	8a 01       	movw	r16, r20
@@ -13423,7 +13428,7 @@ uint32_t _crc32_update (uint32_t _crc, uint8_t _data) {
     36ce:	62 27       	eor	r22, r18
     36d0:	73 27       	eor	r23, r19
     36d2:	e1 50       	subi	r30, 0x01	; 1
-/Users/askn/Library/Arduino15/packages/MultiX-Zinnia/hardware/modernAVR/0.4.10/cores/modernAVR/api/cpp/btools.cpp:202
+/Users/askn/Library/Arduino15/packages/MultiX-Zinnia/hardware/modernAVR/0.4.10/cores/modernAVR/api/cpp/btools.cpp:206
 
 /* x32 + x26 + x23 + x22 + x16 + x12 + x11 + x10 + x8 + x7 + x5 + x4 + x2 + x + 1 */
 /* (0xEDB88320 rev) init -1 */
@@ -13433,7 +13438,7 @@ uint32_t _crc32_update (uint32_t _crc, uint8_t _data) {
     36d4:	29 f7       	brne	.-54     	; 0x36a0 <main+0x4be>
     36d6:	fc 01       	movw	r30, r24
 crc32():
-/Users/askn/Library/Arduino15/packages/MultiX-Zinnia/hardware/modernAVR/0.4.10/cores/modernAVR/api/cpp/btools.cpp:211
+/Users/askn/Library/Arduino15/packages/MultiX-Zinnia/hardware/modernAVR/0.4.10/cores/modernAVR/api/cpp/btools.cpp:215
 }
 
 uint32_t crc32 (void* _data, size_t _len) {
