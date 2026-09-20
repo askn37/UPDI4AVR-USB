@@ -14,6 +14,9 @@ The conventional *USB4AVR* is designed to use a USB-serial conversion circuit, b
 
 ### Recent Features
 
+1.35.54 (26/09/13)
+- Update for compatibility with SDK 0.4.10. (No functional changes)
+
 1.35.53 (26/08/30)
 - During ISP control, an external clock for XTAL1 can be output on PA6.
 

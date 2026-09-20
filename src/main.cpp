@@ -82,11 +82,14 @@ namespace /* NAMELESS */ {
 __attribute__((used, naked, section(".init3")))
 void setup_mcu (void) {
   SYS::check_firmwaremode();
-  initVariant();
 
   /* Enables automatic adjustment of the OSCHF synchronized to the USB SOF. */
-  uint8_t _t = CLKCTRL_OSCHFCTRLA | CLKCTRL_ALGSEL_bm | CLKCTRL_AUTOTUNE_SOF_gc;
-  _PROTECTED_WRITE(CLKCTRL_OSCHFCTRLA, _t);
+  _CLKCTRL_SETUP(CLKCTRL_ALGSEL_bm | CLKCTRL_AUTOTUNE_SOF_gc);
+  PORTA.PINCONFIG = PORT_ISC_INPUT_DISABLE_gc;
+  PORTA.PINCTRLUPD = ~0;
+  PORTC.PINCTRLUPD = ~0;
+  PORTD.PINCTRLUPD = ~0;
+  PORTF.PINCTRLUPD = ~0;
 }
 
 int main (void) {

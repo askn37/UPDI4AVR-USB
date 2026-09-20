@@ -50,7 +50,7 @@ namespace SYS {
     /* Grouping consecutive lines that assign the same value results in shorter code. */
     pinControlRegister(PIN_VCP_TXD)      = PORT_PULLUPEN_bm;
     pinControlRegister(PIN_VCP_RXD)      = PORT_PULLUPEN_bm;
-    pinControlRegister(PIN_PGM_TDAT)     = PORT_PULLUPEN_bm;
+    pinControlRegister(PIN_PGM_TDAT)     = PORT_PULLUPEN_bm | PORT_INLVL_bm;
     pinControlRegister(PIN_PGM_TRST)     = PORT_PULLUPEN_bm | PORT_ISC_INPUT_DISABLE_gc;
     pinControlRegister(PIN_SYS_SW0)      = PORT_PULLUPEN_bm | PORT_ISC_FALLING_gc;
     pinControlRegister(PIN_HVC_CHGPUMP1) = PORT_INVEN_bm    | PORT_ISC_INPUT_DISABLE_gc;

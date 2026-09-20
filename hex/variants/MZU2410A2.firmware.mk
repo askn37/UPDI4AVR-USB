@@ -4,7 +4,7 @@
 
 SKETCH  = UPDI4AVR-USB
 VARIANT = MZU2410A2
-TARGET  = 33_AVR32DU28
+TARGET  = AVR32DU28
 
 CODE_HEX = $(SKETCH).ino.hex
 FUSE_HEX = $(SKETCH).ino.fuse
@@ -23,9 +23,9 @@ SDKURL = --additional-urls https://askn37.github.io/package_multix_zinnia_index.
 
 FQBN = "MultiX-Zinnia:modernAVR:AVRDU_usbloader:\
 01_variant=$(TARGET),\
-02_clock=11_20MHz,\
-90_console_baud=14_500000bps,\
-96_usbbootloader=11_euboot_LC3_SF6"
+02_clock=20MHz,\
+90_console_baud=500000bps,\
+96_usbbootloader=euboot_LC3_SF6"
 
 ### Make rule ###
 

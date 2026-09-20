@@ -155,7 +155,7 @@ namespace USART {
       uint8_t _ctrlc = (uint8_t[]){
         USART_PMODE_DISABLED_gc, USART_PMODE_ODD_gc, USART_PMODE_EVEN_gc, USART_PMODE_DISABLED_gc
       }[_set_line_encoding.bParityType & 3]
-      + _set_line_encoding.bCharFormat ? USART_SBMODE_2BIT_gc : USART_SBMODE_1BIT_gc;
+      | (_set_line_encoding.bCharFormat ? USART_SBMODE_2BIT_gc : USART_SBMODE_1BIT_gc);
       if (_bits < 4) {
         _ctrlc += _bits; /* USART_CHSIZE_[5,6,7,8]BIT_gc */
         #if defined(CONFIG_VCP_9BIT_SUPPORT)
