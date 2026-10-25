@@ -183,6 +183,8 @@ namespace SYS {
       TCA0_SPLIT_LPER  = TM_HBEAT - 1;
       TCA0_SPLIT_LCMP1 = TM_HBEAT >> 1; /* compare TCA0_WO1 */
       TCA0_SPLIT_CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV1024_gc;
+      TCA0_SPLIT_CTRLESET = TCA_SPLIT_CMD_RESTART_gc;
+      TCB0_CTRLA = 0;
       TCB0_CNT   = 0;
       TCB0_CCMPL = TM_HBEAT;
       TCB0_CCMPH = TM_HBEAT >> 1;       /* compare TCB0_WO */
@@ -196,6 +198,7 @@ namespace SYS {
       D1PRINTF(" LED=%d\r\n", _mode);
       TCA0_SPLIT_LCMP1 = 0;             /* turn off TCA0_WO1 */
       TCA0_SPLIT_CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV1024_gc;
+      TCA0_SPLIT_CTRLESET = TCA_SPLIT_CMD_RESTART_gc;
       TCB0_CNT   = (_ccmp >> 1) - 2;
       TCB0_CCMPL = _ccmp;
       TCB0_CCMPH = _ccmp >> 1;          /* compare TCB0_WO */
@@ -308,10 +311,10 @@ namespace SYS {
      and bit manipulation, without switching USART. */
   void send_bitmap (const uint8_t _bitmap[], const size_t _length) {
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-      TCA0_SPLIT_CTRLA = 0;
       TCA0_SPLIT_LCNT  = TCA0_SPLIT_LCMP2;
       TCA0_SPLIT_LPER  = TCA0_SPLIT_LCMP2;
       TCA0_SPLIT_CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV1_gc;
+      TCA0_SPLIT_CTRLESET = TCA_SPLIT_CMD_RESTART_gc;
       loop_until_bit_is_set(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_LUNF_bp);
       bit_set(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_LUNF_bp);
       for (uint8_t i = 0; i < _length; i++) {
@@ -323,8 +326,8 @@ namespace SYS {
         EVSYS_SWEVENTA = EVSYS_SWEVENTA_CH2_gc;
         bit_set(TCA0_SPLIT_INTFLAGS, TCA_SPLIT_LUNF_bp);
       }
-      TCA0_SPLIT_CTRLA = 0;
       TCA0_SPLIT_CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV1024_gc;
+      TCA0_SPLIT_CTRLESET = TCA_SPLIT_CMD_RESTART_gc;
     }
   }
 
@@ -445,6 +448,7 @@ namespace SYS {
     TCA0_SPLIT_CTRLB = TCA_SPLIT_HCMP2EN_bm | TCA_SPLIT_HCMP1EN_bm;
     TCA0_SPLIT_HCNT  = 0;
     TCA0_SPLIT_CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV1_gc;
+    TCA0_SPLIT_CTRLESET = TCA_SPLIT_CMD_RESTART_gc;
     delay_100us();
   #endif
   }
@@ -453,6 +457,7 @@ namespace SYS {
   #ifdef CONFIG_HVC_ENABLE
     TCA0_SPLIT_CTRLB = 0;
     TCA0_SPLIT_CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV1024_gc;
+    TCA0_SPLIT_CTRLESET = TCA_SPLIT_CMD_RESTART_gc;
   #endif
   }
 

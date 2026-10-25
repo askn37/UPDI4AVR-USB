@@ -46,6 +46,7 @@ namespace /* NAMELESS */ {
   NOINIT uint16_t _send_break;
   NOINIT volatile uint8_t _send_count;
   NOINIT uint8_t _recv_count;
+  NOINIT uint8_t _vcp_ctrl;
   NOINIT uint8_t _set_config;
   NOINIT volatile uint8_t _sof_count;
   NOINIT uint8_t _set_serial_state;

@@ -21,12 +21,10 @@ SDKURL = --additional-urls https://askn37.github.io/package_multix_zinnia_index.
 
 # FQBN : You only need to specify the menu items that differ from the defaults.
 
-FQBN = --fqbn "MultiX-Zinnia:modernAVR:AVRDU_noloader:\
+FQBN = --fqbn "MultiX-Zinnia:modernAVR:CNANO:\
   01_variant=AVR64DU32,\
-  02_clock=20MHz,\
   21_resetpin=Gpio,\
   27_fusefile=Upload,\
-  54_console_select=UART1_D6_LF2_SF6_Curiosity,\
   90_console_baud=500000bps"
 
 # If you have MPLAB installed, the executable path will already be there.
@@ -49,7 +47,7 @@ all:
 
 hex/updi4avr-usb/$(TARGET)%.hex: build/$(TARGET)%.ino.elf
 	@$(eval TOOLS := $(shell dirname $(shell cat build/compile_commands.json | grep tools | head -n1) | tr -d '"'))
-	$(TOOLS)/../../../avrdude/8.2-avrdude/bin/avrdude -cdryrun -p$(TARGET) -qqqU{flash,fuses}:w:$< -Uall:r:-:I | grep -vE "F{32}|0{32}|S{32}|/sigrow| lock" > $@
+	$(TOOLS)/../../../avrdude/8.2-avrdude/bin/avrdude -cdryrun -p$(TARGET) -qqqU{flash,fuses}:w:$< -Uall:r:-:I | grep -vE "F{64}|0{64}|S{32}|/sigrow| lock" > $@
 	@cp -f build/$(TARGET)$*.ino.lst $@.lst
 	ls -la hex/updi4avr-usb/$(TARGET)$*.*
 

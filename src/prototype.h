@@ -455,6 +455,7 @@ extern "C" {
     extern uint16_t _send_break;
     extern volatile uint8_t _send_count;
     extern uint8_t _recv_count;
+    extern uint8_t _vcp_ctrl;
     extern uint8_t _set_config;
     extern volatile uint8_t _sof_count;
     extern uint8_t _set_serial_state;
