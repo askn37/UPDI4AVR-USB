@@ -52,7 +52,7 @@ namespace USB {
   const uint8_t PROGMEM device_descriptor[] = {
     /* This device descriptor contains the VID:PID, default is MCHP:CDC-ACM. */
     0x12, 0x01, 0x00, 0x02, 0x02, 0x00, 0x00, 0x40,
-    0xD8, 0x04, 0x15, 0x0B, 0x55, 0x01, 0x01, 0x02, 0x03, 0x01
+    0xD8, 0x04, 0x15, 0x0B, 0x35, 0x01, 0x01, 0x02, 0x03, 0x01
   };
   const uint8_t PROGMEM qualifier_descriptor[] = {
     /* This descriptor selects Full-Speed (USB 2.0) ​​for USB 3.0. */
@@ -332,9 +332,11 @@ namespace USB {
       loop_until_bit_is_clear(USB0_INTFLAGSB, USB_RMWBUSY_bp);
       USB_EP_STATUS_CLR(USB_EP_CCI) = ~USB_TOGGLE_bm;
     }
+    #if defined(CONFIG_VCP_INTERRUPT_SUPPRT)
     else {
       _sof_count = SERIALSTATE_DELAY;
     }
+    #endif
   }
 
   void ep_cdi_listen (void) {
@@ -644,7 +646,9 @@ namespace USB {
       bit_set(GPCONF, GPCONF_OPN_bp);
       _send_count = 0;
       _recv_count = 0;
+    #if defined(CONFIG_VCP_INTERRUPT_SUPPRT)
       _sof_count = SERIALSTATE_DELAY;
+    #endif
       EP_RES.CNT = 0;
     }
     else if (bRequest == 0x21) {  /* GET_LINE_ENCODING */
@@ -672,7 +676,9 @@ namespace USB {
       _send_break = EP_MEM.req_data.wValue;
       if (_send_break) break_on();
       else break_off();
+    #if defined(CONFIG_VCP_INTERRUPT_SUPPRT)
       _sof_count = SERIALSTATE_DELAY;
+    #endif
       EP_RES.CNT = 0;
     }
     else {
