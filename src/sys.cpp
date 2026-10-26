@@ -184,7 +184,6 @@ namespace SYS {
       TCA0_SPLIT_LCMP1 = TM_HBEAT >> 1; /* compare TCA0_WO1 */
       TCA0_SPLIT_CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV1024_gc;
       TCA0_SPLIT_CTRLESET = TCA_SPLIT_CMD_RESTART_gc;
-      TCB0_CTRLA = 0;
       TCB0_CNT   = 0;
       TCB0_CCMPL = TM_HBEAT;
       TCB0_CCMPH = TM_HBEAT >> 1;       /* compare TCB0_WO */
@@ -234,11 +233,9 @@ namespace SYS {
     CCL_LUT0CTRLB = CCL_INSEL0_TCB0_gc;             /* <- TCB0_WO */
     CCL_LUT0CTRLA = CCL_ENABLE_bm | CCL_OUTEN_bm;   /* -> PIN_PA6 */
     CCL_CTRLA     = CCL_ENABLE_bm;
-    TCB0_CTRLA = 0;
     TCB0_CNT   = 0;
     TCB0_CCMPL = (CONFIG_PGM_EXCLK_ENABLE) - 1;
     TCB0_CCMPH = (CONFIG_PGM_EXCLK_ENABLE) / 2 - 1;
-    TCB0_CTRLB = TCB_CNTMODE_PWM8_gc;
     TCB0_CTRLA = TCB_ENABLE_bm | TCB_CLKSEL_DIV1_gc;
     SYS::delay_20ms();
   #endif

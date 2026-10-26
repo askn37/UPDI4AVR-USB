@@ -93,7 +93,7 @@ namespace USB {
     0x04, 0x24, 0x02, 0x06,                               /*   Functional ACM Capabilities   */
     0x05, 0x24, 0x06, 0x03, 0x04,                         /*   Functional UNION      #3 + #4 */
     0x05, 0x24, 0x01, 0x00, 0x04,                         /*   Functional Call Management #4 */
-    0x07, 0x05, 0x84, 0x03, 0x10, 0x00, 0x05,             /*   EP_CCI_IN  #84  */
+    0x07, 0x05, 0x84, 0x03, 0x10, 0x00, USB_CCI_INTERVAL, /*   EP_CCI_IN  #84  */
     0x09, 0x04, 0x04, 0x00, 0x02, 0x0A, 0x02, 0x01, 0x00, /* Interface #4 CDI  */
     0x07, 0x05, 0x05, 0x02, 0x40, 0x00, 0x00,             /*   EP_CDO_OUT #05  */
     0x07, 0x05, 0x85, 0x02, 0x40, 0x00, 0x00,             /*   EP_CDI_IN  #85  */
@@ -223,7 +223,7 @@ namespace USB {
     return _size;
   }
 
-  void set_cci_data (uint16_t _state) {
+  void set_cci_data (uint8_t _state) {
     _set_serial_state = _state;
     EP_MEM.cci_header.bmRequestType = 0xA1; /* REQTYPE_DIRECTION | REQTYPE_CLASS | RECIPIENT_INTERFACE */
     EP_MEM.cci_header.bRequest      = 0x20; /* CDC_REQ_SerialState */
@@ -249,6 +249,7 @@ namespace USB {
       _recv_count = 0;
       _set_config = 0;
       _sof_count = 0;
+      _set_serial_state = 0;
       memcpy_P(&EP_TABLE, &ep_init, sizeof(EP_TABLE_t));
       set_cci_data(0x00);
       USB0_CTRLA = USB_ENABLE_bm | (USB_ENDPOINTS_MAX - 1);
@@ -266,6 +267,7 @@ namespace USB {
   // MARK: Endpoint
 
   bool is_ep_setup (void) { return bit_is_set(EP_REQ.STATUS, USB_EPSETUP_bp); }
+  bool is_ep_cci (void) { return bit_is_set(EP_CCI.STATUS, USB_BUSNAK_bp); }
   bool is_not_dap (void) { return bit_is_clear(EP_DPO.STATUS, USB_BUSNAK_bp); }
   void ep_req_pending (void) { loop_until_bit_is_set(EP_REQ.STATUS, USB_BUSNAK_bp); }
   void ep_res_pending (void) { loop_until_bit_is_set(EP_RES.STATUS, USB_BUSNAK_bp); }
@@ -300,15 +302,27 @@ namespace USB {
     USB_EP_STATUS_CLR(USB_EP_DPO) = ~USB_TOGGLE_bm;
   }
 
+  bool progress_break (void) {
+    if ((_send_break + 1) > 1) {
+      _send_break -= _send_break > USB_CCI_INTERVAL
+        ? USB_CCI_INTERVAL 
+        : _send_break;
+      return !_send_break;
+    }
+    else return false;
+  }
+
   void ep_cci_listen (void) {
-    if (bit_is_set(EP_CCI.STATUS, USB_BUSNAK_bp)) {
-      if ((_send_break + 1) > 1 && _send_break > USB_CCI_INTERVAL) {
-        _send_break -= USB_CCI_INTERVAL;
-      }
+    if (is_ep_cci()) {
+      D1PRINTF("CCI=");
+      D1PRINTHEX(&EP_MEM.cci_data, 10, ':');
       EP_CCI.CNT = 10;
       EP_CCI.MCNT = 0;
       loop_until_bit_is_clear(USB0_INTFLAGSB, USB_RMWBUSY_bp);
       USB_EP_STATUS_CLR(USB_EP_CCI) = ~USB_TOGGLE_bm;
+    }
+    else {
+      _sof_count = SERIALSTATE_DELAY;
     }
   }
 
@@ -360,10 +374,9 @@ namespace USB {
      && bit_is_clear(GPCONF, GPCONF_BRK_bp)) {
       /* SET_SEND_BREAK is called when the port is closed successfully. */
       bit_clear(GPCONF, GPCONF_OPN_bp);
-      _sof_count = 0;
       _send_count = 0;
       _vcp_ctrl = USART0_CTRLB;
-      USART0_CTRLB = 0;
+      USART0_CTRLB &= ~(USART_RXEN_bm | USART_TXEN_bm);
       bit_set(GPCONF, GPCONF_VCP_bp);
       /* During Break, VCP-TxD is pulled LOW. */
       pinLogicPull(PIN_VCP_TXD);
@@ -376,7 +389,7 @@ namespace USB {
      && bit_is_set(GPCONF, GPCONF_BRK_bp)) {
       pinLogicOpen(PIN_VCP_TXD);
       _send_count = 0;
-      RXSTAT = 0;
+      _send_break = 0;
       USART0_CTRLB = _vcp_ctrl;
       bit_set(GPCONF, GPCONF_OPN_bp);
     }
@@ -385,33 +398,35 @@ namespace USB {
 
   void cci_break_count (void) {
     /* If the break value is between 1 and 65534, it will count down. */
-    if ((_send_break + 1) > 1) {
-      if (_send_break > USB_CCI_INTERVAL) {
-        ep_cci_listen();
-      }
-      else {
-        _send_break = 0;
-        break_off();
-      }
-      D2PRINTF(" SB=%04X\r\n", _send_break);
-    }
+    if (progress_break()) break_off();
   }
 
   void cci_interrupt (void) {
   #if defined(CONFIG_VCP_INTERRUPT_SUPPRT)
     SerialState_t _value = {};
     #if defined(CONFIG_VCP_RS232C_ENABLE)
+    /* This paragraph is implementation-dependent. */
+    /* Please set the states of appropriately,     */
+    /*    bRxCarrier, bTxCarrier, and bRingSignal. */
     uint8_t _c = VPORTD_IN;
-    _value.bValue = (_c ^ 0x0B) & 0x0B;
+    _value.bValue = (_c ^ 0x03) & 0x03;
+    #else
+    if (bit_is_set(GPCONF, GPCONF_VCP_bp)) {
+      _value.bValue = 0x03; /* bRxCarrier(DCD) and bTxCarrier(DSR) */
+    }
+    else {
+      _value.bValue = 0x04; /* bBreak(BREAK) */
+    }
     #endif
-    if (bit_is_set(RXSTAT, USART_FERR_bp))   _value.bFraming = true;
-    if (bit_is_set(RXSTAT, USART_PERR_bp))   _value.bParity  = true;
-    if (bit_is_set(RXSTAT, USART_BUFOVF_bp)) _value.bOverRun = true;
+    if (bit_is_set(RXSTAT, USART_FERR_bp))   /* 0x04 */ _value.bFraming = true; /* 0x10 */
+    if (bit_is_set(RXSTAT, USART_PERR_bp))   /* 0x02 */ _value.bParity  = true; /* 0x20 */
+    if (bit_is_set(RXSTAT, USART_BUFOVF_bp)) /* 0x40 */ _value.bOverRun = true; /* 0x40 */
     RXSTAT = 0;
-    if (bit_is_set(GPCONF, GPCONF_OPN_bp) && _set_serial_state != _value.bValue) {
+    if (_set_serial_state != _value.bValue) {
+      /* If it doesn't meet your expectations, you should reconfirm it after the delay. */
+      if (_value.bValue ^ 0x03) _sof_count = SERIALSTATE_DELAY;
+      D2PRINTF(" SS=%02X:%02X:%02X\r\n", _set_serial_state, _value.bValue, _sof_count);
       set_cci_data(_value.bValue);
-      D2PRINTF(" CCI=");
-      D2PRINTHEX(&EP_MEM.cci_data, 10, ':');
       ep_cci_listen();
     }
   #endif
@@ -425,7 +440,7 @@ namespace USB {
       ? &EP_MEM.cdi_data[64]
       : &EP_MEM.cdi_data[0];
     _buf[_send_count++] = _c;
-    if (_send_count < 64) _sof_count = 30;
+    if (_send_count < 64) _sof_count = VCP_BULK_DELAY;
     else ep_cdi_listen();
   }
 
@@ -464,9 +479,6 @@ namespace USB {
       write_byte(_c);
     }
     RXSTAT |= _d;
-  #if defined(CONFIG_VCP_INTERRUPT_SUPPRT)
-    if (bit_is_set(EP_CCI.STATUS, USB_BUSNAK_bp)) cci_interrupt();
-  #endif
   }
 
   void vcp_receiver_9bit (void) {
@@ -478,9 +490,6 @@ namespace USB {
       write_byte(_d & 1);
     }
     RXSTAT |= _d;
-    #if defined(CONFIG_VCP_INTERRUPT_SUPPRT)
-    if (bit_is_set(EP_CCI.STATUS, USB_BUSNAK_bp)) cci_interrupt();
-    #endif
   #endif
   }
 
@@ -622,7 +631,7 @@ namespace USB {
       bit_set(GPCONF, GPCONF_OPN_bp);
       _send_count = 0;
       _recv_count = 0;
-      _sof_count = 0;
+      _sof_count = SERIALSTATE_DELAY;
       EP_RES.CNT = 0;
     }
     else if (bRequest == 0x21) {  /* GET_LINE_ENCODING */
@@ -650,6 +659,7 @@ namespace USB {
       _send_break = EP_MEM.req_data.wValue;
       if (_send_break) break_on();
       else break_off();
+      _sof_count = SERIALSTATE_DELAY;
       EP_RES.CNT = 0;
     }
     else {
@@ -726,6 +736,7 @@ namespace USB {
         if (bit_is_set(EP_CDI.STATUS, USB_BUSNAK_bp) && _send_count > 0) {
           ep_cdi_listen();
         }
+        cci_interrupt();
       }
     }
     if (bit_is_set(busstate, USB_SUSPEND_bp)

@@ -49,7 +49,7 @@ namespace /* NAMELESS */ {
   NOINIT uint8_t _vcp_ctrl;
   NOINIT uint8_t _set_config;
   NOINIT volatile uint8_t _sof_count;
-  NOINIT uint8_t _set_serial_state;
+  NOINIT volatile uint8_t _set_serial_state;
 
   /* JTAG packet payload */
   NOINIT JTAG_Packet_t packet;
@@ -116,7 +116,6 @@ int main (void) {
 #if defined(PIN_SYS_SW0)
   /* Clear the dirty flag before enabling interrupts. */
   vportRegister(PIN_SYS_SW0).INTFLAGS = ~0;
-  CCL_INTFLAGS = ~0;
 #endif
 
   interrupts();
@@ -129,6 +128,7 @@ int main (void) {
 
   /* From here on, it's an endless loop. */
   D1PRINTF("<WAITING>\r\n");
+  bit_clear(GPCONF, GPCONF_FAL_bp);
   bool _wdt = true;
   while (true) {
     if (_wdt) wdt_reset();
