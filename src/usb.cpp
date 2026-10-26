@@ -225,9 +225,9 @@ namespace USB {
       }
       *_buffer++ = (uint8_t)_size;
       *_buffer++ = 3;
-      if (_size) memcpy_P(_buffer, _pgmem, _size - 2);
-      return _size;
+      /* Two extra bytes will be copied afterwards, but don't worry about it. */
     }
+    _size = constrain(_size, (size_t)0, _length);
     if (_size) memcpy_P(_buffer, _pgmem, _size);
     return _size;
   }
@@ -420,7 +420,9 @@ namespace USB {
     uint8_t _c = VPORTD_IN;
     _value.bValue = (_c ^ 0x03) & 0x03;
     #else
-    if (bit_is_set(GPCONF, GPCONF_VCP_bp)) {
+    if (bit_is_set(GPCONF, GPCONF_VCP_bp)
+     && bit_is_set(GPCONF, GPCONF_OPN_bp)
+     && bit_is_clear(GPCONF, GPCONF_BRK_bp)) {
       _value.bValue = 0x03; /* bRxCarrier(DCD) and bTxCarrier(DSR) */
     }
     else {
