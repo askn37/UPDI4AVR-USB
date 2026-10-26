@@ -43,13 +43,6 @@ namespace /* NAMELESS */ {
 #endif
   LineEncoding_t _set_line_encoding;
   LineState_t    _set_line_state;
-  NOINIT uint16_t _send_break;
-  NOINIT volatile uint8_t _send_count;
-  NOINIT uint8_t _recv_count;
-  NOINIT uint8_t _vcp_ctrl;
-  NOINIT uint8_t _set_config;
-  NOINIT volatile uint8_t _sof_count;
-  NOINIT volatile uint8_t _set_serial_state;
 
   /* JTAG packet payload */
   NOINIT JTAG_Packet_t packet;
@@ -128,7 +121,6 @@ int main (void) {
 
   /* From here on, it's an endless loop. */
   D1PRINTF("<WAITING>\r\n");
-  bit_clear(GPCONF, GPCONF_FAL_bp);
   bool _wdt = true;
   while (true) {
     if (_wdt) wdt_reset();

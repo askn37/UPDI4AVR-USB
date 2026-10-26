@@ -462,13 +462,6 @@ extern "C" {
     #endif
     extern LineEncoding_t _set_line_encoding;
     extern LineState_t _set_line_state;
-    extern uint16_t _send_break;
-    extern volatile uint8_t _send_count;
-    extern uint8_t _recv_count;
-    extern uint8_t _vcp_ctrl;
-    extern uint8_t _set_config;
-    extern volatile uint8_t _sof_count;
-    extern volatile uint8_t _set_serial_state;
 
     /* JTAG packet payload */
     extern JTAG_Packet_t packet;
