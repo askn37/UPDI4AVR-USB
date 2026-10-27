@@ -201,7 +201,6 @@ namespace USB {
         case 0x0301: _pgmem = (uint8_t*)&vstring; _size = sizeof(vstring); break;
         case 0x0302: _pgmem = (uint8_t*)&mstring; _size = sizeof(mstring); break;
         case 0x0304: _pgmem = (uint8_t*)&istring; _size = sizeof(istring); break;
-        // case 0x0303: _pgmem = (uint8_t*)&string3; _size = sizeof(string3); break;
         case 0x0303: {
           /*
            * NOTE: Serial Number String Generation
@@ -225,6 +224,7 @@ namespace USB {
           }
           return 26;
         }
+        default: return 0;
       }
       *_buffer++ = (uint8_t)_size;
       *_buffer++ = 3;
@@ -716,7 +716,6 @@ namespace USB {
       ep_res_listen();
       ep_req_listen();
     }
-    USB0_INTFLAGSB |= USB_EPSETUP_bp;
   }
 
   /*** This process is equivalent to a bus interrupt. ***/
