@@ -335,511 +335,510 @@ __trampolines_start():
      2c6:	04 03 09 04                                         ....
 
 000002ca <USB::report_descriptor>:
-     2ca:	06 00 ff a1 01 14 25 ff 75 08 95 40 81 02 95 40     ......%.u..@...@
-     2da:	91 02 95 04 b1 02 c0                                .......
+     2ca:	06 00 ff 09 01 a1 01 15 00 25 ff 75 08 95 40 09     .........%.u..@.
+     2da:	01 81 02 09 01 91 02 95 04 09 01 b1 02 c0           ..............
 
-000002e1 <USB::qualifier_descriptor>:
-     2e1:	0a 06 00 02 02 00 00 40 00 00                       .......@..
+000002e8 <USB::qualifier_descriptor>:
+     2e8:	0a 06 00 02 02 00 00 40 00 00                       .......@..
 
-000002eb <USB::current_descriptor>:
-     2eb:	09 02 6b 00 03 01 00 80 32 09 04 00 00 02 03 00     ..k.....2.......
-     2fb:	00 00 09 21 11 01 00 01 22 17 00 07 05 02 03 40     ...!...."......@
-     30b:	00 01 07 05 81 03 40 00 01 08 0b 01 02 02 02 01     ......@.........
-     31b:	04 09 04 01 00 01 02 02 01 00 05 24 00 10 01 05     ...........$....
-     32b:	24 06 01 02 04 24 02 06 05 24 01 00 02 07 05 82     $....$...$......
-     33b:	03 10 00 04 09 04 02 00 02 0a 02 01 00 07 05 03     ................
-     34b:	02 40 00 00 07 05 83 02 40 00 00                    .@......@..
+000002f2 <USB::current_descriptor>:
+     2f2:	09 02 6b 00 03 01 00 80 32 09 04 00 00 02 03 00     ..k.....2.......
+     302:	00 00 09 21 11 01 00 01 22 1e 00 07 05 02 03 40     ...!...."......@
+     312:	00 01 07 05 81 03 40 00 01 08 0b 01 02 02 02 01     ......@.........
+     322:	04 09 04 01 00 01 02 02 01 00 05 24 00 10 01 05     ...........$....
+     332:	24 06 01 02 04 24 02 06 05 24 01 00 02 07 05 82     $....$...$......
+     342:	03 10 00 04 09 04 02 00 02 0a 02 01 00 07 05 03     ................
+     352:	02 40 00 00 07 05 83 02 40 00 00                    .@......@..
 
-00000356 <USB::istring>:
-     356:	43 00 44 00 43 00 2d 00 41 00 43 00 4d 00 2f 00     C.D.C.-.A.C.M./.
-     366:	56 00 43 00 50 00 00 00                             V.C.P...
+0000035d <USB::istring>:
+     35d:	43 00 44 00 43 00 2d 00 41 00 43 00 4d 00 2f 00     C.D.C.-.A.C.M./.
+     36d:	56 00 43 00 50 00 00 00                             V.C.P...
 
-0000036e <USB::mstring>:
-     36e:	55 00 50 00 44 00 49 00 34 00 41 00 56 00 52 00     U.P.D.I.4.A.V.R.
-     37e:	2d 00 55 00 53 00 42 00 3a 00 41 00 56 00 52 00     -.U.S.B.:.A.V.R.
-     38e:	2d 00 44 00 55 00 3a 00 45 00 44 00 42 00 47 00     -.D.U.:.E.D.B.G.
-     39e:	2f 00 43 00 4d 00 53 00 49 00 53 00 2d 00 44 00     /.C.M.S.I.S.-.D.
-     3ae:	41 00 50 00 00 00                                   A.P...
+00000375 <USB::mstring>:
+     375:	55 00 50 00 44 00 49 00 34 00 41 00 56 00 52 00     U.P.D.I.4.A.V.R.
+     385:	3a 00 41 00 56 00 52 00 2d 00 44 00 55 00 3a 00     :.A.V.R.-.D.U.:.
+     395:	45 00 44 00 42 00 47 00 2f 00 43 00 4d 00 53 00     E.D.B.G./.C.M.S.
+     3a5:	49 00 53 00 2d 00 44 00 41 00 50 00 00 00           I.S.-.D.A.P...
 
-000003b4 <USB::vstring>:
-     3b4:	4d 00 75 00 6c 00 74 00 69 00 58 00 2e 00 6a 00     M.u.l.t.i.X...j.
-     3c4:	70 00 20 00 4f 00 53 00 53 00 57 00 2f 00 4f 00     p. .O.S.S.W./.O.
-     3d4:	53 00 48 00 57 00 00 00                             S.H.W...
+000003b3 <USB::vstring>:
+     3b3:	4d 00 75 00 6c 00 74 00 69 00 58 00 2e 00 6a 00     M.u.l.t.i.X...j.
+     3c3:	70 00 20 00 4f 00 53 00 53 00 57 00 2f 00 4f 00     p. .O.S.S.W./.O.
+     3d3:	53 00 48 00 57 00 00 00                             S.H.W...
 
-000003dc <USB::get_descriptor(unsigned char*, unsigned int, unsigned int)::__c>:
-     3dc:	20 56 49 44 3a 50 49 44 3d 25 30 34 58 3a 25 30      VID:PID=%04X:%0
-     3ec:	34 58 0d 0a 00                                      4X...
+000003db <USB::get_descriptor(unsigned char*, unsigned int, unsigned int)::__c>:
+     3db:	20 56 49 44 3a 50 49 44 3d 25 30 34 58 3a 25 30      VID:PID=%04X:%0
+     3eb:	34 58 0d 0a 00                                      4X...
 
-000003f1 <USB::device_descriptor>:
-     3f1:	12 01 00 02 02 00 00 40 d8 04 15 0b 35 01 01 02     .......@....5...
-     401:	03 01                                               ..
+000003f0 <USB::device_descriptor>:
+     3f0:	12 01 00 02 ef 02 01 40 d8 04 15 0b 35 01 01 02     .......@....5...
+     400:	03 01                                               ..
 
-00000403 <USB::request_standard()::__c>:
-     403:	3c 47 49 3a 25 30 32 58 3e 0d 0a 00                 <GI:%02X>...
+00000402 <USB::request_standard()::__c>:
+     402:	3c 47 49 3a 25 30 32 58 3e 0d 0a 00                 <GI:%02X>...
 
-0000040f <USB::request_standard()::__c>:
-     40f:	3c 53 49 3a 30 3e 0d 0a 00                          <SI:0>...
+0000040e <USB::request_standard()::__c>:
+     40e:	3c 53 49 3a 30 3e 0d 0a 00                          <SI:0>...
 
-00000418 <USB::request_standard()::__c>:
-     418:	3c 53 43 3a 25 30 32 58 3e 0d 0a 00                 <SC:%02X>...
+00000417 <USB::request_standard()::__c>:
+     417:	3c 53 43 3a 25 30 32 58 3e 0d 0a 00                 <SC:%02X>...
 
-00000424 <USB::request_standard()::__c>:
-     424:	3c 47 43 3a 25 30 32 58 3e 0d 0a 00                 <GC:%02X>...
+00000423 <USB::request_standard()::__c>:
+     423:	3c 47 43 3a 25 30 32 58 3e 0d 0a 00                 <GC:%02X>...
 
-00000430 <USB::request_standard()::__c>:
-     430:	20 00                                                .
+0000042f <USB::request_standard()::__c>:
+     42f:	20 00                                                .
 
-00000432 <USB::request_standard()::__c>:
-     432:	20 55 53 42 30 5f 41 44 44 52 3d 25 64 0d 0a 00      USB0_ADDR=%d...
+00000431 <USB::request_standard()::__c>:
+     431:	20 55 53 42 30 5f 41 44 44 52 3d 25 64 0d 0a 00      USB0_ADDR=%d...
 
-00000442 <USB::request_standard()::__c>:
-     442:	20 53 46 3d 25 30 32 58 3a 25 30 32 58 0d 0a 00      SF=%02X:%02X...
+00000441 <USB::request_standard()::__c>:
+     441:	20 53 46 3d 25 30 32 58 3a 25 30 32 58 0d 0a 00      SF=%02X:%02X...
 
-00000452 <USB::request_standard()::__c>:
-     452:	20 43 46 3d 25 30 32 58 3a 25 30 32 58 0d 0a 00      CF=%02X:%02X...
+00000451 <USB::request_standard()::__c>:
+     451:	20 43 46 3d 25 30 32 58 3a 25 30 32 58 0d 0a 00      CF=%02X:%02X...
 
-00000462 <USB::request_class()::__c>:
-     462:	20 53 42 3d 25 30 34 58 0d 0a 00                     SB=%04X...
+00000461 <USB::request_class()::__c>:
+     461:	20 53 42 3d 25 30 34 58 0d 0a 00                     SB=%04X...
 
-0000046d <USB::request_class()::__c>:
-     46d:	20 53 4c 53 3d 25 30 32 58 0d 0a 00                  SLS=%02X...
+0000046c <USB::request_class()::__c>:
+     46c:	20 53 4c 53 3d 25 30 32 58 0d 0a 00                  SLS=%02X...
 
-00000479 <USB::request_class()::__c>:
-     479:	20 47 4c 45 3d 00                                    GLE=.
+00000478 <USB::request_class()::__c>:
+     478:	20 47 4c 45 3d 00                                    GLE=.
 
-0000047f <USB::request_class()::__c>:
-     47f:	20 53 4c 45 3d 00                                    SLE=.
+0000047e <USB::request_class()::__c>:
+     47e:	20 53 4c 45 3d 00                                    SLE=.
 
-00000485 <USB::request_class()::__c>:
-     485:	20 49 44 4c 3d 25 30 32 58 0d 0a 00                  IDL=%02X...
+00000484 <USB::request_class()::__c>:
+     484:	20 49 44 4c 3d 25 30 32 58 0d 0a 00                  IDL=%02X...
 
-00000491 <USB::handling_control_transactions()::__c>:
-     491:	52 51 3d 25 30 34 58 3a 25 30 32 58 3a 25 30 32     RQ=%04X:%02X:%02
-     4a1:	58 3a 25 30 34 58 3a 25 30 34 58 3a 25 30 34 58     X:%04X:%04X:%04X
-     4b1:	0d 0a 00                                            ...
+00000490 <USB::handling_control_transactions()::__c>:
+     490:	52 51 3d 25 30 34 58 3a 25 30 32 58 3a 25 30 32     RQ=%04X:%02X:%02
+     4a0:	58 3a 25 30 34 58 3a 25 30 34 58 3a 25 30 34 58     X:%04X:%04X:%04X
+     4b0:	0d 0a 00                                            ...
 
-000004b4 <SYS::reset_leave()::__c>:
-     4b4:	3c 52 53 54 3a 4f 55 54 3e 0d 0a 00                 <RST:OUT>...
+000004b3 <SYS::reset_leave()::__c>:
+     4b3:	3c 52 53 54 3a 4f 55 54 3e 0d 0a 00                 <RST:OUT>...
 
-000004c0 <SYS::reset_enter()::__c>:
-     4c0:	3c 52 53 54 3a 49 4e 3e 0d 0a 00                    <RST:IN>...
+000004bf <SYS::reset_enter()::__c>:
+     4bf:	3c 52 53 54 3a 49 4e 3e 0d 0a 00                    <RST:IN>...
 
-000004cb <JTAG::dap_command_check()::__c>:
-     4cb:	3c 45 44 42 47 5f 45 4d 50 54 59 3e 0d 0a 00        <EDBG_EMPTY>...
+000004ca <JTAG::dap_command_check()::__c>:
+     4ca:	3c 45 44 42 47 5f 45 4d 50 54 59 3e 0d 0a 00        <EDBG_EMPTY>...
 
-000004da <JTAG::dap_command_check()::__c>:
-     4da:	3c 45 44 42 47 5f 46 41 49 4c 3e 0d 0a 00           <EDBG_FAIL>...
+000004d9 <JTAG::dap_command_check()::__c>:
+     4d9:	3c 45 44 42 47 5f 46 41 49 4c 3e 0d 0a 00           <EDBG_FAIL>...
 
-000004e8 <JTAG::dap_command_check()::__c>:
-     4e8:	3c 45 44 42 47 5f 46 41 49 4c 3e 0d 0a 00           <EDBG_FAIL>...
+000004e7 <JTAG::dap_command_check()::__c>:
+     4e7:	3c 45 44 42 47 5f 46 41 49 4c 3e 0d 0a 00           <EDBG_FAIL>...
 
-000004f6 <JTAG::jtag_scope_general()::__c>:
-     4f6:	20 3f 47 45 4e 3d 25 30 32 58 3a 25 30 32 58 3a      ?GEN=%02X:%02X:
-     506:	25 30 32 58 0d 0a 00                                %02X...
+000004f5 <JTAG::jtag_scope_general()::__c>:
+     4f5:	20 3f 47 45 4e 3d 25 30 32 58 3a 25 30 32 58 3a      ?GEN=%02X:%02X:
+     505:	25 30 32 58 0d 0a 00                                %02X...
 
-0000050d <JTAG::jtag_scope_general()::__c>:
-     50d:	20 47 45 4e 5f 53 49 47 4e 5f 4f 46 46 0d 0a 00      GEN_SIGN_OFF...
+0000050c <JTAG::jtag_scope_general()::__c>:
+     50c:	20 47 45 4e 5f 53 49 47 4e 5f 4f 46 46 0d 0a 00      GEN_SIGN_OFF...
 
-0000051d <JTAG::jtag_sign_on>:
-     51d:	08 55 50 44 49 34 41 56 52 00                       .UPDI4AVR.
+0000051c <JTAG::jtag_sign_on>:
+     51c:	08 55 50 44 49 34 41 56 52 00                       .UPDI4AVR.
 
-00000527 <JTAG::jtag_scope_general()::__c>:
-     527:	20 47 45 4e 5f 53 49 47 4e 5f 4f 4e 0d 0a 00         GEN_SIGN_ON...
+00000526 <JTAG::jtag_scope_general()::__c>:
+     526:	20 47 45 4e 5f 53 49 47 4e 5f 4f 4e 0d 0a 00         GEN_SIGN_ON...
 
-00000536 <JTAG::jtag_physical>:
-     536:	90 28 00 18 38 00 00 00                             .(..8...
+00000535 <JTAG::jtag_physical>:
+     535:	90 28 00 18 38 00 00 00                             .(..8...
 
-0000053e <JTAG::jtag_scope_general()::__c>:
-     53e:	20 50 48 59 53 49 43 41 4c 0d 0a 00                  PHYSICAL...
+0000053d <JTAG::jtag_scope_general()::__c>:
+     53d:	20 50 48 59 53 49 43 41 4c 0d 0a 00                  PHYSICAL...
 
-0000054a <JTAG::jtag_scope_general()::__c>:
-     54a:	20 56 54 41 52 47 45 54 3d 25 64 0d 0a 00            VTARGET=%d...
+00000549 <JTAG::jtag_scope_general()::__c>:
+     549:	20 56 54 41 52 47 45 54 3d 25 64 0d 0a 00            VTARGET=%d...
 
-00000558 <JTAG::jtag_scope_general()::__c>:
-     558:	20 56 45 53 52 49 4f 4e 3d 00                        VESRION=.
+00000557 <JTAG::jtag_scope_general()::__c>:
+     557:	20 56 45 53 52 49 4f 4e 3d 00                        VESRION=.
 
-00000562 <JTAG::jtag_version>:
-     562:	00 01 23 37 00                                      ..#7.
+00000561 <JTAG::jtag_version>:
+     561:	00 01 23 37 00                                      ..#7.
 
-00000567 <JTAG::jtag_scope_general()::__c>:
-     567:	20 47 45 4e 5f 47 45 54 5f 50 41 52 41 4d 0d 0a      GEN_GET_PARAM..
+00000566 <JTAG::jtag_scope_general()::__c>:
+     566:	20 47 45 4e 5f 47 45 54 5f 50 41 52 41 4d 0d 0a      GEN_GET_PARAM..
 	...
 
-00000578 <JTAG::jtag_scope_general()::__c>:
-     578:	2c 53 3d 25 30 32 58 2c 49 3d 25 30 32 58 2c 4c     ,S=%02X,I=%02X,L
-     588:	3d 25 30 32 58 0d 0a 00                             =%02X...
+00000577 <JTAG::jtag_scope_general()::__c>:
+     577:	2c 53 3d 25 30 32 58 2c 49 3d 25 30 32 58 2c 4c     ,S=%02X,I=%02X,L
+     587:	3d 25 30 32 58 0d 0a 00                             =%02X...
 
-00000590 <UPDI::jtag_scope_updi()::__c>:
-     590:	20 55 50 44 49 5f 57 52 49 54 45 3d 25 30 32 58      UPDI_WRITE=%02X
-     5a0:	3a 25 30 36 6c 58 3a 25 30 34 58 0d 0a 00           :%06lX:%04X...
+0000058f <UPDI::jtag_scope_updi()::__c>:
+     58f:	20 55 50 44 49 5f 57 52 49 54 45 3d 25 30 32 58      UPDI_WRITE=%02X
+     59f:	3a 25 30 36 6c 58 3a 25 30 34 58 0d 0a 00           :%06lX:%04X...
 
-000005ae <UPDI::jtag_scope_updi()::__c>:
-     5ae:	20 55 50 44 49 5f 52 45 41 44 3d 25 30 32 58 3a      UPDI_READ=%02X:
-     5be:	25 30 36 6c 58 3a 25 30 34 58 0d 0a 00              %06lX:%04X...
+000005ad <UPDI::jtag_scope_updi()::__c>:
+     5ad:	20 55 50 44 49 5f 52 45 41 44 3d 25 30 32 58 3a      UPDI_READ=%02X:
+     5bd:	25 30 36 6c 58 3a 25 30 34 58 0d 0a 00              %06lX:%04X...
 
-000005cb <UPDI::jtag_scope_updi()::__c>:
-     5cb:	20 55 50 44 49 5f 45 52 41 53 45 3d 25 30 32 58      UPDI_ERASE=%02X
-     5db:	3a 25 30 36 6c 58 0d 0a 00                          :%06lX...
+000005ca <UPDI::jtag_scope_updi()::__c>:
+     5ca:	20 55 50 44 49 5f 45 52 41 53 45 3d 25 30 32 58      UPDI_ERASE=%02X
+     5da:	3a 25 30 36 6c 58 0d 0a 00                          :%06lX...
 
-000005e4 <UPDI::jtag_scope_updi()::__c>:
-     5e4:	20 4c 41 53 54 5f 58 43 4c 4b 3d 25 64 0d 0a 00      LAST_XCLK=%d...
+000005e3 <UPDI::jtag_scope_updi()::__c>:
+     5e3:	20 4c 41 53 54 5f 58 43 4c 4b 3d 25 64 0d 0a 00      LAST_XCLK=%d...
 
-000005f4 <UPDI::jtag_scope_updi()::__c>:
-     5f4:	20 55 50 44 49 5f 4c 45 41 56 45 5f 50 52 4f 47      UPDI_LEAVE_PROG
-     604:	0d 0a 00                                            ...
+000005f3 <UPDI::jtag_scope_updi()::__c>:
+     5f3:	20 55 50 44 49 5f 4c 45 41 56 45 5f 50 52 4f 47      UPDI_LEAVE_PROG
+     603:	0d 0a 00                                            ...
 
-00000607 <UPDI::jtag_scope_updi()::__c>:
-     607:	20 55 50 44 49 5f 45 4e 54 45 52 5f 50 52 4f 47      UPDI_ENTER_PROG
-     617:	0d 0a 00                                            ...
+00000606 <UPDI::jtag_scope_updi()::__c>:
+     606:	20 55 50 44 49 5f 45 4e 54 45 52 5f 50 52 4f 47      UPDI_ENTER_PROG
+     616:	0d 0a 00                                            ...
 
-0000061a <UPDI::jtag_scope_updi()::__c>:
-     61a:	20 55 50 44 49 5f 53 49 47 4e 5f 4f 46 46 0d 0a      UPDI_SIGN_OFF..
+00000619 <UPDI::jtag_scope_updi()::__c>:
+     619:	20 55 50 44 49 5f 53 49 47 4e 5f 4f 46 46 0d 0a      UPDI_SIGN_OFF..
 	...
 
-0000062b <UPDI::jtag_scope_updi()::__c>:
-     62b:	20 55 50 44 49 5f 53 49 47 4e 5f 4f 4e 3d 45 58      UPDI_SIGN_ON=EX
-     63b:	54 3a 25 30 32 58 0d 0a 00                          T:%02X...
+0000062a <UPDI::jtag_scope_updi()::__c>:
+     62a:	20 55 50 44 49 5f 53 49 47 4e 5f 4f 4e 3d 45 58      UPDI_SIGN_ON=EX
+     63a:	54 3a 25 30 32 58 0d 0a 00                          T:%02X...
 
-00000644 <PDI::jtag_scope_xmega()::__c>:
-     644:	20 50 44 49 5f 57 52 49 54 45 3d 25 30 32 58 3a      PDI_WRITE=%02X:
-     654:	25 30 38 6c 58 3a 25 30 34 58 0d 0a 00              %08lX:%04X...
+00000643 <PDI::jtag_scope_xmega()::__c>:
+     643:	20 50 44 49 5f 57 52 49 54 45 3d 25 30 32 58 3a      PDI_WRITE=%02X:
+     653:	25 30 38 6c 58 3a 25 30 34 58 0d 0a 00              %08lX:%04X...
 
-00000661 <PDI::jtag_scope_xmega()::__c>:
-     661:	20 50 44 49 5f 52 45 41 44 3d 25 30 32 58 3a 25      PDI_READ=%02X:%
-     671:	30 38 6c 58 3a 25 30 34 58 0d 0a 00                 08lX:%04X...
+00000660 <PDI::jtag_scope_xmega()::__c>:
+     660:	20 50 44 49 5f 52 45 41 44 3d 25 30 32 58 3a 25      PDI_READ=%02X:%
+     670:	30 38 6c 58 3a 25 30 34 58 0d 0a 00                 08lX:%04X...
 
-0000067d <PDI::jtag_scope_xmega()::__c>:
-     67d:	20 50 44 49 5f 45 52 41 53 45 3d 25 30 32 58 3a      PDI_ERASE=%02X:
-     68d:	25 30 38 6c 58 0d 0a 00                             %08lX...
+0000067c <PDI::jtag_scope_xmega()::__c>:
+     67c:	20 50 44 49 5f 45 52 41 53 45 3d 25 30 32 58 3a      PDI_ERASE=%02X:
+     68c:	25 30 38 6c 58 0d 0a 00                             %08lX...
 
-00000695 <PDI::jtag_scope_xmega()::__c>:
-     695:	20 50 44 49 5f 4c 45 41 56 45 5f 50 52 4f 47 0d      PDI_LEAVE_PROG.
-     6a5:	0a 00                                               ..
+00000694 <PDI::jtag_scope_xmega()::__c>:
+     694:	20 50 44 49 5f 4c 45 41 56 45 5f 50 52 4f 47 0d      PDI_LEAVE_PROG.
+     6a4:	0a 00                                               ..
 
-000006a7 <PDI::jtag_scope_xmega()::__c>:
-     6a7:	20 50 44 49 5f 45 4e 54 45 52 5f 50 52 4f 47 0d      PDI_ENTER_PROG.
-     6b7:	0a 00                                               ..
+000006a6 <PDI::jtag_scope_xmega()::__c>:
+     6a6:	20 50 44 49 5f 45 4e 54 45 52 5f 50 52 4f 47 0d      PDI_ENTER_PROG.
+     6b6:	0a 00                                               ..
 
-000006b9 <PDI::jtag_scope_xmega()::__c>:
-     6b9:	20 50 44 49 5f 53 49 47 4e 5f 4f 46 46 0d 0a 00      PDI_SIGN_OFF...
+000006b8 <PDI::jtag_scope_xmega()::__c>:
+     6b8:	20 50 44 49 5f 53 49 47 4e 5f 4f 46 46 0d 0a 00      PDI_SIGN_OFF...
 
-000006c9 <PDI::jtag_scope_xmega()::__c>:
-     6c9:	20 50 44 49 5f 53 49 47 4e 5f 4f 4e 3d 45 58 54      PDI_SIGN_ON=EXT
-     6d9:	3a 25 30 32 58 0d 0a 00                             :%02X...
+000006c8 <PDI::jtag_scope_xmega()::__c>:
+     6c8:	20 50 44 49 5f 53 49 47 4e 5f 4f 4e 3d 45 58 54      PDI_SIGN_ON=EXT
+     6d8:	3a 25 30 32 58 0d 0a 00                             :%02X...
 
-000006e1 <_ZZN4JTAG19jtag_scope_avr_coreEvE3__c__19_>:
-     6e1:	20 41 56 52 5f 43 4d 44 3f 5b 25 30 32 58 5d 20      AVR_CMD?[%02X] 
-     6f1:	41 52 43 48 3d 25 64 0d 0a 00                       ARCH=%d...
+000006e0 <_ZZN4JTAG19jtag_scope_avr_coreEvE3__c__19_>:
+     6e0:	20 41 56 52 5f 43 4d 44 3f 5b 25 30 32 58 5d 20      AVR_CMD?[%02X] 
+     6f0:	41 52 43 48 3d 25 64 0d 0a 00                       ARCH=%d...
 
-000006fb <_ZZN4JTAG19jtag_scope_avr_coreEvE3__c__18_>:
-     6fb:	20 41 56 52 5f 53 54 41 52 54 5f 44 57 5f 44 45      AVR_START_DW_DE
-     70b:	42 55 47 3a 41 52 43 48 3d 25 64 3a 46 41 49 4c     BUG:ARCH=%d:FAIL
-     71b:	45 44 0d 0a 00                                      ED...
+000006fa <_ZZN4JTAG19jtag_scope_avr_coreEvE3__c__18_>:
+     6fa:	20 41 56 52 5f 53 54 41 52 54 5f 44 57 5f 44 45      AVR_START_DW_DE
+     70a:	42 55 47 3a 41 52 43 48 3d 25 64 3a 46 41 49 4c     BUG:ARCH=%d:FAIL
+     71a:	45 44 0d 0a 00                                      ED...
 
-00000720 <_ZZN4JTAG19jtag_scope_avr_coreEvE3__c__17_>:
-     720:	20 41 56 52 5f 53 49 47 4e 5f 4f 4e 3a 41 52 43      AVR_SIGN_ON:ARC
-     730:	48 3d 25 64 0d 0a 00                                H=%d...
+0000071f <_ZZN4JTAG19jtag_scope_avr_coreEvE3__c__17_>:
+     71f:	20 41 56 52 5f 53 49 47 4e 5f 4f 4e 3a 41 52 43      AVR_SIGN_ON:ARC
+     72f:	48 3d 25 64 0d 0a 00                                H=%d...
 
-00000737 <_ZZN4JTAG19jtag_scope_avr_coreEvE3__c__16_>:
-     737:	20 41 56 52 5f 53 49 47 4e 5f 4f 46 46 3a 41 52      AVR_SIGN_OFF:AR
-     747:	43 48 3d 25 64 0d 0a 00                             CH=%d...
+00000736 <_ZZN4JTAG19jtag_scope_avr_coreEvE3__c__16_>:
+     736:	20 41 56 52 5f 53 49 47 4e 5f 4f 46 46 3a 41 52      AVR_SIGN_OFF:AR
+     746:	43 48 3d 25 64 0d 0a 00                             CH=%d...
 
-0000074f <_ZZN4JTAG19jtag_scope_avr_coreEvE3__c__15_>:
-     74f:	20 58 43 4c 4b 3d 25 64 0d 0a 00                     XCLK=%d...
+0000074e <_ZZN4JTAG19jtag_scope_avr_coreEvE3__c__15_>:
+     74e:	20 58 43 4c 4b 3d 25 64 0d 0a 00                     XCLK=%d...
 
-0000075a <_ZZN4JTAG19jtag_scope_avr_coreEvE3__c__14_>:
-     75a:	20 43 4f 4e 4e 45 43 54 49 4f 4e 3d 25 30 32 58      CONNECTION=%02X
-     76a:	0d 0a 00                                            ...
+00000759 <_ZZN4JTAG19jtag_scope_avr_coreEvE3__c__14_>:
+     759:	20 43 4f 4e 4e 45 43 54 49 4f 4e 3d 25 30 32 58      CONNECTION=%02X
+     769:	0d 0a 00                                            ...
 
-0000076d <_ZZN4JTAG19jtag_scope_avr_coreEvE3__c__13_>:
-     76d:	20 47 45 54 5f 41 52 43 48 3d 25 30 32 58 0d 0a      GET_ARCH=%02X..
+0000076c <_ZZN4JTAG19jtag_scope_avr_coreEvE3__c__13_>:
+     76c:	20 47 45 54 5f 41 52 43 48 3d 25 30 32 58 0d 0a      GET_ARCH=%02X..
 	...
 
-0000077e <_ZZN4JTAG19jtag_scope_avr_coreEvE3__c__12_>:
-     77e:	20 41 56 52 5f 47 45 54 5f 50 41 52 41 4d 45 54      AVR_GET_PARAMET
-     78e:	45 52 0d 0a 00                                      ER...
+0000077d <_ZZN4JTAG19jtag_scope_avr_coreEvE3__c__12_>:
+     77d:	20 41 56 52 5f 47 45 54 5f 50 41 52 41 4d 45 54      AVR_GET_PARAMET
+     78d:	45 52 0d 0a 00                                      ER...
 
-00000793 <_ZZN4JTAG19jtag_scope_avr_coreEvE3__c__11_>:
-     793:	2c 53 3d 25 30 32 58 2c 49 3d 25 30 32 58 2c 4c     ,S=%02X,I=%02X,L
-     7a3:	3d 25 30 32 58 0d 0a 00                             =%02X...
+00000792 <_ZZN4JTAG19jtag_scope_avr_coreEvE3__c__11_>:
+     792:	2c 53 3d 25 30 32 58 2c 49 3d 25 30 32 58 2c 4c     ,S=%02X,I=%02X,L
+     7a2:	3d 25 30 32 58 0d 0a 00                             =%02X...
 
-000007ab <_ZZN4JTAG19jtag_scope_avr_coreEvE3__c__10_>:
-     7ab:	20 55 4e 4c 4f 43 4b 45 4e 3d 25 30 32 58 0d 0a      UNLOCKEN=%02X..
+000007aa <_ZZN4JTAG19jtag_scope_avr_coreEvE3__c__10_>:
+     7aa:	20 55 4e 4c 4f 43 4b 45 4e 3d 25 30 32 58 0d 0a      UNLOCKEN=%02X..
 	...
 
-000007bc <JTAG::jtag_scope_avr_core()::__c>:
-     7bc:	20 48 56 43 54 52 4c 45 4e 3d 25 30 32 58 0d 0a      HVCTRLEN=%02X..
+000007bb <JTAG::jtag_scope_avr_core()::__c>:
+     7bb:	20 48 56 43 54 52 4c 45 4e 3d 25 30 32 58 0d 0a      HVCTRLEN=%02X..
 	...
 
-000007cd <JTAG::jtag_scope_avr_core()::__c>:
-     7cd:	20 44 45 56 49 43 45 44 45 53 43 3d 25 58 0d 0a      DEVICEDESC=%X..
+000007cc <JTAG::jtag_scope_avr_core()::__c>:
+     7cc:	20 44 45 56 49 43 45 44 45 53 43 3d 25 58 0d 0a      DEVICEDESC=%X..
 	...
 
-000007de <JTAG::jtag_scope_avr_core()::__c>:
-     7de:	20 46 49 58 5f 58 43 4c 4b 3d 25 64 0d 0a 00         FIX_XCLK=%d...
+000007dd <JTAG::jtag_scope_avr_core()::__c>:
+     7dd:	20 46 49 58 5f 58 43 4c 4b 3d 25 64 0d 0a 00         FIX_XCLK=%d...
 
-000007ed <JTAG::jtag_scope_avr_core()::__c>:
-     7ed:	20 43 4f 4e 4e 45 43 54 49 4f 4e 3d 25 30 32 58      CONNECTION=%02X
-     7fd:	0d 0a 00                                            ...
+000007ec <JTAG::jtag_scope_avr_core()::__c>:
+     7ec:	20 43 4f 4e 4e 45 43 54 49 4f 4e 3d 25 30 32 58      CONNECTION=%02X
+     7fc:	0d 0a 00                                            ...
 
-00000800 <JTAG::jtag_scope_avr_core()::__c>:
-     800:	20 53 45 53 53 5f 50 55 52 50 4f 53 45 3d 25 30      SESS_PURPOSE=%0
-     810:	32 58 0d 0a 00                                      2X...
+000007ff <JTAG::jtag_scope_avr_core()::__c>:
+     7ff:	20 53 45 53 53 5f 50 55 52 50 4f 53 45 3d 25 30      SESS_PURPOSE=%0
+     80f:	32 58 0d 0a 00                                      2X...
 
-00000815 <JTAG::jtag_scope_avr_core()::__c>:
-     815:	20 58 43 4c 4b 3d 25 64 0d 0a 00                     XCLK=%d...
+00000814 <JTAG::jtag_scope_avr_core()::__c>:
+     814:	20 58 43 4c 4b 3d 25 64 0d 0a 00                     XCLK=%d...
 
-00000820 <JTAG::jtag_scope_avr_core()::__c>:
-     820:	20 53 45 54 5f 41 52 43 48 3d 25 30 32 58 0d 0a      SET_ARCH=%02X..
+0000081f <JTAG::jtag_scope_avr_core()::__c>:
+     81f:	20 53 45 54 5f 41 52 43 48 3d 25 30 32 58 0d 0a      SET_ARCH=%02X..
 	...
 
-00000831 <JTAG::jtag_scope_avr_core()::__c>:
-     831:	20 41 56 52 5f 53 45 54 5f 50 41 52 41 4d 3d 25      AVR_SET_PARAM=%
-     841:	30 34 58 0d 0a 00                                   04X...
+00000830 <JTAG::jtag_scope_avr_core()::__c>:
+     830:	20 41 56 52 5f 53 45 54 5f 50 41 52 41 4d 3d 25      AVR_SET_PARAM=%
+     840:	30 34 58 0d 0a 00                                   04X...
 
-00000847 <JTAG::jtag_scope_avr_core()::__c>:
-     847:	20 41 56 52 5f 53 45 54 5f 50 41 52 41 4d 3d 25      AVR_SET_PARAM=%
-     857:	30 32 58 0d 0a 00                                   02X...
+00000846 <JTAG::jtag_scope_avr_core()::__c>:
+     846:	20 41 56 52 5f 53 45 54 5f 50 41 52 41 4d 3d 25      AVR_SET_PARAM=%
+     856:	30 32 58 0d 0a 00                                   02X...
 
-0000085d <JTAG::jtag_scope_avr_core()::__c>:
-     85d:	20 41 56 52 5f 53 45 54 5f 50 41 52 41 4d 0d 0a      AVR_SET_PARAM..
+0000085c <JTAG::jtag_scope_avr_core()::__c>:
+     85c:	20 41 56 52 5f 53 45 54 5f 50 41 52 41 4d 0d 0a      AVR_SET_PARAM..
 	...
 
-0000086e <JTAG::jtag_scope_avr_core()::__c>:
-     86e:	2c 53 3d 25 30 32 58 2c 49 3d 25 30 32 58 2c 4c     ,S=%02X,I=%02X,L
-     87e:	3d 25 30 32 58 0d 0a 00                             =%02X...
+0000086d <JTAG::jtag_scope_avr_core()::__c>:
+     86d:	2c 53 3d 25 30 32 58 2c 49 3d 25 30 32 58 2c 4c     ,S=%02X,I=%02X,L
+     87d:	3d 25 30 32 58 0d 0a 00                             =%02X...
 
-00000886 <TPI::disconnect()::__c>:
-     886:	3c 48 56 43 3a 4f 46 46 3e 0d 0a 00                 <HVC:OFF>...
+00000885 <TPI::disconnect()::__c>:
+     885:	3c 48 56 43 3a 4f 46 46 3e 0d 0a 00                 <HVC:OFF>...
 
-00000892 <TPI::jtag_scope_tpi()::__c>:
-     892:	20 3c 52 45 53 3a 25 30 32 58 3e 0d 0a 00            <RES:%02X>...
+00000891 <TPI::jtag_scope_tpi()::__c>:
+     891:	20 3c 52 45 53 3a 25 30 32 58 3e 0d 0a 00            <RES:%02X>...
 
-000008a0 <TPI::jtag_scope_tpi()::__c>:
-     8a0:	20 54 50 49 5f 57 52 49 54 45 3d 25 30 32 58 3a      TPI_WRITE=%02X:
-     8b0:	25 30 38 6c 58 3a 25 64 0d 0a 00                    %08lX:%d...
+0000089f <TPI::jtag_scope_tpi()::__c>:
+     89f:	20 54 50 49 5f 57 52 49 54 45 3d 25 30 32 58 3a      TPI_WRITE=%02X:
+     8af:	25 30 38 6c 58 3a 25 64 0d 0a 00                    %08lX:%d...
 
-000008bb <TPI::jtag_scope_tpi()::__c>:
-     8bb:	20 54 50 49 5f 45 52 41 53 45 3d 25 30 32 58 3a      TPI_ERASE=%02X:
-     8cb:	25 30 38 6c 58 0d 0a 00                             %08lX...
+000008ba <TPI::jtag_scope_tpi()::__c>:
+     8ba:	20 54 50 49 5f 45 52 41 53 45 3d 25 30 32 58 3a      TPI_ERASE=%02X:
+     8ca:	25 30 38 6c 58 0d 0a 00                             %08lX...
 
-000008d3 <TPI::jtag_scope_tpi()::__c>:
-     8d3:	20 54 50 49 5f 43 4d 44 3d 25 64 2c 20 56 54 47      TPI_CMD=%d, VTG
-     8e3:	4c 4f 57 3d 25 64 0d 0a 00                          LOW=%d...
+000008d2 <TPI::jtag_scope_tpi()::__c>:
+     8d2:	20 54 50 49 5f 43 4d 44 3d 25 64 2c 20 56 54 47      TPI_CMD=%d, VTG
+     8e2:	4c 4f 57 3d 25 64 0d 0a 00                          LOW=%d...
 
-000008ec <TPI::jtag_scope_tpi()::__c>:
-     8ec:	20 54 50 49 5f 52 45 41 44 3d 25 30 32 58 3a 25      TPI_READ=%02X:%
-     8fc:	30 38 6c 58 3a 25 64 0d 0a 00                       08lX:%d...
+000008eb <TPI::jtag_scope_tpi()::__c>:
+     8eb:	20 54 50 49 5f 52 45 41 44 3d 25 30 32 58 3a 25      TPI_READ=%02X:%
+     8fb:	30 38 6c 58 3a 25 64 0d 0a 00                       08lX:%d...
 
-00000906 <TPI::jtag_scope_tpi()::__c>:
-     906:	20 54 50 49 5f 43 52 43 0d 0a 00                     TPI_CRC...
+00000905 <TPI::jtag_scope_tpi()::__c>:
+     905:	20 54 50 49 5f 43 52 43 0d 0a 00                     TPI_CRC...
 
-00000911 <TPI::jtag_scope_tpi()::__c>:
-     911:	20 54 50 49 5f 4c 45 41 56 45 5f 50 52 4f 47 4d      TPI_LEAVE_PROGM
-     921:	4f 44 45 0d 0a 00                                   ODE...
+00000910 <TPI::jtag_scope_tpi()::__c>:
+     910:	20 54 50 49 5f 4c 45 41 56 45 5f 50 52 4f 47 4d      TPI_LEAVE_PROGM
+     920:	4f 44 45 0d 0a 00                                   ODE...
 
-00000927 <TPI::jtag_scope_tpi()::__c>:
-     927:	20 56 54 41 52 47 45 54 3d 25 64 0d 0a 00            VTARGET=%d...
+00000926 <TPI::jtag_scope_tpi()::__c>:
+     926:	20 56 54 41 52 47 45 54 3d 25 64 0d 0a 00            VTARGET=%d...
 
-00000935 <TPI::jtag_scope_tpi()::__c>:
-     935:	20 54 50 49 5f 45 4e 54 45 52 5f 50 52 4f 47 4d      TPI_ENTER_PROGM
-     945:	4f 44 45 0d 0a 00                                   ODE...
+00000934 <TPI::jtag_scope_tpi()::__c>:
+     934:	20 54 50 49 5f 45 4e 54 45 52 5f 50 52 4f 47 4d      TPI_ENTER_PROGM
+     944:	4f 44 45 0d 0a 00                                   ODE...
 
-0000094b <JTAG::jtag_scope_edbg()::__c>:
-     94b:	20 54 41 52 47 45 54 5f 50 4f 57 45 52 3d 25 30      TARGET_POWER=%0
-     95b:	32 58 0d 0a 00                                      2X...
+0000094a <JTAG::jtag_scope_edbg()::__c>:
+     94a:	20 54 41 52 47 45 54 5f 50 4f 57 45 52 3d 25 30      TARGET_POWER=%0
+     95a:	32 58 0d 0a 00                                      2X...
 
-00000960 <JTAG::jtag_scope_edbg()::__c>:
-     960:	20 41 56 52 5f 47 45 54 5f 50 41 52 41 4d 0d 0a      AVR_GET_PARAM..
+0000095f <JTAG::jtag_scope_edbg()::__c>:
+     95f:	20 41 56 52 5f 47 45 54 5f 50 41 52 41 4d 0d 0a      AVR_GET_PARAM..
 	...
 
-00000971 <JTAG::jtag_scope_edbg()::__c>:
-     971:	20 54 41 52 47 45 54 5f 50 4f 57 45 52 3d 25 30      TARGET_POWER=%0
-     981:	32 58 0d 0a 00                                      2X...
+00000970 <JTAG::jtag_scope_edbg()::__c>:
+     970:	20 54 41 52 47 45 54 5f 50 4f 57 45 52 3d 25 30      TARGET_POWER=%0
+     980:	32 58 0d 0a 00                                      2X...
 
-00000986 <JTAG::jtag_scope_edbg()::__c>:
-     986:	20 41 56 52 5f 53 45 54 5f 50 41 52 41 4d 3d 25      AVR_SET_PARAM=%
-     996:	30 34 58 0d 0a 00                                   04X...
+00000985 <JTAG::jtag_scope_edbg()::__c>:
+     985:	20 41 56 52 5f 53 45 54 5f 50 41 52 41 4d 3d 25      AVR_SET_PARAM=%
+     995:	30 34 58 0d 0a 00                                   04X...
 
-0000099c <JTAG::jtag_scope_edbg()::__c>:
-     99c:	2c 53 3d 25 30 32 2c 49 3d 25 30 32 58 2c 4c 3d     ,S=%02,I=%02X,L=
-     9ac:	25 30 32 58 0d 0a 00                                %02X...
+0000099b <JTAG::jtag_scope_edbg()::__c>:
+     99b:	2c 53 3d 25 30 32 2c 49 3d 25 30 32 58 2c 4c 3d     ,S=%02,I=%02X,L=
+     9ab:	25 30 32 58 0d 0a 00                                %02X...
 
-000009b3 <JTAG::jtag_scope_branch()::__c>:
-     9b3:	20 3f 3a 53 43 4f 50 45 3d 25 30 32 58 0d 0a 00      ?:SCOPE=%02X...
+000009b2 <JTAG::jtag_scope_branch()::__c>:
+     9b2:	20 3f 3a 53 43 4f 50 45 3d 25 30 32 58 0d 0a 00      ?:SCOPE=%02X...
 
-000009c3 <JTAG::jtag_scope_branch()::__c>:
-     9c3:	53 51 3d 25 64 3a 25 64 3e 53 43 4f 50 45 3d 25     SQ=%d:%d>SCOPE=%
-     9d3:	30 32 58 2c 43 3d 25 30 32 58 00                    02X,C=%02X.
+000009c2 <JTAG::jtag_scope_branch()::__c>:
+     9c2:	53 51 3d 25 64 3a 25 64 3e 53 43 4f 50 45 3d 25     SQ=%d:%d>SCOPE=%
+     9d2:	30 32 58 2c 43 3d 25 30 32 58 00                    02X,C=%02X.
 
-000009de <main::__c>:
-     9de:	3c 57 41 49 54 49 4e 47 3e 0d 0a 00                 <WAITING>...
+000009dd <main::__c>:
+     9dd:	3c 57 41 49 54 49 4e 47 3e 0d 0a 00                 <WAITING>...
 
-000009ea <main::__c>:
-     9ea:	48 41 4c 5f 50 52 4f 46 49 4c 45 3d 48 41 4c 2f     HAL_PROFILE=HAL/
-     9fa:	41 56 52 44 55 5f 43 4e 41 4e 4f 2e 68 0d 0a 00     AVRDU_CNANO.h...
+000009e9 <main::__c>:
+     9e9:	48 41 4c 5f 50 52 4f 46 49 4c 45 3d 48 41 4c 2f     HAL_PROFILE=HAL/
+     9f9:	41 56 52 44 55 5f 43 4e 41 4e 4f 2e 68 0d 0a 00     AVRDU_CNANO.h...
 
-00000a0a <main::__c>:
-     a0a:	5f 5f 41 56 52 5f 41 52 43 48 5f 5f 3d 25 64 0d     __AVR_ARCH__=%d.
-     a1a:	0a 00                                               ..
+00000a09 <main::__c>:
+     a09:	5f 5f 41 56 52 5f 41 52 43 48 5f 5f 3d 25 64 0d     __AVR_ARCH__=%d.
+     a19:	0a 00                                               ..
 
-00000a1c <main::__c>:
-     a1c:	5f 41 56 52 5f 49 4f 58 58 58 5f 48 5f 3d 69 6f     _AVR_IOXXX_H_=io
-     a2c:	61 76 72 36 34 64 75 33 32 2e 68 0d 0a 00           avr64du32.h...
+00000a1b <main::__c>:
+     a1b:	5f 41 56 52 5f 49 4f 58 58 58 5f 48 5f 3d 69 6f     _AVR_IOXXX_H_=io
+     a2b:	61 76 72 36 34 64 75 33 32 2e 68 0d 0a 00           avr64du32.h...
 
-00000a3a <main::__c>:
-     a3a:	46 5f 43 50 55 3d 25 6c 64 0d 0a 00                 F_CPU=%ld...
+00000a39 <main::__c>:
+     a39:	46 5f 43 50 55 3d 25 6c 64 0d 0a 00                 F_CPU=%ld...
 
-00000a46 <main::__c>:
-     a46:	0a 3c 73 74 61 72 74 75 70 3e 0d 0a 00              .<startup>...
+00000a45 <main::__c>:
+     a45:	0a 3c 73 74 61 72 74 75 70 3e 0d 0a 00              .<startup>...
 
-00000a53 <PDI::read_memory()::__c>:
-     a53:	20 4c 3d 25 30 34 58 2c 41 3d 25 30 38 6c 58 2c      L=%04X,A=%08lX,
+00000a52 <PDI::read_memory()::__c>:
+     a52:	20 4c 3d 25 30 34 58 2c 41 3d 25 30 38 6c 58 2c      L=%04X,A=%08lX,
 	...
 
-00000a64 <PDI::write_memory()::__c>:
-     a64:	20 4c 3d 25 30 34 58 2c 41 3d 25 30 38 6c 58 2c      L=%04X,A=%08lX,
+00000a63 <PDI::write_memory()::__c>:
+     a63:	20 4c 3d 25 30 34 58 2c 41 3d 25 30 38 6c 58 2c      L=%04X,A=%08lX,
 	...
 
-00000a75 <PDI::timeout_fallback()::__c>:
-     a75:	20 46 61 69 6c 0d 0a 00                              Fail...
+00000a74 <PDI::timeout_fallback()::__c>:
+     a74:	20 46 61 69 6c 0d 0a 00                              Fail...
 
-00000a7d <PDI::connect()::__c>:
-     a7d:	20 20 50 44 49 5f 4f 4e 3a 47 56 41 4c 3d 25 30       PDI_ON:GVAL=%0
-     a8d:	32 58 0d 0a 00                                      2X...
+00000a7c <PDI::connect()::__c>:
+     a7c:	20 20 50 44 49 5f 4f 4e 3a 47 56 41 4c 3d 25 30       PDI_ON:GVAL=%0
+     a8c:	32 58 0d 0a 00                                      2X...
 
-00000a92 <PDI::enter_progmode()::__c>:
-     a92:	20 20 4e 56 4d 50 5f 4f 4e 3a 25 30 32 58 0d 0a       NVMP_ON:%02X..
+00000a91 <PDI::enter_progmode()::__c>:
+     a91:	20 20 4e 56 4d 50 5f 4f 4e 3a 25 30 32 58 0d 0a       NVMP_ON:%02X..
 	...
 
-00000aa3 <PDI::enter_progmode()::__c>:
-     aa3:	20 20 46 61 69 6c 3a 25 30 32 58 0d 0a 00             Fail:%02X...
+00000aa2 <PDI::enter_progmode()::__c>:
+     aa2:	20 20 46 61 69 6c 3a 25 30 32 58 0d 0a 00             Fail:%02X...
 
-00000ab1 <SYS::LED_HeartBeat()::__c>:
-     ab1:	20 4c 45 44 3d 48 42 0d 0a 00                        LED=HB...
+00000ab0 <SYS::LED_HeartBeat()::__c>:
+     ab0:	20 4c 45 44 3d 48 42 0d 0a 00                        LED=HB...
 
-00000abb <SYS::LED_TM(unsigned char, unsigned int)::__c>:
-     abb:	20 4c 45 44 3d 25 64 0d 0a 00                        LED=%d...
+00000aba <SYS::LED_TM(unsigned char, unsigned int)::__c>:
+     aba:	20 4c 45 44 3d 25 64 0d 0a 00                        LED=%d...
 
-00000ac5 <Timeout::command(unsigned int (*)(), unsigned int (*)(), unsigned int)::__c>:
-     ac5:	5b 54 4f 5d 00                                      [TO].
+00000ac4 <Timeout::command(unsigned int (*)(), unsigned int (*)(), unsigned int)::__c>:
+     ac4:	5b 54 4f 5d 00                                      [TO].
 
-00000aca <TPI::erase_memory()::__c>:
-     aca:	20 53 45 43 54 49 4f 4e 5f 45 52 41 53 45 3d 25      SECTION_ERASE=%
-     ada:	30 34 58 0d 0a 00                                   04X...
+00000ac9 <TPI::erase_memory()::__c>:
+     ac9:	20 53 45 43 54 49 4f 4e 5f 45 52 41 53 45 3d 25      SECTION_ERASE=%
+     ad9:	30 34 58 0d 0a 00                                   04X...
 
-00000ae0 <TPI::erase_memory()::__c>:
-     ae0:	20 43 48 49 50 5f 45 52 41 53 45 3d 25 30 34 58      CHIP_ERASE=%04X
-     af0:	0d 0a 00                                            ...
+00000adf <TPI::erase_memory()::__c>:
+     adf:	20 43 48 49 50 5f 45 52 41 53 45 3d 25 30 34 58      CHIP_ERASE=%04X
+     aef:	0d 0a 00                                            ...
 
-00000af3 <TPI::read_memory()::__c>:
-     af3:	20 52 45 41 44 3d 25 30 34 58 3a 25 64 20 00         READ=%04X:%d .
+00000af2 <TPI::read_memory()::__c>:
+     af2:	20 52 45 41 44 3d 25 30 34 58 3a 25 64 20 00         READ=%04X:%d .
 
-00000b02 <TPI::write_memory()::__c>:
-     b02:	20 43 4f 44 45 5f 57 52 49 54 45 3d 25 30 34 58      CODE_WRITE=%04X
-     b12:	3a 25 30 32 58 0d 0a 00                             :%02X...
+00000b01 <TPI::write_memory()::__c>:
+     b01:	20 43 4f 44 45 5f 57 52 49 54 45 3d 25 30 34 58      CODE_WRITE=%04X
+     b11:	3a 25 30 32 58 0d 0a 00                             :%02X...
 
-00000b1a <TPI::write_memory()::__c>:
-     b1a:	20 53 45 43 54 49 4f 4e 5f 45 52 41 53 45 3d 25      SECTION_ERASE=%
-     b2a:	30 34 58 0d 0a 00                                   04X...
+00000b19 <TPI::write_memory()::__c>:
+     b19:	20 53 45 43 54 49 4f 4e 5f 45 52 41 53 45 3d 25      SECTION_ERASE=%
+     b29:	30 34 58 0d 0a 00                                   04X...
 
-00000b30 <TPI::write_memory()::__c>:
-     b30:	20 57 52 49 54 45 3d 25 30 34 58 3a 25 64 20 00      WRITE=%04X:%d .
+00000b2f <TPI::write_memory()::__c>:
+     b2f:	20 57 52 49 54 45 3d 25 30 34 58 3a 25 64 20 00      WRITE=%04X:%d .
 
-00000b40 <USART::change_tpi()::__c>:
-     b40:	20 55 53 41 52 54 3d 54 50 49 20 42 41 55 44 3d      USART=TPI BAUD=
-     b50:	25 30 34 58 0d 0a 00                                %04X...
+00000b3f <USART::change_tpi()::__c>:
+     b3f:	20 55 53 41 52 54 3d 54 50 49 20 42 41 55 44 3d      USART=TPI BAUD=
+     b4f:	25 30 34 58 0d 0a 00                                %04X...
 
-00000b57 <TPI::connect()::__c>:
-     b57:	20 53 49 47 3e 25 30 34 58 3a 25 30 32 58 0d 0a      SIG>%04X:%02X..
+00000b56 <TPI::connect()::__c>:
+     b56:	20 53 49 47 3e 25 30 34 58 3a 25 30 32 58 0d 0a      SIG>%04X:%02X..
 	...
 
-00000b68 <TPI::connect()::__c>:
-     b68:	20 53 4b 45 59 0d 0a 00                              SKEY...
+00000b67 <TPI::connect()::__c>:
+     b67:	20 53 4b 45 59 0d 0a 00                              SKEY...
 
-00000b70 <TPI::connect()::__c>:
-     b70:	3c 48 56 45 4e 3e 00                                <HVEN>.
+00000b6f <TPI::connect()::__c>:
+     b6f:	3c 48 56 45 4e 3e 00                                <HVEN>.
 
-00000b77 <UPDI::set_nvmprog_key(bool)::__c>:
-     b77:	20 50 52 4f 47 5f 4b 45 59 3d 00                     PROG_KEY=.
+00000b76 <UPDI::set_nvmprog_key(bool)::__c>:
+     b76:	20 50 52 4f 47 5f 4b 45 59 3d 00                     PROG_KEY=.
 
-00000b82 <UPDI::set_erase_key()::__c>:
-     b82:	20 45 52 41 53 45 5f 4b 45 59 3d 00                  ERASE_KEY=.
+00000b81 <UPDI::set_erase_key()::__c>:
+     b81:	20 45 52 41 53 45 5f 4b 45 59 3d 00                  ERASE_KEY=.
 
-00000b8e <UPDI::chip_erase()::__c>:
-     b8e:	20 50 52 4f 47 53 54 41 52 54 3d 25 30 32 58 0d      PROGSTART=%02X.
-     b9e:	0a 00                                               ..
+00000b8d <UPDI::chip_erase()::__c>:
+     b8d:	20 50 52 4f 47 53 54 41 52 54 3d 25 30 32 58 0d      PROGSTART=%02X.
+     b9d:	0a 00                                               ..
 
-00000ba0 <UPDI::chip_erase()::__c>:
-     ba0:	20 3c 53 59 53 3a 25 30 32 58 3e 0d 0a 00            <SYS:%02X>...
+00000b9f <UPDI::chip_erase()::__c>:
+     b9f:	20 3c 53 59 53 3a 25 30 32 58 3e 0d 0a 00            <SYS:%02X>...
 
-00000bae <UPDI::chip_erase()::__c>:
-     bae:	20 57 41 49 54 00                                    WAIT.
+00000bad <UPDI::chip_erase()::__c>:
+     bad:	20 57 41 49 54 00                                    WAIT.
 
-00000bb4 <UPDI::chip_erase()::__c>:
-     bb4:	20 43 48 49 50 5f 45 52 41 53 45 00                  CHIP_ERASE.
+00000bb3 <UPDI::chip_erase()::__c>:
+     bb3:	20 43 48 49 50 5f 45 52 41 53 45 00                  CHIP_ERASE.
 
-00000bc0 <UPDI::set_urowwrite_key()::__c>:
-     bc0:	20 55 52 4f 57 5f 4b 45 59 3d 00                     UROW_KEY=.
+00000bbf <UPDI::set_urowwrite_key()::__c>:
+     bbf:	20 55 52 4f 57 5f 4b 45 59 3d 00                     UROW_KEY=.
 
-00000bcb <UPDI::write_userrow()::__c>:
-     bcb:	20 52 45 5f 50 52 4f 47 53 54 41 52 54 3d 25 30      RE_PROGSTART=%0
-     bdb:	32 58 0d 0a 00                                      2X...
+00000bca <UPDI::write_userrow()::__c>:
+     bca:	20 52 45 5f 50 52 4f 47 53 54 41 52 54 3d 25 30      RE_PROGSTART=%0
+     bda:	32 58 0d 0a 00                                      2X...
 
-00000be0 <UPDI::write_userrow()::__c>:
-     be0:	3c 53 59 53 3a 25 30 32 58 3a 25 64 3e 0d 0a 00     <SYS:%02X:%d>...
+00000bdf <UPDI::write_userrow()::__c>:
+     bdf:	3c 53 59 53 3a 25 30 32 58 3a 25 64 3e 0d 0a 00     <SYS:%02X:%d>...
 
-00000bf0 <UPDI::write_userrow()::__c>:
-     bf0:	3c 53 59 53 3a 25 30 32 58 3a 25 64 3e 0d 0a 00     <SYS:%02X:%d>...
+00000bef <UPDI::write_userrow()::__c>:
+     bef:	3c 53 59 53 3a 25 30 32 58 3a 25 64 3e 0d 0a 00     <SYS:%02X:%d>...
 
-00000c00 <UPDI::write_userrow()::__c>:
-     c00:	20 45 4e 54 45 52 5f 55 52 4f 57 3d 25 30 34 6c      ENTER_UROW=%04l
-     c10:	58 3a 25 30 34 58 0d 0a 00                          X:%04X...
+00000bff <UPDI::write_userrow()::__c>:
+     bff:	20 45 4e 54 45 52 5f 55 52 4f 57 3d 25 30 34 6c      ENTER_UROW=%04l
+     c0f:	58 3a 25 30 34 58 0d 0a 00                          X:%04X...
 
-00000c19 <USART::change_updi()::__c>:
-     c19:	20 55 53 41 52 54 3d 55 50 44 49 20 58 43 4c 4b      USART=UPDI XCLK
-     c29:	3d 25 64 20 42 41 55 44 3d 25 30 34 58 0d 0a 00     =%d BAUD=%04X...
+00000c18 <USART::change_updi()::__c>:
+     c18:	20 55 53 41 52 54 3d 55 50 44 49 20 58 43 4c 4b      USART=UPDI XCLK
+     c28:	3d 25 64 20 42 41 55 44 3d 25 30 34 58 0d 0a 00     =%d BAUD=%04X...
 
-00000c39 <UPDI::connect()::__c>:
-     c39:	20 46 41 49 4c 3a 25 30 32 58 2c 25 30 32 58 0d      FAIL:%02X,%02X.
-     c49:	0a 00                                               ..
+00000c38 <UPDI::connect()::__c>:
+     c38:	20 46 41 49 4c 3a 25 30 32 58 2c 25 30 32 58 0d      FAIL:%02X,%02X.
+     c48:	0a 00                                               ..
 
-00000c4b <UPDI::connect()::__c>:
-     c4b:	20 4e 56 4d 3a 25 30 32 58 2c 53 49 42 3d 22 25      NVM:%02X,SIB="%
-     c5b:	73 22 0d 0a 00                                      s"...
+00000c4a <UPDI::connect()::__c>:
+     c4a:	20 4e 56 4d 3a 25 30 32 58 2c 53 49 42 3d 22 25      NVM:%02X,SIB="%
+     c5a:	73 22 0d 0a 00                                      s"...
 
-00000c60 <UPDI::connect()::__c>:
-     c60:	3c 48 56 43 3a 56 25 64 3e 00                       <HVC:V%d>.
+00000c5f <UPDI::connect()::__c>:
+     c5f:	3c 48 56 43 3a 56 25 64 3e 00                       <HVC:V%d>.
 
-00000c6a <UPDI::enter_progmode()::__c>:
-     c6a:	25 30 32 58 0d 0a 00                                %02X...
+00000c69 <UPDI::enter_progmode()::__c>:
+     c69:	25 30 32 58 0d 0a 00                                %02X...
 
-00000c71 <USART::change_pdi()::__c>:
-     c71:	20 55 53 41 52 54 3d 50 44 49 20 42 41 55 44 3d      USART=PDI BAUD=
-     c81:	25 30 34 58 0d 0a 00                                %04X...
+00000c70 <USART::change_pdi()::__c>:
+     c70:	20 55 53 41 52 54 3d 50 44 49 20 42 41 55 44 3d      USART=PDI BAUD=
+     c80:	25 30 34 58 0d 0a 00                                %04X...
 
-00000c88 <USART::change_vcp()::__c>:
-     c88:	20 56 43 50 3d 46 41 49 4c 0d 0a 00                  VCP=FAIL...
+00000c87 <USART::change_vcp()::__c>:
+     c87:	20 56 43 50 3d 46 41 49 4c 0d 0a 00                  VCP=FAIL...
 
-00000c94 <USART::change_vcp()::__c>:
-     c94:	20 55 53 41 52 54 3d 56 43 50 0d 0a 00               USART=VCP...
+00000c93 <USART::change_vcp()::__c>:
+     c93:	20 55 53 41 52 54 3d 56 43 50 0d 0a 00               USART=VCP...
 
-00000ca1 <USART::change_vcp()::__c>:
-     ca1:	2d 3e 25 30 34 58 0d 0a 00                          ->%04X...
+00000ca0 <USART::change_vcp()::__c>:
+     ca0:	2d 3e 25 30 34 58 0d 0a 00                          ->%04X...
 
-00000caa <USART::change_vcp()::__c>:
-     caa:	20 42 41 55 44 3d 25 6c 64 00                        BAUD=%ld.
+00000ca9 <USART::change_vcp()::__c>:
+     ca9:	20 42 41 55 44 3d 25 6c 64 00                        BAUD=%ld.
 
-00000cb4 <USB::ep_init>:
+00000cb3 <USB::ep_init>:
 	...
-     cbc:	00 4b 00 00 8c 63 00 00 00 7b 00 00 94 63 00 00     .K...c...{...c..
+     cbb:	00 4b 00 00 8c 63 00 00 00 7b 00 00 94 63 00 00     .K...c...{...c..
 	...
-     cd4:	00 bb 40 00 a4 63 00 00 00 8b 00 00 a4 63 40 00     ..@..c.......c@.
-     ce4:	00 b9 00 00 94 63 00 00 00 8b 00 00 e4 63 40 00     .....c.......c@.
-     cf4:	02 bb 00 00 24 64 00 00 00 00                       ....$d....
+     cd3:	00 bb 40 00 a4 63 00 00 00 8b 00 00 a4 63 40 00     ..@..c.......c@.
+     ce3:	00 b9 00 00 94 63 00 00 00 8b 00 00 e4 63 40 00     .....c.......c@.
+     cf3:	02 bb 00 00 24 64 00 00 00 00                       ....$d....
 
-00000cfe <_portmux_usart1c>:
-     cfe:	e2 05 18 10 60 04 40 80 77 04                       ....`.@.w.
+00000cfd <_portmux_usart1c>:
+     cfd:	e2 05 18 10 60 04 40 80 77 04 00                    ....`.@.w..
 
 00000d08 <__ctors_start>:
 __ctors_start():
@@ -1197,7 +1196,7 @@ size_t UsartBaseClass::write (const uint8_t _c) {
 
 00000e6e <USB::break_off()>:
 break_off():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:402
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:403
     bit_set(GPCONF, GPCONF_BRK_bp);
   }
 
@@ -1208,34 +1207,34 @@ break_off():
      e70:	0e c0       	rjmp	.+28     	; 0xe8e <USB::break_off()+0x20>
      e72:	f3 9b       	sbis	0x1e, 3	; 30
      e74:	0c c0       	rjmp	.+24     	; 0xe8e <USB::break_off()+0x20>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:403
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:404
       pinLogicOpen(PIN_VCP_TXD);
      e76:	02 98       	cbi	0x00, 2	; 0
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:404
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:405
       _send_count = 0;
      e78:	10 92 a8 64 	sts	0x64A8, r1	; 0x8064a8 <USB::_send_count>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:405
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:406
       _send_break = 0;
      e7c:	10 92 a9 64 	sts	0x64A9, r1	; 0x8064a9 <USB::_send_break>
      e80:	10 92 aa 64 	sts	0x64AA, r1	; 0x8064aa <USB::_send_break+0x1>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:406
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:407
       USART0_CTRLB = _vcp_ctrl;
      e84:	80 91 8a 63 	lds	r24, 0x638A	; 0x80638a <USB::_vcp_ctrl>
      e88:	80 93 06 08 	sts	0x0806, r24	; 0x800806 <__TEXT_REGION_LENGTH__+0x7f0806>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:407
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:408
       bit_set(GPCONF, GPCONF_OPN_bp);
      e8c:	f4 9a       	sbi	0x1e, 4	; 30
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:409
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:410
     }
     bit_clear(GPCONF, GPCONF_BRK_bp);
      e8e:	f3 98       	cbi	0x1e, 3	; 30
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:410
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:411
   }
      e90:	08 95       	ret
 
 00000e92 <USB::ep_cdo_listen()>:
 ep_cdo_listen():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:372
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:373
     loop_until_bit_is_clear(USB0_INTFLAGSB, USB_RMWBUSY_bp);
     USB_EP_STATUS_CLR(USB_EP_CDI) = ~USB_TOGGLE_bm;
   }
@@ -1253,10 +1252,10 @@ static __inline__ uint8_t __iCliRetVal(void)
     cli();
      e94:	f8 94       	cli
 ep_cdo_listen():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:373
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:374
       _recv_count = 0;
      e96:	10 92 a7 64 	sts	0x64A7, r1	; 0x8064a7 <USB::_recv_count>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:374
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:375
       EP_CDO.CNT  = 0;
      e9a:	10 92 e6 64 	sts	0x64E6, r1	; 0x8064e6 <EP_TABLE+0x3a>
      e9e:	10 92 e7 64 	sts	0x64E7, r1	; 0x8064e7 <EP_TABLE+0x3b>
@@ -1270,23 +1269,23 @@ static __inline__ void __iRestore(const  uint8_t *__s)
     SREG = *__s;
      ea2:	8f bf       	out	0x3f, r24	; 63
 ep_cdo_listen():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:376
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:377
     }
     loop_until_bit_is_clear(USB0_INTFLAGSB, USB_RMWBUSY_bp);
      ea4:	80 91 0b 0c 	lds	r24, 0x0C0B	; 0x800c0b <__TEXT_REGION_LENGTH__+0x7f0c0b>
      ea8:	82 fd       	sbrc	r24, 2
      eaa:	fc cf       	rjmp	.-8      	; 0xea4 <USB::ep_cdo_listen()+0x12>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:377
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:378
     USB_EP_STATUS_CLR(USB_EP_CDO) = ~USB_TOGGLE_bm;
      eac:	8e ef       	ldi	r24, 0xFE	; 254
      eae:	80 93 4c 0c 	sts	0x0C4C, r24	; 0x800c4c <__TEXT_REGION_LENGTH__+0x7f0c4c>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:378
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:379
   }
      eb2:	08 95       	ret
 
 00000eb4 <USB::ep_cdi_listen()>:
 ep_cdi_listen():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:348
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:349
     /* Send the VCP-RxD buffer to the host. */
     /* If our math is correct, then if each side of the double */
     /* buffer can complete the transmission of 64 characters   */
@@ -1298,7 +1297,7 @@ ep_cdi_listen():
      eb8:	80 91 ec 64 	lds	r24, 0x64EC	; 0x8064ec <EP_TABLE+0x40>
      ebc:	81 ff       	sbrs	r24, 1
      ebe:	07 c0       	rjmp	.+14     	; 0xece <USB::ep_cdi_listen()+0x1a>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:358
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:359
     }
     D2PRINTF(" VI=%02X\r\n    ", _send_count);
     D2PRINTHEX(bit_is_set(GPCONF, GPCONF_DBL_bp)
@@ -1316,7 +1315,7 @@ static __inline__ uint8_t __iCliRetVal(void)
     cli();
      ec2:	f8 94       	cli
 ep_cdi_listen():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:360
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:361
       EP_CDI.DATAPTR = bit_is_set(GPCONF, GPCONF_DBL_bp)
         ? (register16_t)&EP_MEM.cdi_data[64]
      ec4:	f2 99       	sbic	0x1e, 2	; 30
@@ -1324,7 +1323,7 @@ ep_cdi_listen():
      ec8:	84 e2       	ldi	r24, 0x24	; 36
      eca:	94 e6       	ldi	r25, 0x64	; 100
      ecc:	09 c0       	rjmp	.+18     	; 0xee0 <USB::ep_cdi_listen()+0x2c>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:351
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:352
     /* in 1 ms, then it can support 640 kbps. */
     if (bit_is_clear(GPCONF, GPCONF_OPN_bp)
      || bit_is_clear(EP_CDI.STATUS, USB_BUSNAK_bp)) {
@@ -1336,7 +1335,7 @@ ep_cdi_listen():
      ed4:	11 f5       	brne	.+68     	; 0xf1a <USB::ep_cdi_listen()+0x66>
      ed6:	10 92 a8 64 	sts	0x64A8, r1	; 0x8064a8 <USB::_send_count>
      eda:	08 95       	ret
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:360
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:361
     D2PRINTHEX(bit_is_set(GPCONF, GPCONF_DBL_bp)
       ? &EP_MEM.cdi_data[64]
       : &EP_MEM.cdi_data[0], _send_count, ':', 16, "\r\n    ");
@@ -1345,7 +1344,7 @@ ep_cdi_listen():
         ? (register16_t)&EP_MEM.cdi_data[64]
      edc:	84 e6       	ldi	r24, 0x64	; 100
      ede:	94 e6       	ldi	r25, 0x64	; 100
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:359
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:360
     D2PRINTF(" VI=%02X\r\n    ", _send_count);
     D2PRINTHEX(bit_is_set(GPCONF, GPCONF_DBL_bp)
       ? &EP_MEM.cdi_data[64]
@@ -1354,7 +1353,7 @@ ep_cdi_listen():
       EP_CDI.DATAPTR = bit_is_set(GPCONF, GPCONF_DBL_bp)
      ee0:	80 93 f0 64 	sts	0x64F0, r24	; 0x8064f0 <EP_TABLE+0x44>
      ee4:	90 93 f1 64 	sts	0x64F1, r25	; 0x8064f1 <EP_TABLE+0x45>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:362
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:363
         ? (register16_t)&EP_MEM.cdi_data[64]
         : (register16_t)&EP_MEM.cdi_data[0];
       EP_CDI.CNT = _send_count;
@@ -1362,14 +1361,14 @@ ep_cdi_listen():
      eec:	90 e0       	ldi	r25, 0x00	; 0
      eee:	80 93 ee 64 	sts	0x64EE, r24	; 0x8064ee <EP_TABLE+0x42>
      ef2:	90 93 ef 64 	sts	0x64EF, r25	; 0x8064ef <EP_TABLE+0x43>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:363
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:364
       EP_CDI.MCNT = 0;
      ef6:	10 92 f2 64 	sts	0x64F2, r1	; 0x8064f2 <EP_TABLE+0x46>
      efa:	10 92 f3 64 	sts	0x64F3, r1	; 0x8064f3 <EP_TABLE+0x47>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:364
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:365
       _send_count = 0;
      efe:	10 92 a8 64 	sts	0x64A8, r1	; 0x8064a8 <USB::_send_count>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:365
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:366
       GPCONF ^= GPCONF_DBL_bm;
      f02:	8e b3       	in	r24, 0x1e	; 30
      f04:	94 e0       	ldi	r25, 0x04	; 4
@@ -1385,23 +1384,23 @@ static __inline__ void __iRestore(const  uint8_t *__s)
     SREG = *__s;
      f0a:	2f bf       	out	0x3f, r18	; 63
 ep_cdi_listen():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:367
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:368
     }
     loop_until_bit_is_clear(USB0_INTFLAGSB, USB_RMWBUSY_bp);
      f0c:	80 91 0b 0c 	lds	r24, 0x0C0B	; 0x800c0b <__TEXT_REGION_LENGTH__+0x7f0c0b>
      f10:	82 fd       	sbrc	r24, 2
      f12:	fc cf       	rjmp	.-8      	; 0xf0c <USB::ep_cdi_listen()+0x58>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:368
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:369
     USB_EP_STATUS_CLR(USB_EP_CDI) = ~USB_TOGGLE_bm;
      f14:	8e ef       	ldi	r24, 0xFE	; 254
      f16:	80 93 4e 0c 	sts	0x0C4E, r24	; 0x800c4e <__TEXT_REGION_LENGTH__+0x7f0c4e>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:369
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:370
   }
      f1a:	08 95       	ret
 
 00000f1c <USB::ep_res_listen()>:
 ep_res_listen():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:298
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:299
     loop_until_bit_is_clear(USB0_INTFLAGSB, USB_RMWBUSY_bp);
     USB_EP_STATUS_CLR(USB_EP_REQ) = ~USB_TOGGLE_bm;
   }
@@ -1410,22 +1409,22 @@ ep_res_listen():
     EP_RES.MCNT = 0;
      f1c:	10 92 c2 64 	sts	0x64C2, r1	; 0x8064c2 <EP_TABLE+0x16>
      f20:	10 92 c3 64 	sts	0x64C3, r1	; 0x8064c3 <EP_TABLE+0x17>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:299
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:300
     loop_until_bit_is_clear(USB0_INTFLAGSB, USB_RMWBUSY_bp);
      f24:	80 91 0b 0c 	lds	r24, 0x0C0B	; 0x800c0b <__TEXT_REGION_LENGTH__+0x7f0c0b>
      f28:	82 fd       	sbrc	r24, 2
      f2a:	fc cf       	rjmp	.-8      	; 0xf24 <USB::ep_res_listen()+0x8>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:300
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:301
     USB_EP_STATUS_CLR(USB_EP_RES) = ~USB_TOGGLE_bm;
      f2c:	8e ef       	ldi	r24, 0xFE	; 254
      f2e:	80 93 42 0c 	sts	0x0C42, r24	; 0x800c42 <__TEXT_REGION_LENGTH__+0x7f0c42>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:301
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:302
   }
      f32:	08 95       	ret
 
 00000f34 <USB::ep_req_listen()>:
 ep_req_listen():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:292
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:293
   void ep_cci_pending (void) { loop_until_bit_is_set(EP_CCI.STATUS, USB_BUSNAK_bp); }
   void ep_cdo_pending (void) { loop_until_bit_is_set(EP_CDO.STATUS, USB_BUSNAK_bp); }
   void ep_cdi_pending (void) { loop_until_bit_is_set(EP_CDI.STATUS, USB_BUSNAK_bp); }
@@ -1434,16 +1433,16 @@ ep_req_listen():
     EP_REQ.CNT = 0;
      f34:	10 92 b6 64 	sts	0x64B6, r1	; 0x8064b6 <EP_TABLE+0xa>
      f38:	10 92 b7 64 	sts	0x64B7, r1	; 0x8064b7 <EP_TABLE+0xb>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:293
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:294
     loop_until_bit_is_clear(USB0_INTFLAGSB, USB_RMWBUSY_bp);
      f3c:	80 91 0b 0c 	lds	r24, 0x0C0B	; 0x800c0b <__TEXT_REGION_LENGTH__+0x7f0c0b>
      f40:	82 fd       	sbrc	r24, 2
      f42:	fc cf       	rjmp	.-8      	; 0xf3c <USB::ep_req_listen()+0x8>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:294
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:295
     USB_EP_STATUS_CLR(USB_EP_REQ) = ~USB_TOGGLE_bm;
      f44:	8e ef       	ldi	r24, 0xFE	; 254
      f46:	80 93 40 0c 	sts	0x0C40, r24	; 0x800c40 <__TEXT_REGION_LENGTH__+0x7f0c40>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:295
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:296
   }
      f4a:	08 95       	ret
 
@@ -5136,7 +5135,7 @@ change_pdi():
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:134
       D1PRINTF(" USART=PDI BAUD=%04X\r\n", USART0_BAUD);
     1d2c:	8f 93       	push	r24
-    1d2e:	81 e7       	ldi	r24, 0x71	; 113
+    1d2e:	80 e7       	ldi	r24, 0x70	; 112
     1d30:	9c e0       	ldi	r25, 0x0C	; 12
     1d32:	9f 93       	push	r25
     1d34:	8f 93       	push	r24
@@ -5186,7 +5185,7 @@ _ZN3SYS6LED_TMEhj.part.3():
   WEAK void LED_TM (uint8_t _mode, uint16_t _ccmp) {
     1d5c:	1f 92       	push	r1
     1d5e:	8f 93       	push	r24
-    1d60:	8b eb       	ldi	r24, 0xBB	; 187
+    1d60:	8a eb       	ldi	r24, 0xBA	; 186
     1d62:	9a e0       	ldi	r25, 0x0A	; 10
     1d64:	9f 93       	push	r25
 /Users/askn/Develop/UPDI4AVR-USB/src/sys.cpp:197
@@ -5269,7 +5268,7 @@ LED_HeartBeat():
     1dcc:	80 91 86 63 	lds	r24, 0x6386	; 0x806386 <_led_mode>
     1dd0:	81 30       	cpi	r24, 0x01	; 1
     1dd2:	41 f1       	breq	.+80     	; 0x1e24 <SYS::LED_HeartBeat()+0x58>
-    1dd4:	81 eb       	ldi	r24, 0xB1	; 177
+    1dd4:	80 eb       	ldi	r24, 0xB0	; 176
 /Users/askn/Develop/UPDI4AVR-USB/src/sys.cpp:212
   }
 
@@ -5369,7 +5368,7 @@ change_vcp():
     1e52:	ef 92       	push	r14
     1e54:	df 92       	push	r13
     1e56:	cf 92       	push	r12
-    1e58:	8a ea       	ldi	r24, 0xAA	; 170
+    1e58:	89 ea       	ldi	r24, 0xA9	; 169
     1e5a:	9c e0       	ldi	r25, 0x0C	; 12
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:144
     D1PRINTF(" BAUD=%ld", _baud);
@@ -5442,7 +5441,7 @@ change_vcp():
     D1PRINTF("->%04X\r\n", _baud);
     1ec8:	df 92       	push	r13
     1eca:	cf 92       	push	r12
-    1ecc:	81 ea       	ldi	r24, 0xA1	; 161
+    1ecc:	80 ea       	ldi	r24, 0xA0	; 160
     1ece:	9c e0       	ldi	r25, 0x0C	; 12
     1ed0:	9f 93       	push	r25
     1ed2:	8f 93       	push	r24
@@ -5545,7 +5544,7 @@ change_vcp():
 __iRestore():
     1f5e:	9f bf       	out	0x3f, r25	; 63
 change_vcp():
-    1f60:	84 e9       	ldi	r24, 0x94	; 148
+    1f60:	83 e9       	ldi	r24, 0x93	; 147
     1f62:	9c e0       	ldi	r25, 0x0C	; 12
     1f64:	9f 93       	push	r25
     1f66:	8f 93       	push	r24
@@ -5622,7 +5621,7 @@ change_vcp():
       /* If outside the supported range, the USART will remain in the BREAK state. */
       D1PRINTF(" VCP=FAIL\r\n");
     1fa4:	c8 cf       	rjmp	.-112    	; 0x1f36 <USART::change_vcp()+0x110>
-    1fa6:	88 e8       	ldi	r24, 0x88	; 136
+    1fa6:	87 e8       	ldi	r24, 0x87	; 135
     1fa8:	9c e0       	ldi	r25, 0x0C	; 12
     1faa:	9f 93       	push	r25
     1fac:	8f 93       	push	r24
@@ -5691,7 +5690,7 @@ enter_progmode():
       D1PRINTF("  NVMP_ON:%02X\r\n", RXDATA);
     1fec:	1f 92       	push	r1
     1fee:	8f 93       	push	r24
-    1ff0:	82 e9       	ldi	r24, 0x92	; 146
+    1ff0:	81 e9       	ldi	r24, 0x91	; 145
     1ff2:	9a e0       	ldi	r25, 0x0A	; 10
     1ff4:	9f 93       	push	r25
     1ff6:	8f 93       	push	r24
@@ -5733,7 +5732,7 @@ enter_progmode():
     D1PRINTF("  Fail:%02X\r\n", RXDATA);
     2016:	1f 92       	push	r1
     2018:	8f 93       	push	r24
-    201a:	83 ea       	ldi	r24, 0xA3	; 163
+    201a:	82 ea       	ldi	r24, 0xA2	; 162
     201c:	9a e0       	ldi	r25, 0x0A	; 10
     201e:	9f 93       	push	r25
     2020:	8f 93       	push	r24
@@ -5763,7 +5762,7 @@ enter_progmode():
 
 0000203e <PDI::timeout_fallback()>:
 timeout_fallback():
-    203e:	85 e7       	ldi	r24, 0x75	; 117
+    203e:	84 e7       	ldi	r24, 0x74	; 116
     2040:	9a e0       	ldi	r25, 0x0A	; 10
     2042:	9f 93       	push	r25
     2044:	8f 93       	push	r24
@@ -5875,7 +5874,7 @@ write_memory():
     20e2:	cf 92       	push	r12
     20e4:	1f 93       	push	r17
     20e6:	0f 93       	push	r16
-    20e8:	84 e6       	ldi	r24, 0x64	; 100
+    20e8:	83 e6       	ldi	r24, 0x63	; 99
     20ea:	9a e0       	ldi	r25, 0x0A	; 10
     20ec:	9f 93       	push	r25
 /Users/askn/Develop/UPDI4AVR-USB/src/pdi.cpp:275
@@ -6203,7 +6202,7 @@ read_memory():
     225a:	cf 92       	push	r12
     225c:	df 93       	push	r29
     225e:	cf 93       	push	r28
-    2260:	83 e5       	ldi	r24, 0x53	; 83
+    2260:	82 e5       	ldi	r24, 0x52	; 82
     2262:	9a e0       	ldi	r25, 0x0A	; 10
     2264:	9f 93       	push	r25
 /Users/askn/Develop/UPDI4AVR-USB/src/pdi.cpp:245
@@ -6607,7 +6606,7 @@ _ZN3USB12setup_deviceEb.part.1():
   }
     242c:	84 eb       	ldi	r24, 0xB4	; 180
     242e:	94 e6       	ldi	r25, 0x64	; 100
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:247
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:248
     EP_MEM.cci_header.wIndex        = 1;    /* Interface#1 */
     EP_MEM.cci_header.wLength       = 2;
     EP_MEM.cci_wValue               = _state;
@@ -6615,56 +6614,56 @@ _ZN3USB12setup_deviceEb.part.1():
 
   void setup_device (bool _force) {
     2430:	80 93 06 0c 	sts	0x0C06, r24	; 0x800c06 <__TEXT_REGION_LENGTH__+0x7f0c06>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:251
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:252
     if (_led_mode != 3) SYS::LED_Flash();
     USB0_ADDR = 0;
     if (USB0_CTRLA || _force) {
       USB0_CTRLA = 0;
     2434:	90 93 07 0c 	sts	0x0C07, r25	; 0x800c07 <__TEXT_REGION_LENGTH__+0x7f0c07>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:252
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:253
       USB0_FIFOWP = 0;
     2438:	81 e0       	ldi	r24, 0x01	; 1
     243a:	80 93 01 0c 	sts	0x0C01, r24	; 0x800c01 <__TEXT_REGION_LENGTH__+0x7f0c01>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:253
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:254
       USB0_EPPTR = (uint16_t)&EP_TABLE.EP;
     243e:	8e b3       	in	r24, 0x1e	; 30
     2440:	80 7c       	andi	r24, 0xC0	; 192
     2442:	8e bb       	out	0x1e, r24	; 30
     2444:	1f ba       	out	0x1f, r1	; 31
     2446:	1c ba       	out	0x1c, r1	; 28
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:254
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:255
       USB0_CTRLB = USB_ATTACH_bm;
     2448:	10 92 a9 64 	sts	0x64A9, r1	; 0x8064a9 <USB::_send_break>
     244c:	10 92 aa 64 	sts	0x64AA, r1	; 0x8064aa <USB::_send_break+0x1>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:255
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:256
       GPCONF &= GPCONF_SW0_gm;
     2450:	10 92 a8 64 	sts	0x64A8, r1	; 0x8064a8 <USB::_send_count>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:257
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:258
       PGCONF = 0;
       RXSTAT = 0;
     2454:	10 92 a7 64 	sts	0x64A7, r1	; 0x8064a7 <USB::_recv_count>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:258
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:259
       _send_break = 0;
     2458:	10 92 a6 64 	sts	0x64A6, r1	; 0x8064a6 <USB::_set_config>
     245c:	10 92 a5 64 	sts	0x64A5, r1	; 0x8064a5 <USB::_sof_count>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:259
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:260
       _send_count = 0;
     2460:	10 92 a4 64 	sts	0x64A4, r1	; 0x8064a4 <USB::_set_serial_state>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:260
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:261
       _recv_count = 0;
     2464:	4a e4       	ldi	r20, 0x4A	; 74
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:261
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:262
       _set_config = 0;
     2466:	50 e0       	ldi	r21, 0x00	; 0
-    2468:	64 eb       	ldi	r22, 0xB4	; 180
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:262
+    2468:	63 eb       	ldi	r22, 0xB3	; 179
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:263
       _sof_count = 0;
     246a:	7c e0       	ldi	r23, 0x0C	; 12
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:263
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:264
       _set_serial_state = 0;
     246c:	8c ea       	ldi	r24, 0xAC	; 172
     246e:	94 e6       	ldi	r25, 0x64	; 100
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:264
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:265
       memcpy_P(&EP_TABLE, &ep_init, sizeof(EP_TABLE_t));
     2470:	0e 94 ca 32 	call	0x6594	; 0x6594 <memcpy_P>
 set_cci_data():
@@ -6673,7 +6672,7 @@ set_cci_data():
     247a:	f3 e6       	ldi	r31, 0x63	; 99
     247c:	81 ea       	ldi	r24, 0xA1	; 161
     247e:	80 87       	std	Z+8, r24	; 0x08
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:238
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:239
     if (_size) memcpy_P(_buffer, _pgmem, _size);
     return _size;
   }
@@ -6682,41 +6681,41 @@ set_cci_data():
     _set_serial_state = _state;
     2480:	80 e2       	ldi	r24, 0x20	; 32
     2482:	81 87       	std	Z+9, r24	; 0x09
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:239
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:240
     EP_MEM.cci_header.bmRequestType = 0xA1; /* REQTYPE_DIRECTION | REQTYPE_CLASS | RECIPIENT_INTERFACE */
     2484:	12 86       	std	Z+10, r1	; 0x0a
     2486:	13 86       	std	Z+11, r1	; 0x0b
     2488:	81 e0       	ldi	r24, 0x01	; 1
     248a:	90 e0       	ldi	r25, 0x00	; 0
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:240
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:241
     EP_MEM.cci_header.bRequest      = 0x20; /* CDC_REQ_SerialState */
     248c:	84 87       	std	Z+12, r24	; 0x0c
     248e:	95 87       	std	Z+13, r25	; 0x0d
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:241
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:242
     EP_MEM.cci_header.wValue        = 0;
     2490:	82 e0       	ldi	r24, 0x02	; 2
     2492:	90 e0       	ldi	r25, 0x00	; 0
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:242
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:243
     EP_MEM.cci_header.wIndex        = 1;    /* Interface#1 */
     2494:	86 87       	std	Z+14, r24	; 0x0e
     2496:	97 87       	std	Z+15, r25	; 0x0f
     2498:	10 8a       	std	Z+16, r1	; 0x10
     249a:	11 8a       	std	Z+17, r1	; 0x11
 _ZN3USB12setup_deviceEb.part.1():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:243
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:244
     EP_MEM.cci_header.wLength       = 2;
     249c:	83 e8       	ldi	r24, 0x83	; 131
     249e:	88 83       	st	Y, r24
     24a0:	df 91       	pop	r29
     24a2:	cf 91       	pop	r28
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:244
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:245
     EP_MEM.cci_wValue               = _state;
     24a4:	08 95       	ret
 
 000024a6 <USART::setup()>:
 LED_TM():
     24a6:	80 91 86 63 	lds	r24, 0x6386	; 0x806386 <_led_mode>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:266
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:267
       _set_config = 0;
       _sof_count = 0;
       _set_serial_state = 0;
@@ -6724,7 +6723,7 @@ LED_TM():
       set_cci_data(0x00);
       USB0_CTRLA = USB_ENABLE_bm | (USB_ENDPOINTS_MAX - 1);
     24aa:	84 30       	cpi	r24, 0x04	; 4
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:268
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:269
     }
   }
     24ac:	21 f0       	breq	.+8      	; 0x24b6 <USART::setup()+0x10>
@@ -7017,7 +7016,7 @@ set_nvmprog_key():
   }
 
   bool set_nvmprog_key (bool _reset = true) {
-    25a8:	87 e7       	ldi	r24, 0x77	; 119
+    25a8:	86 e7       	ldi	r24, 0x76	; 118
     25aa:	9b e0       	ldi	r25, 0x0B	; 11
 /Users/askn/Develop/UPDI4AVR-USB/src/updi.cpp:264
     D1PRINTF(" PROG_KEY=");   /* wait set NVMPROG */
@@ -7159,7 +7158,7 @@ enter_progmode():
     }
     D1PRINTF("%02X\r\n", RXDATA);
     262e:	8f 93       	push	r24
-    2630:	8a e6       	ldi	r24, 0x6A	; 106
+    2630:	89 e6       	ldi	r24, 0x69	; 105
     2632:	9c e0       	ldi	r25, 0x0C	; 12
     2634:	9f 93       	push	r25
     2636:	8f 93       	push	r24
@@ -7297,8 +7296,8 @@ write_userrow():
     26ce:	ef 92       	push	r14
     26d0:	df 92       	push	r13
     26d2:	cf 92       	push	r12
-    26d4:	80 e0       	ldi	r24, 0x00	; 0
-    26d6:	9c e0       	ldi	r25, 0x0C	; 12
+    26d4:	8f ef       	ldi	r24, 0xFF	; 255
+    26d6:	9b e0       	ldi	r25, 0x0B	; 11
     26d8:	9f 93       	push	r25
     26da:	8f 93       	push	r24
     26dc:	c6 ed       	ldi	r28, 0xD6	; 214
@@ -7319,7 +7318,7 @@ set_urowwrite_key():
 
   bool set_urowwrite_key (void) {
     D1PRINTF(" UROW_KEY=");   /* wait set UROWWRITE */
-    26f2:	80 ec       	ldi	r24, 0xC0	; 192
+    26f2:	8f eb       	ldi	r24, 0xBF	; 191
     26f4:	9b e0       	ldi	r25, 0x0B	; 11
     26f6:	9f 93       	push	r25
     26f8:	8f 93       	push	r24
@@ -7389,7 +7388,7 @@ write_userrow():
     2750:	8f 93       	push	r24
     2752:	1f 92       	push	r1
     2754:	9f 93       	push	r25
-    2756:	80 ef       	ldi	r24, 0xF0	; 240
+    2756:	8f ee       	ldi	r24, 0xEF	; 239
     2758:	9b e0       	ldi	r25, 0x0B	; 11
     275a:	9f 93       	push	r25
     275c:	8f 93       	push	r24
@@ -7440,7 +7439,7 @@ write_userrow():
     27a4:	8f 93       	push	r24
     27a6:	1f 92       	push	r1
     27a8:	9f 93       	push	r25
-    27aa:	80 ee       	ldi	r24, 0xE0	; 224
+    27aa:	8f ed       	ldi	r24, 0xDF	; 223
     27ac:	9b e0       	ldi	r25, 0x0B	; 11
     27ae:	9f 93       	push	r25
     27b0:	8f 93       	push	r24
@@ -7528,7 +7527,7 @@ write_userrow():
     280e:	8f 93       	push	r24
 /Users/askn/Develop/UPDI4AVR-USB/src/updi.cpp:335
       D1PRINTF(" RE_PROGSTART=%02X\r\n", RXDATA);
-    2810:	8b ec       	ldi	r24, 0xCB	; 203
+    2810:	8a ec       	ldi	r24, 0xCA	; 202
     2812:	9b e0       	ldi	r25, 0x0B	; 11
     2814:	9f 93       	push	r25
     2816:	8f 93       	push	r24
@@ -9000,7 +8999,7 @@ chip_erase():
 /Users/askn/Develop/UPDI4AVR-USB/src/updi.cpp:283
     D1PRINTF(" CHIP_ERASE");
     2e36:	df 93       	push	r29
-    2e38:	84 eb       	ldi	r24, 0xB4	; 180
+    2e38:	83 eb       	ldi	r24, 0xB3	; 179
     2e3a:	9b e0       	ldi	r25, 0x0B	; 11
     2e3c:	9f 93       	push	r25
     2e3e:	8f 93       	push	r24
@@ -9030,7 +9029,7 @@ set_erase_key():
     2e5e:	a2 db       	rcall	.-2236   	; 0x25a4 <UPDI::set_nvmprog_key(bool)>
 /Users/askn/Develop/UPDI4AVR-USB/src/updi.cpp:271
     D1PRINTF(" ERASE_KEY=");  /* wait set CHIPERASE */
-    2e60:	82 e8       	ldi	r24, 0x82	; 130
+    2e60:	81 e8       	ldi	r24, 0x81	; 129
     2e62:	9b e0       	ldi	r25, 0x0B	; 11
     2e64:	9f 93       	push	r25
     2e66:	8f 93       	push	r24
@@ -9099,7 +9098,7 @@ chip_erase():
     2ea6:	91 f3       	breq	.-28     	; 0x2e8c <UPDI::chip_erase()+0x58>
 /Users/askn/Develop/UPDI4AVR-USB/src/updi.cpp:286
     D1PRINTF(" WAIT");
-    2ea8:	8e ea       	ldi	r24, 0xAE	; 174
+    2ea8:	8d ea       	ldi	r24, 0xAD	; 173
     2eaa:	9b e0       	ldi	r25, 0x0B	; 11
     2eac:	9f 93       	push	r25
     2eae:	8f 93       	push	r24
@@ -9151,7 +9150,7 @@ chip_erase():
     2ee8:	8d b3       	in	r24, 0x1d	; 29
     2eea:	1f 92       	push	r1
     2eec:	8f 93       	push	r24
-    2eee:	80 ea       	ldi	r24, 0xA0	; 160
+    2eee:	8f e9       	ldi	r24, 0x9F	; 159
     2ef0:	9b e0       	ldi	r25, 0x0B	; 11
     2ef2:	9f 93       	push	r25
     2ef4:	8f 93       	push	r24
@@ -9220,7 +9219,7 @@ chip_erase():
     }
     D1PRINTF(" PROGSTART=%02X\r\n", RXDATA);
     2f3a:	8f 93       	push	r24
-    2f3c:	8e e8       	ldi	r24, 0x8E	; 142
+    2f3c:	8d e8       	ldi	r24, 0x8D	; 141
     2f3e:	9b e0       	ldi	r25, 0x0B	; 11
     2f40:	9f 93       	push	r25
     2f42:	8f 93       	push	r24
@@ -9678,7 +9677,7 @@ connect():
 /Users/askn/Develop/UPDI4AVR-USB/src/sys.cpp:448
     TCA0_SPLIT_CTRLESET = TCA_SPLIT_CMD_RESTART_gc;
     310a:	69 9a       	sbi	0x0d, 1	; 13
-    310c:	80 e7       	ldi	r24, 0x70	; 112
+    310c:	8f e6       	ldi	r24, 0x6F	; 111
     310e:	9b e0       	ldi	r25, 0x0B	; 11
 /Users/askn/Library/Arduino15/packages/MultiX-Zinnia/hardware/modernAVR/0.4.11/cores/modernAVR/api/delay_busywait.h:33
     3110:	9f 93       	push	r25
@@ -9772,7 +9771,7 @@ static __inline__ uint8_t __iCliRetVal(void)
     317c:	8f 93       	push	r24
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:116
       USART0_CTRLB = USART_RXEN_bm | USART_TXEN_bm | USART_ODME_bm;
-    317e:	80 e4       	ldi	r24, 0x40	; 64
+    317e:	8f e3       	ldi	r24, 0x3F	; 63
     3180:	9b e0       	ldi	r25, 0x0B	; 11
     3182:	9f 93       	push	r25
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:117
@@ -9883,7 +9882,7 @@ connect():
     31ec:	a1 f7       	brne	.-24     	; 0x31d6 <TPI::connect()+0x144>
     31ee:	f8 9a       	sbi	0x1f, 0	; 31
     31f0:	ff 98       	cbi	0x1f, 7	; 31
-    31f2:	88 e6       	ldi	r24, 0x68	; 104
+    31f2:	87 e6       	ldi	r24, 0x67	; 103
     31f4:	e8 2e       	mov	r14, r24
 /Users/askn/Develop/UPDI4AVR-USB/src/tpi.cpp:266
 
@@ -10033,7 +10032,7 @@ connect():
     32a2:	8f 93       	push	r24
     32a4:	3f 93       	push	r19
     32a6:	2f 93       	push	r18
-    32a8:	87 e5       	ldi	r24, 0x57	; 87
+    32a8:	86 e5       	ldi	r24, 0x56	; 86
     32aa:	9b e0       	ldi	r25, 0x0B	; 11
     32ac:	9f 93       	push	r25
     32ae:	8f 93       	push	r24
@@ -10169,7 +10168,7 @@ void delay_micros (uint32_t _us) {
     idle_clock(16);
 
     while (!(send_bytes(_init, sizeof(_init)) && recv_byte() && RXDATA == PDI_GVAL)) {
-    3336:	8d e7       	ldi	r24, 0x7D	; 125
+    3336:	8c e7       	ldi	r24, 0x7C	; 124
     3338:	9a e0       	ldi	r25, 0x0A	; 10
     333a:	9f 93       	push	r25
     333c:	8f 93       	push	r24
@@ -10597,7 +10596,7 @@ connect():
     3528:	b1 f1       	breq	.+108    	; 0x3596 <UPDI::connect()+0xfc>
     352a:	1f 92       	push	r1
     352c:	cf 93       	push	r28
-    352e:	80 e6       	ldi	r24, 0x60	; 96
+    352e:	8f e5       	ldi	r24, 0x5F	; 95
     3530:	9c e0       	ldi	r25, 0x0C	; 12
     3532:	9f 93       	push	r25
 /Users/askn/Develop/UPDI4AVR-USB/src/updi.cpp:403
@@ -10835,7 +10834,7 @@ change_updi():
 /Users/askn/Develop/UPDI4AVR-USB/src/usart.cpp:101
       D1PRINTF(" USART=UPDI XCLK=%d BAUD=%04X\r\n", _xclk, USART0_BAUD);
     3632:	8f 93       	push	r24
-    3634:	89 e1       	ldi	r24, 0x19	; 25
+    3634:	88 e1       	ldi	r24, 0x18	; 24
     3636:	9c e0       	ldi	r25, 0x0C	; 12
     3638:	9f 93       	push	r25
     363a:	8f 93       	push	r24
@@ -10899,7 +10898,7 @@ static __inline__ void __iRestore(const  uint8_t *__s)
     3688:	9f 93       	push	r25
     368a:	1f 92       	push	r1
     368c:	8f 93       	push	r24
-    368e:	89 e3       	ldi	r24, 0x39	; 57
+    368e:	88 e3       	ldi	r24, 0x38	; 56
     3690:	9c e0       	ldi	r25, 0x0C	; 12
     3692:	9f 93       	push	r25
     3694:	8f 93       	push	r24
@@ -10980,7 +10979,7 @@ static __inline__ void __iRestore(const  uint8_t *__s)
     36e4:	80 91 68 63 	lds	r24, 0x6368	; 0x806368 <_sib+0xa>
     36e8:	1f 92       	push	r1
     36ea:	8f 93       	push	r24
-    36ec:	8b e4       	ldi	r24, 0x4B	; 75
+    36ec:	8a e4       	ldi	r24, 0x4A	; 74
     36ee:	9c e0       	ldi	r25, 0x0C	; 12
     36f0:	9f 93       	push	r25
 /Users/askn/Develop/UPDI4AVR-USB/src/updi.cpp:442
@@ -11551,7 +11550,7 @@ write_memory():
     /* the address must be aligned to the top of the page. */
     while (_dwAddr & (_tpi_chunks - 1)) {
       _dwAddr--;
-    39c8:	80 e3       	ldi	r24, 0x30	; 48
+    39c8:	8f e2       	ldi	r24, 0x2F	; 47
     39ca:	9b e0       	ldi	r25, 0x0B	; 11
 /Users/askn/Develop/UPDI4AVR-USB/src/tpi.cpp:176
       _wLength++;
@@ -11594,7 +11593,7 @@ write_memory():
     3a02:	71 c0       	rjmp	.+226    	; 0x3ae6 <TPI::write_memory()+0x1ae>
     3a04:	b1 2c       	mov	r11, r1
     3a06:	a1 2c       	mov	r10, r1
-    3a08:	82 e0       	ldi	r24, 0x02	; 2
+    3a08:	81 e0       	ldi	r24, 0x01	; 1
 /Users/askn/Develop/UPDI4AVR-USB/src/tpi.cpp:190
 
     /* For the flash code area, the page erase can be */
@@ -11769,7 +11768,7 @@ write_memory():
     3aee:	af 92       	push	r10
 /Users/askn/Develop/UPDI4AVR-USB/src/tpi.cpp:223
       _dwAddr += _tpi_chunks;
-    3af0:	8a e1       	ldi	r24, 0x1A	; 26
+    3af0:	89 e1       	ldi	r24, 0x19	; 25
     3af2:	9b e0       	ldi	r25, 0x0B	; 11
     3af4:	9f 93       	push	r25
 /Users/askn/Develop/UPDI4AVR-USB/src/tpi.cpp:203
@@ -11959,7 +11958,7 @@ read_memory():
     3bde:	cf 93       	push	r28
     3be0:	1f 93       	push	r17
     3be2:	0f 93       	push	r16
-    3be4:	83 ef       	ldi	r24, 0xF3	; 243
+    3be4:	82 ef       	ldi	r24, 0xF2	; 242
     3be6:	9a e0       	ldi	r25, 0x0A	; 10
     3be8:	9f 93       	push	r25
     3bea:	8f 93       	push	r24
@@ -12064,7 +12063,7 @@ erase_memory():
     3c6c:	79 f5       	brne	.+94     	; 0x3ccc <TPI::erase_memory()+0x78>
     3c6e:	df 93       	push	r29
     3c70:	cf 93       	push	r28
-    3c72:	80 ee       	ldi	r24, 0xE0	; 224
+    3c72:	8f ed       	ldi	r24, 0xDF	; 223
     3c74:	9a e0       	ldi	r25, 0x0A	; 10
     3c76:	9f 93       	push	r25
     3c78:	8f 93       	push	r24
@@ -12146,7 +12145,7 @@ erase_memory():
 /Users/askn/Develop/UPDI4AVR-USB/src/tpi.cpp:140
         && set_sst(0xFF)
     3cce:	cf 93       	push	r28
-    3cd0:	8a ec       	ldi	r24, 0xCA	; 202
+    3cd0:	89 ec       	ldi	r24, 0xC9	; 201
     3cd2:	9a e0       	ldi	r25, 0x0A	; 10
     3cd4:	9f 93       	push	r25
     3cd6:	8f 93       	push	r24
@@ -13185,7 +13184,7 @@ write_byte():
     4244:	f2 99       	sbic	0x1e, 2	; 30
     4246:	28 c0       	rjmp	.+80     	; 0x4298 <__vector_19+0x86>
 __vector_19():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:491
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:492
   void read_drop (void) {
     if (bit_is_set(EP_CDO.STATUS, USB_BUSNAK_bp)) ep_cdo_listen();
   }
@@ -13195,15 +13194,15 @@ __vector_19():
     4248:	84 e2       	ldi	r24, 0x24	; 36
     424a:	94 e6       	ldi	r25, 0x64	; 100
 write_byte():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:492
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:493
     uint8_t _c = USART0_RXDATAL;
     424c:	e0 91 a8 64 	lds	r30, 0x64A8	; 0x8064a8 <USB::_send_count>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:493
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:494
     if (!(_d & (USART_BUFOVF_bm | USART_FERR_bm | USART_PERR_bm))) {
     4250:	31 e0       	ldi	r19, 0x01	; 1
     4252:	3e 0f       	add	r19, r30
     4254:	30 93 a8 64 	sts	0x64A8, r19	; 0x8064a8 <USB::_send_count>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:455
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:456
   // MARK: VCP
 
   void write_byte (const uint8_t _c) {
@@ -13213,7 +13212,7 @@ write_byte():
     4258:	e8 0f       	add	r30, r24
     425a:	f9 2f       	mov	r31, r25
     425c:	f1 1d       	adc	r31, r1
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:457
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:458
       : &EP_MEM.cdi_data[0];
     _buf[_send_count++] = _c;
     425e:	20 83       	st	Z, r18
@@ -13225,7 +13224,7 @@ write_byte():
 vcp_receiver():
     426e:	8c b3       	in	r24, 0x1c	; 28
     4270:	c8 2b       	or	r28, r24
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:458
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:459
     if (_send_count < 64) _sof_count = VCP_BULK_DELAY;
     4272:	cc bb       	out	0x1c, r28	; 28
 __vector_19():
@@ -13235,7 +13234,7 @@ __vector_19():
     427a:	bf 91       	pop	r27
     427c:	af 91       	pop	r26
     427e:	9f 91       	pop	r25
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:496
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:497
     uint8_t _d = USART0_RXDATAH;
     uint8_t _c = USART0_RXDATAL;
     if (!(_d & (USART_BUFOVF_bm | USART_FERR_bm | USART_PERR_bm))) {
@@ -13273,7 +13272,7 @@ __vector_4():
     42a4:	11 24       	eor	r1, r1
     42a6:	62 e0       	ldi	r22, 0x02	; 2
     42a8:	70 e0       	ldi	r23, 0x00	; 0
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:455
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:456
   // MARK: VCP
 
   void write_byte (const uint8_t _c) {
@@ -13286,7 +13285,7 @@ __vector_4():
 
 000042b2 <Timeout::stop()>:
 _ZN7Timeout4stopEv():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:459
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:460
       : &EP_MEM.cdi_data[0];
     _buf[_send_count++] = _c;
     if (_send_count < 64) _sof_count = VCP_BULK_DELAY;
@@ -13417,7 +13416,7 @@ command():
       if (!(*fail_p)()) break;
     }
     return _result;
-    433a:	25 ec       	ldi	r18, 0xC5	; 197
+    433a:	24 ec       	ldi	r18, 0xC4	; 196
     433c:	3a e0       	ldi	r19, 0x0A	; 10
 /Users/askn/Develop/UPDI4AVR-USB/src/timeout.cpp:85
   }
@@ -14509,7 +14508,7 @@ _ZN14HarfUART_ClassC2EP12USART_structPK14UART_portmux_t():
     48ac:	90 e6       	ldi	r25, 0x60	; 96
     48ae:	80 83       	st	Z, r24
     48b0:	91 83       	std	Z+1, r25	; 0x01
-    48b2:	8e ef       	ldi	r24, 0xFE	; 254
+    48b2:	8d ef       	ldi	r24, 0xFD	; 253
 /Users/askn/Library/Arduino15/packages/MultiX-Zinnia/hardware/modernAVR/0.4.11/cores/modernAVR/api/HarfUART.h:28
 private:
   const UART_portmux_t* portmux;
@@ -14937,7 +14936,7 @@ main():
   Serial.begin(CONSOLE_BAUD);
   delay_millis(600);  /* VCP setup delay */
   D1PRINTF("\n<startup>\r\n");
-    4a70:	86 e4       	ldi	r24, 0x46	; 70
+    4a70:	85 e4       	ldi	r24, 0x45	; 69
     4a72:	9a e0       	ldi	r25, 0x0A	; 10
     4a74:	9f 93       	push	r25
     4a76:	8f 93       	push	r24
@@ -14953,7 +14952,7 @@ main():
     4a88:	8d e2       	ldi	r24, 0x2D	; 45
     4a8a:	8f 93       	push	r24
     4a8c:	1f 92       	push	r1
-    4a8e:	8a e3       	ldi	r24, 0x3A	; 58
+    4a8e:	89 e3       	ldi	r24, 0x39	; 57
     4a90:	9a e0       	ldi	r25, 0x0A	; 10
     4a92:	9f 93       	push	r25
     4a94:	8f 93       	push	r24
@@ -14962,7 +14961,7 @@ main():
     4a9a:	0e 94 25 0e 	call	0x1c4a	; 0x1c4a <Print::printf(PGM_t const*, ...) [clone .constprop.15]>
 /Users/askn/Develop/UPDI4AVR-USB/src/main.cpp:99
   D1PRINTF("_AVR_IOXXX_H_=" _AVR_IOXXX_H_ "\r\n");
-    4a9e:	8c e1       	ldi	r24, 0x1C	; 28
+    4a9e:	8b e1       	ldi	r24, 0x1B	; 27
     4aa0:	9a e0       	ldi	r25, 0x0A	; 10
     4aa2:	9f 93       	push	r25
     4aa4:	8f 93       	push	r24
@@ -14974,7 +14973,7 @@ main():
     4aae:	1f 92       	push	r1
     4ab0:	86 e6       	ldi	r24, 0x66	; 102
     4ab2:	8f 93       	push	r24
-    4ab4:	8a e0       	ldi	r24, 0x0A	; 10
+    4ab4:	89 e0       	ldi	r24, 0x09	; 9
     4ab6:	9a e0       	ldi	r25, 0x0A	; 10
     4ab8:	9f 93       	push	r25
     4aba:	8f 93       	push	r24
@@ -14983,7 +14982,7 @@ main():
     4ac0:	0e 94 25 0e 	call	0x1c4a	; 0x1c4a <Print::printf(PGM_t const*, ...) [clone .constprop.15]>
 /Users/askn/Develop/UPDI4AVR-USB/src/main.cpp:101
   D1PRINTF("HAL_PROFILE=" HAL_PROFILE "\r\n");
-    4ac4:	8a ee       	ldi	r24, 0xEA	; 234
+    4ac4:	89 ee       	ldi	r24, 0xE9	; 233
     4ac6:	99 e0       	ldi	r25, 0x09	; 9
     4ac8:	9f 93       	push	r25
     4aca:	8f 93       	push	r24
@@ -15027,7 +15026,7 @@ main():
     4af4:	90 e0       	ldi	r25, 0x00	; 0
     4af6:	68 d9       	rcall	.-3376   	; 0x3dc8 <Timeout::delay_rtc_millis(unsigned int)>
 setup_device():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:248
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:249
     EP_MEM.cci_header.wLength       = 2;
     EP_MEM.cci_wValue               = _state;
   }
@@ -15040,10 +15039,10 @@ setup_device():
     4b00:	83 30       	cpi	r24, 0x03	; 3
     4b02:	11 f0       	breq	.+4      	; 0x4b08 <main+0x24c>
     4b04:	0e 94 dd 0e 	call	0x1dba	; 0x1dba <SYS::LED_Flash()>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:249
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:250
     USB0_ADDR = 0;
     4b08:	10 92 03 0c 	sts	0x0C03, r1	; 0x800c03 <__TEXT_REGION_LENGTH__+0x7f0c03>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:250
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:251
     if (USB0_CTRLA || _force) {
     4b0c:	80 91 00 0c 	lds	r24, 0x0C00	; 0x800c00 <__TEXT_REGION_LENGTH__+0x7f0c00>
     4b10:	0e 94 0f 12 	call	0x241e	; 0x241e <USB::setup_device(bool) [clone .part.1]>
@@ -15054,7 +15053,7 @@ main():
 
   /* From here on, it's an endless loop. */
   D1PRINTF("<WAITING>\r\n");
-    4b14:	8e ed       	ldi	r24, 0xDE	; 222
+    4b14:	8d ed       	ldi	r24, 0xDD	; 221
     4b16:	99 e0       	ldi	r25, 0x09	; 9
     4b18:	9f 93       	push	r25
     4b1a:	8f 93       	push	r24
@@ -15072,7 +15071,7 @@ main():
     4b30:	91 e0       	ldi	r25, 0x01	; 1
     4b32:	9f 83       	std	Y+7, r25	; 0x07
 set_cci_data():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:242
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:243
   void set_cci_data (uint8_t _state) {
     _set_serial_state = _state;
     EP_MEM.cci_header.bmRequestType = 0xA1; /* REQTYPE_DIRECTION | REQTYPE_CLASS | RECIPIENT_INTERFACE */
@@ -15082,13 +15081,13 @@ set_cci_data():
     4b34:	22 24       	eor	r2, r2
     4b36:	23 94       	inc	r2
     4b38:	31 2c       	mov	r3, r1
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:243
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:244
     EP_MEM.cci_header.wLength       = 2;
     4b3a:	22 e0       	ldi	r18, 0x02	; 2
     4b3c:	42 2e       	mov	r4, r18
     4b3e:	51 2c       	mov	r5, r1
 ep_cci_listen():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:328
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:329
     else return false;
   }
 
@@ -15112,7 +15111,7 @@ main():
     4b54:	e1 e0       	ldi	r30, 0x01	; 1
     4b56:	ef 83       	std	Y+7, r30	; 0x07
 handling_bus_events():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:725
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:726
 
   /*** This process is equivalent to a bus interrupt. ***/
   /* The reason for using polling is to prioritize VCP performance. */
@@ -15120,10 +15119,10 @@ handling_bus_events():
   void handling_bus_events (void) {
     uint8_t busstate = USB0_INTFLAGSA;
     4b58:	f0 90 0a 0c 	lds	r15, 0x0C0A	; 0x800c0a <__TEXT_REGION_LENGTH__+0x7f0c0a>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:726
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:727
     USB0_INTFLAGSA = busstate;
     4b5c:	f0 92 0a 0c 	sts	0x0C0A, r15	; 0x800c0a <__TEXT_REGION_LENGTH__+0x7f0c0a>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:752
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:753
     }
     if (bit_is_set(busstate, USB_RESUME_bp)) {
       D1PRINTF("<RESUME:%04X>\r\n", USB0_ADDR);
@@ -15132,7 +15131,7 @@ handling_bus_events():
     if (bit_is_set(busstate, USB_SOF_bp)) {
     4b60:	f7 fe       	sbrs	r15, 7
     4b62:	73 c0       	rjmp	.+230    	; 0x4c4a <main+0x38e>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:754
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:755
       /* If there is deferred data for a block transfer, it is sent here. */
       if (_sof_count > 0 && 0 == (--_sof_count)) {
     4b64:	80 91 a5 64 	lds	r24, 0x64A5	; 0x8064a5 <USB::_sof_count>
@@ -15144,18 +15143,18 @@ handling_bus_events():
     4b74:	80 93 a5 64 	sts	0x64A5, r24	; 0x8064a5 <USB::_sof_count>
     4b78:	81 11       	cpse	r24, r1
     4b7a:	67 c0       	rjmp	.+206    	; 0x4c4a <main+0x38e>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:755
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:756
         if (bit_is_set(EP_CDI.STATUS, USB_BUSNAK_bp) && _send_count > 0) {
     4b7c:	80 91 ec 64 	lds	r24, 0x64EC	; 0x8064ec <EP_TABLE+0x40>
     4b80:	81 ff       	sbrs	r24, 1
     4b82:	05 c0       	rjmp	.+10     	; 0x4b8e <main+0x2d2>
     4b84:	80 91 a8 64 	lds	r24, 0x64A8	; 0x8064a8 <USB::_send_count>
     4b88:	81 11       	cpse	r24, r1
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:756
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:757
           ep_cdi_listen();
     4b8a:	0e 94 5a 07 	call	0xeb4	; 0xeb4 <USB::ep_cdi_listen()>
 cci_interrupt():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:429
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:430
     uint8_t _c = VPORTD_IN;
     _value.bValue = (_c ^ 0x03) & 0x03;
     #else
@@ -15164,7 +15163,7 @@ cci_interrupt():
      && bit_is_clear(GPCONF, GPCONF_BRK_bp)) {
     4b8e:	f1 9b       	sbis	0x1e, 1	; 30
     4b90:	8d c0       	rjmp	.+282    	; 0x4cac <main+0x3f0>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:428
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:429
     /*    bRxCarrier, bTxCarrier, and bRingSignal. */
     uint8_t _c = VPORTD_IN;
     _value.bValue = (_c ^ 0x03) & 0x03;
@@ -15173,14 +15172,14 @@ cci_interrupt():
      && bit_is_set(GPCONF, GPCONF_OPN_bp)
     4b92:	f4 9b       	sbis	0x1e, 4	; 30
     4b94:	8b c0       	rjmp	.+278    	; 0x4cac <main+0x3f0>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:429
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:430
      && bit_is_clear(GPCONF, GPCONF_BRK_bp)) {
     4b96:	f3 99       	sbic	0x1e, 3	; 30
     4b98:	89 c0       	rjmp	.+274    	; 0x4cac <main+0x3f0>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:430
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:431
       _value.bValue = 0x03; /* bRxCarrier(DCD) and bTxCarrier(DSR) */
     4b9a:	83 e0       	ldi	r24, 0x03	; 3
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:436
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:437
     }
     else {
       _value.bValue = 0x04; /* bBreak(BREAK) */
@@ -15189,24 +15188,24 @@ cci_interrupt():
     if (bit_is_set(RXSTAT, USART_FERR_bp))   /* 0x04 */ _value.bFraming = true; /* 0x10 */
     4b9c:	e2 99       	sbic	0x1c, 2	; 28
     4b9e:	80 61       	ori	r24, 0x10	; 16
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:437
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:438
     if (bit_is_set(RXSTAT, USART_PERR_bp))   /* 0x02 */ _value.bParity  = true; /* 0x20 */
     4ba0:	e1 99       	sbic	0x1c, 1	; 28
     4ba2:	80 62       	ori	r24, 0x20	; 32
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:438
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:439
     if (bit_is_set(RXSTAT, USART_BUFOVF_bp)) /* 0x40 */ _value.bOverRun = true; /* 0x40 */
     4ba4:	e6 99       	sbic	0x1c, 6	; 28
     4ba6:	80 64       	ori	r24, 0x40	; 64
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:439
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:440
     RXSTAT = 0;
     4ba8:	1c ba       	out	0x1c, r1	; 28
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:440
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:441
     if (_set_serial_state != _value.bValue) {
     4baa:	90 91 a4 64 	lds	r25, 0x64A4	; 0x8064a4 <USB::_set_serial_state>
     4bae:	89 17       	cp	r24, r25
     4bb0:	09 f4       	brne	.+2      	; 0x4bb4 <main+0x2f8>
     4bb2:	4b c0       	rjmp	.+150    	; 0x4c4a <main+0x38e>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:442
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:443
       /* If it doesn't meet your expectations, you should reconfirm it after the delay. */
       if (_value.bValue ^ 0x03) _sof_count = SERIALSTATE_DELAY;
     4bb4:	83 30       	cpi	r24, 0x03	; 3
@@ -15214,7 +15213,7 @@ cci_interrupt():
     4bb8:	98 e0       	ldi	r25, 0x08	; 8
     4bba:	90 93 a5 64 	sts	0x64A5, r25	; 0x8064a5 <USB::_sof_count>
 set_cci_data():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:238
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:239
     if (_size) memcpy_P(_buffer, _pgmem, _size);
     return _size;
   }
@@ -15222,33 +15221,33 @@ set_cci_data():
   void set_cci_data (uint8_t _state) {
     _set_serial_state = _state;
     4bbe:	80 93 a4 64 	sts	0x64A4, r24	; 0x8064a4 <USB::_set_serial_state>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:239
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:240
     EP_MEM.cci_header.bmRequestType = 0xA1; /* REQTYPE_DIRECTION | REQTYPE_CLASS | RECIPIENT_INTERFACE */
     4bc2:	91 ea       	ldi	r25, 0xA1	; 161
     4bc4:	90 93 94 63 	sts	0x6394, r25	; 0x806394 <EP_MEM+0x8>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:240
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:241
     EP_MEM.cci_header.bRequest      = 0x20; /* CDC_REQ_SerialState */
     4bc8:	90 e2       	ldi	r25, 0x20	; 32
     4bca:	90 93 95 63 	sts	0x6395, r25	; 0x806395 <EP_MEM+0x9>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:241
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:242
     EP_MEM.cci_header.wValue        = 0;
     4bce:	10 92 96 63 	sts	0x6396, r1	; 0x806396 <EP_MEM+0xa>
     4bd2:	10 92 97 63 	sts	0x6397, r1	; 0x806397 <EP_MEM+0xb>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:242
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:243
     EP_MEM.cci_header.wIndex        = 1;    /* Interface#1 */
     4bd6:	20 92 98 63 	sts	0x6398, r2	; 0x806398 <EP_MEM+0xc>
     4bda:	30 92 99 63 	sts	0x6399, r3	; 0x806399 <EP_MEM+0xd>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:243
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:244
     EP_MEM.cci_header.wLength       = 2;
     4bde:	40 92 9a 63 	sts	0x639A, r4	; 0x80639a <EP_MEM+0xe>
     4be2:	50 92 9b 63 	sts	0x639B, r5	; 0x80639b <EP_MEM+0xf>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:244
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:245
     EP_MEM.cci_wValue               = _state;
     4be6:	90 e0       	ldi	r25, 0x00	; 0
     4be8:	80 93 9c 63 	sts	0x639C, r24	; 0x80639c <EP_MEM+0x10>
     4bec:	90 93 9d 63 	sts	0x639D, r25	; 0x80639d <EP_MEM+0x11>
 is_ep_cci():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:281
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:282
   }
 
   // MARK: Endpoint
@@ -15257,7 +15256,7 @@ is_ep_cci():
   bool is_ep_cci (void) { return bit_is_set(EP_CCI.STATUS, USB_BUSNAK_bp); }
     4bf0:	80 91 dc 64 	lds	r24, 0x64DC	; 0x8064dc <EP_TABLE+0x30>
 ep_cci_listen():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:327
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:328
     }
     else return false;
   }
@@ -15266,7 +15265,7 @@ ep_cci_listen():
     if (is_ep_cci()) {
     4bf4:	81 ff       	sbrs	r24, 1
     4bf6:	5c c0       	rjmp	.+184    	; 0x4cb0 <main+0x3f4>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:328
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:329
       D1PRINTF("CCI=");
     4bf8:	26 eb       	ldi	r18, 0xB6	; 182
     4bfa:	32 e0       	ldi	r19, 0x02	; 2
@@ -15275,7 +15274,7 @@ ep_cci_listen():
     4c00:	1f 93       	push	r17
     4c02:	0f 93       	push	r16
     4c04:	0e 94 25 0e 	call	0x1c4a	; 0x1c4a <Print::printf(PGM_t const*, ...) [clone .constprop.15]>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:329
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:330
       D1PRINTHEX(&EP_MEM.cci_data, 10, ':');
     4c08:	26 ea       	ldi	r18, 0xA6	; 166
     4c0a:	30 e6       	ldi	r19, 0x60	; 96
@@ -15287,13 +15286,13 @@ ep_cci_listen():
     4c16:	93 e6       	ldi	r25, 0x63	; 99
     4c18:	0e 94 bb 0d 	call	0x1b76	; 0x1b76 <Print::printHex(void const*, unsigned int, char, unsigned int, char const*) [clone .constprop.11]>
     4c1c:	0e 94 19 0e 	call	0x1c32	; 0x1c32 <Print::ln()>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:330
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:331
       EP_CCI.CNT = 10;
     4c20:	8a e0       	ldi	r24, 0x0A	; 10
     4c22:	90 e0       	ldi	r25, 0x00	; 0
     4c24:	80 93 de 64 	sts	0x64DE, r24	; 0x8064de <EP_TABLE+0x32>
     4c28:	90 93 df 64 	sts	0x64DF, r25	; 0x8064df <EP_TABLE+0x33>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:331
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:332
       EP_CCI.MCNT = 0;
     4c2c:	10 92 e2 64 	sts	0x64E2, r1	; 0x8064e2 <EP_TABLE+0x36>
     4c30:	10 92 e3 64 	sts	0x64E3, r1	; 0x8064e3 <EP_TABLE+0x37>
@@ -15301,17 +15300,17 @@ ep_cci_listen():
     4c36:	0f 90       	pop	r0
     4c38:	0f 90       	pop	r0
     4c3a:	0f 90       	pop	r0
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:332
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:333
       loop_until_bit_is_clear(USB0_INTFLAGSB, USB_RMWBUSY_bp);
     4c3c:	80 91 0b 0c 	lds	r24, 0x0C0B	; 0x800c0b <__TEXT_REGION_LENGTH__+0x7f0c0b>
     4c40:	82 fd       	sbrc	r24, 2
     4c42:	fc cf       	rjmp	.-8      	; 0x4c3c <main+0x380>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:333
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:334
       USB_EP_STATUS_CLR(USB_EP_CCI) = ~USB_TOGGLE_bm;
     4c44:	8e ef       	ldi	r24, 0xFE	; 254
     4c46:	80 93 4a 0c 	sts	0x0C4A, r24	; 0x800c4a <__TEXT_REGION_LENGTH__+0x7f0c4a>
 handling_bus_events():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:762
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:763
         }
         cci_interrupt();
       }
@@ -15321,14 +15320,14 @@ handling_bus_events():
     4c4a:	8f 2d       	mov	r24, r15
     4c4c:	80 76       	andi	r24, 0x60	; 96
     4c4e:	b1 f1       	breq	.+108    	; 0x4cbc <main+0x400>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:765
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:766
       /* This implementation does not transition to power saving mode. */
       /* This is only passed when the USB cable is unplugged. */
       if (bit_is_set(GPCONF, GPCONF_USB_bp)) {
     4c50:	f0 9b       	sbis	0x1e, 0	; 30
     4c52:	32 c0       	rjmp	.+100    	; 0x4cb8 <main+0x3fc>
 usb_detach():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:271
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:272
       USB0_CTRLA = USB_ENABLE_bm | (USB_ENDPOINTS_MAX - 1);
     }
   }
@@ -15338,10 +15337,10 @@ usb_detach():
     4c54:	80 91 01 0c 	lds	r24, 0x0C01	; 0x800c01 <__TEXT_REGION_LENGTH__+0x7f0c01>
     4c58:	8e 7f       	andi	r24, 0xFE	; 254
     4c5a:	80 93 01 0c 	sts	0x0C01, r24	; 0x800c01 <__TEXT_REGION_LENGTH__+0x7f0c01>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:272
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:273
     bit_clear(GPCONF, GPCONF_USB_bp);
     4c5e:	f0 98       	cbi	0x1e, 0	; 30
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:273
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:274
     wdt_reset();
     4c60:	a8 95       	wdr
 delay_millis():
@@ -15356,7 +15355,7 @@ delay_millis():
     4c70:	00 c0       	rjmp	.+0      	; 0x4c72 <main+0x3b6>
     4c72:	00 00       	nop
 usb_detach():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:275
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:276
     SYS::delay_125ms();
     USB0_CTRLA = 0;
     4c74:	10 92 00 0c 	sts	0x0C00, r1	; 0x800c00 <__TEXT_REGION_LENGTH__+0x7f0c00>
@@ -15394,7 +15393,7 @@ reboot():
     4ca8:	0f 90       	pop	r0
     4caa:	ff cf       	rjmp	.-2      	; 0x4caa <main+0x3ee>
 cci_interrupt():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:433
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:434
      && bit_is_set(GPCONF, GPCONF_OPN_bp)
      && bit_is_clear(GPCONF, GPCONF_BRK_bp)) {
       _value.bValue = 0x03; /* bRxCarrier(DCD) and bTxCarrier(DSR) */
@@ -15404,7 +15403,7 @@ cci_interrupt():
     4cac:	84 e0       	ldi	r24, 0x04	; 4
     4cae:	76 cf       	rjmp	.-276    	; 0x4b9c <main+0x2e0>
 ep_cci_listen():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:337
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:338
       loop_until_bit_is_clear(USB0_INTFLAGSB, USB_RMWBUSY_bp);
       USB_EP_STATUS_CLR(USB_EP_CCI) = ~USB_TOGGLE_bm;
     }
@@ -15415,7 +15414,7 @@ ep_cci_listen():
     4cb2:	80 93 a5 64 	sts	0x64A5, r24	; 0x8064a5 <USB::_sof_count>
     4cb6:	c9 cf       	rjmp	.-110    	; 0x4c4a <main+0x38e>
 handling_bus_events():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:770
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:771
       if (bit_is_set(GPCONF, GPCONF_USB_bp)) {
         /* System reboot */
         usb_detach();
@@ -15424,13 +15423,13 @@ handling_bus_events():
       bit_set(busstate, USB_RESET_bp);
     4cb8:	68 94       	set
     4cba:	f4 f8       	bld	r15, 4
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:772
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:773
     }
     if (bit_is_set(busstate, USB_RESET_bp)) {
     4cbc:	f4 fe       	sbrs	r15, 4
     4cbe:	0d c0       	rjmp	.+26     	; 0x4cda <main+0x41e>
 setup_device():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:248
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:249
     EP_MEM.cci_header.wLength       = 2;
     EP_MEM.cci_wValue               = _state;
   }
@@ -15441,16 +15440,16 @@ setup_device():
     4cc4:	83 30       	cpi	r24, 0x03	; 3
     4cc6:	11 f0       	breq	.+4      	; 0x4ccc <main+0x410>
     4cc8:	0e 94 dd 0e 	call	0x1dba	; 0x1dba <SYS::LED_Flash()>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:249
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:250
     USB0_ADDR = 0;
     4ccc:	10 92 03 0c 	sts	0x0C03, r1	; 0x800c03 <__TEXT_REGION_LENGTH__+0x7f0c03>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:250
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:251
     if (USB0_CTRLA || _force) {
     4cd0:	80 91 00 0c 	lds	r24, 0x0C00	; 0x800c00 <__TEXT_REGION_LENGTH__+0x7f0c00>
     4cd4:	81 11       	cpse	r24, r1
     4cd6:	0e 94 0f 12 	call	0x241e	; 0x241e <USB::setup_device(bool) [clone .part.1]>
 is_ep_setup():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:280
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:281
     USB0_CTRLA = 0;
   }
 
@@ -15467,7 +15466,7 @@ main():
     4cde:	84 ff       	sbrs	r24, 4
     4ce0:	1b c2       	rjmp	.+1078   	; 0x5118 <main+0x85c>
 handling_control_transactions():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:695
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:696
   /*** Accept the EP0 setup packet. ***/
   /* This process is equivalent to a endpoint interrupt. */
   /* The reason for using polling is to prioritize VCP performance. */
@@ -15475,11 +15474,11 @@ handling_control_transactions():
     bool _listen = false;
     uint8_t bmRequestType = EP_MEM.req_data.bmRequestType;
     4ce2:	f0 90 8c 63 	lds	r15, 0x638C	; 0x80638c <EP_MEM>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:696
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:697
     EVSYS_SWEVENTA = EVSYS_SWEVENTA_CH2_gc;
     4ce6:	84 e0       	ldi	r24, 0x04	; 4
     4ce8:	80 93 00 02 	sts	0x0200, r24	; 0x800200 <__TEXT_REGION_LENGTH__+0x7f0200>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:697
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:698
     D1PRINTF("RQ=%04X:%02X:%02X:%04X:%04X:%04X\r\n",
     4cec:	80 91 b6 64 	lds	r24, 0x64B6	; 0x8064b6 <EP_TABLE+0xa>
     4cf0:	90 91 b7 64 	lds	r25, 0x64B7	; 0x8064b7 <EP_TABLE+0xb>
@@ -15503,14 +15502,14 @@ handling_control_transactions():
     4d26:	2f 93       	push	r18
     4d28:	9f 93       	push	r25
     4d2a:	8f 93       	push	r24
-    4d2c:	e1 e9       	ldi	r30, 0x91	; 145
+    4d2c:	e0 e9       	ldi	r30, 0x90	; 144
     4d2e:	f4 e0       	ldi	r31, 0x04	; 4
     4d30:	ff 93       	push	r31
     4d32:	ef 93       	push	r30
     4d34:	1f 93       	push	r17
     4d36:	0f 93       	push	r16
     4d38:	0e 94 25 0e 	call	0x1c4a	; 0x1c4a <Print::printf(PGM_t const*, ...) [clone .constprop.15]>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:701
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:702
       EP_REQ.CNT, EP_MEM.req_data.bmRequestType, EP_MEM.req_data.bRequest,
       EP_MEM.req_data.wValue, EP_MEM.req_data.wIndex, EP_MEM.req_data.wLength);
     /* Accepts subsequent EP0_DATA packets as needed. */
@@ -15519,16 +15518,16 @@ handling_control_transactions():
     4d3e:	de bf       	out	0x3e, r29	; 62
     4d40:	f7 fe       	sbrs	r15, 7
     4d42:	0e 94 9a 07 	call	0xf34	; 0xf34 <USB::ep_req_listen()>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:702
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:703
     bmRequestType &= (3 << 5);
     4d46:	8f 2d       	mov	r24, r15
     4d48:	80 76       	andi	r24, 0x60	; 96
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:703
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:704
     if (bmRequestType == (0 << 5)) {
     4d4a:	09 f0       	breq	.+2      	; 0x4d4e <main+0x492>
     4d4c:	9a c2       	rjmp	.+1332   	; 0x5282 <main+0x9c6>
 request_standard():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:543
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:544
   // MARK: USB Session
 
   /*** USB Standard Request Enumeration. ***/
@@ -15536,22 +15535,22 @@ request_standard():
     bool _listen = true;
     uint8_t bRequest = EP_MEM.req_data.bRequest;
     4d4e:	80 91 8d 63 	lds	r24, 0x638D	; 0x80638d <EP_MEM+0x1>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:544
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:545
     if (bRequest == 0x00) {       /* GET_STATUS */
     4d52:	81 11       	cpse	r24, r1
     4d54:	0d c0       	rjmp	.+26     	; 0x4d70 <main+0x4b4>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:545
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:546
       EP_MEM.res_data[0] = 0;
     4d56:	10 92 94 63 	sts	0x6394, r1	; 0x806394 <EP_MEM+0x8>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:546
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:547
       EP_MEM.res_data[1] = 0;
     4d5a:	10 92 95 63 	sts	0x6395, r1	; 0x806395 <EP_MEM+0x9>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:547
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:548
       EP_RES.CNT = 2;
     4d5e:	40 92 be 64 	sts	0x64BE, r4	; 0x8064be <EP_TABLE+0x12>
     4d62:	50 92 bf 64 	sts	0x64BF, r5	; 0x8064bf <EP_TABLE+0x13>
 handling_control_transactions():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:715
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:716
     else if (bmRequestType == (2 << 5)) {
       _listen = request_vendor();
     }
@@ -15559,12 +15558,12 @@ handling_control_transactions():
     if (_listen) {
       ep_res_listen();
     4d66:	0e 94 8e 07 	call	0xf1c	; 0xf1c <USB::ep_res_listen()>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:716
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:717
       ep_req_listen();
     4d6a:	0e 94 9a 07 	call	0xf34	; 0xf34 <USB::ep_req_listen()>
     4d6e:	cf c1       	rjmp	.+926    	; 0x510e <main+0x852>
 request_standard():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:549
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:550
     if (bRequest == 0x00) {       /* GET_STATUS */
       EP_MEM.res_data[0] = 0;
       EP_MEM.res_data[1] = 0;
@@ -15573,7 +15572,7 @@ request_standard():
     else if (bRequest == 0x01) {  /* CLEAR_FEATURE */
     4d70:	81 30       	cpi	r24, 0x01	; 1
     4d72:	79 f5       	brne	.+94     	; 0x4dd2 <main+0x516>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:550
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:551
       D1PRINTF(" CF=%02X:%02X\r\n", EP_MEM.req_data.wValue, EP_MEM.req_data.wIndex);
     4d74:	80 91 91 63 	lds	r24, 0x6391	; 0x806391 <EP_MEM+0x5>
     4d78:	8f 93       	push	r24
@@ -15583,32 +15582,32 @@ request_standard():
     4d84:	8f 93       	push	r24
     4d86:	80 91 8e 63 	lds	r24, 0x638E	; 0x80638e <EP_MEM+0x2>
     4d8a:	8f 93       	push	r24
-    4d8c:	82 e5       	ldi	r24, 0x52	; 82
+    4d8c:	81 e5       	ldi	r24, 0x51	; 81
     4d8e:	94 e0       	ldi	r25, 0x04	; 4
     4d90:	9f 93       	push	r25
     4d92:	8f 93       	push	r24
     4d94:	1f 93       	push	r17
     4d96:	0f 93       	push	r16
     4d98:	0e 94 25 0e 	call	0x1c4a	; 0x1c4a <Print::printf(PGM_t const*, ...) [clone .constprop.15]>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:551
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:552
       if (0 == (uint8_t)EP_MEM.req_data.wValue) {
     4d9c:	cd bf       	out	0x3d, r28	; 61
     4d9e:	de bf       	out	0x3e, r29	; 62
     4da0:	80 91 8e 63 	lds	r24, 0x638E	; 0x80638e <EP_MEM+0x2>
     4da4:	81 11       	cpse	r24, r1
     4da6:	10 c0       	rjmp	.+32     	; 0x4dc8 <main+0x50c>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:554
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:555
         /* Expects an endpoint number to be passed in. Swaps the high and low */
         /* nibbles to make it a representation of the USB controller. */
         uint8_t _EP = USB_EP_ID_SWAP(EP_MEM.req_data.wIndex);
     4da8:	e0 91 90 63 	lds	r30, 0x6390	; 0x806390 <EP_MEM+0x4>
     4dac:	e2 95       	swap	r30
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:555
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:556
         loop_until_bit_is_clear(USB0_INTFLAGSB, USB_RMWBUSY_bp);
     4dae:	80 91 0b 0c 	lds	r24, 0x0C0B	; 0x800c0b <__TEXT_REGION_LENGTH__+0x7f0c0b>
     4db2:	82 fd       	sbrc	r24, 2
     4db4:	fc cf       	rjmp	.-8      	; 0x4dae <main+0x4f2>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:556
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:557
         USB_EP_STATUS_CLR(_EP) = USB_STALLED_bm | USB_BUSNAK_bm | USB_TOGGLE_bm;
     4db6:	f0 e0       	ldi	r31, 0x00	; 0
     4db8:	f5 95       	asr	r31
@@ -15620,7 +15619,7 @@ request_standard():
     4dc4:	8b e0       	ldi	r24, 0x0B	; 11
     4dc6:	80 83       	st	Z, r24
 request_class():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:682
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:683
       if (_send_break) break_on();
       else break_off();
     #if defined(CONFIG_VCP_INTERRUPT_SUPPRT)
@@ -15631,7 +15630,7 @@ request_class():
     4dcc:	10 92 bf 64 	sts	0x64BF, r1	; 0x8064bf <EP_TABLE+0x13>
     4dd0:	ca cf       	rjmp	.-108    	; 0x4d66 <main+0x4aa>
 request_standard():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:560
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:561
         loop_until_bit_is_clear(USB0_INTFLAGSB, USB_RMWBUSY_bp);
         USB_EP_STATUS_CLR(_EP) = USB_STALLED_bm | USB_BUSNAK_bm | USB_TOGGLE_bm;
       }
@@ -15640,7 +15639,7 @@ request_standard():
     else if (bRequest == 0x04) {  /* SET_FEATURE */
     4dd2:	84 30       	cpi	r24, 0x04	; 4
     4dd4:	d9 f4       	brne	.+54     	; 0x4e0c <main+0x550>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:562
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:563
       /* If used, it will be ignored. */
       D1PRINTF(" SF=%02X:%02X\r\n", EP_MEM.req_data.wValue, EP_MEM.req_data.wIndex);
     4dd6:	80 91 91 63 	lds	r24, 0x6391	; 0x806391 <EP_MEM+0x5>
@@ -15651,36 +15650,36 @@ request_standard():
     4de6:	8f 93       	push	r24
     4de8:	80 91 8e 63 	lds	r24, 0x638E	; 0x80638e <EP_MEM+0x2>
     4dec:	8f 93       	push	r24
-    4dee:	82 e4       	ldi	r24, 0x42	; 66
+    4dee:	81 e4       	ldi	r24, 0x41	; 65
     4df0:	94 e0       	ldi	r25, 0x04	; 4
     4df2:	9f 93       	push	r25
     4df4:	8f 93       	push	r24
     4df6:	1f 93       	push	r17
     4df8:	0f 93       	push	r16
     4dfa:	0e 94 25 0e 	call	0x1c4a	; 0x1c4a <Print::printf(PGM_t const*, ...) [clone .constprop.15]>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:563
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:564
       EP_RES.CNT = 0;
     4dfe:	10 92 be 64 	sts	0x64BE, r1	; 0x8064be <EP_TABLE+0x12>
     4e02:	10 92 bf 64 	sts	0x64BF, r1	; 0x8064bf <EP_TABLE+0x13>
     4e06:	cd bf       	out	0x3d, r28	; 61
     4e08:	de bf       	out	0x3e, r29	; 62
     4e0a:	ad cf       	rjmp	.-166    	; 0x4d66 <main+0x4aa>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:565
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:566
     }
     else if (bRequest == 0x05) {  /* SET_ADDRESS */
     4e0c:	85 30       	cpi	r24, 0x05	; 5
     4e0e:	e1 f4       	brne	.+56     	; 0x4e48 <main+0x58c>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:566
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:567
       uint8_t _addr = EP_MEM.req_data.wValue & 0x7F;
     4e10:	80 91 8e 63 	lds	r24, 0x638E	; 0x80638e <EP_MEM+0x2>
     4e14:	f8 2e       	mov	r15, r24
     4e16:	e8 94       	clt
     4e18:	f7 f8       	bld	r15, 7
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:567
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:568
       ep_res_listen();
     4e1a:	0e 94 8e 07 	call	0xf1c	; 0xf1c <USB::ep_res_listen()>
 ep_res_pending():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:284
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:285
 
   bool is_ep_setup (void) { return bit_is_set(EP_REQ.STATUS, USB_EPSETUP_bp); }
   bool is_ep_cci (void) { return bit_is_set(EP_CCI.STATUS, USB_BUSNAK_bp); }
@@ -15691,7 +15690,7 @@ ep_res_pending():
     4e22:	81 ff       	sbrs	r24, 1
     4e24:	fc cf       	rjmp	.-8      	; 0x4e1e <main+0x562>
 request_standard():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:569
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:570
     }
     else if (bRequest == 0x05) {  /* SET_ADDRESS */
       uint8_t _addr = EP_MEM.req_data.wValue & 0x7F;
@@ -15699,13 +15698,13 @@ request_standard():
       ep_res_pending();
       USB0_ADDR = _addr;
     4e26:	f0 92 03 0c 	sts	0x0C03, r15	; 0x800c03 <__TEXT_REGION_LENGTH__+0x7f0c03>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:570
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:571
       D1PRINTF(" USB0_ADDR=%d\r\n", _addr);
     4e2a:	1f 92       	push	r1
     4e2c:	ff 92       	push	r15
-    4e2e:	82 e3       	ldi	r24, 0x32	; 50
+    4e2e:	81 e3       	ldi	r24, 0x31	; 49
     4e30:	94 e0       	ldi	r25, 0x04	; 4
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:616
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:617
       EP_MEM.res_data[0] = 0;
       EP_RES.CNT = 1;
     }
@@ -15717,12 +15716,12 @@ request_standard():
     4e36:	1f 93       	push	r17
     4e38:	0f 93       	push	r16
     4e3a:	0e 94 25 0e 	call	0x1c4a	; 0x1c4a <Print::printf(PGM_t const*, ...) [clone .constprop.15]>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:617
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:618
       EP_RES.CNT = 0;
     4e3e:	10 92 be 64 	sts	0x64BE, r1	; 0x8064be <EP_TABLE+0x12>
     4e42:	10 92 bf 64 	sts	0x64BF, r1	; 0x8064bf <EP_TABLE+0x13>
     4e46:	e5 c1       	rjmp	.+970    	; 0x5212 <main+0x956>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:573
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:574
       ep_res_pending();
       USB0_ADDR = _addr;
       D1PRINTF(" USB0_ADDR=%d\r\n", _addr);
@@ -15732,16 +15731,16 @@ request_standard():
     4e48:	86 30       	cpi	r24, 0x06	; 6
     4e4a:	09 f0       	breq	.+2      	; 0x4e4e <main+0x592>
     4e4c:	ce c1       	rjmp	.+924    	; 0x51ea <main+0x92e>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:574
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:575
       size_t _length = EP_MEM.req_data.wLength;
     4e4e:	c0 90 92 63 	lds	r12, 0x6392	; 0x806392 <EP_MEM+0x6>
     4e52:	d0 90 93 63 	lds	r13, 0x6393	; 0x806393 <EP_MEM+0x7>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:575
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:576
       size_t _size = get_descriptor((uint8_t*)&EP_MEM.res_data, EP_MEM.req_data.wValue, _length);
     4e56:	80 91 8e 63 	lds	r24, 0x638E	; 0x80638e <EP_MEM+0x2>
     4e5a:	90 91 8f 63 	lds	r25, 0x638F	; 0x80638f <EP_MEM+0x3>
 get_descriptor():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:166
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:167
 
   size_t get_descriptor (uint8_t* _buffer, uint16_t _index, size_t _length) {
     uint8_t* _pgmem = 0;
@@ -15760,7 +15759,7 @@ main():
     4e6e:	08 f4       	brcc	.+2      	; 0x4e72 <main+0x5b6>
     4e70:	67 01       	movw	r12, r14
 request_standard():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:576
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:577
       EP_RES.CNT = 0;
     }
     else if (bRequest == 0x06) {  /* GET_DESCRIPTOR */
@@ -15769,18 +15768,18 @@ request_standard():
       EP_RES.CNT = constrain(_size, (size_t)0, _length);
     4e72:	c0 92 be 64 	sts	0x64BE, r12	; 0x8064be <EP_TABLE+0x12>
     4e76:	d0 92 bf 64 	sts	0x64BF, r13	; 0x8064bf <EP_TABLE+0x13>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:578
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:579
     #if defined(DEBUG)
       size_t _count = EP_RES.CNT;
     4e7a:	c0 90 be 64 	lds	r12, 0x64BE	; 0x8064be <EP_TABLE+0x12>
     4e7e:	d0 90 bf 64 	lds	r13, 0x64BF	; 0x8064bf <EP_TABLE+0x13>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:580
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:581
       size_t _step = _count;
       uint16_t _req = EP_MEM.req_data.wValue;
     4e82:	60 90 8e 63 	lds	r6, 0x638E	; 0x80638e <EP_MEM+0x2>
     4e86:	70 90 8f 63 	lds	r7, 0x638F	; 0x80638f <EP_MEM+0x3>
 main():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:578
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:579
     else if (bRequest == 0x06) {  /* GET_DESCRIPTOR */
       size_t _length = EP_MEM.req_data.wLength;
       size_t _size = get_descriptor((uint8_t*)&EP_MEM.res_data, EP_MEM.req_data.wValue, _length);
@@ -15788,7 +15787,7 @@ main():
     #if defined(DEBUG)
       size_t _count = EP_RES.CNT;
     4e8a:	56 01       	movw	r10, r12
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:581
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:582
       size_t _step = _count;
       uint16_t _req = EP_MEM.req_data.wValue;
       uint8_t *_buff = EP_MEM.res_data;
@@ -15797,19 +15796,19 @@ main():
     4e90:	33 e6       	ldi	r19, 0x63	; 99
     4e92:	93 2e       	mov	r9, r19
 request_standard():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:582
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:583
       while (_count > 0) {
     4e94:	a1 14       	cp	r10, r1
     4e96:	b1 04       	cpc	r11, r1
     4e98:	09 f4       	brne	.+2      	; 0x4e9c <main+0x5e0>
     4e9a:	36 c1       	rjmp	.+620    	; 0x5108 <main+0x84c>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:583
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:584
         if (_req == 0x200) {
     4e9c:	61 14       	cp	r6, r1
     4e9e:	32 e0       	ldi	r19, 0x02	; 2
     4ea0:	73 06       	cpc	r7, r19
     4ea2:	39 f4       	brne	.+14     	; 0x4eb2 <main+0x5f6>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:584
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:585
           _step = _buff[0];
     4ea4:	d4 01       	movw	r26, r8
     4ea6:	cc 90       	ld	r12, X
@@ -15818,18 +15817,18 @@ request_standard():
     4eac:	bd 04       	cpc	r11, r13
     4eae:	08 f4       	brcc	.+2      	; 0x4eb2 <main+0x5f6>
     4eb0:	65 01       	movw	r12, r10
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:587
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:588
           if (_count < _step) _step = _count;
         }
         D1PRINTF(" ");
-    4eb2:	e0 e3       	ldi	r30, 0x30	; 48
+    4eb2:	ef e2       	ldi	r30, 0x2F	; 47
     4eb4:	f4 e0       	ldi	r31, 0x04	; 4
     4eb6:	ff 93       	push	r31
     4eb8:	ef 93       	push	r30
     4eba:	1f 93       	push	r17
     4ebc:	0f 93       	push	r16
     4ebe:	0e 94 25 0e 	call	0x1c4a	; 0x1c4a <Print::printf(PGM_t const*, ...) [clone .constprop.15]>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:588
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:589
         D1PRINTHEX(_buff, _step, ':', 16, "\r\n ");
     4ec2:	29 ec       	ldi	r18, 0xC9	; 201
     4ec4:	30 e6       	ldi	r19, 0x60	; 96
@@ -15839,16 +15838,16 @@ request_standard():
     4ecc:	c4 01       	movw	r24, r8
     4ece:	0e 94 bb 0d 	call	0x1b76	; 0x1b76 <Print::printHex(void const*, unsigned int, char, unsigned int, char const*) [clone .constprop.11]>
     4ed2:	0e 94 19 0e 	call	0x1c32	; 0x1c32 <Print::ln()>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:589
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:590
         _buff += _step;
     4ed6:	8c 0c       	add	r8, r12
     4ed8:	9d 1c       	adc	r9, r13
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:590
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:591
         _count -= _step;
     4eda:	ac 18       	sub	r10, r12
     4edc:	bd 08       	sbc	r11, r13
 main():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:589
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:590
           _step = _buff[0];
           if (_count < _step) _step = _count;
         }
@@ -15861,7 +15860,7 @@ main():
     4ee4:	0f 90       	pop	r0
     4ee6:	d6 cf       	rjmp	.-84     	; 0x4e94 <main+0x5d8>
 get_descriptor():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:167
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:168
   size_t get_descriptor (uint8_t* _buffer, uint16_t _index, size_t _length) {
     uint8_t* _pgmem = 0;
     size_t   _size = 0;
@@ -15871,7 +15870,7 @@ get_descriptor():
     4ee8:	91 30       	cpi	r25, 0x01	; 1
     4eea:	09 f0       	breq	.+2      	; 0x4eee <main+0x632>
     4eec:	41 c0       	rjmp	.+130    	; 0x4f70 <main+0x6b4>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:169
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:170
       _pgmem = (uint8_t*)&device_descriptor;
       _size = constrain(sizeof(device_descriptor), (size_t)0, _length);
     4eee:	76 01       	movw	r14, r12
@@ -15884,28 +15883,28 @@ main():
     4efa:	eb 2e       	mov	r14, r27
     4efc:	f1 2c       	mov	r15, r1
 get_descriptor():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:170
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:171
       memcpy_P(_buffer, _pgmem, _size);
     4efe:	a7 01       	movw	r20, r14
-    4f00:	61 ef       	ldi	r22, 0xF1	; 241
+    4f00:	60 ef       	ldi	r22, 0xF0	; 240
     4f02:	73 e0       	ldi	r23, 0x03	; 3
     4f04:	84 e9       	ldi	r24, 0x94	; 148
     4f06:	93 e6       	ldi	r25, 0x63	; 99
     4f08:	0e 94 ca 32 	call	0x6594	; 0x6594 <memcpy_P>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:171
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:172
       if (_size >= 12) {
     4f0c:	2c e0       	ldi	r18, 0x0C	; 12
     4f0e:	e2 16       	cp	r14, r18
     4f10:	f1 04       	cpc	r15, r1
     4f12:	08 f4       	brcc	.+2      	; 0x4f16 <main+0x65a>
     4f14:	aa cf       	rjmp	.-172    	; 0x4e6a <main+0x5ae>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:172
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:173
         uint32_t _vidpid = *((uint32_t*)EEPROM_START);
     4f16:	80 91 00 14 	lds	r24, 0x1400	; 0x801400 <__TEXT_REGION_LENGTH__+0x7f1400>
     4f1a:	90 91 01 14 	lds	r25, 0x1401	; 0x801401 <__TEXT_REGION_LENGTH__+0x7f1401>
     4f1e:	a0 91 02 14 	lds	r26, 0x1402	; 0x801402 <__TEXT_REGION_LENGTH__+0x7f1402>
     4f22:	b0 91 03 14 	lds	r27, 0x1403	; 0x801403 <__TEXT_REGION_LENGTH__+0x7f1403>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:173
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:174
         if (_vidpid + 1) _CAPS32(_buffer[8])->dword = _vidpid;
     4f26:	8f 3f       	cpi	r24, 0xFF	; 255
     4f28:	3f ef       	ldi	r19, 0xFF	; 255
@@ -15917,7 +15916,7 @@ get_descriptor():
     4f36:	90 93 9d 63 	sts	0x639D, r25	; 0x80639d <EP_MEM+0x11>
     4f3a:	a0 93 9e 63 	sts	0x639E, r26	; 0x80639e <EP_MEM+0x12>
     4f3e:	b0 93 9f 63 	sts	0x639F, r27	; 0x80639f <EP_MEM+0x13>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:174
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:175
         D1PRINTF(" VID:PID=%04X:%04X\r\n", _CAPS16(_buffer[8])->word, _CAPS16(_buffer[10])->word);
     4f42:	80 91 9f 63 	lds	r24, 0x639F	; 0x80639f <EP_MEM+0x13>
     4f46:	8f 93       	push	r24
@@ -15927,7 +15926,7 @@ get_descriptor():
     4f52:	8f 93       	push	r24
     4f54:	80 91 9c 63 	lds	r24, 0x639C	; 0x80639c <EP_MEM+0x10>
     4f58:	8f 93       	push	r24
-    4f5a:	8c ed       	ldi	r24, 0xDC	; 220
+    4f5a:	8b ed       	ldi	r24, 0xDB	; 219
     4f5c:	93 e0       	ldi	r25, 0x03	; 3
     4f5e:	9f 93       	push	r25
     4f60:	8f 93       	push	r24
@@ -15937,7 +15936,7 @@ get_descriptor():
     4f6a:	cd bf       	out	0x3d, r28	; 61
     4f6c:	de bf       	out	0x3e, r29	; 62
     4f6e:	7d cf       	rjmp	.-262    	; 0x4e6a <main+0x5ae>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:178
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:179
       }
       return _size;
     }
@@ -15945,7 +15944,7 @@ get_descriptor():
     4f70:	92 30       	cpi	r25, 0x02	; 2
     4f72:	11 f4       	brne	.+4      	; 0x4f78 <main+0x6bc>
     4f74:	0c 94 68 32 	jmp	0x64d0	; 0x64d0 <main+0x1c14>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:182
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:183
       _pgmem = (uint8_t*)&current_descriptor;
       _size = sizeof(current_descriptor);
     }
@@ -15953,7 +15952,7 @@ get_descriptor():
     4f78:	96 30       	cpi	r25, 0x06	; 6
     4f7a:	11 f4       	brne	.+4      	; 0x4f80 <main+0x6c4>
     4f7c:	0c 94 76 32 	jmp	0x64ec	; 0x64ec <main+0x1c30>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:186
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:187
       _pgmem = (uint8_t*)&qualifier_descriptor;
       _size = sizeof(qualifier_descriptor);
     }
@@ -15961,7 +15960,7 @@ get_descriptor():
     4f80:	91 32       	cpi	r25, 0x21	; 33
     4f82:	11 f4       	brne	.+4      	; 0x4f88 <main+0x6cc>
     4f84:	0c 94 7b 32 	jmp	0x64f6	; 0x64f6 <main+0x1c3a>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:190
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:191
       _pgmem = (uint8_t*)&current_descriptor + 18;
       _size = 9;
     }
@@ -15969,7 +15968,7 @@ get_descriptor():
     4f88:	92 32       	cpi	r25, 0x22	; 34
     4f8a:	11 f4       	brne	.+4      	; 0x4f90 <main+0x6d4>
     4f8c:	0c 94 80 32 	jmp	0x6500	; 0x6500 <main+0x1c44>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:194
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:195
       _pgmem = (uint8_t*)&report_descriptor;
       _size = sizeof(report_descriptor);
     }
@@ -15979,7 +15978,7 @@ get_descriptor():
     4f94:	9a 07       	cpc	r25, r26
     4f96:	11 f4       	brne	.+4      	; 0x4f9c <main+0x6e0>
     4f98:	0c 94 85 32 	jmp	0x650a	; 0x650a <main+0x1c4e>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:199
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:200
       _pgmem = (uint8_t*)&language_descriptor;
       _size = sizeof(language_descriptor);
     }
@@ -15991,15 +15990,15 @@ get_descriptor():
     4fa2:	61 f1       	breq	.+88     	; 0x4ffc <main+0x740>
     4fa4:	68 f4       	brcc	.+26     	; 0x4fc0 <main+0x704>
 main():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:200
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:201
         case 0x0301: _pgmem = (uint8_t*)&vstring; _size = sizeof(vstring); break;
     4fa6:	48 e2       	ldi	r20, 0x28	; 40
     4fa8:	e4 2e       	mov	r14, r20
     4faa:	f1 2c       	mov	r15, r1
-    4fac:	64 eb       	ldi	r22, 0xB4	; 180
+    4fac:	63 eb       	ldi	r22, 0xB3	; 179
     4fae:	73 e0       	ldi	r23, 0x03	; 3
 get_descriptor():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:199
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:200
     else if (_index == 0x0300) {  /* LANGUAGE */
       _pgmem = (uint8_t*)&language_descriptor;
       _size = sizeof(language_descriptor);
@@ -16010,7 +16009,7 @@ get_descriptor():
     4fb2:	93 40       	sbci	r25, 0x03	; 3
     4fb4:	81 f0       	breq	.+32     	; 0x4fd6 <main+0x71a>
 main():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:164
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:165
     { /* FRAMENUM */ }
   };
 
@@ -16019,7 +16018,7 @@ main():
     size_t   _size = 0;
     4fb6:	f1 2c       	mov	r15, r1
     4fb8:	e1 2c       	mov	r14, r1
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:163
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:164
     },
     { /* FRAMENUM */ }
   };
@@ -16030,7 +16029,7 @@ main():
     4fbc:	60 e0       	ldi	r22, 0x00	; 0
     4fbe:	0b c0       	rjmp	.+22     	; 0x4fd6 <main+0x71a>
 get_descriptor():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:199
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:200
     else if (_index == 0x0300) {  /* LANGUAGE */
       _pgmem = (uint8_t*)&language_descriptor;
       _size = sizeof(language_descriptor);
@@ -16041,17 +16040,17 @@ get_descriptor():
     4fc2:	98 07       	cpc	r25, r24
     4fc4:	09 f1       	breq	.+66     	; 0x5008 <main+0x74c>
 main():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:202
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:203
         case 0x0301: _pgmem = (uint8_t*)&vstring; _size = sizeof(vstring); break;
         case 0x0302: _pgmem = (uint8_t*)&mstring; _size = sizeof(mstring); break;
         case 0x0304: _pgmem = (uint8_t*)&istring; _size = sizeof(istring); break;
     4fc6:	f8 e1       	ldi	r31, 0x18	; 24
     4fc8:	ef 2e       	mov	r14, r31
     4fca:	f1 2c       	mov	r15, r1
-    4fcc:	66 e5       	ldi	r22, 0x56	; 86
+    4fcc:	6d e5       	ldi	r22, 0x5D	; 93
     4fce:	73 e0       	ldi	r23, 0x03	; 3
 get_descriptor():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:199
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:200
     else if (_index == 0x0300) {  /* LANGUAGE */
       _pgmem = (uint8_t*)&language_descriptor;
       _size = sizeof(language_descriptor);
@@ -16061,7 +16060,7 @@ get_descriptor():
     4fd0:	84 30       	cpi	r24, 0x04	; 4
     4fd2:	93 40       	sbci	r25, 0x03	; 3
     4fd4:	81 f7       	brne	.-32     	; 0x4fb6 <main+0x6fa>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:228
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:229
             *_buffer++ = btoh(_c     ); *_buffer++ = 0;
           }
           return 26;
@@ -16069,11 +16068,11 @@ get_descriptor():
       }
       *_buffer++ = (uint8_t)_size;
     4fd6:	e0 92 94 63 	sts	0x6394, r14	; 0x806394 <EP_MEM+0x8>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:229
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:230
       *_buffer++ = 3;
     4fda:	83 e0       	ldi	r24, 0x03	; 3
     4fdc:	80 93 95 63 	sts	0x6395, r24	; 0x806395 <EP_MEM+0x9>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:232
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:233
       /* Two extra bytes will be copied afterwards, but don't worry about it. */
     }
     _size = constrain(_size, (size_t)0, _length);
@@ -16081,14 +16080,14 @@ get_descriptor():
     4fe2:	df 04       	cpc	r13, r15
     4fe4:	08 f4       	brcc	.+2      	; 0x4fe8 <main+0x72c>
     4fe6:	8e c0       	rjmp	.+284    	; 0x5104 <main+0x848>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:233
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:234
     if (_size) memcpy_P(_buffer, _pgmem, _size);
     4fe8:	e1 14       	cp	r14, r1
     4fea:	f1 04       	cpc	r15, r1
     4fec:	09 f4       	brne	.+2      	; 0x4ff0 <main+0x734>
     4fee:	3b cf       	rjmp	.-394    	; 0x4e66 <main+0x5aa>
 main():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:229
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:230
           }
           return 26;
         }
@@ -16098,7 +16097,7 @@ main():
     4ff0:	86 e9       	ldi	r24, 0x96	; 150
     4ff2:	93 e6       	ldi	r25, 0x63	; 99
 get_descriptor():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:233
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:234
       /* Two extra bytes will be copied afterwards, but don't worry about it. */
     }
     _size = constrain(_size, (size_t)0, _length);
@@ -16107,21 +16106,21 @@ get_descriptor():
     4ff6:	0e 94 ca 32 	call	0x6594	; 0x6594 <memcpy_P>
     4ffa:	37 cf       	rjmp	.-402    	; 0x4e6a <main+0x5ae>
 main():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:201
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:202
       _size = sizeof(language_descriptor);
     }
     else {
       switch (_index) {
         case 0x0301: _pgmem = (uint8_t*)&vstring; _size = sizeof(vstring); break;
         case 0x0302: _pgmem = (uint8_t*)&mstring; _size = sizeof(mstring); break;
-    4ffc:	a6 e4       	ldi	r26, 0x46	; 70
+    4ffc:	ae e3       	ldi	r26, 0x3E	; 62
     4ffe:	ea 2e       	mov	r14, r26
     5000:	f1 2c       	mov	r15, r1
-    5002:	6e e6       	ldi	r22, 0x6E	; 110
+    5002:	65 e7       	ldi	r22, 0x75	; 117
     5004:	73 e0       	ldi	r23, 0x03	; 3
     5006:	e7 cf       	rjmp	.-50     	; 0x4fd6 <main+0x71a>
 get_descriptor():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:212
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:213
            *
            * If the 4 bytes from offset 4 of the EEPROM are anything other
            * than 0xFFFF:FFFF, use them, otherwise generate a 32-bit random
@@ -16136,7 +16135,7 @@ get_descriptor():
     501a:	5a 83       	std	Y+2, r21	; 0x02
     501c:	6b 83       	std	Y+3, r22	; 0x03
     501e:	7c 83       	std	Y+4, r23	; 0x04
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:213
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:214
           if (!(_sn + 1)) _sn = crc32((uint8_t*)SIGNATURES_START, 32);
     5020:	4f 3f       	cpi	r20, 0xFF	; 255
     5022:	8f ef       	ldi	r24, 0xFF	; 255
@@ -16145,7 +16144,6 @@ get_descriptor():
     5028:	78 07       	cpc	r23, r24
     502a:	59 f5       	brne	.+86     	; 0x5082 <main+0x7c6>
 main():
-/Users/askn/Library/Arduino15/packages/MultiX-Zinnia/hardware/modernAVR/0.4.11/cores/modernAVR/api/cpp/btools.cpp:214
   return _crc;
 }
 
@@ -16221,34 +16219,34 @@ uint32_t crc32 (void* _data, size_t _len) {
     5076:	f9 07       	cpc	r31, r25
     5078:	d9 f6       	brne	.-74     	; 0x5030 <main+0x774>
 get_descriptor():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:213
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:214
     507a:	49 83       	std	Y+1, r20	; 0x01
     507c:	5a 83       	std	Y+2, r21	; 0x02
     507e:	6b 83       	std	Y+3, r22	; 0x03
     5080:	7c 83       	std	Y+4, r23	; 0x04
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:215
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:216
           uint8_t* _p = (uint8_t*)&_sn;
           *_buffer++ = 26;  *_buffer++ = 3;
     5082:	8a e1       	ldi	r24, 0x1A	; 26
     5084:	80 93 94 63 	sts	0x6394, r24	; 0x806394 <EP_MEM+0x8>
     5088:	83 e0       	ldi	r24, 0x03	; 3
     508a:	80 93 95 63 	sts	0x6395, r24	; 0x806395 <EP_MEM+0x9>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:216
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:217
           *_buffer++ = 'A'; *_buffer++ = 0;
     508e:	81 e4       	ldi	r24, 0x41	; 65
     5090:	80 93 96 63 	sts	0x6396, r24	; 0x806396 <EP_MEM+0xa>
     5094:	10 92 97 63 	sts	0x6397, r1	; 0x806397 <EP_MEM+0xb>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:217
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:218
           *_buffer++ = '1'; *_buffer++ = 0;
     5098:	81 e3       	ldi	r24, 0x31	; 49
     509a:	80 93 98 63 	sts	0x6398, r24	; 0x806398 <EP_MEM+0xc>
     509e:	10 92 99 63 	sts	0x6399, r1	; 0x806399 <EP_MEM+0xd>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:218
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:219
           *_buffer++ = 'C'; *_buffer++ = 0;
     50a2:	83 e4       	ldi	r24, 0x43	; 67
     50a4:	80 93 9a 63 	sts	0x639A, r24	; 0x80639a <EP_MEM+0xe>
     50a8:	10 92 9b 63 	sts	0x639B, r1	; 0x80639b <EP_MEM+0xf>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:219
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:220
           *_buffer++ = 'E'; *_buffer++ = 0;
     50ac:	85 e4       	ldi	r24, 0x45	; 69
     50ae:	80 93 9c 63 	sts	0x639C, r24	; 0x80639c <EP_MEM+0x10>
@@ -16257,11 +16255,11 @@ get_descriptor():
     50b8:	f3 e6       	ldi	r31, 0x63	; 99
     50ba:	de 01       	movw	r26, r28
     50bc:	11 96       	adiw	r26, 0x01	; 1
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:221
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:222
           for (uint8_t _i = 0; _i < 4; _i++) {
             uint8_t _c = *_p++;
     50be:	8d 91       	ld	r24, X+
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:222
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:223
             *_buffer++ = btoh(_c >> 4); *_buffer++ = 0;
     50c0:	28 2f       	mov	r18, r24
     50c2:	30 e0       	ldi	r19, 0x00	; 0
@@ -16287,7 +16285,7 @@ char btoh (uint8_t _x) {
     50d6:	97 e3       	ldi	r25, 0x37	; 55
     50d8:	92 0f       	add	r25, r18
 get_descriptor():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:222
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:223
     50da:	90 83       	st	Z, r25
     50dc:	11 82       	std	Z+1, r1	; 0x01
 btoh():
@@ -16308,12 +16306,12 @@ char btoh (uint8_t _x) {
     50e8:	97 e3       	ldi	r25, 0x37	; 55
     50ea:	98 0f       	add	r25, r24
 get_descriptor():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:223
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:224
             *_buffer++ = btoh(_c     ); *_buffer++ = 0;
     50ec:	92 83       	std	Z+2, r25	; 0x02
     50ee:	13 82       	std	Z+3, r1	; 0x03
     50f0:	34 96       	adiw	r30, 0x04	; 4
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:220
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:221
           *_buffer++ = 26;  *_buffer++ = 3;
           *_buffer++ = 'A'; *_buffer++ = 0;
           *_buffer++ = '1'; *_buffer++ = 0;
@@ -16326,7 +16324,7 @@ get_descriptor():
     50f8:	3b 07       	cpc	r19, r27
     50fa:	09 f7       	brne	.-62     	; 0x50be <main+0x802>
 main():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:225
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:226
             uint8_t _c = *_p++;
             *_buffer++ = btoh(_c >> 4); *_buffer++ = 0;
             *_buffer++ = btoh(_c     ); *_buffer++ = 0;
@@ -16337,7 +16335,7 @@ main():
     5100:	f1 2c       	mov	r15, r1
     5102:	b3 ce       	rjmp	.-666    	; 0x4e6a <main+0x5ae>
 get_descriptor():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:232
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:233
       }
       *_buffer++ = (uint8_t)_size;
       *_buffer++ = 3;
@@ -16347,7 +16345,7 @@ get_descriptor():
     5104:	76 01       	movw	r14, r12
     5106:	74 cf       	rjmp	.-280    	; 0x4ff0 <main+0x734>
 handling_control_transactions():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:714
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:715
   #ifdef _Not_being_used_STUB_
     else if (bmRequestType == (2 << 5)) {
       _listen = request_vendor();
@@ -16357,7 +16355,7 @@ handling_control_transactions():
     5108:	ef 28       	or	r14, r15
     510a:	09 f0       	breq	.+2      	; 0x510e <main+0x852>
     510c:	2c ce       	rjmp	.-936    	; 0x4d66 <main+0x4aa>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:718
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:719
       ep_res_listen();
       ep_req_listen();
     }
@@ -16423,7 +16421,7 @@ reset_leave():
         LED_Flash();
       }
       D1PRINTF("<RST:OUT>\r\n");
-    5148:	84 eb       	ldi	r24, 0xB4	; 180
+    5148:	83 eb       	ldi	r24, 0xB3	; 179
     514a:	94 e0       	ldi	r25, 0x04	; 4
     514c:	9f 93       	push	r25
     514e:	8f 93       	push	r24
@@ -16459,7 +16457,7 @@ main():
     516a:	f1 9b       	sbis	0x1e, 1	; 30
     516c:	c8 c1       	rjmp	.+912    	; 0x54fe <main+0xc42>
 vcp_transceiver():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:517
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:518
     if (bit_is_clear(GPCONF, GPCONF_BRK_bp)
   #if defined(CONFIG_VCP_CTS_ENABLE)
      && !digitalReadMacro(PIN_VCP_CTS)
@@ -16468,7 +16466,7 @@ vcp_transceiver():
      && read_available()) {
     516e:	f3 99       	sbic	0x1e, 3	; 30
     5170:	14 c0       	rjmp	.+40     	; 0x519a <main+0x8de>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:516
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:517
   void vcp_transceiver (void) {
     if (bit_is_clear(GPCONF, GPCONF_BRK_bp)
   #if defined(CONFIG_VCP_CTS_ENABLE)
@@ -16479,7 +16477,7 @@ vcp_transceiver():
     5176:	85 ff       	sbrs	r24, 5
     5178:	10 c0       	rjmp	.+32     	; 0x519a <main+0x8de>
 read_available():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:479
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:480
     return _c;
   }
 
@@ -16491,12 +16489,12 @@ read_available():
     5180:	0c c0       	rjmp	.+24     	; 0x519a <main+0x8de>
     5182:	f1 9b       	sbis	0x1e, 1	; 30
     5184:	0a c0       	rjmp	.+20     	; 0x519a <main+0x8de>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:480
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:481
       _s = EP_CDO.CNT - _recv_count;
     5186:	20 91 e6 64 	lds	r18, 0x64E6	; 0x8064e6 <EP_TABLE+0x3a>
     518a:	30 91 e7 64 	lds	r19, 0x64E7	; 0x8064e7 <EP_TABLE+0x3b>
     518e:	80 91 a7 64 	lds	r24, 0x64A7	; 0x8064a7 <USB::_recv_count>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:481
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:482
       if (_s == 0) ep_cdo_listen();
     5192:	82 13       	cpse	r24, r18
     5194:	95 c1       	rjmp	.+810    	; 0x54c0 <main+0xc04>
@@ -16511,7 +16509,7 @@ main():
     519a:	f3 9b       	sbis	0x1e, 3	; 30
     519c:	1a c0       	rjmp	.+52     	; 0x51d2 <main+0x916>
 progress_break():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:317
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:318
     loop_until_bit_is_clear(USB0_INTFLAGSB, USB_RMWBUSY_bp);
     USB_EP_STATUS_CLR(USB_EP_DPO) = ~USB_TOGGLE_bm;
   }
@@ -16526,7 +16524,7 @@ progress_break():
     51ac:	22 30       	cpi	r18, 0x02	; 2
     51ae:	31 05       	cpc	r19, r1
     51b0:	80 f0       	brcs	.+32     	; 0x51d2 <main+0x916>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:319
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:320
       _send_break -= _send_break > USB_CCI_INTERVAL
         ? USB_CCI_INTERVAL 
     51b2:	9c 01       	movw	r18, r24
@@ -16535,7 +16533,7 @@ progress_break():
     51b8:	10 f0       	brcs	.+4      	; 0x51be <main+0x902>
     51ba:	24 e0       	ldi	r18, 0x04	; 4
     51bc:	30 e0       	ldi	r19, 0x00	; 0
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:318
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:319
     USB_EP_STATUS_CLR(USB_EP_DPO) = ~USB_TOGGLE_bm;
   }
 
@@ -16547,7 +16545,7 @@ progress_break():
     51c2:	80 93 a9 64 	sts	0x64A9, r24	; 0x8064a9 <USB::_send_break>
     51c6:	90 93 aa 64 	sts	0x64AA, r25	; 0x8064aa <USB::_send_break+0x1>
 cci_break_count():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:414
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:415
     bit_clear(GPCONF, GPCONF_BRK_bp);
   }
 
@@ -16558,7 +16556,7 @@ cci_break_count():
     51cc:	11 f4       	brne	.+4      	; 0x51d2 <main+0x916>
     51ce:	0e 94 37 07 	call	0xe6e	; 0xe6e <USB::break_off()>
 is_not_dap():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:282
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:283
 
   // MARK: Endpoint
 
@@ -16589,7 +16587,7 @@ main():
     51e6:	8e bb       	out	0x1e, r24	; 30
     51e8:	b1 cc       	rjmp	.-1694   	; 0x4b4c <main+0x290>
 request_standard():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:595
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:596
         _count -= _step;
       }
     #endif
@@ -16598,22 +16596,22 @@ request_standard():
     else if (bRequest == 0x08) {  /* GET_CONFIGURATION */
     51ea:	88 30       	cpi	r24, 0x08	; 8
     51ec:	c9 f4       	brne	.+50     	; 0x5220 <main+0x964>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:596
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:597
       EP_MEM.res_data[0] = _set_config;
     51ee:	80 91 a6 64 	lds	r24, 0x64A6	; 0x8064a6 <USB::_set_config>
     51f2:	80 93 94 63 	sts	0x6394, r24	; 0x806394 <EP_MEM+0x8>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:597
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:598
       D1PRINTF("<GC:%02X>\r\n", _set_config);
     51f6:	1f 92       	push	r1
     51f8:	8f 93       	push	r24
-    51fa:	84 e2       	ldi	r24, 0x24	; 36
+    51fa:	83 e2       	ldi	r24, 0x23	; 35
     51fc:	94 e0       	ldi	r25, 0x04	; 4
     51fe:	9f 93       	push	r25
     5200:	8f 93       	push	r24
     5202:	1f 93       	push	r17
     5204:	0f 93       	push	r16
     5206:	0e 94 25 0e 	call	0x1c4a	; 0x1c4a <Print::printf(PGM_t const*, ...) [clone .constprop.15]>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:598
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:599
       EP_RES.CNT = 1;
     520a:	20 92 be 64 	sts	0x64BE, r2	; 0x8064be <EP_TABLE+0x12>
     520e:	30 92 bf 64 	sts	0x64BF, r3	; 0x8064bf <EP_TABLE+0x13>
@@ -16624,55 +16622,55 @@ request_standard():
     521a:	0f 90       	pop	r0
     521c:	0f 90       	pop	r0
     521e:	a3 cd       	rjmp	.-1210   	; 0x4d66 <main+0x4aa>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:600
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:601
     }
     else if (bRequest == 0x09) {  /* SET_CONFIGURATION */
     5220:	89 30       	cpi	r24, 0x09	; 9
     5222:	71 f4       	brne	.+28     	; 0x5240 <main+0x984>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:602
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:603
       /* Once the USB connection is fully initiated, it will go through here. */
       _set_config = (uint8_t)EP_MEM.req_data.wValue;
     5224:	80 91 8e 63 	lds	r24, 0x638E	; 0x80638e <EP_MEM+0x2>
     5228:	80 93 a6 64 	sts	0x64A6, r24	; 0x8064a6 <USB::_set_config>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:603
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:604
       bit_set(GPCONF, GPCONF_USB_bp);
     522c:	f0 9a       	sbi	0x1e, 0	; 30
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:604
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:605
       SYS::LED_HeartBeat();
     522e:	0e 94 e6 0e 	call	0x1dcc	; 0x1dcc <SYS::LED_HeartBeat()>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:605
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:606
       D1PRINTF("<SC:%02X>\r\n", _set_config);
     5232:	80 91 a6 64 	lds	r24, 0x64A6	; 0x8064a6 <USB::_set_config>
     5236:	1f 92       	push	r1
     5238:	8f 93       	push	r24
-    523a:	88 e1       	ldi	r24, 0x18	; 24
+    523a:	87 e1       	ldi	r24, 0x17	; 23
     523c:	94 e0       	ldi	r25, 0x04	; 4
     523e:	f9 cd       	rjmp	.-1038   	; 0x4e32 <main+0x576>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:608
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:609
       EP_RES.CNT = 0;
     }
     else if (bRequest == 0x0A) {  /* GET_INTREFACE */
     5240:	8a 30       	cpi	r24, 0x0A	; 10
     5242:	99 f4       	brne	.+38     	; 0x526a <main+0x9ae>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:610
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:611
       /* It seems not to be used. */
       D1PRINTF("<SI:0>\r\n");
-    5244:	8f e0       	ldi	r24, 0x0F	; 15
+    5244:	8e e0       	ldi	r24, 0x0E	; 14
     5246:	94 e0       	ldi	r25, 0x04	; 4
     5248:	9f 93       	push	r25
     524a:	8f 93       	push	r24
     524c:	1f 93       	push	r17
     524e:	0f 93       	push	r16
     5250:	0e 94 25 0e 	call	0x1c4a	; 0x1c4a <Print::printf(PGM_t const*, ...) [clone .constprop.15]>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:611
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:612
       EP_MEM.res_data[0] = 0;
     5254:	10 92 94 63 	sts	0x6394, r1	; 0x806394 <EP_MEM+0x8>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:612
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:613
       EP_RES.CNT = 1;
     5258:	20 92 be 64 	sts	0x64BE, r2	; 0x8064be <EP_TABLE+0x12>
     525c:	30 92 bf 64 	sts	0x64BF, r3	; 0x8064bf <EP_TABLE+0x13>
 request_class():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:664
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:665
         EP_MEM.res_encoding.dwDTERate = 9600UL;
         EP_MEM.res_encoding.bDataBits = 8;
       }
@@ -16685,7 +16683,7 @@ request_class():
     5266:	0f 90       	pop	r0
     5268:	7e cd       	rjmp	.-1284   	; 0x4d66 <main+0x4aa>
 request_standard():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:614
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:615
       /* It seems not to be used. */
       D1PRINTF("<SI:0>\r\n");
       EP_MEM.res_data[0] = 0;
@@ -16695,18 +16693,18 @@ request_standard():
     526a:	8b 30       	cpi	r24, 0x0B	; 11
     526c:	09 f0       	breq	.+2      	; 0x5270 <main+0x9b4>
     526e:	4f cf       	rjmp	.-354    	; 0x510e <main+0x852>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:616
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:617
       /* It seems not to be used. */
       D1PRINTF("<GI:%02X>\r\n", EP_MEM.req_data.wValue);
     5270:	80 91 8f 63 	lds	r24, 0x638F	; 0x80638f <EP_MEM+0x3>
     5274:	8f 93       	push	r24
     5276:	80 91 8e 63 	lds	r24, 0x638E	; 0x80638e <EP_MEM+0x2>
     527a:	8f 93       	push	r24
-    527c:	83 e0       	ldi	r24, 0x03	; 3
+    527c:	82 e0       	ldi	r24, 0x02	; 2
     527e:	94 e0       	ldi	r25, 0x04	; 4
     5280:	d8 cd       	rjmp	.-1104   	; 0x4e32 <main+0x576>
 handling_control_transactions():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:706
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:707
     if (bit_is_clear(bmRequestType, 7)) ep_req_listen();
     bmRequestType &= (3 << 5);
     if (bmRequestType == (0 << 5)) {
@@ -16717,7 +16715,7 @@ handling_control_transactions():
     5284:	09 f0       	breq	.+2      	; 0x5288 <main+0x9cc>
     5286:	43 cf       	rjmp	.-378    	; 0x510e <main+0x852>
 request_class():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:628
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:629
   }
 
   /*** CDC-ACM request processing. ***/
@@ -16725,11 +16723,11 @@ request_class():
     bool _listen = true;
     uint8_t bRequest = EP_MEM.req_data.bRequest;
     5288:	80 91 8d 63 	lds	r24, 0x638D	; 0x80638d <EP_MEM+0x1>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:629
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:630
     if (bRequest == 0x0A) {       /* SET_IDLE */
     528c:	8a 30       	cpi	r24, 0x0A	; 10
     528e:	51 f4       	brne	.+20     	; 0x52a4 <main+0x9e8>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:632
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:633
       /* This is a HID Compliance Class Request. */
       /* It is called but not used. */
       D1PRINTF(" IDL=%02X\r\n", (uint8_t)EP_MEM.req_data.wValue);
@@ -16738,10 +16736,10 @@ request_class():
     5298:	99 27       	eor	r25, r25
     529a:	9f 93       	push	r25
     529c:	8f 93       	push	r24
-    529e:	85 e8       	ldi	r24, 0x85	; 133
+    529e:	84 e8       	ldi	r24, 0x84	; 132
     52a0:	94 e0       	ldi	r25, 0x04	; 4
     52a2:	c7 cd       	rjmp	.-1138   	; 0x4e32 <main+0x576>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:635
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:636
       EP_RES.CNT = 0;
     }
     else if (bRequest == 0x20) {  /* SET_LINE_ENCODING */
@@ -16749,7 +16747,7 @@ request_class():
     52a6:	09 f0       	breq	.+2      	; 0x52aa <main+0x9ee>
     52a8:	41 c0       	rjmp	.+130    	; 0x532c <main+0xa70>
 ep_req_pending():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:283
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:284
   // MARK: Endpoint
 
   bool is_ep_setup (void) { return bit_is_set(EP_REQ.STATUS, USB_EPSETUP_bp); }
@@ -16777,7 +16775,7 @@ set_line_encoding():
     52c2:	89 2b       	or	r24, r25
     52c4:	91 f0       	breq	.+36     	; 0x52ea <main+0xa2e>
 read_drop():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:487
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:488
     }
     return _s != 0;
   }
@@ -16807,21 +16805,21 @@ set_line_encoding():
     change_vcp();
     52e6:	0e 94 13 0f 	call	0x1e26	; 0x1e26 <USART::change_vcp()>
 request_class():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:644
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:645
       /* In any case, this isn't a one-off thing. */
       /* If the same parameter settings persist,  */
       /* it's probably best to do nothing.        */
       ep_req_pending();
       USART::set_line_encoding(&EP_MEM.res_encoding);
       D1PRINTF(" SLE=");
-    52ea:	8f e7       	ldi	r24, 0x7F	; 127
+    52ea:	8e e7       	ldi	r24, 0x7E	; 126
     52ec:	94 e0       	ldi	r25, 0x04	; 4
     52ee:	9f 93       	push	r25
     52f0:	8f 93       	push	r24
     52f2:	1f 93       	push	r17
     52f4:	0f 93       	push	r16
     52f6:	0e 94 25 0e 	call	0x1c4a	; 0x1c4a <Print::printf(PGM_t const*, ...) [clone .constprop.15]>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:645
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:646
       D1PRINTHEX(&_set_line_encoding, sizeof(LineEncoding_t), ':');
     52fa:	26 ea       	ldi	r18, 0xA6	; 166
     52fc:	30 e6       	ldi	r19, 0x60	; 96
@@ -16833,33 +16831,33 @@ request_class():
     5308:	90 e6       	ldi	r25, 0x60	; 96
     530a:	0e 94 bb 0d 	call	0x1b76	; 0x1b76 <Print::printHex(void const*, unsigned int, char, unsigned int, char const*) [clone .constprop.11]>
     530e:	0e 94 19 0e 	call	0x1c32	; 0x1c32 <Print::ln()>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:646
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:647
       bit_set(GPCONF, GPCONF_OPN_bp);
     5312:	f4 9a       	sbi	0x1e, 4	; 30
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:647
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:648
       _send_count = 0;
     5314:	10 92 a8 64 	sts	0x64A8, r1	; 0x8064a8 <USB::_send_count>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:648
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:649
       _recv_count = 0;
     5318:	10 92 a7 64 	sts	0x64A7, r1	; 0x8064a7 <USB::_recv_count>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:650
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:651
     #if defined(CONFIG_VCP_INTERRUPT_SUPPRT)
       _sof_count = SERIALSTATE_DELAY;
     531c:	88 e0       	ldi	r24, 0x08	; 8
     531e:	80 93 a5 64 	sts	0x64A5, r24	; 0x8064a5 <USB::_sof_count>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:652
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:653
     #endif
       EP_RES.CNT = 0;
     5322:	10 92 be 64 	sts	0x64BE, r1	; 0x8064be <EP_TABLE+0x12>
     5326:	10 92 bf 64 	sts	0x64BF, r1	; 0x8064bf <EP_TABLE+0x13>
     532a:	9a cf       	rjmp	.-204    	; 0x5260 <main+0x9a4>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:654
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:655
     }
     else if (bRequest == 0x21) {  /* GET_LINE_ENCODING */
     532c:	81 32       	cpi	r24, 0x21	; 33
     532e:	09 f0       	breq	.+2      	; 0x5332 <main+0xa76>
     5330:	3f c0       	rjmp	.+126    	; 0x53b0 <main+0xaf4>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:655
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:656
       memcpy(&EP_MEM.res_encoding, &_set_line_encoding, sizeof(LineEncoding_t));
     5332:	87 e0       	ldi	r24, 0x07	; 7
     5334:	ef ec       	ldi	r30, 0xCF	; 207
@@ -16870,7 +16868,7 @@ request_class():
     533e:	0d 92       	st	X+, r0
     5340:	8a 95       	dec	r24
     5342:	e1 f7       	brne	.-8      	; 0x533c <main+0xa80>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:656
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:657
       if (EP_MEM.res_encoding.dwDTERate == 0) {
     5344:	80 91 94 63 	lds	r24, 0x6394	; 0x806394 <EP_MEM+0x8>
     5348:	90 91 95 63 	lds	r25, 0x6395	; 0x806395 <EP_MEM+0x9>
@@ -16880,7 +16878,7 @@ request_class():
     5356:	8a 2b       	or	r24, r26
     5358:	8b 2b       	or	r24, r27
     535a:	79 f4       	brne	.+30     	; 0x537a <main+0xabe>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:659
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:660
         /* Parameters that, if incorrectly accepted,           */
         /* would result in division by zero must be corrected. */
         EP_MEM.res_encoding.dwDTERate = 9600UL;
@@ -16892,21 +16890,21 @@ request_class():
     5368:	90 93 95 63 	sts	0x6395, r25	; 0x806395 <EP_MEM+0x9>
     536c:	a0 93 96 63 	sts	0x6396, r26	; 0x806396 <EP_MEM+0xa>
     5370:	b0 93 97 63 	sts	0x6397, r27	; 0x806397 <EP_MEM+0xb>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:660
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:661
         EP_MEM.res_encoding.bDataBits = 8;
     5374:	88 e0       	ldi	r24, 0x08	; 8
     5376:	80 93 9a 63 	sts	0x639A, r24	; 0x80639a <EP_MEM+0xe>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:662
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:663
       }
       D1PRINTF(" GLE=");
-    537a:	a9 e7       	ldi	r26, 0x79	; 121
+    537a:	a8 e7       	ldi	r26, 0x78	; 120
     537c:	b4 e0       	ldi	r27, 0x04	; 4
     537e:	bf 93       	push	r27
     5380:	af 93       	push	r26
     5382:	1f 93       	push	r17
     5384:	0f 93       	push	r16
     5386:	0e 94 25 0e 	call	0x1c4a	; 0x1c4a <Print::printf(PGM_t const*, ...) [clone .constprop.15]>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:663
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:664
       D1PRINTHEX(&EP_MEM.res_encoding, sizeof(LineEncoding_t), ':');
     538a:	26 ea       	ldi	r18, 0xA6	; 166
     538c:	30 e6       	ldi	r19, 0x60	; 96
@@ -16918,19 +16916,19 @@ request_class():
     5398:	93 e6       	ldi	r25, 0x63	; 99
     539a:	0e 94 bb 0d 	call	0x1b76	; 0x1b76 <Print::printHex(void const*, unsigned int, char, unsigned int, char const*) [clone .constprop.11]>
     539e:	0e 94 19 0e 	call	0x1c32	; 0x1c32 <Print::ln()>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:664
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:665
       EP_RES.CNT = sizeof(LineEncoding_t);
     53a2:	87 e0       	ldi	r24, 0x07	; 7
     53a4:	90 e0       	ldi	r25, 0x00	; 0
     53a6:	80 93 be 64 	sts	0x64BE, r24	; 0x8064be <EP_TABLE+0x12>
     53aa:	90 93 bf 64 	sts	0x64BF, r25	; 0x8064bf <EP_TABLE+0x13>
     53ae:	58 cf       	rjmp	.-336    	; 0x5260 <main+0x9a4>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:666
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:667
     }
     else if (bRequest == 0x22) {  /* SET_LINE_STATE */
     53b0:	82 32       	cpi	r24, 0x22	; 34
     53b2:	01 f5       	brne	.+64     	; 0x53f4 <main+0xb38>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:668
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:669
       /* This includes the DTR and RTS settings. */
       D1PRINTF(" SLS=%02X\r\n", (uint8_t)EP_MEM.req_data.wValue);
     53b4:	80 91 8e 63 	lds	r24, 0x638E	; 0x80638e <EP_MEM+0x2>
@@ -16938,14 +16936,14 @@ request_class():
     53bc:	99 27       	eor	r25, r25
     53be:	9f 93       	push	r25
     53c0:	8f 93       	push	r24
-    53c2:	2d e6       	ldi	r18, 0x6D	; 109
+    53c2:	2c e6       	ldi	r18, 0x6C	; 108
     53c4:	34 e0       	ldi	r19, 0x04	; 4
     53c6:	3f 93       	push	r19
     53c8:	2f 93       	push	r18
     53ca:	1f 93       	push	r17
     53cc:	0f 93       	push	r16
     53ce:	0e 94 25 0e 	call	0x1c4a	; 0x1c4a <Print::printf(PGM_t const*, ...) [clone .constprop.15]>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:669
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:670
       USART::set_line_state((uint8_t)EP_MEM.req_data.wValue);
     53d2:	80 91 8e 63 	lds	r24, 0x638E	; 0x80638e <EP_MEM+0x2>
 set_line_state():
@@ -16977,14 +16975,14 @@ set_line_state():
     53ee:	80 93 ce 60 	sts	0x60CE, r24	; 0x8060ce <__data_end>
     53f2:	ea cc       	rjmp	.-1580   	; 0x4dc8 <main+0x50c>
 request_class():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:672
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:673
       EP_RES.CNT = 0;
     }
     else if (bRequest == 0x23) {  /* SET_SEND_BREAK */
     53f4:	83 32       	cpi	r24, 0x23	; 35
     53f6:	09 f0       	breq	.+2      	; 0x53fa <main+0xb3e>
     53f8:	8a ce       	rjmp	.-748    	; 0x510e <main+0x852>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:675
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:676
       /* When the host application closes the port, it may send a BREAK=0. */
       /* Nothing else is used unless programmed by the application. */
       D1PRINTF(" SB=%04X\r\n", EP_MEM.req_data.wValue);
@@ -16992,20 +16990,20 @@ request_class():
     53fe:	8f 93       	push	r24
     5400:	80 91 8e 63 	lds	r24, 0x638E	; 0x80638e <EP_MEM+0x2>
     5404:	8f 93       	push	r24
-    5406:	82 e6       	ldi	r24, 0x62	; 98
+    5406:	81 e6       	ldi	r24, 0x61	; 97
     5408:	94 e0       	ldi	r25, 0x04	; 4
     540a:	9f 93       	push	r25
     540c:	8f 93       	push	r24
     540e:	1f 93       	push	r17
     5410:	0f 93       	push	r16
     5412:	0e 94 25 0e 	call	0x1c4a	; 0x1c4a <Print::printf(PGM_t const*, ...) [clone .constprop.15]>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:676
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:677
       _send_break = EP_MEM.req_data.wValue;
     5416:	80 91 8e 63 	lds	r24, 0x638E	; 0x80638e <EP_MEM+0x2>
     541a:	90 91 8f 63 	lds	r25, 0x638F	; 0x80638f <EP_MEM+0x3>
     541e:	80 93 a9 64 	sts	0x64A9, r24	; 0x8064a9 <USB::_send_break>
     5422:	90 93 aa 64 	sts	0x64AA, r25	; 0x8064aa <USB::_send_break+0x1>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:677
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:678
       if (_send_break) break_on();
     5426:	0f 90       	pop	r0
     5428:	0f 90       	pop	r0
@@ -17016,7 +17014,7 @@ request_class():
     5432:	89 2b       	or	r24, r25
     5434:	b9 f0       	breq	.+46     	; 0x5464 <main+0xba8>
 break_on():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:387
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:388
     ep_dpo_listen();  /* continue transaction */
   }
 
@@ -17027,35 +17025,35 @@ break_on():
     5438:	10 c0       	rjmp	.+32     	; 0x545a <main+0xb9e>
     543a:	f3 99       	sbic	0x1e, 3	; 30
     543c:	0e c0       	rjmp	.+28     	; 0x545a <main+0xb9e>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:389
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:390
       /* SET_SEND_BREAK is called when the port is closed successfully. */
       bit_clear(GPCONF, GPCONF_OPN_bp);
     543e:	f4 98       	cbi	0x1e, 4	; 30
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:390
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:391
       _send_count = 0;
     5440:	10 92 a8 64 	sts	0x64A8, r1	; 0x8064a8 <USB::_send_count>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:391
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:392
       _vcp_ctrl = USART0_CTRLB;
     5444:	80 91 06 08 	lds	r24, 0x0806	; 0x800806 <__TEXT_REGION_LENGTH__+0x7f0806>
     5448:	80 93 8a 63 	sts	0x638A, r24	; 0x80638a <USB::_vcp_ctrl>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:392
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:393
       USART0_CTRLB &= ~(USART_RXEN_bm | USART_TXEN_bm);
     544c:	80 91 06 08 	lds	r24, 0x0806	; 0x800806 <__TEXT_REGION_LENGTH__+0x7f0806>
     5450:	8f 73       	andi	r24, 0x3F	; 63
     5452:	80 93 06 08 	sts	0x0806, r24	; 0x800806 <__TEXT_REGION_LENGTH__+0x7f0806>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:393
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:394
       bit_set(GPCONF, GPCONF_VCP_bp);
     5456:	f1 9a       	sbi	0x1e, 1	; 30
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:395
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:396
       /* During Break, VCP-TxD is pulled LOW. */
       pinLogicPull(PIN_VCP_TXD);
     5458:	02 9a       	sbi	0x00, 2	; 0
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:397
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:398
     }
     bit_set(GPCONF, GPCONF_BRK_bp);
     545a:	f3 9a       	sbi	0x1e, 3	; 30
 request_class():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:680
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:681
       D1PRINTF(" SB=%04X\r\n", EP_MEM.req_data.wValue);
       _send_break = EP_MEM.req_data.wValue;
       if (_send_break) break_on();
@@ -17065,7 +17063,7 @@ request_class():
     545c:	88 e0       	ldi	r24, 0x08	; 8
     545e:	80 93 a5 64 	sts	0x64A5, r24	; 0x8064a5 <USB::_sof_count>
     5462:	b2 cc       	rjmp	.-1692   	; 0x4dc8 <main+0x50c>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:678
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:679
       /* When the host application closes the port, it may send a BREAK=0. */
       /* Nothing else is used unless programmed by the application. */
       D1PRINTF(" SB=%04X\r\n", EP_MEM.req_data.wValue);
@@ -17106,7 +17104,7 @@ reset_enter():
     5476:	77 ce       	rjmp	.-786    	; 0x5166 <main+0x8aa>
 /Users/askn/Develop/UPDI4AVR-USB/src/sys.cpp:337
       D1PRINTF("<RST:IN>\r\n");
-    5478:	80 ec       	ldi	r24, 0xC0	; 192
+    5478:	8f eb       	ldi	r24, 0xBF	; 191
     547a:	94 e0       	ldi	r25, 0x04	; 4
     547c:	9f 93       	push	r25
     547e:	8f 93       	push	r24
@@ -17165,7 +17163,7 @@ reset_enter():
     54bc:	be 98       	cbi	0x17, 6	; 23
     54be:	53 ce       	rjmp	.-858    	; 0x5166 <main+0x8aa>
 read_byte():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:464
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:465
     else ep_cdi_listen();
   }
 
@@ -17177,7 +17175,7 @@ read_byte():
     54c8:	28 2f       	mov	r18, r24
     54ca:	30 e0       	ldi	r19, 0x00	; 0
 main():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:463
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:464
     if (_send_count < 64) _sof_count = VCP_BULK_DELAY;
     else ep_cdi_listen();
   }
@@ -17186,12 +17184,12 @@ main():
     uint8_t _c = 0;
     54cc:	f1 2c       	mov	r15, r1
 read_byte():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:464
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:465
     if (EP_CDO.CNT != _recv_count) {
     54ce:	42 17       	cp	r20, r18
     54d0:	53 07       	cpc	r21, r19
     54d2:	39 f0       	breq	.+14     	; 0x54e2 <main+0xc26>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:471
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:472
       if (_recv_count == 0) {
         D2PRINTF(" VO=%02X\r\n    ", EP_CDO.CNT);
         D2PRINTHEX(&EP_MEM.cdo_data, EP_CDO.CNT, ':', 16, "\r\n    ");
@@ -17204,7 +17202,7 @@ read_byte():
     54dc:	3c 49       	sbci	r19, 0x9C	; 156
     54de:	f9 01       	movw	r30, r18
     54e0:	f0 80       	ld	r15, Z
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:473
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:474
     }
     if (EP_CDO.CNT == _recv_count) ep_cdo_listen();
     54e2:	80 91 e6 64 	lds	r24, 0x64E6	; 0x8064e6 <EP_TABLE+0x3a>
@@ -17215,7 +17213,7 @@ read_byte():
     54f2:	11 f4       	brne	.+4      	; 0x54f8 <main+0xc3c>
     54f4:	0e 94 49 07 	call	0xe92	; 0xe92 <USB::ep_cdo_listen()>
 vcp_transceiver():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:518
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:519
   #if defined(CONFIG_VCP_CTS_ENABLE)
      && !digitalReadMacro(PIN_VCP_CTS)
   #endif
@@ -17225,7 +17223,7 @@ vcp_transceiver():
     54f8:	f0 92 02 08 	sts	0x0802, r15	; 0x800802 <__TEXT_REGION_LENGTH__+0x7f0802>
     54fc:	4e ce       	rjmp	.-868    	; 0x519a <main+0x8de>
 read_drop():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:487
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:488
     }
     return _s != 0;
   }
@@ -17253,7 +17251,7 @@ dap_command_check():
     5510:	24 e0       	ldi	r18, 0x04	; 4
     5512:	20 93 00 02 	sts	0x0200, r18	; 0x800200 <__TEXT_REGION_LENGTH__+0x7f0200>
 ep_dpi_pending():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:285
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:286
   bool is_ep_setup (void) { return bit_is_set(EP_REQ.STATUS, USB_EPSETUP_bp); }
   bool is_ep_cci (void) { return bit_is_set(EP_CCI.STATUS, USB_BUSNAK_bp); }
   bool is_not_dap (void) { return bit_is_clear(EP_DPO.STATUS, USB_BUSNAK_bp); }
@@ -17306,7 +17304,7 @@ dap_command_check():
 /Users/askn/Develop/UPDI4AVR-USB/src/jtag.cpp:77
         /* Only a maximum of 540 bytes : 9 fragment records is accepted. */
         D1PRINTF("<EDBG_FAIL>\r\n");
-    554c:	88 ee       	ldi	r24, 0xE8	; 232
+    554c:	87 ee       	ldi	r24, 0xE7	; 231
     554e:	94 e0       	ldi	r25, 0x04	; 4
 /Users/askn/Develop/UPDI4AVR-USB/src/jtag.cpp:75
     if (_cmd == 0x80) {             /* DAP_EDBG_VENDOR_AVR_CMD */
@@ -17392,7 +17390,7 @@ main():
     559e:	ee 24       	eor	r14, r14
     55a0:	e3 94       	inc	r14
 ep_dpi_listen():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:304
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:305
     loop_until_bit_is_clear(USB0_INTFLAGSB, USB_RMWBUSY_bp);
     USB_EP_STATUS_CLR(USB_EP_RES) = ~USB_TOGGLE_bm;
   }
@@ -17403,33 +17401,33 @@ ep_dpi_listen():
     55a4:	90 e0       	ldi	r25, 0x00	; 0
     55a6:	80 93 ce 64 	sts	0x64CE, r24	; 0x8064ce <EP_TABLE+0x22>
     55aa:	90 93 cf 64 	sts	0x64CF, r25	; 0x8064cf <EP_TABLE+0x23>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:305
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:306
     EP_DPI.MCNT = 0;
     55ae:	10 92 d2 64 	sts	0x64D2, r1	; 0x8064d2 <EP_TABLE+0x26>
     55b2:	10 92 d3 64 	sts	0x64D3, r1	; 0x8064d3 <EP_TABLE+0x27>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:306
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:307
     loop_until_bit_is_clear(USB0_INTFLAGSB, USB_RMWBUSY_bp);
     55b6:	80 91 0b 0c 	lds	r24, 0x0C0B	; 0x800c0b <__TEXT_REGION_LENGTH__+0x7f0c0b>
     55ba:	82 fd       	sbrc	r24, 2
     55bc:	fc cf       	rjmp	.-8      	; 0x55b6 <main+0xcfa>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:307
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:308
     USB_EP_STATUS_CLR(USB_EP_DPI) = ~USB_TOGGLE_bm;
     55be:	8e ef       	ldi	r24, 0xFE	; 254
     55c0:	80 93 46 0c 	sts	0x0C46, r24	; 0x800c46 <__TEXT_REGION_LENGTH__+0x7f0c46>
 ep_dpo_listen():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:311
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:312
   }
 
   void ep_dpo_listen (void) {
     EP_DPO.CNT = 0;
     55c4:	10 92 d6 64 	sts	0x64D6, r1	; 0x8064d6 <EP_TABLE+0x2a>
     55c8:	10 92 d7 64 	sts	0x64D7, r1	; 0x8064d7 <EP_TABLE+0x2b>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:312
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:313
     loop_until_bit_is_clear(USB0_INTFLAGSB, USB_RMWBUSY_bp);
     55cc:	80 91 0b 0c 	lds	r24, 0x0C0B	; 0x800c0b <__TEXT_REGION_LENGTH__+0x7f0c0b>
     55d0:	82 fd       	sbrc	r24, 2
     55d2:	fc cf       	rjmp	.-8      	; 0x55cc <main+0xd10>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:313
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:314
     USB_EP_STATUS_CLR(USB_EP_DPO) = ~USB_TOGGLE_bm;
     55d4:	8e ef       	ldi	r24, 0xFE	; 254
     55d6:	80 93 48 0c 	sts	0x0C48, r24	; 0x800c48 <__TEXT_REGION_LENGTH__+0x7f0c48>
@@ -17468,7 +17466,7 @@ jtag_scope_branch():
     5600:	8f 93       	push	r24
     5602:	80 91 0d 61 	lds	r24, 0x610D	; 0x80610d <packet+0x2>
     5606:	8f 93       	push	r24
-    5608:	83 ec       	ldi	r24, 0xC3	; 195
+    5608:	82 ec       	ldi	r24, 0xC2	; 194
     560a:	99 e0       	ldi	r25, 0x09	; 9
     560c:	9f 93       	push	r25
     560e:	8f 93       	push	r24
@@ -17521,7 +17519,7 @@ jtag_scope_general():
     5646:	bf 92       	push	r11
     5648:	1f 92       	push	r1
     564a:	af 92       	push	r10
-    564c:	88 e7       	ldi	r24, 0x78	; 120
+    564c:	87 e7       	ldi	r24, 0x77	; 119
     564e:	95 e0       	ldi	r25, 0x05	; 5
     5650:	9f 93       	push	r25
     5652:	8f 93       	push	r24
@@ -17530,7 +17528,7 @@ jtag_scope_general():
     5658:	0e 94 25 0e 	call	0x1c4a	; 0x1c4a <Print::printf(PGM_t const*, ...) [clone .constprop.15]>
 /Users/askn/Develop/UPDI4AVR-USB/src/jtag.cpp:190
       D1PRINTF(" GEN_GET_PARAM\r\n");
-    565c:	87 e6       	ldi	r24, 0x67	; 103
+    565c:	86 e6       	ldi	r24, 0x66	; 102
     565e:	95 e0       	ldi	r25, 0x05	; 5
     5660:	9f 93       	push	r25
     5662:	8f 93       	push	r24
@@ -17547,7 +17545,7 @@ jtag_scope_general():
         /* _index == 0-5 */
         memcpy_P(&packet.in.data[0], &jtag_version[_index], _length);
     5674:	b6 01       	movw	r22, r12
-    5676:	6e 59       	subi	r22, 0x9E	; 158
+    5676:	6f 59       	subi	r22, 0x9F	; 159
     5678:	7a 4f       	sbci	r23, 0xFA	; 250
     567a:	a7 01       	movw	r20, r14
     567c:	82 e1       	ldi	r24, 0x12	; 18
@@ -17555,7 +17553,7 @@ jtag_scope_general():
     5680:	89 d7       	rcall	.+3858   	; 0x6594 <memcpy_P>
 /Users/askn/Develop/UPDI4AVR-USB/src/jtag.cpp:194
         D1PRINTF(" VESRION=");
-    5682:	88 e5       	ldi	r24, 0x58	; 88
+    5682:	87 e5       	ldi	r24, 0x57	; 87
     5684:	95 e0       	ldi	r25, 0x05	; 5
     5686:	9f 93       	push	r25
     5688:	8f 93       	push	r24
@@ -17609,7 +17607,7 @@ dap_command_check():
           else {
             /* A missing chunk is detected, so an error is returned. */
             D1PRINTF("<EDBG_FAIL>\r\n");
-    56c2:	8a ed       	ldi	r24, 0xDA	; 218
+    56c2:	89 ed       	ldi	r24, 0xD9	; 217
     56c4:	94 e0       	ldi	r25, 0x04	; 4
     56c6:	9f 93       	push	r25
     56c8:	8f 93       	push	r24
@@ -17650,7 +17648,7 @@ dap_command_check():
     56ee:	0d c0       	rjmp	.+26     	; 0x570a <main+0xe4e>
 /Users/askn/Develop/UPDI4AVR-USB/src/jtag.cpp:108
         D1PRINTF("<EDBG_EMPTY>\r\n");
-    56f0:	8b ec       	ldi	r24, 0xCB	; 203
+    56f0:	8a ec       	ldi	r24, 0xCA	; 202
     56f2:	94 e0       	ldi	r25, 0x04	; 4
     56f4:	9f 93       	push	r25
     56f6:	8f 93       	push	r24
@@ -17836,7 +17834,7 @@ jtag_scope_general():
           D1PRINTF(" VTARGET=%d\r\n", _vtarget);
     57ce:	9f 93       	push	r25
     57d0:	8f 93       	push	r24
-    57d2:	8a e4       	ldi	r24, 0x4A	; 74
+    57d2:	89 e4       	ldi	r24, 0x49	; 73
     57d4:	95 e0       	ldi	r25, 0x05	; 5
     57d6:	9f 93       	push	r25
     57d8:	8f 93       	push	r24
@@ -17880,7 +17878,7 @@ jtag_scope_general():
         else {                      /* PARM3_ANALOG_XXXX */
           /* Called with PowerDebugger HAS_VTARG_ADJ */
           D1PRINTF(" PHYSICAL\r\n");
-    5800:	8e e3       	ldi	r24, 0x3E	; 62
+    5800:	8d e3       	ldi	r24, 0x3D	; 61
     5802:	95 e0       	ldi	r25, 0x05	; 5
     5804:	9f 93       	push	r25
     5806:	8f 93       	push	r24
@@ -17892,7 +17890,7 @@ jtag_scope_general():
     5810:	6b 2d       	mov	r22, r11
     5812:	67 70       	andi	r22, 0x07	; 7
     5814:	70 e0       	ldi	r23, 0x00	; 0
-    5816:	6a 5c       	subi	r22, 0xCA	; 202
+    5816:	6b 5c       	subi	r22, 0xCB	; 203
     5818:	7a 4f       	sbci	r23, 0xFA	; 250
     581a:	a7 01       	movw	r20, r14
     581c:	82 e1       	ldi	r24, 0x12	; 18
@@ -17911,7 +17909,7 @@ jtag_scope_general():
     5828:	41 c0       	rjmp	.+130    	; 0x58ac <main+0xff0>
 /Users/askn/Develop/UPDI4AVR-USB/src/jtag.cpp:214
       D1PRINTF(" GEN_SIGN_ON\r\n");
-    582a:	87 e2       	ldi	r24, 0x27	; 39
+    582a:	86 e2       	ldi	r24, 0x26	; 38
     582c:	95 e0       	ldi	r25, 0x05	; 5
     582e:	9f 93       	push	r25
     5830:	8f 93       	push	r24
@@ -17947,7 +17945,7 @@ jtag_scope_general():
       memcpy_P(&packet.in.data, jtag_sign_on, sizeof(jtag_sign_on));
     5860:	4a e0       	ldi	r20, 0x0A	; 10
     5862:	50 e0       	ldi	r21, 0x00	; 0
-    5864:	6d e1       	ldi	r22, 0x1D	; 29
+    5864:	6c e1       	ldi	r22, 0x1C	; 28
     5866:	75 e0       	ldi	r23, 0x05	; 5
     5868:	82 e1       	ldi	r24, 0x12	; 18
     586a:	91 e6       	ldi	r25, 0x61	; 97
@@ -18008,7 +18006,7 @@ jtag_scope_general():
     58ae:	d9 f4       	brne	.+54     	; 0x58e6 <main+0x102a>
 /Users/askn/Develop/UPDI4AVR-USB/src/jtag.cpp:226
       D1PRINTF(" GEN_SIGN_OFF\r\n");
-    58b0:	8d e0       	ldi	r24, 0x0D	; 13
+    58b0:	8c e0       	ldi	r24, 0x0C	; 12
     58b2:	95 e0       	ldi	r25, 0x05	; 5
     58b4:	9f 93       	push	r25
     58b6:	8f 93       	push	r24
@@ -18061,7 +18059,7 @@ jtag_scope_general():
     58ec:	bf 92       	push	r11
     58ee:	1f 92       	push	r1
     58f0:	af 92       	push	r10
-    58f2:	86 ef       	ldi	r24, 0xF6	; 246
+    58f2:	85 ef       	ldi	r24, 0xF5	; 245
     58f4:	94 e0       	ldi	r25, 0x04	; 4
     58f6:	9f 93       	push	r25
     58f8:	8f 93       	push	r24
@@ -18131,7 +18129,7 @@ jtag_scope_avr_core():
     593a:	cf 92       	push	r12
     593c:	1f 92       	push	r1
     593e:	df 92       	push	r13
-    5940:	8e e6       	ldi	r24, 0x6E	; 110
+    5940:	8d e6       	ldi	r24, 0x6D	; 109
     5942:	98 e0       	ldi	r25, 0x08	; 8
     5944:	9f 93       	push	r25
     5946:	8f 93       	push	r24
@@ -18158,7 +18156,7 @@ jtag_scope_avr_core():
     5968:	2b c0       	rjmp	.+86     	; 0x59c0 <main+0x1104>
 /Users/askn/Develop/UPDI4AVR-USB/src/jtag.cpp:296
         D1PRINTF(" AVR_SET_PARAM\r\n");
-    596a:	8d e5       	ldi	r24, 0x5D	; 93
+    596a:	8c e5       	ldi	r24, 0x5C	; 92
     596c:	98 e0       	ldi	r25, 0x08	; 8
     596e:	9f 93       	push	r25
     5970:	8f 93       	push	r24
@@ -18189,7 +18187,7 @@ jtag_scope_avr_core():
     598c:	99 27       	eor	r25, r25
     598e:	9f 93       	push	r25
     5990:	8f 93       	push	r24
-    5992:	80 e2       	ldi	r24, 0x20	; 32
+    5992:	8f e1       	ldi	r24, 0x1F	; 31
     5994:	98 e0       	ldi	r25, 0x08	; 8
     5996:	9f 93       	push	r25
     5998:	8f 93       	push	r24
@@ -18241,7 +18239,7 @@ jtag_scope_avr_core():
         D1PRINTF(" AVR_SET_PARAM=%02X\r\n", _data);
     59c8:	ff 92       	push	r15
     59ca:	ef 92       	push	r14
-    59cc:	87 e4       	ldi	r24, 0x47	; 71
+    59cc:	86 e4       	ldi	r24, 0x46	; 70
     59ce:	98 e0       	ldi	r25, 0x08	; 8
 /Users/askn/Develop/UPDI4AVR-USB/src/jtag.cpp:303
       }
@@ -18261,7 +18259,7 @@ jtag_scope_avr_core():
     59e8:	cc cf       	rjmp	.-104    	; 0x5982 <main+0x10c6>
     59ea:	ff 92       	push	r15
     59ec:	ef 92       	push	r14
-    59ee:	81 e3       	ldi	r24, 0x31	; 49
+    59ee:	80 e3       	ldi	r24, 0x30	; 48
     59f0:	98 e0       	ldi	r25, 0x08	; 8
     59f2:	ee cf       	rjmp	.-36     	; 0x59d0 <main+0x1114>
 /Users/askn/Develop/UPDI4AVR-USB/src/jtag.cpp:316
@@ -18296,7 +18294,7 @@ jtag_scope_avr_core():
     5a18:	8f 93       	push	r24
     5a1a:	80 91 88 63 	lds	r24, 0x6388	; 0x806388 <_xclk>
     5a1e:	8f 93       	push	r24
-    5a20:	85 e1       	ldi	r24, 0x15	; 21
+    5a20:	84 e1       	ldi	r24, 0x14	; 20
     5a22:	98 e0       	ldi	r25, 0x08	; 8
 /Users/askn/Develop/UPDI4AVR-USB/src/jtag.cpp:396
         }
@@ -18325,8 +18323,8 @@ jtag_scope_avr_core():
           D1PRINTF(" SESS_PURPOSE=%02X\r\n", _data);
     5a38:	ff 92       	push	r15
     5a3a:	ef 92       	push	r14
-    5a3c:	80 e0       	ldi	r24, 0x00	; 0
-    5a3e:	98 e0       	ldi	r25, 0x08	; 8
+    5a3c:	8f ef       	ldi	r24, 0xFF	; 255
+    5a3e:	97 e0       	ldi	r25, 0x07	; 7
     5a40:	f1 cf       	rjmp	.-30     	; 0x5a24 <main+0x1168>
 /Users/askn/Develop/UPDI4AVR-USB/src/jtag.cpp:327
           _jtag_sess = _data;
@@ -18344,7 +18342,7 @@ jtag_scope_avr_core():
           D1PRINTF(" CONNECTION=%02X\r\n", _data);
     5a4c:	ff 92       	push	r15
     5a4e:	ef 92       	push	r14
-    5a50:	8d ee       	ldi	r24, 0xED	; 237
+    5a50:	8c ee       	ldi	r24, 0xEC	; 236
     5a52:	97 e0       	ldi	r25, 0x07	; 7
     5a54:	9f 93       	push	r25
     5a56:	8f 93       	push	r24
@@ -18407,7 +18405,7 @@ jtag_scope_avr_core():
     5a9c:	81 f0       	breq	.+32     	; 0x5abe <main+0x1202>
     5a9e:	ff 92       	push	r15
     5aa0:	6f 93       	push	r22
-    5aa2:	8e ed       	ldi	r24, 0xDE	; 222
+    5aa2:	8d ed       	ldi	r24, 0xDD	; 221
     5aa4:	97 e0       	ldi	r25, 0x07	; 7
     5aa6:	9f 93       	push	r25
     5aa8:	8f 93       	push	r24
@@ -18443,7 +18441,7 @@ jtag_scope_avr_core():
           D1PRINTF(" DEVICEDESC=%X\r\n", _length);
     5ada:	1f 92       	push	r1
     5adc:	bf 92       	push	r11
-    5ade:	8d ec       	ldi	r24, 0xCD	; 205
+    5ade:	8c ec       	ldi	r24, 0xCC	; 204
     5ae0:	97 e0       	ldi	r25, 0x07	; 7
     5ae2:	9f 93       	push	r25
     5ae4:	8f 93       	push	r24
@@ -18481,7 +18479,7 @@ jtag_scope_avr_core():
           D1PRINTF(" HVCTRLEN=%02X\r\n", _data);
     5b0e:	ff 92       	push	r15
     5b10:	ef 92       	push	r14
-    5b12:	8c eb       	ldi	r24, 0xBC	; 188
+    5b12:	8b eb       	ldi	r24, 0xBB	; 187
     5b14:	97 e0       	ldi	r25, 0x07	; 7
     5b16:	9f 93       	push	r25
     5b18:	8f 93       	push	r24
@@ -18505,7 +18503,7 @@ jtag_scope_avr_core():
           D1PRINTF(" UNLOCKEN=%02X\r\n", _data);
     5b2e:	ff 92       	push	r15
     5b30:	ef 92       	push	r14
-    5b32:	8b ea       	ldi	r24, 0xAB	; 171
+    5b32:	8a ea       	ldi	r24, 0xAA	; 170
     5b34:	97 e0       	ldi	r25, 0x07	; 7
     5b36:	76 cf       	rjmp	.-276    	; 0x5a24 <main+0x1168>
 /Users/askn/Develop/UPDI4AVR-USB/src/jtag.cpp:402
@@ -18528,7 +18526,7 @@ jtag_scope_avr_core():
     5b48:	cf 92       	push	r12
     5b4a:	1f 92       	push	r1
     5b4c:	df 92       	push	r13
-    5b4e:	83 e9       	ldi	r24, 0x93	; 147
+    5b4e:	82 e9       	ldi	r24, 0x92	; 146
     5b50:	97 e0       	ldi	r25, 0x07	; 7
     5b52:	9f 93       	push	r25
     5b54:	8f 93       	push	r24
@@ -18537,7 +18535,7 @@ jtag_scope_avr_core():
     5b5a:	0e 94 25 0e 	call	0x1c4a	; 0x1c4a <Print::printf(PGM_t const*, ...) [clone .constprop.15]>
 /Users/askn/Develop/UPDI4AVR-USB/src/jtag.cpp:404
       D1PRINTF(" AVR_GET_PARAMETER\r\n");
-    5b5e:	8e e7       	ldi	r24, 0x7E	; 126
+    5b5e:	8d e7       	ldi	r24, 0x7D	; 125
     5b60:	97 e0       	ldi	r25, 0x07	; 7
     5b62:	9f 93       	push	r25
     5b64:	8f 93       	push	r24
@@ -18559,7 +18557,7 @@ jtag_scope_avr_core():
     5b7a:	80 91 87 63 	lds	r24, 0x6387	; 0x806387 <_jtag_arch>
     5b7e:	1f 92       	push	r1
     5b80:	8f 93       	push	r24
-    5b82:	8d e6       	ldi	r24, 0x6D	; 109
+    5b82:	8c e6       	ldi	r24, 0x6C	; 108
     5b84:	97 e0       	ldi	r25, 0x07	; 7
     5b86:	9f 93       	push	r25
     5b88:	8f 93       	push	r24
@@ -18600,7 +18598,7 @@ jtag_scope_avr_core():
     5ba6:	80 91 eb 60 	lds	r24, 0x60EB	; 0x8060eb <_jtag_conn>
     5baa:	1f 92       	push	r1
     5bac:	8f 93       	push	r24
-    5bae:	8a e5       	ldi	r24, 0x5A	; 90
+    5bae:	89 e5       	ldi	r24, 0x59	; 89
     5bb0:	97 e0       	ldi	r25, 0x07	; 7
     5bb2:	9f 93       	push	r25
     5bb4:	8f 93       	push	r24
@@ -18624,7 +18622,7 @@ jtag_scope_avr_core():
     5bce:	8f 93       	push	r24
     5bd0:	80 91 88 63 	lds	r24, 0x6388	; 0x806388 <_xclk>
     5bd4:	8f 93       	push	r24
-    5bd6:	8f e4       	ldi	r24, 0x4F	; 79
+    5bd6:	8e e4       	ldi	r24, 0x4E	; 78
     5bd8:	97 e0       	ldi	r25, 0x07	; 7
     5bda:	9f 93       	push	r25
     5bdc:	8f 93       	push	r24
@@ -18662,7 +18660,7 @@ jtag_scope_updi():
       D1PRINTF(" UPDI_SIGN_ON=EXT:%02X\r\n", packet.out.bMType);
     5c00:	1f 92       	push	r1
     5c02:	df 92       	push	r13
-    5c04:	8b e2       	ldi	r24, 0x2B	; 43
+    5c04:	8a e2       	ldi	r24, 0x2A	; 42
     5c06:	96 e0       	ldi	r25, 0x06	; 6
     5c08:	9f 93       	push	r25
     5c0a:	8f 93       	push	r24
@@ -18737,7 +18735,7 @@ jtag_scope_updi():
     5c8c:	3d c0       	rjmp	.+122    	; 0x5d08 <main+0x144c>
 /Users/askn/Develop/UPDI4AVR-USB/src/updi.cpp:524
       D1PRINTF(" UPDI_SIGN_OFF\r\n");
-    5c8e:	8a e1       	ldi	r24, 0x1A	; 26
+    5c8e:	89 e1       	ldi	r24, 0x19	; 25
     5c90:	96 e0       	ldi	r25, 0x06	; 6
     5c92:	9f 93       	push	r25
     5c94:	8f 93       	push	r24
@@ -18870,7 +18868,7 @@ jtag_scope_updi():
     5d0a:	d9 f4       	brne	.+54     	; 0x5d42 <main+0x1486>
 /Users/askn/Develop/UPDI4AVR-USB/src/updi.cpp:529
       D1PRINTF(" UPDI_ENTER_PROG\r\n");
-    5d0c:	87 e0       	ldi	r24, 0x07	; 7
+    5d0c:	86 e0       	ldi	r24, 0x06	; 6
     5d0e:	96 e0       	ldi	r25, 0x06	; 6
     5d10:	9f 93       	push	r25
     5d12:	8f 93       	push	r24
@@ -18916,7 +18914,7 @@ jtag_scope_updi():
     5d44:	e9 f4       	brne	.+58     	; 0x5d80 <main+0x14c4>
 /Users/askn/Develop/UPDI4AVR-USB/src/updi.cpp:536
       D1PRINTF(" UPDI_LEAVE_PROG\r\n");
-    5d46:	84 ef       	ldi	r24, 0xF4	; 244
+    5d46:	83 ef       	ldi	r24, 0xF3	; 243
     5d48:	95 e0       	ldi	r25, 0x05	; 5
     5d4a:	9f 93       	push	r25
     5d4c:	8f 93       	push	r24
@@ -18929,7 +18927,7 @@ jtag_scope_updi():
     5d5a:	8f 93       	push	r24
     5d5c:	80 91 88 63 	lds	r24, 0x6388	; 0x806388 <_xclk>
     5d60:	8f 93       	push	r24
-    5d62:	84 ee       	ldi	r24, 0xE4	; 228
+    5d62:	83 ee       	ldi	r24, 0xE3	; 227
     5d64:	95 e0       	ldi	r25, 0x05	; 5
     5d66:	9f 93       	push	r25
     5d68:	8f 93       	push	r24
@@ -18979,7 +18977,7 @@ jtag_scope_updi():
     5d9a:	8f 93       	push	r24
     5d9c:	1f 92       	push	r1
     5d9e:	df 92       	push	r13
-    5da0:	8b ec       	ldi	r24, 0xCB	; 203
+    5da0:	8a ec       	ldi	r24, 0xCA	; 202
     5da2:	95 e0       	ldi	r25, 0x05	; 5
     5da4:	9f 93       	push	r25
     5da6:	8f 93       	push	r24
@@ -19034,7 +19032,7 @@ jtag_scope_updi():
     5df6:	8f 93       	push	r24
     5df8:	1f 92       	push	r1
     5dfa:	df 92       	push	r13
-    5dfc:	8e ea       	ldi	r24, 0xAE	; 174
+    5dfc:	8d ea       	ldi	r24, 0xAD	; 173
     5dfe:	95 e0       	ldi	r25, 0x05	; 5
     5e00:	9f 93       	push	r25
     5e02:	8f 93       	push	r24
@@ -19197,7 +19195,7 @@ jtag_scope_updi():
     5eca:	8f 93       	push	r24
     5ecc:	1f 92       	push	r1
     5ece:	df 92       	push	r13
-    5ed0:	80 e9       	ldi	r24, 0x90	; 144
+    5ed0:	8f e8       	ldi	r24, 0x8F	; 143
     5ed2:	95 e0       	ldi	r25, 0x05	; 5
     5ed4:	9f 93       	push	r25
     5ed6:	8f 93       	push	r24
@@ -19235,7 +19233,7 @@ jtag_scope_xmega():
       D1PRINTF(" PDI_SIGN_ON=EXT:%02X\r\n", packet.out.bMType);
     5efc:	1f 92       	push	r1
     5efe:	df 92       	push	r13
-    5f00:	89 ec       	ldi	r24, 0xC9	; 201
+    5f00:	88 ec       	ldi	r24, 0xC8	; 200
     5f02:	96 e0       	ldi	r25, 0x06	; 6
     5f04:	9f 93       	push	r25
     5f06:	8f 93       	push	r24
@@ -19287,7 +19285,7 @@ jtag_scope_xmega():
     5f42:	c9 f5       	brne	.+114    	; 0x5fb6 <main+0x16fa>
 /Users/askn/Develop/UPDI4AVR-USB/src/pdi.cpp:415
       D1PRINTF(" PDI_SIGN_OFF\r\n");
-    5f44:	89 eb       	ldi	r24, 0xB9	; 185
+    5f44:	88 eb       	ldi	r24, 0xB8	; 184
     5f46:	96 e0       	ldi	r25, 0x06	; 6
     5f48:	9f 93       	push	r25
     5f4a:	8f 93       	push	r24
@@ -19395,7 +19393,7 @@ jtag_scope_xmega():
     5fb8:	79 f4       	brne	.+30     	; 0x5fd8 <main+0x171c>
 /Users/askn/Develop/UPDI4AVR-USB/src/pdi.cpp:420
       D1PRINTF(" PDI_ENTER_PROG\r\n");
-    5fba:	87 ea       	ldi	r24, 0xA7	; 167
+    5fba:	86 ea       	ldi	r24, 0xA6	; 166
     5fbc:	96 e0       	ldi	r25, 0x06	; 6
     5fbe:	9f 93       	push	r25
     5fc0:	8f 93       	push	r24
@@ -19419,7 +19417,7 @@ jtag_scope_xmega():
     5fda:	69 f4       	brne	.+26     	; 0x5ff6 <main+0x173a>
 /Users/askn/Develop/UPDI4AVR-USB/src/pdi.cpp:425
       D1PRINTF(" PDI_LEAVE_PROG\r\n");
-    5fdc:	85 e9       	ldi	r24, 0x95	; 149
+    5fdc:	84 e9       	ldi	r24, 0x94	; 148
     5fde:	96 e0       	ldi	r25, 0x06	; 6
     5fe0:	9f 93       	push	r25
     5fe2:	8f 93       	push	r24
@@ -19455,7 +19453,7 @@ jtag_scope_xmega():
     6014:	8f 93       	push	r24
     6016:	1f 92       	push	r1
     6018:	df 92       	push	r13
-    601a:	8d e7       	ldi	r24, 0x7D	; 125
+    601a:	8c e7       	ldi	r24, 0x7C	; 124
     601c:	96 e0       	ldi	r25, 0x06	; 6
     601e:	9f 93       	push	r25
     6020:	8f 93       	push	r24
@@ -19493,7 +19491,7 @@ jtag_scope_xmega():
     605e:	8f 93       	push	r24
     6060:	1f 92       	push	r1
     6062:	df 92       	push	r13
-    6064:	81 e6       	ldi	r24, 0x61	; 97
+    6064:	80 e6       	ldi	r24, 0x60	; 96
     6066:	96 e0       	ldi	r25, 0x06	; 6
     6068:	9f 93       	push	r25
     606a:	8f 93       	push	r24
@@ -19537,7 +19535,7 @@ jtag_scope_xmega():
     60b0:	8f 93       	push	r24
     60b2:	1f 92       	push	r1
     60b4:	df 92       	push	r13
-    60b6:	84 e4       	ldi	r24, 0x44	; 68
+    60b6:	83 e4       	ldi	r24, 0x43	; 67
     60b8:	96 e0       	ldi	r25, 0x06	; 6
     60ba:	9f 93       	push	r25
     60bc:	8f 93       	push	r24
@@ -19575,7 +19573,7 @@ jtag_scope_avr_core():
       D1PRINTF(" AVR_SIGN_OFF:ARCH=%d\r\n", _jtag_arch);
     60de:	1f 92       	push	r1
     60e0:	9f 93       	push	r25
-    60e2:	87 e3       	ldi	r24, 0x37	; 55
+    60e2:	86 e3       	ldi	r24, 0x36	; 54
     60e4:	97 e0       	ldi	r25, 0x07	; 7
 /Users/askn/Develop/UPDI4AVR-USB/src/jtag.cpp:443
   #endif
@@ -19630,7 +19628,7 @@ jtag_scope_avr_core():
       D1PRINTF(" AVR_SIGN_ON:ARCH=%d\r\n", _jtag_arch);
     6116:	1f 92       	push	r1
     6118:	9f 93       	push	r25
-    611a:	80 e2       	ldi	r24, 0x20	; 32
+    611a:	8f e1       	ldi	r24, 0x1F	; 31
     611c:	97 e0       	ldi	r25, 0x07	; 7
     611e:	e3 cf       	rjmp	.-58     	; 0x60e6 <main+0x182a>
 /Users/askn/Develop/UPDI4AVR-USB/src/jtag.cpp:446
@@ -19643,7 +19641,7 @@ jtag_scope_avr_core():
       D1PRINTF(" AVR_START_DW_DEBUG:ARCH=%d:FAILED\r\n", _jtag_arch);
     6124:	1f 92       	push	r1
     6126:	9f 93       	push	r25
-    6128:	8b ef       	ldi	r24, 0xFB	; 251
+    6128:	8a ef       	ldi	r24, 0xFA	; 250
     612a:	96 e0       	ldi	r25, 0x06	; 6
 jtag_scope_branch():
 /Users/askn/Develop/UPDI4AVR-USB/src/jtag.cpp:481
@@ -19671,7 +19669,7 @@ jtag_scope_avr_core():
     613c:	9f 93       	push	r25
     613e:	1f 92       	push	r1
     6140:	8f 93       	push	r24
-    6142:	81 ee       	ldi	r24, 0xE1	; 225
+    6142:	80 ee       	ldi	r24, 0xE0	; 224
     6144:	96 e0       	ldi	r25, 0x06	; 6
     6146:	9f 93       	push	r25
     6148:	8f 93       	push	r24
@@ -19711,7 +19709,7 @@ jtag_scope_tpi():
     616c:	31 f5       	brne	.+76     	; 0x61ba <main+0x18fe>
 /Users/askn/Develop/UPDI4AVR-USB/src/tpi.cpp:353
       D1PRINTF(" TPI_ENTER_PROGMODE\r\n");
-    616e:	85 e3       	ldi	r24, 0x35	; 53
+    616e:	84 e3       	ldi	r24, 0x34	; 52
     6170:	99 e0       	ldi	r25, 0x09	; 9
     6172:	9f 93       	push	r25
     6174:	8f 93       	push	r24
@@ -19727,7 +19725,7 @@ jtag_scope_tpi():
       D1PRINTF(" VTARGET=%d\r\n", _vtarget);
     618a:	9f 93       	push	r25
     618c:	8f 93       	push	r24
-    618e:	87 e2       	ldi	r24, 0x27	; 39
+    618e:	86 e2       	ldi	r24, 0x26	; 38
     6190:	99 e0       	ldi	r25, 0x09	; 9
     6192:	9f 93       	push	r25
     6194:	8f 93       	push	r24
@@ -19769,7 +19767,7 @@ jtag_scope_tpi():
     61be:	64 c0       	rjmp	.+200    	; 0x6288 <main+0x19cc>
 /Users/askn/Develop/UPDI4AVR-USB/src/tpi.cpp:360
       D1PRINTF(" TPI_LEAVE_PROGMODE\r\n");
-    61c0:	81 e1       	ldi	r24, 0x11	; 17
+    61c0:	80 e1       	ldi	r24, 0x10	; 16
     61c2:	99 e0       	ldi	r25, 0x09	; 9
     61c4:	9f 93       	push	r25
     61c6:	8f 93       	push	r24
@@ -19820,7 +19818,7 @@ jtag_scope_tpi():
     D1PRINTF(" <RES:%02X>\r\n", _rspsize);
     61f2:	ff 92       	push	r15
     61f4:	ef 92       	push	r14
-    61f6:	82 e9       	ldi	r24, 0x92	; 146
+    61f6:	81 e9       	ldi	r24, 0x91	; 145
     61f8:	98 e0       	ldi	r25, 0x08	; 8
     61fa:	9f 93       	push	r25
     61fc:	8f 93       	push	r24
@@ -19907,7 +19905,7 @@ disconnect():
     624a:	fc 98       	cbi	0x1f, 4	; 31
 /Users/askn/Develop/UPDI4AVR-USB/src/tpi.cpp:317
       D1PRINTF("<HVC:OFF>\r\n");
-    624c:	86 e8       	ldi	r24, 0x86	; 134
+    624c:	85 e8       	ldi	r24, 0x85	; 133
     624e:	98 e0       	ldi	r25, 0x08	; 8
     6250:	9f 93       	push	r25
     6252:	8f 93       	push	r24
@@ -19977,7 +19975,7 @@ jtag_scope_tpi():
     6290:	79 f4       	brne	.+30     	; 0x62b0 <main+0x19f4>
 /Users/askn/Develop/UPDI4AVR-USB/src/tpi.cpp:382
       D1PRINTF(" TPI_CRC\r\n");     /* not used (Fail) */
-    6292:	86 e0       	ldi	r24, 0x06	; 6
+    6292:	85 e0       	ldi	r24, 0x05	; 5
     6294:	99 e0       	ldi	r25, 0x09	; 9
     6296:	9f 93       	push	r25
     6298:	8f 93       	push	r24
@@ -20049,7 +20047,7 @@ jtag_scope_tpi():
     62e4:	80 91 11 61 	lds	r24, 0x6111	; 0x806111 <packet+0x6>
     62e8:	1f 92       	push	r1
     62ea:	8f 93       	push	r24
-    62ec:	8c ee       	ldi	r24, 0xEC	; 236
+    62ec:	8b ee       	ldi	r24, 0xEB	; 235
     62ee:	98 e0       	ldi	r25, 0x08	; 8
     62f0:	9f 93       	push	r25
     62f2:	8f 93       	push	r24
@@ -20084,7 +20082,7 @@ jtag_scope_tpi():
     631c:	2f 93       	push	r18
     631e:	1f 92       	push	r1
     6320:	8f 93       	push	r24
-    6322:	83 ed       	ldi	r24, 0xD3	; 211
+    6322:	82 ed       	ldi	r24, 0xD2	; 210
     6324:	98 e0       	ldi	r25, 0x08	; 8
     6326:	9f 93       	push	r25
     6328:	8f 93       	push	r24
@@ -20116,7 +20114,7 @@ jtag_scope_tpi():
     6356:	80 91 11 61 	lds	r24, 0x6111	; 0x806111 <packet+0x6>
     635a:	1f 92       	push	r1
     635c:	8f 93       	push	r24
-    635e:	8b eb       	ldi	r24, 0xBB	; 187
+    635e:	8a eb       	ldi	r24, 0xBA	; 186
     6360:	98 e0       	ldi	r25, 0x08	; 8
     6362:	9f 93       	push	r25
     6364:	8f 93       	push	r24
@@ -20177,7 +20175,7 @@ jtag_scope_tpi():
     63ae:	80 91 11 61 	lds	r24, 0x6111	; 0x806111 <packet+0x6>
     63b2:	1f 92       	push	r1
     63b4:	8f 93       	push	r24
-    63b6:	80 ea       	ldi	r24, 0xA0	; 160
+    63b6:	8f e9       	ldi	r24, 0x9F	; 159
     63b8:	98 e0       	ldi	r25, 0x08	; 8
     63ba:	9f 93       	push	r25
     63bc:	8f 93       	push	r24
@@ -20230,7 +20228,7 @@ jtag_scope_edbg():
     63f4:	df 92       	push	r13
     63f6:	1f 92       	push	r1
     63f8:	cf 92       	push	r12
-    63fa:	8c e9       	ldi	r24, 0x9C	; 156
+    63fa:	8b e9       	ldi	r24, 0x9B	; 155
     63fc:	99 e0       	ldi	r25, 0x09	; 9
     63fe:	9f 93       	push	r25
     6400:	8f 93       	push	r24
@@ -20252,7 +20250,7 @@ jtag_scope_edbg():
       D1PRINTF(" AVR_SET_PARAM=%04X\r\n", _data);
     641c:	ff 92       	push	r15
     641e:	ef 92       	push	r14
-    6420:	86 e8       	ldi	r24, 0x86	; 134
+    6420:	85 e8       	ldi	r24, 0x85	; 133
     6422:	99 e0       	ldi	r25, 0x09	; 9
     6424:	9f 93       	push	r25
     6426:	8f 93       	push	r24
@@ -20279,7 +20277,7 @@ jtag_scope_edbg():
           D1PRINTF(" TARGET_POWER=%02X\r\n", _data);
     6446:	ff 92       	push	r15
     6448:	ef 92       	push	r14
-    644a:	81 e7       	ldi	r24, 0x71	; 113
+    644a:	80 e7       	ldi	r24, 0x70	; 112
     644c:	99 e0       	ldi	r25, 0x09	; 9
     644e:	9f 93       	push	r25
     6450:	8f 93       	push	r24
@@ -20323,7 +20321,7 @@ jtag_scope_edbg():
     6484:	2d ca       	rjmp	.-2982   	; 0x58e0 <main+0x1024>
 /Users/askn/Develop/UPDI4AVR-USB/src/jtag.cpp:267
       D1PRINTF(" AVR_GET_PARAM\r\n");
-    6486:	80 e6       	ldi	r24, 0x60	; 96
+    6486:	8f e5       	ldi	r24, 0x5F	; 95
     6488:	99 e0       	ldi	r25, 0x09	; 9
     648a:	9f 93       	push	r25
     648c:	8f 93       	push	r24
@@ -20349,7 +20347,7 @@ jtag_scope_edbg():
     64a8:	80 91 59 63 	lds	r24, 0x6359	; 0x806359 <_jtag_vpow>
     64ac:	1f 92       	push	r1
     64ae:	8f 93       	push	r24
-    64b0:	8b e4       	ldi	r24, 0x4B	; 75
+    64b0:	8a e4       	ldi	r24, 0x4A	; 74
     64b2:	99 e0       	ldi	r25, 0x09	; 9
     64b4:	9f 93       	push	r25
     64b6:	8f 93       	push	r24
@@ -20370,11 +20368,11 @@ jtag_scope_branch():
     else    { D1PRINTF(" ?:SCOPE=%02X\r\n", _scope); }
     64c6:	1f 92       	push	r1
     64c8:	ff 92       	push	r15
-    64ca:	83 eb       	ldi	r24, 0xB3	; 179
+    64ca:	82 eb       	ldi	r24, 0xB2	; 178
     64cc:	99 e0       	ldi	r25, 0x09	; 9
     64ce:	2e ce       	rjmp	.-932    	; 0x612c <main+0x1870>
 main():
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:180
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:181
       }
       return _size;
     }
@@ -20383,14 +20381,14 @@ main():
       _size = sizeof(current_descriptor);
     64d0:	9b e6       	ldi	r25, 0x6B	; 107
     64d2:	80 e0       	ldi	r24, 0x00	; 0
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:179
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:180
         D1PRINTF(" VID:PID=%04X:%04X\r\n", _CAPS16(_buffer[8])->word, _CAPS16(_buffer[10])->word);
       }
       return _size;
     }
     else if (_type == 0x02) {     /* CONFIGURATION */
       _pgmem = (uint8_t*)&current_descriptor;
-    64d4:	6b ee       	ldi	r22, 0xEB	; 235
+    64d4:	62 ef       	ldi	r22, 0xF2	; 242
     64d6:	72 e0       	ldi	r23, 0x02	; 2
     64d8:	e9 2e       	mov	r14, r25
     64da:	f8 2e       	mov	r15, r24
@@ -20398,7 +20396,7 @@ main():
     64de:	df 04       	cpc	r13, r15
     64e0:	08 f4       	brcc	.+2      	; 0x64e4 <main+0x1c28>
     64e2:	76 01       	movw	r14, r12
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:229
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:230
           }
           return 26;
         }
@@ -20408,7 +20406,7 @@ main():
     64e4:	84 e9       	ldi	r24, 0x94	; 148
     64e6:	93 e6       	ldi	r25, 0x63	; 99
     64e8:	0c 94 fa 27 	jmp	0x4ff4	; 0x4ff4 <main+0x738>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:184
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:185
       _pgmem = (uint8_t*)&current_descriptor;
       _size = sizeof(current_descriptor);
     }
@@ -20417,17 +20415,17 @@ main():
       _size = sizeof(qualifier_descriptor);
     64ec:	9a e0       	ldi	r25, 0x0A	; 10
     64ee:	80 e0       	ldi	r24, 0x00	; 0
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:183
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:184
     else if (_type == 0x02) {     /* CONFIGURATION */
       _pgmem = (uint8_t*)&current_descriptor;
       _size = sizeof(current_descriptor);
     }
     else if (_type == 0x06) {     /* QUALIFIER */
       _pgmem = (uint8_t*)&qualifier_descriptor;
-    64f0:	61 ee       	ldi	r22, 0xE1	; 225
+    64f0:	68 ee       	ldi	r22, 0xE8	; 232
     64f2:	72 e0       	ldi	r23, 0x02	; 2
     64f4:	f1 cf       	rjmp	.-30     	; 0x64d8 <main+0x1c1c>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:188
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:189
       _size = sizeof(qualifier_descriptor);
     }
     else if (_type == 0x21) {     /* HID */
@@ -20435,25 +20433,25 @@ main():
       _size = 9;
     64f6:	99 e0       	ldi	r25, 0x09	; 9
     64f8:	80 e0       	ldi	r24, 0x00	; 0
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:187
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:188
     else if (_type == 0x06) {     /* QUALIFIER */
       _pgmem = (uint8_t*)&qualifier_descriptor;
       _size = sizeof(qualifier_descriptor);
     }
     else if (_type == 0x21) {     /* HID */
       _pgmem = (uint8_t*)&current_descriptor + 18;
-    64fa:	6d ef       	ldi	r22, 0xFD	; 253
-    64fc:	72 e0       	ldi	r23, 0x02	; 2
+    64fa:	64 e0       	ldi	r22, 0x04	; 4
+    64fc:	73 e0       	ldi	r23, 0x03	; 3
     64fe:	ec cf       	rjmp	.-40     	; 0x64d8 <main+0x1c1c>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:192
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:193
       _size = 9;
     }
     else if (_type == 0x22) {     /* REPORT */
       _pgmem = (uint8_t*)&report_descriptor;
       _size = sizeof(report_descriptor);
-    6500:	97 e1       	ldi	r25, 0x17	; 23
+    6500:	9e e1       	ldi	r25, 0x1E	; 30
     6502:	80 e0       	ldi	r24, 0x00	; 0
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:191
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:192
     else if (_type == 0x21) {     /* HID */
       _pgmem = (uint8_t*)&current_descriptor + 18;
       _size = 9;
@@ -20463,7 +20461,7 @@ main():
     6504:	6a ec       	ldi	r22, 0xCA	; 202
     6506:	72 e0       	ldi	r23, 0x02	; 2
     6508:	e7 cf       	rjmp	.-50     	; 0x64d8 <main+0x1c1c>
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:196
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:197
       _size = sizeof(report_descriptor);
     }
     else if (_index == 0x0300) {  /* LANGUAGE */
@@ -20471,7 +20469,7 @@ main():
       _size = sizeof(language_descriptor);
     650a:	94 e0       	ldi	r25, 0x04	; 4
     650c:	80 e0       	ldi	r24, 0x00	; 0
-/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:195
+/Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:196
     else if (_type == 0x22) {     /* REPORT */
       _pgmem = (uint8_t*)&report_descriptor;
       _size = sizeof(report_descriptor);
