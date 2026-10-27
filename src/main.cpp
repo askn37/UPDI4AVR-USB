@@ -43,12 +43,6 @@ namespace /* NAMELESS */ {
 #endif
   LineEncoding_t _set_line_encoding;
   LineState_t    _set_line_state;
-  NOINIT uint16_t _send_break;
-  NOINIT volatile uint8_t _send_count;
-  NOINIT uint8_t _recv_count;
-  NOINIT uint8_t _set_config;
-  NOINIT volatile uint8_t _sof_count;
-  NOINIT uint8_t _set_serial_state;
 
   /* JTAG packet payload */
   NOINIT JTAG_Packet_t packet;
@@ -115,7 +109,6 @@ int main (void) {
 #if defined(PIN_SYS_SW0)
   /* Clear the dirty flag before enabling interrupts. */
   vportRegister(PIN_SYS_SW0).INTFLAGS = ~0;
-  CCL_INTFLAGS = ~0;
 #endif
 
   interrupts();

@@ -14,6 +14,13 @@
 
 ### Recent Features
 
+1.35.55 (26/10/26)
+- "SEND_BREAK" 後に VCP が回復しないのを修正。
+- "SERIAL_STATE" 通知の発行は、VCP-RxD がアイドルになるまで遅延されるようになった。
+- "General Information Descriptor" は CDC-ACM Revision 1.2 準拠に改訂された。
+- "iSerialNumber" は 12桁の 16進数に変更された。*Ex:"A1CE XXXX YYYY"*
+  - これによりある種の文字列制限が緩和される。
+
 1.35.54 (26/09/13)
 - SDK 0.4.10 に合わせた些細な修正
 
@@ -151,8 +158,8 @@ Programming modes     : SPM, UPDI
 Programmer type       : JTAGICE3_UPDI
 Description           : MPLAB(R) PICkit 4 in UPDI mode
 ICE HW version        : 0
-ICE FW version        : 1.34 (rel. 49)
-Serial number         : MX********
+ICE FW version        : 1.35 (rel. 55)
+Serial number         : A1CE********
 Vtarget               : 5.02 V
 PDI/UPDI clk          : 225 kHz
 
@@ -195,8 +202,8 @@ Programming modes     : TPI
 Programmer type       : JTAGICE3_TPI
 Description           : MPLAB(R) PICkit 4 in TPI mode
 ICE HW version        : 0
-ICE FW version        : 1.34 (rel. 49)
-Serial number         : MX********
+ICE FW version        : 1.35 (rel. 55)
+Serial number         : A1CE********
 Vtarget               : 5.00 V
 
 
@@ -266,8 +273,8 @@ Programming modes     : SPM, PDI
 Programmer type       : JTAGICE3_PDI
 Description           : MPLAB(R) PICkit 4 in PDI mode
 ICE HW version        : 0
-ICE FW version        : 1.34 (rel. 49)
-Serial number         : MX********
+ICE FW version        : 1.35 (rel. 55)
+Serial number         : A1CE********
 Vtarget               : 3.30 V
 PDI/UPDI clk          : 2500 kHz
 

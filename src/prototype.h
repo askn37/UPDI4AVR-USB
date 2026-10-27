@@ -102,7 +102,17 @@
 #define USB_EP_STATUS_SET(EPFIFO) _SFR_MEM8(&USB0_STATUS0_OUTSET + ((EPFIFO) >> 2))
 
 #define USB_ENDPOINTS_MAX 4
-#define USB_CCI_INTERVAL  4
+
+/* For Windows, powers of 2 from 1 to 32 are recommended. */
+#define USB_CCI_INTERVAL 4
+
+/* VCP-TxD buffering delay time. */
+#define VCP_BULK_DELAY 32
+
+/* The delay time for notifying the SerialState. */
+/* This must be greater than USB_CCI_INTERVAL. */
+/* VCP_BULK_DELAY cancels each other out. */
+#define SERIALSTATE_DELAY 8
 
 /* In the internal representation of an endpoint number, */
 /* the high and low nibbles are reversed from the representation on the USB device. */
@@ -452,12 +462,6 @@ extern "C" {
     #endif
     extern LineEncoding_t _set_line_encoding;
     extern LineState_t _set_line_state;
-    extern uint16_t _send_break;
-    extern volatile uint8_t _send_count;
-    extern uint8_t _recv_count;
-    extern uint8_t _set_config;
-    extern volatile uint8_t _sof_count;
-    extern uint8_t _set_serial_state;
 
     /* JTAG packet payload */
     extern JTAG_Packet_t packet;
@@ -610,6 +614,7 @@ namespace USB {
   void ep_cdo_pending (void);
   void complete_dap_out (void);
   void cci_break_count (void);
+  void cci_interrupt (void);
   void read_drop (void);
   void vcp_receiver (void);
   void vcp_receiver_9bit (void);

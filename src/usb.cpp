@@ -45,14 +45,14 @@ namespace USB {
 
   // MARK: Descroptor
 
-  const wchar_t PROGMEM vstring[] = L"MultiX.jp OSSW/OSHW Prod.";
-  const wchar_t PROGMEM mstring[] = L"UPDI4AVR-USB:AVR-DU:EDBG/CMSIS-DAP";
+  const wchar_t PROGMEM vstring[] = L"MultiX.jp OSSW/OSHW";
+  const wchar_t PROGMEM mstring[] = L"UPDI4AVR:AVR-DU:EDBG/CMSIS-DAP";
   const wchar_t PROGMEM istring[] = L"CDC-ACM/VCP";
 
   const uint8_t PROGMEM device_descriptor[] = {
     /* This device descriptor contains the VID:PID, default is MCHP:CDC-ACM. */
     0x12, 0x01, 0x00, 0x02, 0xEF, 0x02, 0x01, 0x40,
-    0xD8, 0x04, 0x15, 0x0B, 0x00, 0x01, 0x01, 0x02, 0x03, 0x01
+    0xD8, 0x04, 0x15, 0x0B, 0x35, 0x01, 0x01, 0x02, 0x03, 0x01
   };
   const uint8_t PROGMEM qualifier_descriptor[] = {
     /* This descriptor selects Full-Speed (USB 2.0) ​​for USB 3.0. */
@@ -61,21 +61,21 @@ namespace USB {
   const uint8_t PROGMEM current_descriptor[] = {
     /* This descriptor is almost identical to the Xplained Mini series. */
     /* It does not allow for an dWire gateway. */
-    0x09, 0x02, 0x6B, 0x00, 0x03, 0x01, 0x00, 0x80, 0x32, /* Information Set#3 */
-    0x09, 0x04, 0x00, 0x00, 0x02, 0x03, 0x00, 0x00, 0x00, /* Interface #0 HID  */
-    0x09, 0x21, 0x11, 0x01, 0x00, 0x01, 0x22, 0x23, 0x00, /*   HID using       */
-    0x07, 0x05, 0x02, 0x03, 0x40, 0x00, 0x01,             /*   EP_DPO_OUT 0x02 */
-    0x07, 0x05, 0x81, 0x03, 0x40, 0x00, 0x01,             /*   EP_DPI_IN  0x81 */
-    0x08, 0x0B, 0x01, 0x02, 0x02, 0x02, 0x01, 0x04,       /* CDC IAD    Str#4  */
-    0x09, 0x04, 0x01, 0x00, 0x01, 0x02, 0x02, 0x01, 0x00, /* Interface #1 CDC  */
-    0x05, 0x24, 0x00, 0x10, 0x01,                         /* Functional Header */
-    0x04, 0x24, 0x02, 0x06,                               /* Functional ACM Capabilities  */
-    0x05, 0x24, 0x06, 0x01, 0x02,                         /* Functional UNION     #1 + #2 */
-    0x05, 0x24, 0x01, 0x03, 0x02,                         /* Functional CallManagement #2 */
-    0x07, 0x05, 0x82, 0x03, 0x10, 0x00, USB_CCI_INTERVAL, /*   EP_CCI_IN  0x82 */
-    0x09, 0x04, 0x02, 0x00, 0x02, 0x0A, 0x00, 0x00, 0x00, /* Interface #2 Bulk */
-    0x07, 0x05, 0x03, 0x02, 0x40, 0x00, 0x00,             /*   EP_CDO_OUT 0x03 */
-    0x07, 0x05, 0x83, 0x02, 0x40, 0x00, 0x00,             /*   EP_CDI_IN  0x83 */
+    0x09, 0x02, 0x6B, 0x00, 0x03, 0x01, 0x00, 0x80, 0x32, /* Information Descriptor */
+    0x09, 0x04, 0x00, 0x00, 0x02, 0x03, 0x00, 0x00, 0x00, /*  Interface #0 HID */
+    0x09, 0x21, 0x11, 0x01, 0x00, 0x01, 0x22, 0x1E, 0x00, /*   HID using       */
+    0x07, 0x05, 0x02, 0x03, 0x40, 0x00, 0x01,             /*   EP_DPO_OUT #02  */
+    0x07, 0x05, 0x81, 0x03, 0x40, 0x00, 0x01,             /*   EP_DPI_IN  #81  */
+    0x08, 0x0B, 0x01, 0x02, 0x02, 0x02, 0x01, 0x04,       /* IAD CDC-ACM Str#4 */
+    0x09, 0x04, 0x01, 0x00, 0x01, 0x02, 0x02, 0x01, 0x00, /*  Interface #1 CCI */
+    0x05, 0x24, 0x00, 0x10, 0x01,                         /*   Functional Header */
+    0x05, 0x24, 0x06, 0x01, 0x02,                         /*   Functional UNION #1 + #2 */
+    0x04, 0x24, 0x02, 0x06,                               /*   Functional ACM Capabilities */
+    0x05, 0x24, 0x01, 0x00, 0x02,                         /*   Functional Call Management #2 */
+    0x07, 0x05, 0x82, 0x03, 0x10, 0x00, USB_CCI_INTERVAL, /*   EP_CCI_IN  #82 */
+    0x09, 0x04, 0x02, 0x00, 0x02, 0x0A, 0x02, 0x01, 0x00, /*  Interface #2 CDI */
+    0x07, 0x05, 0x03, 0x02, 0x40, 0x00, 0x00,             /*   EP_CDO_OUT #03 */
+    0x07, 0x05, 0x83, 0x02, 0x40, 0x00, 0x00,             /*   EP_CDI_IN  #83 */
   #ifdef _I_want_to_use_a_second_CDC_ACM_additional_
     /*
      * Examples for increasing the number of CDC-ACM interfaces on Windows and macos.
@@ -87,27 +87,38 @@ namespace USB {
      *             ____  ____  ____
      * 0x09, 0x02, 0xAD, 0x00, 0x05, 0x01, 0x00, 0x80, 0x32, // Information Set#5 (Dual CDC)
     */
-    0x08, 0x0B, 0x03, 0x02, 0x02, 0x02, 0x01, 0x05,       /* CDC IAD    Str#5  */
-    0x09, 0x04, 0x03, 0x00, 0x01, 0x02, 0x02, 0x01, 0x00, /* Interface #3 CDC  */
-    0x05, 0x24, 0x00, 0x10, 0x01,                         /* Functional Header */
-    0x04, 0x24, 0x02, 0x06,                               /* Functional ACM Capabilities  */
-    0x05, 0x24, 0x06, 0x03, 0x04,                         /* Functional UNION     #3 + #4 */
-    0x05, 0x24, 0x01, 0x03, 0x04,                         /* Functional CallManagement #4 */
-    0x07, 0x05, 0x84, 0x03, 0x10, 0x00, 0x05,             /*   EP_CCI_IN  0x84 */
-    0x09, 0x04, 0x04, 0x00, 0x02, 0x0A, 0x00, 0x00, 0x00, /* Interface #4 Bulk */
-    0x07, 0x05, 0x05, 0x02, 0x40, 0x00, 0x00,             /*   EP_CDO_OUT 0x05 */
-    0x07, 0x05, 0x85, 0x02, 0x40, 0x00, 0x00,             /*   EP_CDI_IN  0x85 */
+    0x08, 0x0B, 0x03, 0x02, 0x02, 0x02, 0x01, 0x05,       /* IAD CDC-ACM Str#5 */
+    0x09, 0x04, 0x03, 0x00, 0x01, 0x02, 0x02, 0x01, 0x00, /*  Interface #3 CCI */
+    0x05, 0x24, 0x00, 0x10, 0x01,                         /*   Functional Header */
+    0x05, 0x24, 0x06, 0x03, 0x04,                         /*   Functional UNION #3 + #4 */
+    0x04, 0x24, 0x02, 0x06,                               /*   Functional ACM Capabilities */
+    0x05, 0x24, 0x01, 0x00, 0x04,                         /*   Functional Call Management #4 */
+    0x07, 0x05, 0x84, 0x03, 0x10, 0x00, USB_CCI_INTERVAL, /*   EP_CCI_IN  #84 */
+    0x09, 0x04, 0x04, 0x00, 0x02, 0x0A, 0x02, 0x01, 0x00, /*  Interface #4 CDI */
+    0x07, 0x05, 0x05, 0x02, 0x40, 0x00, 0x00,             /*    EP_CDO_OUT #05 */
+    0x07, 0x05, 0x85, 0x02, 0x40, 0x00, 0x00,             /*    EP_CDI_IN  #85 */
   #endif
   };
   const uint8_t PROGMEM report_descriptor[] = {
     /* This descriptor defines a HID report. */
     /* The maximum buffer size allowed in Full-Speed (USB 2.0) mode is 64 bytes. */
     0x06, 0x00, 0xFF, 0x09, 0x01, 0xA1, 0x01, 0x15,
-    0x00, 0x26, 0xFF, 0x00, 0x75, 0x08, 0x96, 0x40,
-    0x00, 0x09, 0x01, 0x81, 0x02, 0x96, 0x40, 0x00,
-    0x09, 0x01, 0x91, 0x02, 0x95, 0x04, 0x09, 0x01,
-    0xB1, 0x02, 0xC0
+    0x00, 0x25, 0xFF, 0x75, 0x08, 0x95, 0x40, 0x09,
+    0x01, 0x81, 0x02, 0x09, 0x01, 0x91, 0x02, 0x95,
+    0x04, 0x09, 0x01, 0xB1, 0x02, 0xC0
   };
+  const uint8_t PROGMEM language_descriptor[] = {
+    0x04, 0x03, 0x09, 0x04  /* wLANGID : EN(US) */
+  };
+
+  /* Filescope variables */
+  NOINIT uint16_t _send_break;
+  NOINIT volatile uint8_t _sof_count;
+  NOINIT volatile uint8_t _set_serial_state;
+  NOINIT volatile uint8_t _send_count;
+  NOINIT uint8_t _recv_count;
+  NOINIT uint8_t _set_config;
+  NOINIT uint8_t _vcp_ctrl;
 
   const EP_TABLE_t PROGMEM ep_init = {
     { /* FIFO */ },
@@ -149,17 +160,20 @@ namespace USB {
     { /* FRAMENUM */ }
   };
 
-  size_t get_descriptor (uint8_t* _buffer, uint16_t _index) {
+  size_t get_descriptor (uint8_t* _buffer, uint16_t _index, size_t _length) {
     uint8_t* _pgmem = 0;
     size_t   _size = 0;
     uint8_t  _type = _index >> 8;
+    if (_length == 0) return 0;
     if (_type == 0x01) {          /* DEVICE */
       _pgmem = (uint8_t*)&device_descriptor;
-      _size = sizeof(device_descriptor);
+      _size = constrain(sizeof(device_descriptor), (size_t)0, _length);
       memcpy_P(_buffer, _pgmem, _size);
-      uint32_t _vidpid = *((uint32_t*)EEPROM_START);
-      if (_vidpid + 1) _CAPS32(_buffer[8])->dword = _vidpid;
-      D1PRINTF(" VID:PID=%04X:%04X\r\n", _CAPS16(_buffer[8])->word, _CAPS16(_buffer[10])->word);
+      if (_size >= 12) {
+        uint32_t _vidpid = *((uint32_t*)EEPROM_START);
+        if (_vidpid + 1) _CAPS32(_buffer[8])->dword = _vidpid;
+        D1PRINTF(" VID:PID=%04X:%04X\r\n", _CAPS16(_buffer[8])->word, _CAPS16(_buffer[10])->word);
+      }
       return _size;
     }
     else if (_type == 0x02) {     /* CONFIGURATION */
@@ -179,19 +193,14 @@ namespace USB {
       _size = sizeof(report_descriptor);
     }
     else if (_index == 0x0300) {  /* LANGUAGE */
-      _size = 4;
-      *_buffer++ = 4;
-      *_buffer++ = 3;
-      *_buffer++ = 0x09;
-      *_buffer++ = 0x04;
-      return _size;
+      _pgmem = (uint8_t*)&language_descriptor;
+      _size = sizeof(language_descriptor);
     }
     else {
       switch (_index) {
         case 0x0301: _pgmem = (uint8_t*)&vstring; _size = sizeof(vstring); break;
         case 0x0302: _pgmem = (uint8_t*)&mstring; _size = sizeof(mstring); break;
         case 0x0304: _pgmem = (uint8_t*)&istring; _size = sizeof(istring); break;
-        // case 0x0303: _pgmem = (uint8_t*)&string3; _size = sizeof(string3); break;
         case 0x0303: {
           /*
            * NOTE: Serial Number String Generation
@@ -203,27 +212,30 @@ namespace USB {
           uint32_t _sn = ((User_EEP_t*)EEPROM_START)->dwSerialNumber;
           if (!(_sn + 1)) _sn = crc32((uint8_t*)SIGNATURES_START, 32);
           uint8_t* _p = (uint8_t*)&_sn;
-          *_buffer++ = 22;  *_buffer++ = 3;
-          *_buffer++ = 'M'; *_buffer++ = 0;
-          *_buffer++ = 'X'; *_buffer++ = 0;
+          *_buffer++ = 26;  *_buffer++ = 3;
+          *_buffer++ = 'A'; *_buffer++ = 0;
+          *_buffer++ = '1'; *_buffer++ = 0;
+          *_buffer++ = 'C'; *_buffer++ = 0;
+          *_buffer++ = 'E'; *_buffer++ = 0;
           for (uint8_t _i = 0; _i < 4; _i++) {
             uint8_t _c = *_p++;
             *_buffer++ = btoh(_c >> 4); *_buffer++ = 0;
             *_buffer++ = btoh(_c     ); *_buffer++ = 0;
           }
-          return 22;
+          return 26;
         }
+        default: return 0;
       }
       *_buffer++ = (uint8_t)_size;
       *_buffer++ = 3;
-      if (_size) memcpy_P(_buffer, _pgmem, _size - 2);
-      return _size;
+      /* Two extra bytes will be copied afterwards, but don't worry about it. */
     }
+    _size = constrain(_size, (size_t)0, _length);
     if (_size) memcpy_P(_buffer, _pgmem, _size);
     return _size;
   }
 
-  void set_cci_data (uint16_t _state) {
+  void set_cci_data (uint8_t _state) {
     _set_serial_state = _state;
     EP_MEM.cci_header.bmRequestType = 0xA1; /* REQTYPE_DIRECTION | REQTYPE_CLASS | RECIPIENT_INTERFACE */
     EP_MEM.cci_header.bRequest      = 0x20; /* CDC_REQ_SerialState */
@@ -249,6 +261,7 @@ namespace USB {
       _recv_count = 0;
       _set_config = 0;
       _sof_count = 0;
+      _set_serial_state = 0;
       memcpy_P(&EP_TABLE, &ep_init, sizeof(EP_TABLE_t));
       set_cci_data(0x00);
       USB0_CTRLA = USB_ENABLE_bm | (USB_ENDPOINTS_MAX - 1);
@@ -266,6 +279,7 @@ namespace USB {
   // MARK: Endpoint
 
   bool is_ep_setup (void) { return bit_is_set(EP_REQ.STATUS, USB_EPSETUP_bp); }
+  bool is_ep_cci (void) { return bit_is_set(EP_CCI.STATUS, USB_BUSNAK_bp); }
   bool is_not_dap (void) { return bit_is_clear(EP_DPO.STATUS, USB_BUSNAK_bp); }
   void ep_req_pending (void) { loop_until_bit_is_set(EP_REQ.STATUS, USB_BUSNAK_bp); }
   void ep_res_pending (void) { loop_until_bit_is_set(EP_RES.STATUS, USB_BUSNAK_bp); }
@@ -300,14 +314,30 @@ namespace USB {
     USB_EP_STATUS_CLR(USB_EP_DPO) = ~USB_TOGGLE_bm;
   }
 
-  void ep_cci_listen (void) {
-    if ((_send_break + 1) > 1 && _send_break > USB_CCI_INTERVAL) {
-      _send_break -= USB_CCI_INTERVAL;
+  bool progress_break (void) {
+    if ((_send_break + 1) > 1) {
+      _send_break -= _send_break > USB_CCI_INTERVAL
+        ? USB_CCI_INTERVAL 
+        : _send_break;
+      return !_send_break;
     }
-    EP_CCI.CNT = 10;
-    EP_CCI.MCNT = 0;
-    loop_until_bit_is_clear(USB0_INTFLAGSB, USB_RMWBUSY_bp);
-    USB_EP_STATUS_CLR(USB_EP_CCI) = ~USB_TOGGLE_bm;
+    else return false;
+  }
+
+  void ep_cci_listen (void) {
+    if (is_ep_cci()) {
+      D1PRINTF("CCI=");
+      D1PRINTHEX(&EP_MEM.cci_data, 10, ':');
+      EP_CCI.CNT = 10;
+      EP_CCI.MCNT = 0;
+      loop_until_bit_is_clear(USB0_INTFLAGSB, USB_RMWBUSY_bp);
+      USB_EP_STATUS_CLR(USB_EP_CCI) = ~USB_TOGGLE_bm;
+    }
+    #if defined(CONFIG_VCP_INTERRUPT_SUPPRT)
+    else {
+      _sof_count = SERIALSTATE_DELAY;
+    }
+    #endif
   }
 
   void ep_cdi_listen (void) {
@@ -322,10 +352,10 @@ namespace USB {
       if (_send_count == 64) _send_count = 0;
       return;
     }
-    D2PRINTF(" VI=%02X:", _send_count);
+    D2PRINTF(" VI=%02X\r\n    ", _send_count);
     D2PRINTHEX(bit_is_set(GPCONF, GPCONF_DBL_bp)
       ? &EP_MEM.cdi_data[64]
-      : &EP_MEM.cdi_data[0], _send_count, ':');
+      : &EP_MEM.cdi_data[0], _send_count, ':', 16, "\r\n    ");
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
       EP_CDI.DATAPTR = bit_is_set(GPCONF, GPCONF_DBL_bp)
         ? (register16_t)&EP_MEM.cdi_data[64]
@@ -358,12 +388,12 @@ namespace USB {
      && bit_is_clear(GPCONF, GPCONF_BRK_bp)) {
       /* SET_SEND_BREAK is called when the port is closed successfully. */
       bit_clear(GPCONF, GPCONF_OPN_bp);
-      _sof_count = 0;
-      USART::disable_vcp();
-  #ifdef CONFIG_VCP_TXD_ODM
+      _send_count = 0;
+      _vcp_ctrl = USART0_CTRLB;
+      USART0_CTRLB &= ~(USART_RXEN_bm | USART_TXEN_bm);
+      bit_set(GPCONF, GPCONF_VCP_bp);
       /* During Break, VCP-TxD is pulled LOW. */
-      pinModeMacro(PIN_VCP_TXD, OUTPUT);
-  #endif
+      pinLogicPull(PIN_VCP_TXD);
     }
     bit_set(GPCONF, GPCONF_BRK_bp);
   }
@@ -371,7 +401,10 @@ namespace USB {
   void break_off (void) {
     if (bit_is_set(GPCONF, GPCONF_VCP_bp)
      && bit_is_set(GPCONF, GPCONF_BRK_bp)) {
-      USART::change_vcp();
+      pinLogicOpen(PIN_VCP_TXD);
+      _send_count = 0;
+      _send_break = 0;
+      USART0_CTRLB = _vcp_ctrl;
       bit_set(GPCONF, GPCONF_OPN_bp);
     }
     bit_clear(GPCONF, GPCONF_BRK_bp);
@@ -379,34 +412,38 @@ namespace USB {
 
   void cci_break_count (void) {
     /* If the break value is between 1 and 65534, it will count down. */
-    if ((_send_break + 1) > 1) {
-      if (_send_break > USB_CCI_INTERVAL) {
-        if (bit_is_set(EP_CCI.STATUS, USB_BUSNAK_bp)) ep_cci_listen();
-      }
-      else {
-        _send_break = 0;
-        break_off();
-      }
-      D2PRINTF(" SB=%04X\r\n", _send_break);
-    }
+    if (progress_break()) break_off();
   }
 
   void cci_interrupt (void) {
   #if defined(CONFIG_VCP_INTERRUPT_SUPPRT)
     SerialState_t _value = {};
     #if defined(CONFIG_VCP_RS232C_ENABLE)
+    /* This paragraph is implementation-dependent. */
+    /* Please set the states of appropriately,     */
+    /*    bRxCarrier, bTxCarrier, and bRingSignal. */
     uint8_t _c = VPORTD_IN;
-    _value.bValue = (_c ^ 0x0B) & 0x0B;
+    _value.bValue = (_c ^ 0x03) & 0x03;
+    #else
+    if (bit_is_set(GPCONF, GPCONF_VCP_bp)
+     && bit_is_set(GPCONF, GPCONF_OPN_bp)
+     && bit_is_clear(GPCONF, GPCONF_BRK_bp)) {
+      _value.bValue = 0x03; /* bRxCarrier(DCD) and bTxCarrier(DSR) */
+    }
+    else {
+      _value.bValue = 0x04; /* bBreak(BREAK) */
+    }
     #endif
-    if (bit_is_set(RXSTAT, USART_FERR_bp))   _value.bFraming = true;
-    if (bit_is_set(RXSTAT, USART_PERR_bp))   _value.bParity  = true;
-    if (bit_is_set(RXSTAT, USART_BUFOVF_bp)) _value.bOverRun = true;
+    if (bit_is_set(RXSTAT, USART_FERR_bp))   /* 0x04 */ _value.bFraming = true; /* 0x10 */
+    if (bit_is_set(RXSTAT, USART_PERR_bp))   /* 0x02 */ _value.bParity  = true; /* 0x20 */
+    if (bit_is_set(RXSTAT, USART_BUFOVF_bp)) /* 0x40 */ _value.bOverRun = true; /* 0x40 */
     RXSTAT = 0;
-    if (bit_is_set(GPCONF, GPCONF_OPN_bp) && _set_serial_state != _value.bValue) {
+    if (_set_serial_state != _value.bValue) {
+      /* If it doesn't meet your expectations, you should reconfirm it after the delay. */
+      if (_value.bValue ^ 0x03) _sof_count = SERIALSTATE_DELAY;
+      D2PRINTF(" SS=%02X:%02X:%02X\r\n", _set_serial_state, _value.bValue, _sof_count);
       set_cci_data(_value.bValue);
-      D1PRINTF(" CCI=");
-      D1PRINTHEX(&EP_MEM.cci_data, 10, ':');
-      if (bit_is_set(EP_CCI.STATUS, USB_BUSNAK_bp)) ep_cci_listen();
+      ep_cci_listen();
     }
   #endif
   }
@@ -419,7 +456,7 @@ namespace USB {
       ? &EP_MEM.cdi_data[64]
       : &EP_MEM.cdi_data[0];
     _buf[_send_count++] = _c;
-    if (_send_count < 64) _sof_count = 30;
+    if (_send_count < 64) _sof_count = VCP_BULK_DELAY;
     else ep_cdi_listen();
   }
 
@@ -428,8 +465,8 @@ namespace USB {
     if (EP_CDO.CNT != _recv_count) {
   #if defined(DEBUG) && (DEBUG >= 2)
       if (_recv_count == 0) {
-        D2PRINTF(" VO=%02X:", EP_CDO.CNT);
-        D2PRINTHEX(&EP_MEM.cdo_data, EP_CDO.CNT, ':');
+        D2PRINTF(" VO=%02X\r\n    ", EP_CDO.CNT);
+        D2PRINTHEX(&EP_MEM.cdo_data, EP_CDO.CNT, ':', 16, "\r\n    ");
       }
   #endif
       _c = EP_MEM.cdo_data[_recv_count++];
@@ -458,9 +495,6 @@ namespace USB {
       write_byte(_c);
     }
     RXSTAT |= _d;
-  #if defined(CONFIG_VCP_INTERRUPT_SUPPRT)
-    if (bit_is_set(EP_CCI.STATUS, USB_BUSNAK_bp)) cci_interrupt();
-  #endif
   }
 
   void vcp_receiver_9bit (void) {
@@ -472,9 +506,6 @@ namespace USB {
       write_byte(_d & 1);
     }
     RXSTAT |= _d;
-    #if defined(CONFIG_VCP_INTERRUPT_SUPPRT)
-    if (bit_is_set(EP_CCI.STATUS, USB_BUSNAK_bp)) cci_interrupt();
-    #endif
   #endif
   }
 
@@ -542,8 +573,24 @@ namespace USB {
     }
     else if (bRequest == 0x06) {  /* GET_DESCRIPTOR */
       size_t _length = EP_MEM.req_data.wLength;
-      size_t _size = get_descriptor((uint8_t*)&EP_MEM.res_data, EP_MEM.req_data.wValue);
-      EP_RES.CNT = (_size > _length) ? _length : _size;
+      size_t _size = get_descriptor((uint8_t*)&EP_MEM.res_data, EP_MEM.req_data.wValue, _length);
+      EP_RES.CNT = constrain(_size, (size_t)0, _length);
+    #if defined(DEBUG)
+      size_t _count = EP_RES.CNT;
+      size_t _step = _count;
+      uint16_t _req = EP_MEM.req_data.wValue;
+      uint8_t *_buff = EP_MEM.res_data;
+      while (_count > 0) {
+        if (_req == 0x200) {
+          _step = _buff[0];
+          if (_count < _step) _step = _count;
+        }
+        D1PRINTF(" ");
+        D1PRINTHEX(_buff, _step, ':', 16, "\r\n ");
+        _buff += _step;
+        _count -= _step;
+      }
+    #endif
       _listen = !!_size;
     }
     else if (bRequest == 0x08) {  /* GET_CONFIGURATION */
@@ -600,7 +647,9 @@ namespace USB {
       bit_set(GPCONF, GPCONF_OPN_bp);
       _send_count = 0;
       _recv_count = 0;
-      _sof_count = 0;
+    #if defined(CONFIG_VCP_INTERRUPT_SUPPRT)
+      _sof_count = SERIALSTATE_DELAY;
+    #endif
       EP_RES.CNT = 0;
     }
     else if (bRequest == 0x21) {  /* GET_LINE_ENCODING */
@@ -628,6 +677,9 @@ namespace USB {
       _send_break = EP_MEM.req_data.wValue;
       if (_send_break) break_on();
       else break_off();
+    #if defined(CONFIG_VCP_INTERRUPT_SUPPRT)
+      _sof_count = SERIALSTATE_DELAY;
+    #endif
       EP_RES.CNT = 0;
     }
     else {
@@ -643,8 +695,8 @@ namespace USB {
     bool _listen = false;
     uint8_t bmRequestType = EP_MEM.req_data.bmRequestType;
     EVSYS_SWEVENTA = EVSYS_SWEVENTA_CH2_gc;
-    D1PRINTF("RQ=%02X:%04X:%02X:%02X:%04X:%04X:%04X\r\n",
-      EP_REQ.STATUS, EP_REQ.CNT, EP_MEM.req_data.bmRequestType, EP_MEM.req_data.bRequest,
+    D1PRINTF("RQ=%04X:%02X:%02X:%04X:%04X:%04X\r\n",
+      EP_REQ.CNT, EP_MEM.req_data.bmRequestType, EP_MEM.req_data.bRequest,
       EP_MEM.req_data.wValue, EP_MEM.req_data.wIndex, EP_MEM.req_data.wLength);
     /* Accepts subsequent EP0_DATA packets as needed. */
     if (bit_is_clear(bmRequestType, 7)) ep_req_listen();
@@ -664,7 +716,6 @@ namespace USB {
       ep_res_listen();
       ep_req_listen();
     }
-    USB0_INTFLAGSB |= USB_EPSETUP_bp;
   }
 
   /*** This process is equivalent to a bus interrupt. ***/
@@ -704,6 +755,7 @@ namespace USB {
         if (bit_is_set(EP_CDI.STATUS, USB_BUSNAK_bp) && _send_count > 0) {
           ep_cdi_listen();
         }
+        cci_interrupt();
       }
     }
     if (bit_is_set(busstate, USB_SUSPEND_bp)

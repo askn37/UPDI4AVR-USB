@@ -14,6 +14,13 @@ The conventional *USB4AVR* is designed to use a USB-serial conversion circuit, b
 
 ### Recent Features
 
+1.35.55 (26/10/26)
+- Fixed an issue where the VCP would not recover after "SEND_BREAK".
+- The issuance of "SERIAL_STATE" Notifications is now delayed until VCP-RxD becomes idle.
+- The "General Information Descriptor" has been revised to conform to CDC-ACM Revision 1.2.
+- The "iSerialNumber" was changed to a 12-digit hexadecimal number. *Ex:"A1CE XXXX YYYY"*
+  - This relaxes the constraints on certain strings.
+
 1.35.54 (26/09/13)
 - Update for compatibility with SDK 0.4.10. (No functional changes)
 
@@ -149,8 +156,8 @@ Programming modes     : SPM, UPDI
 Programmer type       : JTAGICE3_UPDI
 Description           : MPLAB(R) PICkit 4 in UPDI mode
 ICE HW version        : 0
-ICE FW version        : 1.34 (rel. 49)
-Serial number         : MX********
+ICE FW version        : 1.35 (rel. 55)
+Serial number         : A1CE********
 Vtarget               : 5.02 V
 PDI/UPDI clk          : 225 kHz
 
@@ -193,8 +200,8 @@ Programming modes     : TPI
 Programmer type       : JTAGICE3_TPI
 Description           : MPLAB(R) PICkit 4 in TPI mode
 ICE HW version        : 0
-ICE FW version        : 1.34 (rel. 49)
-Serial number         : MX********
+ICE FW version        : 1.35 (rel. 49)
+Serial number         : A1CE********
 Vtarget               : 5.00 V
 
 
@@ -264,8 +271,8 @@ Programming modes     : SPM, PDI
 Programmer type       : JTAGICE3_PDI
 Description           : MPLAB(R) PICkit 4 in PDI mode
 ICE HW version        : 0
-ICE FW version        : 1.34 (rel. 49)
-Serial number         : MX********
+ICE FW version        : 1.35 (rel. 55)
+Serial number         : A1CE********
 Vtarget               : 3.30 V
 PDI/UPDI clk          : 2500 kHz
 
