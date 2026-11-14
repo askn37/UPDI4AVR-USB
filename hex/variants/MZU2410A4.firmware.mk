@@ -37,7 +37,7 @@ build: FORCE
 	@mv ./build/$(FUSE_HEX) hex/$(VARIANT).bootloader.fuse
 	@mv ./build/$(BOOT_HEX) hex/$(VARIANT).firmware_withboot.hex
 	@ls -lh hex/$(VARIANT)*.*
-	@$(MAKE) -f $(MF) clean
+#	@$(MAKE) -f $(MF) clean
 
 compile:
 	$(MAKE) -f $(MF) clean

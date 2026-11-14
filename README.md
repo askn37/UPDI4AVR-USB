@@ -14,6 +14,10 @@ The conventional *USB4AVR* is designed to use a USB-serial conversion circuit, b
 
 ### Recent Features
 
+1.35.56 (26/11/14)
+- Updated for compatibility with SDK 0.4.12
+- Changed USB Descriptor to match the SDK format
+
 1.35.55 (26/10/26)
 - Fixed an issue where the VCP would not recover after "SEND_BREAK".
 - The issuance of "SERIAL_STATE" Notifications is now delayed until VCP-RxD becomes idle.

@@ -22,6 +22,8 @@
 #include <peripheral.h>     /* import Serial (Debug) */
 #include "configuration.h"
 #include "prototype.h"
+#include "USB_Utils.h"
+#include "USB/Descriptor.h"
 
 /*
  * NOTE:
@@ -44,72 +46,6 @@
 namespace USB {
 
   // MARK: Descroptor
-
-  const wchar_t PROGMEM vstring[] = L"MultiX.jp OSSW/OSHW";
-  const wchar_t PROGMEM mstring[] = L"UPDI4AVR:AVR-DU:EDBG/CMSIS-DAP";
-  const wchar_t PROGMEM istring[] = L"CDC-ACM/VCP";
-
-  const uint8_t PROGMEM device_descriptor[] = {
-    /* This device descriptor contains the VID:PID, default is MCHP:CDC-ACM. */
-    0x12, 0x01, 0x00, 0x02, 0xEF, 0x02, 0x01, 0x40,
-    0xD8, 0x04, 0x15, 0x0B, 0x35, 0x01, 0x01, 0x02, 0x03, 0x01
-  };
-  const uint8_t PROGMEM qualifier_descriptor[] = {
-    /* This descriptor selects Full-Speed (USB 2.0) ​​for USB 3.0. */
-    0x0A, 0x06, 0x00, 0x02, 0xEF, 0x02, 0x01, 0x40, 0x00, 0x00
-  };
-  const uint8_t PROGMEM current_descriptor[] = {
-    /* This descriptor is almost identical to the Xplained Mini series. */
-    /* It does not allow for an dWire gateway. */
-    0x09, 0x02, 0x6B, 0x00, 0x03, 0x01, 0x00, 0x80, 0x32, /* Information Descriptor */
-    0x09, 0x04, 0x00, 0x00, 0x02, 0x03, 0x00, 0x00, 0x00, /*  Interface #0 HID */
-    0x09, 0x21, 0x11, 0x01, 0x00, 0x01, 0x22, 0x1E, 0x00, /*   HID using       */
-    0x07, 0x05, 0x02, 0x03, 0x40, 0x00, 0x01,             /*   EP_DPO_OUT #02  */
-    0x07, 0x05, 0x81, 0x03, 0x40, 0x00, 0x01,             /*   EP_DPI_IN  #81  */
-    0x08, 0x0B, 0x01, 0x02, 0x02, 0x02, 0x01, 0x04,       /* IAD CDC-ACM Str#4 */
-    0x09, 0x04, 0x01, 0x00, 0x01, 0x02, 0x02, 0x01, 0x00, /*  Interface #1 CCI */
-    0x05, 0x24, 0x00, 0x10, 0x01,                         /*   Functional Header */
-    0x05, 0x24, 0x06, 0x01, 0x02,                         /*   Functional UNION #1 + #2 */
-    0x04, 0x24, 0x02, 0x06,                               /*   Functional ACM Capabilities */
-    0x05, 0x24, 0x01, 0x00, 0x02,                         /*   Functional Call Management #2 */
-    0x07, 0x05, 0x82, 0x03, 0x10, 0x00, USB_CCI_INTERVAL, /*   EP_CCI_IN  #82 */
-    0x09, 0x04, 0x02, 0x00, 0x02, 0x0A, 0x02, 0x01, 0x00, /*  Interface #2 CDI */
-    0x07, 0x05, 0x03, 0x02, 0x40, 0x00, 0x00,             /*   EP_CDO_OUT #03 */
-    0x07, 0x05, 0x83, 0x02, 0x40, 0x00, 0x00,             /*   EP_CDI_IN  #83 */
-  #ifdef _I_want_to_use_a_second_CDC_ACM_additional_
-    /*
-     * Examples for increasing the number of CDC-ACM interfaces on Windows and macos.
-     * Besides this, you need to extend the required endpoint implementation.
-     * You can add up to 6 sets.
-     * Linux? Basically no, probably only the first one will work.
-     *
-     * Please update the Information Descriptor as shown in the example.
-     *             ____  ____  ____
-     * 0x09, 0x02, 0xAD, 0x00, 0x05, 0x01, 0x00, 0x80, 0x32, // Information Set#5 (Dual CDC)
-    */
-    0x08, 0x0B, 0x03, 0x02, 0x02, 0x02, 0x01, 0x05,       /* IAD CDC-ACM Str#5 */
-    0x09, 0x04, 0x03, 0x00, 0x01, 0x02, 0x02, 0x01, 0x00, /*  Interface #3 CCI */
-    0x05, 0x24, 0x00, 0x10, 0x01,                         /*   Functional Header */
-    0x05, 0x24, 0x06, 0x03, 0x04,                         /*   Functional UNION #3 + #4 */
-    0x04, 0x24, 0x02, 0x06,                               /*   Functional ACM Capabilities */
-    0x05, 0x24, 0x01, 0x00, 0x04,                         /*   Functional Call Management #4 */
-    0x07, 0x05, 0x84, 0x03, 0x10, 0x00, USB_CCI_INTERVAL, /*   EP_CCI_IN  #84 */
-    0x09, 0x04, 0x04, 0x00, 0x02, 0x0A, 0x02, 0x01, 0x00, /*  Interface #4 CDI */
-    0x07, 0x05, 0x05, 0x02, 0x40, 0x00, 0x00,             /*    EP_CDO_OUT #05 */
-    0x07, 0x05, 0x85, 0x02, 0x40, 0x00, 0x00,             /*    EP_CDI_IN  #85 */
-  #endif
-  };
-  const uint8_t PROGMEM report_descriptor[] = {
-    /* This descriptor defines a HID report. */
-    /* The maximum buffer size allowed in Full-Speed (USB 2.0) mode is 64 bytes. */
-    0x06, 0x00, 0xFF, 0x09, 0x01, 0xA1, 0x01, 0x15,
-    0x00, 0x25, 0xFF, 0x75, 0x08, 0x95, 0x40, 0x09,
-    0x01, 0x81, 0x02, 0x09, 0x01, 0x91, 0x02, 0x95,
-    0x04, 0x09, 0x01, 0xB1, 0x02, 0xC0
-  };
-  const uint8_t PROGMEM language_descriptor[] = {
-    0x04, 0x03, 0x09, 0x04  /* wLANGID : EN(US) */
-  };
 
   /* Filescope variables */
   NOINIT uint16_t _send_break;
@@ -150,7 +86,7 @@ namespace USB {
       { /* EP_CDO */
         { 0,
           USB_TYPE_BULKINT_gc                                 | USB_TCDSBL_bm | USB_BUFSIZE_DEFAULT_BUF64_gc,
-          0, (uint16_t)&EP_MEM.cdo_data, 64 },
+          0, (uint16_t)&EP_MEM.cdo_data, VCP_RXD_BUFFSIZE },
         /* EP_CDI */
         { USB_BUSNAK_bm,
           USB_TYPE_BULKINT_gc | USB_MULTIPKT_bm | USB_AZLP_bm | USB_TCDSBL_bm | USB_BUFSIZE_DEFAULT_BUF64_gc,
@@ -161,77 +97,19 @@ namespace USB {
   };
 
   size_t get_descriptor (uint8_t* _buffer, uint16_t _index, size_t _length) {
-    uint8_t* _pgmem = 0;
-    size_t   _size = 0;
-    uint8_t  _type = _index >> 8;
-    if (_length == 0) return 0;
-    if (_type == 0x01) {          /* DEVICE */
-      _pgmem = (uint8_t*)&device_descriptor;
-      _size = constrain(sizeof(device_descriptor), (size_t)0, _length);
-      memcpy_P(_buffer, _pgmem, _size);
-      if (_size >= 12) {
-        uint32_t _vidpid = *((uint32_t*)EEPROM_START);
-        if (_vidpid + 1) _CAPS32(_buffer[8])->dword = _vidpid;
-        D1PRINTF(" VID:PID=%04X:%04X\r\n", _CAPS16(_buffer[8])->word, _CAPS16(_buffer[10])->word);
-      }
-      return _size;
+    if (_index == 0x03FF) {
+      return get_auto_generate_serial_number_string(_buffer, true);
     }
-    else if (_type == 0x02) {     /* CONFIGURATION */
-      _pgmem = (uint8_t*)&current_descriptor;
-      _size = sizeof(current_descriptor);
+  #if (__AVR_ARCH__ == 103) || (USB_DESC_MEM >= 1)
+    size_t _size = get_descriptor_copy(_buffer, _index, USB_DescriptorSet);
+  #else
+    size_t _size = get_descriptor_copy_P(_buffer, _index, USB_DescriptorSet);
+  #endif
+    if (_length >= 12 && _index == bDescriptorType_DEVICE << 8) {
+      uint32_t _vidpid = *((uint32_t*)EEPROM_START);
+      if (_vidpid + 1) _CAPS32(_buffer[8])->dword = _vidpid;
+      D1PRINTF(" VID:PID=%04X:%04X\r\n", _CAPS16(_buffer[8])->word, _CAPS16(_buffer[10])->word);
     }
-    else if (_type == 0x06) {     /* QUALIFIER */
-      _pgmem = (uint8_t*)&qualifier_descriptor;
-      _size = sizeof(qualifier_descriptor);
-    }
-    else if (_type == 0x21) {     /* HID */
-      _pgmem = (uint8_t*)&current_descriptor + 18;
-      _size = 9;
-    }
-    else if (_type == 0x22) {     /* REPORT */
-      _pgmem = (uint8_t*)&report_descriptor;
-      _size = sizeof(report_descriptor);
-    }
-    else if (_index == 0x0300) {  /* LANGUAGE */
-      _pgmem = (uint8_t*)&language_descriptor;
-      _size = sizeof(language_descriptor);
-    }
-    else {
-      switch (_index) {
-        case 0x0301: _pgmem = (uint8_t*)&vstring; _size = sizeof(vstring); break;
-        case 0x0302: _pgmem = (uint8_t*)&mstring; _size = sizeof(mstring); break;
-        case 0x0304: _pgmem = (uint8_t*)&istring; _size = sizeof(istring); break;
-        case 0x0303: {
-          /*
-           * NOTE: Serial Number String Generation
-           *
-           * If the 4 bytes from offset 4 of the EEPROM are anything other
-           * than 0xFFFF:FFFF, use them, otherwise generate a 32-bit random
-           * serial number using CRC32 from the factory information.
-           */
-          uint32_t _sn = ((User_EEP_t*)EEPROM_START)->dwSerialNumber;
-          if (!(_sn + 1)) _sn = crc32((uint8_t*)SIGNATURES_START, 32);
-          uint8_t* _p = (uint8_t*)&_sn;
-          *_buffer++ = 26;  *_buffer++ = 3;
-          *_buffer++ = 'A'; *_buffer++ = 0;
-          *_buffer++ = '1'; *_buffer++ = 0;
-          *_buffer++ = 'C'; *_buffer++ = 0;
-          *_buffer++ = 'E'; *_buffer++ = 0;
-          for (uint8_t _i = 0; _i < 4; _i++) {
-            uint8_t _c = *_p++;
-            *_buffer++ = btoh(_c >> 4); *_buffer++ = 0;
-            *_buffer++ = btoh(_c     ); *_buffer++ = 0;
-          }
-          return 26;
-        }
-        default: return 0;
-      }
-      *_buffer++ = (uint8_t)_size;
-      *_buffer++ = 3;
-      /* Two extra bytes will be copied afterwards, but don't worry about it. */
-    }
-    _size = constrain(_size, (size_t)0, _length);
-    if (_size) memcpy_P(_buffer, _pgmem, _size);
     return _size;
   }
 
@@ -301,8 +179,13 @@ namespace USB {
     USB_EP_STATUS_CLR(USB_EP_RES) = ~USB_TOGGLE_bm;
   }
 
+  void ep_setup_stalled (void) {
+    bit_set(EP_RES.CTRL, USB_DOSTALL_bp);
+    USB0_INTFLAGSB |= USB_EPSETUP_bp;
+  }
+
   void ep_dpi_listen (void) {
-    EP_DPI.CNT = 64;
+    EP_DPI.CNT = VCP_TXD_BUFFSIZE;
     EP_DPI.MCNT = 0;
     loop_until_bit_is_clear(USB0_INTFLAGSB, USB_RMWBUSY_bp);
     USB_EP_STATUS_CLR(USB_EP_DPI) = ~USB_TOGGLE_bm;
@@ -349,16 +232,16 @@ namespace USB {
      || bit_is_clear(EP_CDI.STATUS, USB_BUSNAK_bp)) {
       /* No sending allowed while port is closed.  */
       /* If the buffer overflows, it is discarded. */
-      if (_send_count == 64) _send_count = 0;
+      if (_send_count == VCP_TXD_BUFFSIZE) _send_count = 0;
       return;
     }
     D2PRINTF(" VI=%02X\r\n    ", _send_count);
     D2PRINTHEX(bit_is_set(GPCONF, GPCONF_DBL_bp)
-      ? &EP_MEM.cdi_data[64]
+      ? &EP_MEM.cdi_data[VCP_TXD_BUFFSIZE]
       : &EP_MEM.cdi_data[0], _send_count, ':', 16, "\r\n    ");
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
       EP_CDI.DATAPTR = bit_is_set(GPCONF, GPCONF_DBL_bp)
-        ? (register16_t)&EP_MEM.cdi_data[64]
+        ? (register16_t)&EP_MEM.cdi_data[VCP_TXD_BUFFSIZE]
         : (register16_t)&EP_MEM.cdi_data[0];
       EP_CDI.CNT = _send_count;
       EP_CDI.MCNT = 0;
@@ -453,10 +336,10 @@ namespace USB {
   void write_byte (const uint8_t _c) {
     /* The double buffer consists of two blocks. */
     uint8_t* _buf = bit_is_set(GPCONF, GPCONF_DBL_bp)
-      ? &EP_MEM.cdi_data[64]
+      ? &EP_MEM.cdi_data[VCP_TXD_BUFFSIZE]
       : &EP_MEM.cdi_data[0];
     _buf[_send_count++] = _c;
-    if (_send_count < 64) _sof_count = VCP_BULK_DELAY;
+    if (_send_count < VCP_TXD_BUFFSIZE) _sof_count = VCP_BULK_DELAY;
     else ep_cdi_listen();
   }
 
@@ -695,6 +578,9 @@ namespace USB {
     bool _listen = false;
     uint8_t bmRequestType = EP_MEM.req_data.bmRequestType;
     EVSYS_SWEVENTA = EVSYS_SWEVENTA_CH2_gc;
+  #if defined(DEBUG)
+    if (EP_MEM.req_data.wRequestType == 0x0680 && EP_MEM.req_data.wValue == 0x0600) ep_setup_stalled();
+  #endif
     D1PRINTF("RQ=%04X:%02X:%02X:%04X:%04X:%04X\r\n",
       EP_REQ.CNT, EP_MEM.req_data.bmRequestType, EP_MEM.req_data.bRequest,
       EP_MEM.req_data.wValue, EP_MEM.req_data.wIndex, EP_MEM.req_data.wLength);
@@ -712,10 +598,9 @@ namespace USB {
       _listen = request_vendor();
     }
   #endif
-    if (_listen) {
-      ep_res_listen();
-      ep_req_listen();
-    }
+    if (!_listen) ep_setup_stalled();
+    ep_res_listen();
+    ep_req_listen();
   }
 
   /*** This process is equivalent to a bus interrupt. ***/
@@ -740,15 +625,20 @@ namespace USB {
   #endif
   #if defined(DEBUG) && (DEBUG >= 2)
     if (bit_is_set(busstate, USB_RESET_bp)) {
-      D1PRINTF("<RESET:%04X>\r\n", USB0_ADDR);
+      D1PRINTF("<RESET>\r\n");
     }
     if (bit_is_set(busstate, USB_SUSPEND_bp)) {
-      D1PRINTF("<SUSPEND:%04X>\r\n", USB0_ADDR);
+      D1PRINTF("<SUSPEND>\r\n");
     }
     if (bit_is_set(busstate, USB_RESUME_bp)) {
-      D1PRINTF("<RESUME:%04X>\r\n", USB0_ADDR);
+      D1PRINTF("<RESUME>\r\n");
     }
   #endif
+    if (bit_is_set(busstate, USB_STALLED_bp)) {
+      loop_until_bit_is_clear(USB0_INTFLAGSB, USB_RMWBUSY_bp);
+      bit_clear(EP_RES.CTRL, USB_DOSTALL_bp);
+      D1PRINTF("<STALLED>");
+    }
     if (bit_is_set(busstate, USB_SOF_bp)) {
       /* If there is deferred data for a block transfer, it is sent here. */
       if (_sof_count > 0 && 0 == (--_sof_count)) {
