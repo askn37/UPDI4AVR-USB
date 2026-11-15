@@ -181,7 +181,6 @@ namespace USB {
 
   void ep_setup_stalled (void) {
     bit_set(EP_RES.CTRL, USB_DOSTALL_bp);
-    USB0_INTFLAGSB |= USB_EPSETUP_bp;
   }
 
   void ep_dpi_listen (void) {
@@ -635,7 +634,6 @@ namespace USB {
     }
   #endif
     if (bit_is_set(busstate, USB_STALLED_bp)) {
-      loop_until_bit_is_clear(USB0_INTFLAGSB, USB_RMWBUSY_bp);
       bit_clear(EP_RES.CTRL, USB_DOSTALL_bp);
       D1PRINTF("<STALLED>");
     }
