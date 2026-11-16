@@ -101,9 +101,9 @@ namespace USB {
       return get_auto_generate_serial_number_string(_buffer, true);
     }
   #if (__AVR_ARCH__ == 103) || (USB_DESC_MEM >= 1)
-    size_t _size = get_descriptor_copy(_buffer, _index, USB_DescriptorSet);
+    size_t _size = get_descriptor_copy(_buffer, _index, get_descriptor_ptr());
   #else
-    size_t _size = get_descriptor_copy_P(_buffer, _index, USB_DescriptorSet);
+    size_t _size = get_descriptor_copy_P(_buffer, _index, get_descriptor_ptr());
   #endif
     if (_length >= 12 && _index == bDescriptorType_DEVICE << 8) {
       uint32_t _vidpid = *((uint32_t*)EEPROM_START);

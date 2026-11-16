@@ -613,6 +613,7 @@ namespace USART {
 };
 
 namespace USB {
+  uint8_t* get_descriptor_ptr (void);
   bool is_ep_setup (void);
   bool is_not_dap (void);
   void usb_detach (void);

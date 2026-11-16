@@ -15,7 +15,7 @@
 #include "USB_Utils.h"
 #include "USB/Descriptor.h"
 
-namespace {
+namespace USB {
 
   /*** WARNING ***
    * This USB device information applies only when using Microchip Technology Inc. products.
@@ -300,12 +300,8 @@ namespace {
     , {0, 4, bDescriptorType_STRING}, {wLANG_EN_US}
   };
 
-  extern "C" {
-    const uint8_t* USB_DescriptorSet = (uint8_t*)&USB_Descriptor + USB_DESC_ADDR;
-    const size_t   USB_DescriptorSetSize = sizeof(USB_Descriptor);
-    const uint8_t  USB_DescriptorSetSection = USB_DESC_ADDR;
-  }
+  uint8_t* get_descriptor_ptr (void) { return (uint8_t*)&USB_Descriptor + USB_DESC_ADDR; }
 
-} // anonymous namespace
+} /* USB */
 
 // end of code

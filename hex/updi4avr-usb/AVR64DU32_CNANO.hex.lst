@@ -209,7 +209,7 @@ __trampolines_start():
       9e:	4f 2e       	mov	r4, r31
       a0:	68 00       	.word	0x0068	; ????
 
-000000a2 <(anonymous namespace)::USB_Descriptor>:
+000000a2 <USB::USB_Descriptor>:
       a2:	00 3e 00 4d 55 4c 54 49 58 2e 4a 50 20 4f 53 53     .>.MULTIX.JP OSS
       b2:	57 2f 4f 53 48 57 55 50 44 49 34 41 56 52 3a 41     W/OSHWUPDI4AVR:A
       c2:	56 52 2d 44 55 3a 45 44 42 47 3a 43 4d 53 49 53     VR-DU:EDBG:CMSIS
@@ -13648,9 +13648,9 @@ get_descriptor():
       return get_auto_generate_serial_number_string(_buffer, true);
     }
   #if (__AVR_ARCH__ == 103) || (USB_DESC_MEM >= 1)
-    size_t _size = get_descriptor_copy(_buffer, _index, USB_DescriptorSet);
+    size_t _size = get_descriptor_copy(_buffer, _index, get_descriptor_ptr());
   #else
-    size_t _size = get_descriptor_copy_P(_buffer, _index, USB_DescriptorSet);
+    size_t _size = get_descriptor_copy_P(_buffer, _index, get_descriptor_ptr());
     3728:	62 ea       	ldi	r22, 0xA2	; 162
     372a:	70 e0       	ldi	r23, 0x00	; 0
     372c:	c8 01       	movw	r24, r16

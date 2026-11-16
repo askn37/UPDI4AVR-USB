@@ -214,143 +214,143 @@ __trampolines_start():
       9e:	4f 2e       	mov	r4, r31
       a0:	68 00       	.word	0x0068	; ????
 
-000000a2 <(anonymous namespace)::USB_Descriptor>:
-      a2:	00 3e 00 4d 55 4c 54 49 58 2e 4a 50 20 4f 53 53     .>.MULTIX.JP OSS
-      b2:	57 2f 4f 53 48 57 55 50 44 49 34 41 56 52 3a 41     W/OSHWUPDI4AVR:A
-      c2:	56 52 2d 44 55 3a 45 44 42 47 3a 43 4d 53 49 53     VR-DU:EDBG:CMSIS
-      d2:	2d 44 41 50 43 44 43 2d 41 43 4d 2d 56 43 50 00     -DAPCDC-ACM-VCP.
-      e2:	12 01 00 02 ef 02 01 40 d8 04 15 0b 35 01 01 02     .......@....5...
-      f2:	ff 01 00 09 02 6b 00 03 01 00 80 32 09 04 00 00     .....k.....2....
-     102:	02 03 00 00 00 09 21 11 01 00 01 22 1f 00 07 05     ......!...."....
-     112:	81 03 40 00 01 07 05 02 03 40 00 01 08 0b 01 02     ..@......@......
-     122:	02 02 00 04 09 04 01 00 01 02 02 00 00 05 24 00     ..............$.
-     132:	10 01 04 24 02 06 05 24 06 01 02 05 24 01 03 02     ...$...$....$...
-     142:	07 05 82 03 10 00 10 09 04 02 00 02 0a 00 00 00     ................
-     152:	07 05 83 02 40 00 00 07 05 03 02 40 00 00 00 21     ....@......@...!
-     162:	22 06 00 ff 09 01 a1 01 15 00 26 ff 00 75 08 95     ".........&..u..
-     172:	40 09 01 81 02 09 01 91 02 95 04 09 01 b1 02 c0     @...............
-     182:	01 13 03 03 02 1e 03 16 03 09 03 2b 04 0b 03 34     ...........+...4
-     192:	00 04 03 09 04                                      .....
+000000a2 <ISP::spi_transaction(unsigned char const*)::__c>:
+      a2:	20 52 2f 00                                          R/.
 
-00000197 <ISP::spi_transaction(unsigned char const*)::__c>:
-     197:	20 52 2f 00                                          R/.
+000000a6 <ISP::spi_transaction(unsigned char const*)::__c>:
+      a6:	20 53 2f 00                                          S/.
 
-0000019b <ISP::spi_transaction(unsigned char const*)::__c>:
-     19b:	20 53 2f 00                                          S/.
+000000aa <ISP::read_memories()::__c>:
+      aa:	20 4d 3d 24 25 30 34 58 2c 20 4c 3d 25 64 2c 20      M=$%04X, L=%d, 
+      ba:	54 3d 24 25 30 32 58 0d 0a 00                       T=$%02X...
 
-0000019f <ISP::read_memories()::__c>:
-     19f:	20 4d 3d 24 25 30 34 58 2c 20 4c 3d 25 64 2c 20      M=$%04X, L=%d, 
-     1af:	54 3d 24 25 30 32 58 0d 0a 00                       T=$%02X...
+000000c4 <ISP::read_flash()::__c>:
+      c4:	20 4d 3d 24 25 30 34 58 2c 20 4c 3d 25 64 2c 20      M=$%04X, L=%d, 
+      d4:	54 3d 24 25 30 32 58 0d 0a 00                       T=$%02X...
 
-000001b9 <ISP::read_flash()::__c>:
-     1b9:	20 4d 3d 24 25 30 34 58 2c 20 4c 3d 25 64 2c 20      M=$%04X, L=%d, 
-     1c9:	54 3d 24 25 30 32 58 0d 0a 00                       T=$%02X...
+000000de <ISP::write_busy(unsigned char, unsigned char, unsigned char)::__c>:
+      de:	20 52 2f 00                                          R/.
 
-000001d3 <ISP::write_busy(unsigned char, unsigned char, unsigned char)::__c>:
-     1d3:	20 52 2f 00                                          R/.
+000000e2 <ISP::write_busy(unsigned char, unsigned char, unsigned char)::__c>:
+      e2:	20 53 2f 00                                          S/.
 
-000001d7 <ISP::write_busy(unsigned char, unsigned char, unsigned char)::__c>:
-     1d7:	20 53 2f 00                                          S/.
-
-000001db <ISP::write_flash()::__c>:
-     1db:	20 4d 3d 24 25 30 34 58 2c 20 4c 3d 25 64 0d 0a      M=$%04X, L=%d..
+000000e6 <ISP::write_flash()::__c>:
+      e6:	20 4d 3d 24 25 30 34 58 2c 20 4c 3d 25 64 0d 0a      M=$%04X, L=%d..
 	...
 
-000001ec <ISP::write_eeprom()::__c>:
-     1ec:	20 4d 3d 24 25 30 34 58 2c 20 4c 3d 25 64 0d 0a      M=$%04X, L=%d..
+000000f7 <ISP::write_eeprom()::__c>:
+      f7:	20 4d 3d 24 25 30 34 58 2c 20 4c 3d 25 64 0d 0a      M=$%04X, L=%d..
 	...
 
-000001fd <ISP::connect()::__c>:
-     1fd:	20 50 47 4d 20 4f 4b 0d 0a 00                        PGM OK...
+00000108 <ISP::connect()::__c>:
+     108:	20 50 47 4d 20 4f 4b 0d 0a 00                        PGM OK...
 
-00000207 <ISP::connect()::__c>:
-     207:	20 58 43 4b 3d 25 64 3e 25 64 2c 25 30 32 58 0d      XCK=%d>%d,%02X.
-     217:	0a 00                                               ..
+00000112 <ISP::connect()::__c>:
+     112:	20 58 43 4b 3d 25 64 3e 25 64 2c 25 30 32 58 0d      XCK=%d>%d,%02X.
+     122:	0a 00                                               ..
 
-00000219 <ISP::timeout_fallback()::__c>:
-     219:	20 46 61 69 6c 0d 0a 00                              Fail...
+00000124 <ISP::timeout_fallback()::__c>:
+     124:	20 46 61 69 6c 0d 0a 00                              Fail...
 
-00000221 <_ZZN3ISP14jtag_scope_ispEvE3__c__17_>:
-     221:	20 49 53 50 5f 52 45 53 20 4c 3d 25 64 0d 0a 20      ISP_RES L=%d.. 
-     231:	20 00                                                .
+0000012c <_ZZN3ISP14jtag_scope_ispEvE3__c__17_>:
+     12c:	20 49 53 50 5f 52 45 53 20 4c 3d 25 64 0d 0a 20      ISP_RES L=%d.. 
+     13c:	20 00                                                .
 
-00000233 <_ZZN3ISP14jtag_scope_ispEvE3__c__16_>:
-     233:	20 49 53 50 5f 43 4d 44 5f 3f 5b 25 30 32 58 5d      ISP_CMD_?[%02X]
-     243:	0d 0a 00                                            ...
+0000013e <_ZZN3ISP14jtag_scope_ispEvE3__c__16_>:
+     13e:	20 49 53 50 5f 43 4d 44 5f 3f 5b 25 30 32 58 5d      ISP_CMD_?[%02X]
+     14e:	0d 0a 00                                            ...
 
-00000246 <_ZZN3ISP14jtag_scope_ispEvE3__c__15_>:
-     246:	20 49 53 50 5f 43 4d 44 5f 52 45 41 44 5f 25 73      ISP_CMD_READ_%s
-     256:	0d 0a 00                                            ...
+00000151 <_ZZN3ISP14jtag_scope_ispEvE3__c__15_>:
+     151:	20 49 53 50 5f 43 4d 44 5f 52 45 41 44 5f 25 73      ISP_CMD_READ_%s
+     161:	0d 0a 00                                            ...
 
-00000259 <_ZZN3ISP14jtag_scope_ispEvE3__c__14_>:
-     259:	20 49 53 50 5f 52 45 53 20 4c 3d 25 64 0d 0a 20      ISP_RES L=%d.. 
-     269:	20 00                                                .
+00000164 <_ZZN3ISP14jtag_scope_ispEvE3__c__14_>:
+     164:	20 49 53 50 5f 52 45 53 20 4c 3d 25 64 0d 0a 20      ISP_RES L=%d.. 
+     174:	20 00                                                .
 
-0000026b <_ZZN3ISP14jtag_scope_ispEvE3__c__13_>:
-     26b:	20 49 53 50 5f 43 4d 44 5f 50 52 4f 47 52 41 4d      ISP_CMD_PROGRAM
-     27b:	5f 25 73 0d 0a 00                                   _%s...
+00000176 <_ZZN3ISP14jtag_scope_ispEvE3__c__13_>:
+     176:	20 49 53 50 5f 43 4d 44 5f 50 52 4f 47 52 41 4d      ISP_CMD_PROGRAM
+     186:	5f 25 73 0d 0a 00                                   _%s...
 
-00000281 <_ZZN3ISP14jtag_scope_ispEvE3__c__12_>:
-     281:	20 49 53 50 5f 43 4d 44 5f 52 45 41 44 5f 45 45      ISP_CMD_READ_EE
-     291:	50 52 4f 4d 0d 0a 00                                PROM...
+0000018c <_ZZN3ISP14jtag_scope_ispEvE3__c__12_>:
+     18c:	20 49 53 50 5f 43 4d 44 5f 52 45 41 44 5f 45 45      ISP_CMD_READ_EE
+     19c:	50 52 4f 4d 0d 0a 00                                PROM...
 
-00000298 <_ZZN3ISP14jtag_scope_ispEvE3__c__11_>:
-     298:	20 49 53 50 5f 43 4d 44 5f 50 52 4f 47 52 41 4d      ISP_CMD_PROGRAM
-     2a8:	5f 45 45 50 52 4f 4d 0d 0a 00                       _EEPROM...
+000001a3 <_ZZN3ISP14jtag_scope_ispEvE3__c__11_>:
+     1a3:	20 49 53 50 5f 43 4d 44 5f 50 52 4f 47 52 41 4d      ISP_CMD_PROGRAM
+     1b3:	5f 45 45 50 52 4f 4d 0d 0a 00                       _EEPROM...
 
-000002b2 <_ZZN3ISP14jtag_scope_ispEvE3__c__10_>:
-     2b2:	20 49 53 50 5f 43 4d 44 5f 52 45 41 44 5f 46 4c      ISP_CMD_READ_FL
-     2c2:	41 53 48 0d 0a 00                                   ASH...
+000001bd <_ZZN3ISP14jtag_scope_ispEvE3__c__10_>:
+     1bd:	20 49 53 50 5f 43 4d 44 5f 52 45 41 44 5f 46 4c      ISP_CMD_READ_FL
+     1cd:	41 53 48 0d 0a 00                                   ASH...
 
-000002c8 <ISP::jtag_scope_isp()::__c>:
-     2c8:	20 49 53 50 5f 43 4d 44 5f 50 52 4f 47 52 41 4d      ISP_CMD_PROGRAM
-     2d8:	5f 46 4c 41 53 48 0d 0a 00                          _FLASH...
+000001d3 <ISP::jtag_scope_isp()::__c>:
+     1d3:	20 49 53 50 5f 43 4d 44 5f 50 52 4f 47 52 41 4d      ISP_CMD_PROGRAM
+     1e3:	5f 46 4c 41 53 48 0d 0a 00                          _FLASH...
 
-000002e1 <ISP::jtag_scope_isp()::__c>:
-     2e1:	20 49 53 50 5f 43 4d 44 5f 43 48 49 50 5f 45 52      ISP_CMD_CHIP_ER
-     2f1:	41 53 45 0d 0a 00                                   ASE...
+000001ec <ISP::jtag_scope_isp()::__c>:
+     1ec:	20 49 53 50 5f 43 4d 44 5f 43 48 49 50 5f 45 52      ISP_CMD_CHIP_ER
+     1fc:	41 53 45 0d 0a 00                                   ASE...
 
-000002f7 <ISP::jtag_scope_isp()::__c>:
-     2f7:	20 49 53 50 5f 43 4d 44 5f 4c 4f 41 44 5f 41 44      ISP_CMD_LOAD_AD
-     307:	44 52 45 53 53 3d 24 25 30 34 58 0d 0a 00           DRESS=$%04X...
+00000202 <ISP::jtag_scope_isp()::__c>:
+     202:	20 49 53 50 5f 43 4d 44 5f 4c 4f 41 44 5f 41 44      ISP_CMD_LOAD_AD
+     212:	44 52 45 53 53 3d 24 25 30 34 58 0d 0a 00           DRESS=$%04X...
 
-00000315 <ISP::jtag_scope_isp()::__c>:
-     315:	20 50 49 43 5f 52 45 53 20 4c 3d 32 0d 0a 20 20      PIC_RES L=2..  
+00000220 <ISP::jtag_scope_isp()::__c>:
+     220:	20 50 49 43 5f 52 45 53 20 4c 3d 32 0d 0a 20 20      PIC_RES L=2..  
 	...
 
-00000326 <ISP::jtag_scope_isp()::__c>:
-     326:	20 50 49 43 5f 43 4d 44 5f 47 45 54 5f 53 43 4b      PIC_CMD_GET_SCK
-     336:	3d 25 64 0d 0a 00                                   =%d...
+00000231 <ISP::jtag_scope_isp()::__c>:
+     231:	20 50 49 43 5f 43 4d 44 5f 47 45 54 5f 53 43 4b      PIC_CMD_GET_SCK
+     241:	3d 25 64 0d 0a 00                                   =%d...
 
-0000033c <ISP::jtag_scope_isp()::__c>:
-     33c:	20 58 43 4c 4b 3d 25 64 0d 0a 00                     XCLK=%d...
+00000247 <ISP::jtag_scope_isp()::__c>:
+     247:	20 58 43 4c 4b 3d 25 64 0d 0a 00                     XCLK=%d...
 
-00000347 <ISP::jtag_scope_isp()::__c>:
-     347:	20 50 49 43 5f 43 4d 44 5f 53 45 54 5f 53 43 4b      PIC_CMD_SET_SCK
-     357:	3d 25 64 0d 0a 00                                   =%d...
+00000252 <ISP::jtag_scope_isp()::__c>:
+     252:	20 50 49 43 5f 43 4d 44 5f 53 45 54 5f 53 43 4b      PIC_CMD_SET_SCK
+     262:	3d 25 64 0d 0a 00                                   =%d...
 
-0000035d <ISP::jtag_scope_isp()::__c>:
-     35d:	20 49 53 50 5f 43 4d 44 5f 4c 45 41 56 45 5f 50      ISP_CMD_LEAVE_P
-     36d:	52 4f 47 4d 4f 44 45 0d 0a 00                       ROGMODE...
+00000268 <ISP::jtag_scope_isp()::__c>:
+     268:	20 49 53 50 5f 43 4d 44 5f 4c 45 41 56 45 5f 50      ISP_CMD_LEAVE_P
+     278:	52 4f 47 4d 4f 44 45 0d 0a 00                       ROGMODE...
 
-00000377 <ISP::jtag_scope_isp()::__c>:
-     377:	20 49 53 50 5f 43 4d 44 5f 45 4e 54 45 52 5f 50      ISP_CMD_ENTER_P
-     387:	52 4f 47 4d 4f 44 45 0d 0a 00                       ROGMODE...
+00000282 <ISP::jtag_scope_isp()::__c>:
+     282:	20 49 53 50 5f 43 4d 44 5f 45 4e 54 45 52 5f 50      ISP_CMD_ENTER_P
+     292:	52 4f 47 4d 4f 44 45 0d 0a 00                       ROGMODE...
 
-00000391 <ISP::jtag_scope_isp()::__c>:
-     391:	0d 0a 00                                            ...
+0000029c <ISP::jtag_scope_isp()::__c>:
+     29c:	0d 0a 00                                            ...
 
-00000394 <ISP::jtag_scope_isp()::__c>:
-     394:	20 4c 3d 25 64 0d 0a 20 20 00                        L=%d..  .
+0000029f <ISP::jtag_scope_isp()::__c>:
+     29f:	20 4c 3d 25 64 0d 0a 20 20 00                        L=%d..  .
 
-0000039e <USB::ep_cci_listen()::__c>:
-     39e:	43 43 49 3d 00                                      CCI=.
+000002a9 <USB::ep_cci_listen()::__c>:
+     2a9:	43 43 49 3d 00                                      CCI=.
 
-000003a3 <SYS::reboot()::__c>:
-     3a3:	3c 52 45 42 4f 4f 54 3e 0d 0a 00                    <REBOOT>...
+000002ae <SYS::reboot()::__c>:
+     2ae:	3c 52 45 42 4f 4f 54 3e 0d 0a 00                    <REBOOT>...
 
-000003ae <USB::handling_bus_events()::__c>:
-     3ae:	3c 53 54 41 4c 4c 45 44 3e 00                       <STALLED>.
+000002b9 <USB::handling_bus_events()::__c>:
+     2b9:	3c 53 54 41 4c 4c 45 44 3e 00                       <STALLED>.
+
+000002c3 <USB::USB_Descriptor>:
+     2c3:	00 3e 00 4d 55 4c 54 49 58 2e 4a 50 20 4f 53 53     .>.MULTIX.JP OSS
+     2d3:	57 2f 4f 53 48 57 55 50 44 49 34 41 56 52 3a 41     W/OSHWUPDI4AVR:A
+     2e3:	56 52 2d 44 55 3a 45 44 42 47 3a 43 4d 53 49 53     VR-DU:EDBG:CMSIS
+     2f3:	2d 44 41 50 43 44 43 2d 41 43 4d 2d 56 43 50 00     -DAPCDC-ACM-VCP.
+     303:	12 01 00 02 ef 02 01 40 d8 04 15 0b 35 01 01 02     .......@....5...
+     313:	ff 01 00 09 02 6b 00 03 01 00 80 32 09 04 00 00     .....k.....2....
+     323:	02 03 00 00 00 09 21 11 01 00 01 22 1f 00 07 05     ......!...."....
+     333:	81 03 40 00 01 07 05 02 03 40 00 01 08 0b 01 02     ..@......@......
+     343:	02 02 00 04 09 04 01 00 01 02 02 00 00 05 24 00     ..............$.
+     353:	10 01 04 24 02 06 05 24 06 01 02 05 24 01 03 02     ...$...$....$...
+     363:	07 05 82 03 10 00 10 09 04 02 00 02 0a 00 00 00     ................
+     373:	07 05 83 02 40 00 00 07 05 03 02 40 00 00 00 21     ....@......@...!
+     383:	22 06 00 ff 09 01 a1 01 15 00 26 ff 00 75 08 95     ".........&..u..
+     393:	40 09 01 81 02 09 01 91 02 95 04 09 01 b1 02 c0     @...............
+     3a3:	01 13 03 03 02 1e 03 16 03 09 03 2b 04 0b 03 34     ...........+...4
+     3b3:	00 04 03 09 04                                      .....
 
 000003b8 <USB::get_descriptor(unsigned char*, unsigned int, unsigned int)::__c>:
      3b8:	20 56 49 44 3a 50 49 44 3d 25 30 34 58 3a 25 30      VID:PID=%04X:%0
@@ -6695,8 +6695,8 @@ static __inline__ void __iRestore(const  uint8_t *__s)
     }
   #if !defined(NDEBUG) && defined(DEBUG)
     if (bit_is_clear(PGCONF, PGCONF_PGIA_bp)) {
-    246c:	8b e9       	ldi	r24, 0x9B	; 155
-    246e:	91 e0       	ldi	r25, 0x01	; 1
+    246c:	86 ea       	ldi	r24, 0xA6	; 166
+    246e:	90 e0       	ldi	r25, 0x00	; 0
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:103
       DPRINTF(" S/"); DPRINTHEX(_cmd, 4, ':');
     2470:	9f 93       	push	r25
@@ -6715,8 +6715,8 @@ static __inline__ void __iRestore(const  uint8_t *__s)
     248a:	ce 01       	movw	r24, r28
     248c:	e7 db       	rcall	.-2098   	; 0x1c5c <Print::printHex(void const*, unsigned int, char, unsigned int, char const*) [clone .constprop.14]>
     248e:	44 dc       	rcall	.-1912   	; 0x1d18 <Print::ln()>
-    2490:	87 e9       	ldi	r24, 0x97	; 151
-    2492:	91 e0       	ldi	r25, 0x01	; 1
+    2490:	82 ea       	ldi	r24, 0xA2	; 162
+    2492:	90 e0       	ldi	r25, 0x00	; 0
     2494:	9f 93       	push	r25
     2496:	8f 93       	push	r24
     2498:	1f 93       	push	r17
@@ -10726,8 +10726,8 @@ void delay_micros (uint32_t _us) {
     3582:	8f 93       	push	r24
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:321
     D1PRINTF(" XCK=%d>%d,%02X\r\n", _xclk, _ret, _period);
-    3584:	87 e0       	ldi	r24, 0x07	; 7
-    3586:	92 e0       	ldi	r25, 0x02	; 2
+    3584:	82 e1       	ldi	r24, 0x12	; 18
+    3586:	91 e0       	ldi	r25, 0x01	; 1
     3588:	9f 93       	push	r25
     358a:	8f 93       	push	r24
     358c:	86 e0       	ldi	r24, 0x06	; 6
@@ -10869,7 +10869,7 @@ void delay_millis (uint32_t _ms) {
       if (_res[packet.out.isp.data[6] - 1] == packet.out.isp.data[5]) {
     361e:	83 e0       	ldi	r24, 0x03	; 3
     3620:	8f bb       	out	0x1f, r24	; 31
-    3622:	8d ef       	ldi	r24, 0xFD	; 253
+    3622:	88 e0       	ldi	r24, 0x08	; 8
     3624:	91 e0       	ldi	r25, 0x01	; 1
     3626:	9f 93       	push	r25
     3628:	8f 93       	push	r24
@@ -11721,11 +11721,11 @@ uint16_t bswap16 (uint16_t _word) {
     3a3e:	99 1f       	adc	r25, r25
     3a40:	9f 93       	push	r25
     3a42:	8f 93       	push	r24
-    3a44:	89 eb       	ldi	r24, 0xB9	; 185
+    3a44:	84 ec       	ldi	r24, 0xC4	; 196
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:142
     size_t  _length = bswap16(packet.out.isp.wValue);
     uint8_t _type   = packet.out.isp.data[2];
-    3a46:	91 e0       	ldi	r25, 0x01	; 1
+    3a46:	90 e0       	ldi	r25, 0x00	; 0
     3a48:	9f 93       	push	r25
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:143
     D1PRINTF(" M=$%04X, L=%d, T=$%02X\r\n", _addr << 1, _length, _type);
@@ -12660,11 +12660,11 @@ read_memories():
     3eea:	0f 93       	push	r16
     3eec:	9f 93       	push	r25
     3eee:	8f 93       	push	r24
-    3ef0:	8f e9       	ldi	r24, 0x9F	; 159
+    3ef0:	8a ea       	ldi	r24, 0xAA	; 170
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:124
     size_t  _length = bswap16(packet.out.isp.wValue);
     uint8_t _type   = packet.out.isp.data[2];
-    3ef2:	91 e0       	ldi	r25, 0x01	; 1
+    3ef2:	90 e0       	ldi	r25, 0x00	; 0
     3ef4:	9f 93       	push	r25
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:125
     D1PRINTF(" M=$%04X, L=%d, T=$%02X\r\n", _addr, _length, _type);
@@ -12871,8 +12871,8 @@ write_busy():
       } while (_ser[3] & 1);
     }
     else if (bit_is_set(_type, 5) && _ser[3] != 0xFF) {
-    3ffa:	87 ed       	ldi	r24, 0xD7	; 215
-    3ffc:	91 e0       	ldi	r25, 0x01	; 1
+    3ffa:	82 ee       	ldi	r24, 0xE2	; 226
+    3ffc:	90 e0       	ldi	r25, 0x00	; 0
     3ffe:	9f 93       	push	r25
     4000:	8f 93       	push	r24
     4002:	86 e0       	ldi	r24, 0x06	; 6
@@ -12918,10 +12918,10 @@ write_busy():
       do {
         _ser[0] = _read;
     4040:	b1 f3       	breq	.-20     	; 0x402e <ISP::write_busy(unsigned char, unsigned char, unsigned char)+0x74>
-    4042:	83 ed       	ldi	r24, 0xD3	; 211
+    4042:	8e ed       	ldi	r24, 0xDE	; 222
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:185
         spi_transaction(_ser);
-    4044:	91 e0       	ldi	r25, 0x01	; 1
+    4044:	90 e0       	ldi	r25, 0x00	; 0
     4046:	9f 93       	push	r25
     4048:	8f 93       	push	r24
     404a:	86 e0       	ldi	r24, 0x06	; 6
@@ -13063,8 +13063,8 @@ write_flash():
     40f4:	0f 93       	push	r16
     40f6:	9f 93       	push	r25
     40f8:	8f 93       	push	r24
-    40fa:	8b ed       	ldi	r24, 0xDB	; 219
-    40fc:	91 e0       	ldi	r25, 0x01	; 1
+    40fa:	86 ee       	ldi	r24, 0xE6	; 230
+    40fc:	90 e0       	ldi	r25, 0x00	; 0
     40fe:	9f 93       	push	r25
     4100:	8f 93       	push	r24
     4102:	86 e0       	ldi	r24, 0x06	; 6
@@ -13277,10 +13277,10 @@ write_eeprom():
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:244
     uint8_t _page_set = packet.out.isp.data[4]; /* WW */
     423a:	8f 93       	push	r24
-    423c:	8c ee       	ldi	r24, 0xEC	; 236
+    423c:	87 ef       	ldi	r24, 0xF7	; 247
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:245
     uint8_t _commit   = packet.out.isp.data[5]; /* FF */
-    423e:	91 e0       	ldi	r25, 0x01	; 1
+    423e:	90 e0       	ldi	r25, 0x00	; 0
     4240:	9f 93       	push	r25
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:246
     uint8_t _verify   = packet.out.isp.data[8]; /* P2 */
@@ -13502,8 +13502,8 @@ write_eeprom():
 00004366 <ISP::timeout_fallback()>:
 timeout_fallback():
     4366:	a8 95       	wdr
-    4368:	89 e1       	ldi	r24, 0x19	; 25
-    436a:	92 e0       	ldi	r25, 0x02	; 2
+    4368:	84 e2       	ldi	r24, 0x24	; 36
+    436a:	91 e0       	ldi	r25, 0x01	; 1
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:278
         write_busy(_type, _delay, _verify);
     436c:	9f 93       	push	r25
@@ -13895,11 +13895,11 @@ jtag_scope_isp():
     452c:	f1 2c       	mov	r15, r1
     452e:	1f 92       	push	r1
     4530:	df 93       	push	r29
-    4532:	84 e9       	ldi	r24, 0x94	; 148
+    4532:	8f e9       	ldi	r24, 0x9F	; 159
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:398
     size_t  _rspsize = 0;
     uint8_t _length  = _packet_length - 6;
-    4534:	93 e0       	ldi	r25, 0x03	; 3
+    4534:	92 e0       	ldi	r25, 0x02	; 2
     4536:	9f 93       	push	r25
     4538:	8f 93       	push	r24
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:399
@@ -13937,8 +13937,8 @@ jtag_scope_isp():
     456e:	c0 31       	cpi	r28, 0x10	; 16
     4570:	09 f0       	breq	.+2      	; 0x4574 <ISP::jtag_scope_isp()+0x60>
     4572:	98 c0       	rjmp	.+304    	; 0x46a4 <ISP::jtag_scope_isp()+0x190>
-    4574:	87 e7       	ldi	r24, 0x77	; 119
-    4576:	93 e0       	ldi	r25, 0x03	; 3
+    4574:	82 e8       	ldi	r24, 0x82	; 130
+    4576:	92 e0       	ldi	r25, 0x02	; 2
     4578:	9f 93       	push	r25
     457a:	8f 93       	push	r24
     457c:	86 e0       	ldi	r24, 0x06	; 6
@@ -14068,7 +14068,7 @@ jtag_scope_isp():
 
       PGCONF = PGCONF_PGIF_bm;
     4618:	cf 93       	push	r28
-    461a:	81 e2       	ldi	r24, 0x21	; 33
+    461a:	8c e2       	ldi	r24, 0x2C	; 44
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:410
       D1PRINTF("\r\n");
   #endif
@@ -14076,7 +14076,7 @@ jtag_scope_isp():
       D1PRINTF(" ISP_CMD_ENTER_PROGMODE\r\n");
       sign_on();
       if (_length >= 11) {
-    461c:	92 e0       	ldi	r25, 0x02	; 2
+    461c:	91 e0       	ldi	r25, 0x01	; 1
     461e:	9f 93       	push	r25
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:501
       packet.in.isp.res = 0xC9; /* STATUS_CMD_UNKNOWN */
@@ -14120,8 +14120,8 @@ jtag_scope_isp():
     4650:	0f 90       	pop	r0
     4652:	0f 90       	pop	r0
     4654:	d5 c0       	rjmp	.+426    	; 0x4800 <ISP::jtag_scope_isp()+0x2ec>
-    4656:	81 e9       	ldi	r24, 0x91	; 145
-    4658:	93 e0       	ldi	r25, 0x03	; 3
+    4656:	8c e9       	ldi	r24, 0x9C	; 156
+    4658:	92 e0       	ldi	r25, 0x02	; 2
     465a:	9f 93       	push	r25
     465c:	8f 93       	push	r24
     465e:	1f 93       	push	r17
@@ -14188,8 +14188,8 @@ jtag_scope_isp():
     46a6:	c9 f5       	brne	.+114    	; 0x471a <ISP::jtag_scope_isp()+0x206>
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:506
       if (_rspsize > 1) _rspsize += 1;
-    46a8:	8d e5       	ldi	r24, 0x5D	; 93
-    46aa:	93 e0       	ldi	r25, 0x03	; 3
+    46a8:	88 e6       	ldi	r24, 0x68	; 104
+    46aa:	92 e0       	ldi	r25, 0x02	; 2
     46ac:	9f 93       	push	r25
     46ae:	8f 93       	push	r24
     46b0:	86 e0       	ldi	r24, 0x06	; 6
@@ -14303,8 +14303,8 @@ jtag_scope_isp():
     else {
       packet.in.data[_rspsize] = 0;
     4728:	cf 93       	push	r28
-    472a:	87 e4       	ldi	r24, 0x47	; 71
-    472c:	93 e0       	ldi	r25, 0x03	; 3
+    472a:	82 e5       	ldi	r24, 0x52	; 82
+    472c:	92 e0       	ldi	r25, 0x02	; 2
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:421
     }
     else if (_cmd == 0x11) {    /* CMD_LEAVE_PROGMODE_ISP */
@@ -14344,8 +14344,8 @@ jtag_scope_isp():
     4764:	8f 93       	push	r24
     4766:	80 91 b8 63 	lds	r24, 0x63B8	; 0x8063b8 <_xclk>
     476a:	8f 93       	push	r24
-    476c:	8c e3       	ldi	r24, 0x3C	; 60
-    476e:	93 e0       	ldi	r25, 0x03	; 3
+    476c:	87 e4       	ldi	r24, 0x47	; 71
+    476e:	92 e0       	ldi	r25, 0x02	; 2
     4770:	9f 93       	push	r25
     4772:	8f 93       	push	r24
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:426
@@ -14387,7 +14387,7 @@ jtag_scope_isp():
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:506
       if (_rspsize > 1) _rspsize += 1;
     47a4:	8f 93       	push	r24
-    47a6:	86 e2       	ldi	r24, 0x26	; 38
+    47a6:	81 e3       	ldi	r24, 0x31	; 49
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:429
       /* This command sends microseconds. */
       if (_data > 0) _xclk = 1000 / _data;  /* convert us to kbps */
@@ -14395,7 +14395,7 @@ jtag_scope_isp():
       _rspsize = 1;
     }
     else if (_cmd == 0x1E) {    /* CMD_GET_SCK */
-    47a8:	93 e0       	ldi	r25, 0x03	; 3
+    47a8:	92 e0       	ldi	r25, 0x02	; 2
     47aa:	9f 93       	push	r25
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:430
       D1PRINTF(" PIC_CMD_GET_SCK=%d\r\n", _xclk);
@@ -14409,11 +14409,11 @@ jtag_scope_isp():
     47be:	90 91 b9 63 	lds	r25, 0x63B9	; 0x8063b9 <_xclk+0x1>
     47c2:	80 93 41 61 	sts	0x6141, r24	; 0x806141 <packet+0x6>
     47c6:	90 93 42 61 	sts	0x6142, r25	; 0x806142 <packet+0x7>
-    47ca:	85 e1       	ldi	r24, 0x15	; 21
+    47ca:	80 e2       	ldi	r24, 0x20	; 32
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:432
       /* This command gives a non-standard response. */
       packet.in.stk500v2.wValue = _xclk; /* kbps */
-    47cc:	93 e0       	ldi	r25, 0x03	; 3
+    47cc:	92 e0       	ldi	r25, 0x02	; 2
     47ce:	9f 93       	push	r25
     47d0:	8f 93       	push	r24
     47d2:	df 93       	push	r29
@@ -14512,17 +14512,17 @@ jtag_scope_isp():
     483c:	70 93 17 61 	sts	0x6117, r23	; 0x806117 <ISP::_base_addr+0x1>
     4840:	7f 93       	push	r23
     4842:	6f 93       	push	r22
-    4844:	87 ef       	ldi	r24, 0xF7	; 247
+    4844:	82 e0       	ldi	r24, 0x02	; 2
     4846:	92 e0       	ldi	r25, 0x02	; 2
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:444
       _base_addr = bswap32(packet.out.isp.dwValue);
     4848:	93 cf       	rjmp	.-218    	; 0x4770 <ISP::jtag_scope_isp()+0x25c>
     484a:	c2 31       	cpi	r28, 0x12	; 18
     484c:	b1 f4       	brne	.+44     	; 0x487a <ISP::jtag_scope_isp()+0x366>
-    484e:	81 ee       	ldi	r24, 0xE1	; 225
+    484e:	8c ee       	ldi	r24, 0xEC	; 236
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:445
       D1PRINTF(" ISP_CMD_LOAD_ADDRESS=$%04X\r\n", _base_addr);
-    4850:	92 e0       	ldi	r25, 0x02	; 2
+    4850:	91 e0       	ldi	r25, 0x01	; 1
     4852:	9f 93       	push	r25
     4854:	8f 93       	push	r24
     4856:	86 e0       	ldi	r24, 0x06	; 6
@@ -14559,8 +14559,8 @@ jtag_scope_isp():
     else if (_cmd == 0x16) {    /* CMD_READ_EEPROM_ISP */
       D1PRINTF(" ISP_CMD_READ_EEPROM\r\n");
       _rspsize = Timeout::command(&read_memories);
-    487e:	88 ec       	ldi	r24, 0xC8	; 200
-    4880:	92 e0       	ldi	r25, 0x02	; 2
+    487e:	83 ed       	ldi	r24, 0xD3	; 211
+    4880:	91 e0       	ldi	r25, 0x01	; 1
     4882:	9f 93       	push	r25
     4884:	8f 93       	push	r24
     4886:	86 e0       	ldi	r24, 0x06	; 6
@@ -14588,8 +14588,8 @@ jtag_scope_isp():
     48a2:	89 f4       	brne	.+34     	; 0x48c6 <ISP::jtag_scope_isp()+0x3b2>
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:454
       _rspsize = Timeout::command(&write_flash);
-    48a4:	82 eb       	ldi	r24, 0xB2	; 178
-    48a6:	92 e0       	ldi	r25, 0x02	; 2
+    48a4:	8d eb       	ldi	r24, 0xBD	; 189
+    48a6:	91 e0       	ldi	r25, 0x01	; 1
     48a8:	9f 93       	push	r25
     48aa:	8f 93       	push	r24
     48ac:	86 e0       	ldi	r24, 0x06	; 6
@@ -14613,8 +14613,8 @@ jtag_scope_isp():
     48c8:	89 f4       	brne	.+34     	; 0x48ec <ISP::jtag_scope_isp()+0x3d8>
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:458
       _rspsize = Timeout::command(&read_flash);
-    48ca:	88 e9       	ldi	r24, 0x98	; 152
-    48cc:	92 e0       	ldi	r25, 0x02	; 2
+    48ca:	83 ea       	ldi	r24, 0xA3	; 163
+    48cc:	91 e0       	ldi	r25, 0x01	; 1
     48ce:	9f 93       	push	r25
     48d0:	8f 93       	push	r24
     48d2:	86 e0       	ldi	r24, 0x06	; 6
@@ -14638,8 +14638,8 @@ jtag_scope_isp():
     48ee:	89 f4       	brne	.+34     	; 0x4912 <ISP::jtag_scope_isp()+0x3fe>
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:462
       _rspsize = Timeout::command(&write_eeprom);
-    48f0:	81 e8       	ldi	r24, 0x81	; 129
-    48f2:	92 e0       	ldi	r25, 0x02	; 2
+    48f0:	8c e8       	ldi	r24, 0x8C	; 140
+    48f2:	91 e0       	ldi	r25, 0x01	; 1
     48f4:	9f 93       	push	r25
     48f6:	8f 93       	push	r24
     48f8:	86 e0       	ldi	r24, 0x06	; 6
@@ -14707,8 +14707,8 @@ jtag_scope_isp():
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:485
           || _cmd == 0x1B       /* CMD_READ_SIGNATURE_ISP */
     493c:	cf 93       	push	r28
-    493e:	83 e3       	ldi	r24, 0x33	; 51
-    4940:	92 e0       	ldi	r25, 0x02	; 2
+    493e:	8e e3       	ldi	r24, 0x3E	; 62
+    4940:	91 e0       	ldi	r25, 0x01	; 1
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:487
           || _cmd == 0x1C) {    /* CMD_READ_OSCCAL_ISP */
       D1PRINTF(" ISP_CMD_READ_%s\r\n",
@@ -14748,8 +14748,8 @@ jtag_scope_isp():
     4968:	90 e6       	ldi	r25, 0x60	; 96
     496a:	9f 93       	push	r25
     496c:	8f 93       	push	r24
-    496e:	8b e6       	ldi	r24, 0x6B	; 107
-    4970:	92 e0       	ldi	r25, 0x02	; 2
+    496e:	86 e7       	ldi	r24, 0x76	; 118
+    4970:	91 e0       	ldi	r25, 0x01	; 1
     4972:	9f 93       	push	r25
     4974:	8f 93       	push	r24
     4976:	86 e0       	ldi	r24, 0x06	; 6
@@ -14794,8 +14794,8 @@ jtag_scope_isp():
     49aa:	1f 92       	push	r1
     49ac:	82 e0       	ldi	r24, 0x02	; 2
     49ae:	8f 93       	push	r24
-    49b0:	89 e5       	ldi	r24, 0x59	; 89
-    49b2:	92 e0       	ldi	r25, 0x02	; 2
+    49b0:	84 e6       	ldi	r24, 0x64	; 100
+    49b2:	91 e0       	ldi	r25, 0x01	; 1
     49b4:	9f 93       	push	r25
     49b6:	8f 93       	push	r24
     49b8:	86 e0       	ldi	r24, 0x06	; 6
@@ -14831,8 +14831,8 @@ jtag_scope_isp():
     49f0:	90 e6       	ldi	r25, 0x60	; 96
     49f2:	9f 93       	push	r25
     49f4:	8f 93       	push	r24
-    49f6:	86 e4       	ldi	r24, 0x46	; 70
-    49f8:	92 e0       	ldi	r25, 0x02	; 2
+    49f6:	81 e5       	ldi	r24, 0x51	; 81
+    49f8:	91 e0       	ldi	r25, 0x01	; 1
     49fa:	9f 93       	push	r25
     49fc:	8f 93       	push	r24
 /Users/askn/Develop/UPDI4AVR-USB/src/isp.cpp:476
@@ -15562,8 +15562,8 @@ handling_bus_events():
     4d20:	80 93 d3 63 	sts	0x63D3, r24	; 0x8063d3 <EP_TABLE+0x11>
 /Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:638
       D1PRINTF("<STALLED>");
-    4d24:	ee ea       	ldi	r30, 0xAE	; 174
-    4d26:	f3 e0       	ldi	r31, 0x03	; 3
+    4d24:	e9 eb       	ldi	r30, 0xB9	; 185
+    4d26:	f2 e0       	ldi	r31, 0x02	; 2
     4d28:	ff 93       	push	r31
     4d2a:	ef 93       	push	r30
     4d2c:	86 e0       	ldi	r24, 0x06	; 6
@@ -15716,8 +15716,8 @@ ep_cci_listen():
     4dd6:	5e c0       	rjmp	.+188    	; 0x4e94 <main+0x42e>
 /Users/askn/Develop/UPDI4AVR-USB/src/usb.cpp:211
       D1PRINTF("CCI=");
-    4dd8:	2e e9       	ldi	r18, 0x9E	; 158
-    4dda:	33 e0       	ldi	r19, 0x03	; 3
+    4dd8:	29 ea       	ldi	r18, 0xA9	; 169
+    4dda:	32 e0       	ldi	r19, 0x02	; 2
     4ddc:	3f 93       	push	r19
     4dde:	2f 93       	push	r18
     4de0:	86 e0       	ldi	r24, 0x06	; 6
@@ -15818,8 +15818,8 @@ reboot():
    */
   void reboot (void) {
     D1PRINTF("<REBOOT>\r\n");
-    4e5c:	83 ea       	ldi	r24, 0xA3	; 163
-    4e5e:	93 e0       	ldi	r25, 0x03	; 3
+    4e5c:	8e ea       	ldi	r24, 0xAE	; 174
+    4e5e:	92 e0       	ldi	r25, 0x02	; 2
     4e60:	9f 93       	push	r25
     4e62:	8f 93       	push	r24
     4e64:	86 e0       	ldi	r24, 0x06	; 6
@@ -16581,11 +16581,11 @@ get_descriptor():
       return get_auto_generate_serial_number_string(_buffer, true);
     }
   #if (__AVR_ARCH__ == 103) || (USB_DESC_MEM >= 1)
-    size_t _size = get_descriptor_copy(_buffer, _index, USB_DescriptorSet);
+    size_t _size = get_descriptor_copy(_buffer, _index, get_descriptor_ptr());
   #else
-    size_t _size = get_descriptor_copy_P(_buffer, _index, USB_DescriptorSet);
-    51de:	62 ea       	ldi	r22, 0xA2	; 162
-    51e0:	70 e0       	ldi	r23, 0x00	; 0
+    size_t _size = get_descriptor_copy_P(_buffer, _index, get_descriptor_ptr());
+    51de:	63 ec       	ldi	r22, 0xC3	; 195
+    51e0:	72 e0       	ldi	r23, 0x02	; 2
     51e2:	c7 01       	movw	r24, r14
     51e4:	0e 94 82 12 	call	0x2504	; 0x2504 <get_descriptor_copy_P.constprop.10>
     51e8:	6c 01       	movw	r12, r24
