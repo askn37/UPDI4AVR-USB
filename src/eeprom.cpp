@@ -16,6 +16,7 @@
 #include <api/memspace.h>   /* EEPROM */
 #include "configuration.h"
 #include "prototype.h"
+#include "USB_Utils.h"
 
 /*
  * NOTE:

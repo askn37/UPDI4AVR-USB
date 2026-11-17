@@ -16,6 +16,7 @@
 #include <avr/pgmspace.h>   /* PROGMEM memcpy_P */
 #include <string.h>         /* memcpy */
 #include <api/btools.h>     /* bswap16,32 */
+#include <api/capsule.h>    /* _CAPS macro */
 #include <peripheral.h>     /* import Serial (Debug) */
 #include "configuration.h"
 #include "prototype.h"
@@ -56,7 +57,7 @@ namespace JTAG {
     uint8_t _cmd = EP_MEM.dap_data[0];
     uint8_t _sub = EP_MEM.dap_data[1];
     EVSYS_SWEVENTA = EVSYS_SWEVENTA_CH2_gc;
-    D2PRINTF("DAP=%02X SUB=%02X\r\n", _cmd, _sub);
+    D1PRINTF("DAP=%02X:%02X\r\n", _cmd, _sub);
     USB::ep_dpi_pending();
 
     /*** EDBG Payload ***/
@@ -71,8 +72,8 @@ namespace JTAG {
       uint8_t _endf = _sub & 0x0F;
       uint8_t _frag = _sub >> 4;
       uint8_t _size = EP_MEM.dap_data[3];
-      size_t  _ofst = (_frag - 1) * 60;
-      if (_endf >= 10) {
+      size_t  _ofst = (_frag - 1) * (EDBG_BUFFSIZE);
+      if (_endf > DAP_COUNT) {
         /* Only a maximum of 540 bytes : 9 fragment records is accepted. */
         D1PRINTF("<EDBG_FAIL>\r\n");
         EP_MEM.dap_data[1] = 0x00;  /* EDBG_RSP_FAIL */
@@ -86,11 +87,10 @@ namespace JTAG {
         D3PRINTHEX(&EP_MEM.dap_data, _size + 4, ':');
         if (_endf == _frag) {       /* end of defragment */
           _packet_length = _ofst + _size;
-          D2PRINTF(" SQ=%03X:%03X<", packet.out.sequence, _packet_length);
-          D2PRINTHEX(&packet, _packet_length, ':');
+          D2PRINTF(" SQ=%03X:%03X\r\n <", packet.out.sequence, _packet_length);
+          D2PRINTHEX(&packet, _packet_length, ':', 16, "\r\n <");
           if (_packet_chunks == _endf) {
             /* True if an EDBG Payload is received. */
-            D2PRINTF("<EDBG_OK>\r\n");
             _packet_endfrag = 0;
             _result = true;
           }
@@ -110,10 +110,10 @@ namespace JTAG {
         EP_MEM.dap_data[3] = 0;
       }
       else {
-        memcpy(&EP_MEM.dap_data[4], &packet.in.token + (_packet_fragment * 60), 60);
+        memcpy(&EP_MEM.dap_data[4], &packet.in.token + (_packet_fragment * EDBG_BUFFSIZE), EDBG_BUFFSIZE);
         EP_MEM.dap_data[1] = ((++_packet_fragment) << 4) | _packet_endfrag;
-        EP_MEM.dap_data[3] = _packet_fragment == _packet_endfrag ? _packet_length : 60;
-        _packet_length -= 60;
+        EP_MEM.dap_data[3] = _packet_fragment == _packet_endfrag ? _packet_length : EDBG_BUFFSIZE;
+        _packet_length -= EDBG_BUFFSIZE;
         D3PRINTF(" PI=");
         D3PRINTHEX(&EP_MEM.dap_data, EP_MEM.dap_data[3] + 4, ':');
       }
@@ -121,40 +121,36 @@ namespace JTAG {
 
     /*** DAP Standard ***/
     else if (_cmd == 0x00) {        /* DAP_CMD_INFO */
-      if (_sub == 0xFF              /* DAP_INFO_PACKET_SIZE      */
-       || _sub == 0xFB              /* UART Receive Buffer Size  */
-       || _sub == 0xFC) {           /* UART Transmit Buffer Size */
-        EP_MEM.dap_data[1] = 0x02;  /* length=2 */
-        EP_MEM.dap_data[2] = 0x40;  /* MaxPacketSize = 64 */
-        EP_MEM.dap_data[3] = 0x00;
-        D3PRINTF(" PI=");
-        D3PRINTHEX(&EP_MEM.dap_data, 4, ':');
+      uint32_t _res = 0;
+      uint8_t _len = 2;
+      switch (_sub) {
+        case 0xFF: _res = DAP_BUFFSIZE;               break;  /* DAP_INFO_Packet_Size */
+        case 0xFE: _res = DAP_COUNT;        _len = 1; break;  /* DAP_INFO_Packet_Count */
+        case 0xFB: _res = VCP_RXD_BUFFSIZE; _len = 4; break;  /* UART Receive Buffer Size */
+        case 0xFC: _res = VCP_TXD_BUFFSIZE; _len = 4; break;  /* UART Transmit Buffer Size */
+        case 0xF0: _res = 0x0180;                     break;  /* DAP_INFO_Capabilities */
+        default:   _res = _len = 0;
       }
-      else if (_sub == 0xF1) {      /* DAP_INFO_Capabilities */
-        EP_MEM.dap_data[1] = 0x02;  /* length=2 */
-        EP_MEM.dap_data[2] = 0x80;  /* 7:UART Communication Port */
-        EP_MEM.dap_data[3] = 0x01;  /* 1:USB COM Port */
-        D3PRINTF(" PI=");
-        D3PRINTHEX(&EP_MEM.dap_data, 4, ':');
-      }
+      EP_MEM.dap_data[1] = _len;    /* length */
+      _CAPS32(EP_MEM.dap_data[2])->dword = _res;
+      D1PRINTF("-INFO=");
+      D1PRINTHEX(&EP_MEM.dap_data, EP_MEM.dap_data[1] + 1, ':');
     }
     else if (_cmd == 0x02) {        /* DAP_CMD_CONNECT */
       /* EP_MEM.dap_data[1] == CONN_TYPE */
       /* Here, the response is returned without processing. */
-      D3PRINTF(" PI=");
-      D3PRINTHEX(&EP_MEM.dap_data, 2, ':');
+      D1PRINTF("-CONNECT\r\n");
     }
     else if (_cmd == 0x01           /* DAP_CMD_HOSTSTATUS */
           && _sub == 0x00) {        /* DAP_LED_CONNECT */
       /* EP_MEM.dap_data[2] == LED_ON/OFF */
       /* Here, the response is returned without processing. */
-      D3PRINTF(" PI=");
+      D3PRINTF("-PI=");
       D3PRINTHEX(&EP_MEM.dap_data, 3, ':');
     }
     else if (_cmd == 0x03) {        /* DAP_CMD_DISCONNECT */
       /* Here, the response is returned without processing. */
-      D3PRINTF(" PI=");
-      D3PRINTHEX(&EP_MEM.dap_data, 2, ':');
+      D1PRINTF("-DISCONNECT\r\n");
     }
     else {
       EP_MEM.dap_data[1] = 0x00;    /* other 0 length result */
@@ -171,8 +167,8 @@ namespace JTAG {
     packet.in.token = 0x0E;                 /* TOKEN */
     packet.rawData[_packet_length] = 0;     /* EOT */
   #if !defined(NDEBUG) && defined(DEBUG) && (DEBUG >= 2)
-    DPRINTF(" SQ=%03X:%03X>", packet.in.sequence, _packet_length);
-    DPRINTHEX(&packet.in.token, _packet_length, ':');
+    DPRINTF(" SQ=%03X:%03X\r\n >", packet.in.sequence, _packet_length);
+    DPRINTHEX(&packet.in.token, _packet_length, ':', 16, "\r\n >");
   #endif
   }
 
@@ -191,19 +187,19 @@ namespace JTAG {
       if (_section == 0) {          /* SET_GET_CTXT_CONFIG */
         /* _index == 0-5 */
         memcpy_P(&packet.in.data[0], &jtag_version[_index], _length);
-        D1PRINTF(" VESRION=");
+        D1PRINTF(" VER=");
         D1PRINTHEX(&packet.in.data[0], _length, ':');
       }
       else if (_section == 1) {     /* SET_GET_CTXT_PHYSICAL */
         if (_index == 0 || _index == 0x20) {  /* PARM3_VTARGET */
           /* Called with `-xvtarget` HAS_VTARG_READ */
           _vtarget = SYS::get_vdd();
-          D1PRINTF(" VTARGET=%d\r\n", _vtarget);
+          D1PRINTF(" VTG=%d\r\n", _vtarget);
           packet.in.wValue = _vtarget;
         }
         else {                      /* PARM3_ANALOG_XXXX */
           /* Called with PowerDebugger HAS_VTARG_ADJ */
-          D1PRINTF(" PHYSICAL\r\n");
+          D1PRINTF(" PHY\r\n");
           memcpy_P(&packet.in.data[0], &jtag_physical[_index & 7], _length);
         }
       }
@@ -213,6 +209,8 @@ namespace JTAG {
     else if (_cmd == 0x10) {        /* CMD3_SIGN_ON */
       D1PRINTF(" GEN_SIGN_ON\r\n");
       PGCONF = 0;
+      _vtarget = SYS::get_vdd();
+      D1PRINTF(" VTG=%d\r\n", _vtarget);
       _jtag_hvctrl = 0;
       _jtag_unlock = 0;   /* This is not used. */
       _jtag_arch = 0;
@@ -231,7 +229,7 @@ namespace JTAG {
       packet.in.res = 0x80;         /* RSP3_OK */
     }
     else {
-      D1PRINTF(" ?GEN=%02X:%02X:%02X\r\n", _section, _index, _length);
+      D1PRINTF("?GEN=%02X:%02X:%02X\r\n", _section, _index, _length);
     }
     return _rspsize;
   }
@@ -253,7 +251,7 @@ namespace JTAG {
       if (_section == 0) {          /* SET_GET_CTXT_CONFIG */
         if (_index == 0x10) {       /* EDBG_CONTROL_TARGET_POWER */
           /* Called with `-xvtarget_switch=0,1` HAS_VTARG_SWITCH */
-          D1PRINTF(" TARGET_POWER=%02X\r\n", _data);
+          D1PRINTF(" TPW=%02X\r\n", _data);
           _jtag_vpow = _data;       /* 0,1 */
   #ifdef CONFIG_PGM_VPOWER_ENABLE
           SYS::power_reset(true, false);              /* VPW off */
@@ -268,7 +266,7 @@ namespace JTAG {
       if (_section == 0) {          /* SET_GET_CTXT_CONFIG */
         if (_index == 0x10) {       /* EDBG_CONTROL_TARGET_POWER */
           /* Called with `-xvtarget_switch` HAS_VTARG_SWITCH */
-          D1PRINTF(" TARGET_POWER=%02X\r\n", _jtag_vpow);
+          D1PRINTF(" TPW=%02X\r\n", _jtag_vpow);
           packet.in.data[0] = _jtag_vpow;
         }
       }

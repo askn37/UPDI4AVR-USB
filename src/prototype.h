@@ -100,14 +100,25 @@
 #define USB_EP(EPFIFO) (*(USB_EP_t *)(((uint16_t)&EP_TABLE.EP) + (EPFIFO)))
 #define USB_EP_STATUS_CLR(EPFIFO) _SFR_MEM8(&USB0_STATUS0_OUTCLR + ((EPFIFO) >> 2))
 #define USB_EP_STATUS_SET(EPFIFO) _SFR_MEM8(&USB0_STATUS0_OUTSET + ((EPFIFO) >> 2))
+#define USB_EP_CTRL_CLR(EPFIFO) _SFR_MEM8(&USB0_STATUS0_OUTCLR + ((EPFIFO) >> 2))
+#define USB_EP_CTRL_SET(EPFIFO) _SFR_MEM8(&USB0_STATUS0_OUTSET + ((EPFIFO) >> 2))
 
 #define USB_ENDPOINTS_MAX 4
 
 /* For Windows, powers of 2 from 1 to 32 are recommended. */
-#define USB_CCI_INTERVAL 4
+#define USB_CCI_INTERVAL 16
 
 /* VCP-TxD buffering delay time. */
 #define VCP_BULK_DELAY 32
+
+/* The maximum value for these is 255. */
+#define VCP_TXD_BUFFSIZE 64
+#define VCP_RXD_BUFFSIZE 64
+#define VCP_INT_BUFFSIZE 16
+
+#define DAP_BUFFSIZE 64
+#define DAP_COUNT 9
+#define EDBG_BUFFSIZE (DAP_BUFFSIZE - 4)
 
 /* The delay time for notifying the SerialState. */
 /* This must be greater than USB_CCI_INTERVAL. */
@@ -319,19 +330,19 @@ typedef struct {
 typedef struct {
   Setup_Packet_t req_data;
   union {
-    uint8_t res_data[256 + 16];
+    uint8_t res_data[VCP_TXD_BUFFSIZE + VCP_TXD_BUFFSIZE + VCP_RXD_BUFFSIZE + DAP_BUFFSIZE+ VCP_INT_BUFFSIZE];
     LineEncoding_t res_encoding;
     struct {
       union {
-        uint8_t cci_data[16];
+        uint8_t cci_data[VCP_INT_BUFFSIZE];
         struct {
           Setup_Packet_t cci_header;
           uint16_t cci_wValue;
         };
       };
-      uint8_t dap_data[64];   /* DAP IN/OUT */
-      uint8_t cdo_data[64];
-      uint8_t cdi_data[128];  /* 64x2 Double buffer */
+      uint8_t dap_data[DAP_BUFFSIZE];     /* DAP IN/OUT */
+      uint8_t cdo_data[VCP_RXD_BUFFSIZE];
+      uint8_t cdi_data[VCP_TXD_BUFFSIZE + VCP_TXD_BUFFSIZE];  /* Double buffer */
     };
   };
 } PACKED EP_DATA_t;
@@ -433,11 +444,6 @@ typedef struct {
   size_t (*erase_memory)(void);
   size_t (*write_memory)(void);
 } PACKED Command_Table_t;
-
-typedef struct {
-  uint16_t wVidPid[2];
-  uint32_t dwSerialNumber;
-} PACKED User_EEP_t;
 
 /*
  * Global workspace
@@ -607,6 +613,7 @@ namespace USART {
 };
 
 namespace USB {
+  uint8_t* get_descriptor_ptr (void);
   bool is_ep_setup (void);
   bool is_not_dap (void);
   void usb_detach (void);
